@@ -1,0 +1,50 @@
+- id: attention
+  term: внимание
+  term_en: attention
+  definition: Правило, по которому каждый токен получает взвешенную смесь всех остальных токенов; веса пересчитываются для каждого входа.
+  chapter: dl/attention
+- id: softmax
+  term: softmax
+  definition: Нормировка вектора оценок в вероятности; каждый элемент становится положительным, а сумма всех равна единице.
+  chapter: dl/attention
+- id: query
+  term: запрос
+  term_en: query
+  definition: Вектор токена, который ищет подходящие ключи; у каждого токена свой запрос.
+  chapter: dl/attention
+- id: key
+  term: ключ
+  term_en: key
+  definition: Вектор токена, по которому остальные токены находят его через сравнение с запросом.
+  chapter: dl/attention
+- id: value
+  term: значение
+  term_en: value
+  definition: Вектор токена, который попадает в результат с весом, найденным по запросу и ключу.
+  chapter: dl/attention
+- id: scaled-dot-product
+  term: масштабированное скалярное произведение
+  term_en: scaled dot-product
+  definition: Оценка внимания q·k, делённая на √d; деление не даёт softmax насыщаться при большом d.
+  chapter: dl/attention
+- id: causal-mask
+  term: каузальная маска
+  term_en: causal mask
+  definition: Маска, которая запрещает токену смотреть на будущие позиции; добавляется к оценкам до softmax.
+  chapter: dl/attention
+- id: flash-attention
+  term: FlashAttention
+  definition: Точный алгоритм внимания, который считает блоками в SRAM и не записывает матрицу n×n в HBM.
+  chapter: dl/attention
+  layer: { c: 1, d: 3 }
+- id: hbm
+  term: HBM
+  term_en: high-bandwidth memory
+  definition: Основная память GPU большого объёма и относительно медленная; чтение и запись в неё дорогие.
+  chapter: dl/attention
+  layer: { c: 1, d: 3 }
+- id: sram
+  term: SRAM
+  definition: Быстрая память на кристалле GPU, очень маленькая; вычисления на тайлах идут в ней.
+  chapter: dl/attention
+  layer: { c: 1, d: 3 }

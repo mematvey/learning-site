@@ -1,0 +1,8 @@
+id: mlops
+title: MLOps Practices
+description: 'Практики эксплуатации моделей: данные, эксперименты, выкладка и мониторинг.'
+order: 3
+icon: pipeline
+accent:
+  topic: { light: '#c2410c', dark: '#fb923c' }
+  soft: { light: '#fff7ed', dark: '#2a1a10' }
