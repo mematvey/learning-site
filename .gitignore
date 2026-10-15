@@ -7,3 +7,5 @@ __pycache__/
 user-data/
 test-results/
 playwright-report/
+src/generated/
+static/pagefind/
