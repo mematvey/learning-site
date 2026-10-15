@@ -11,6 +11,8 @@ import { defineConfig } from 'vite';
 const base = (process.env.BASE_PATH ?? '') as '' | `/${string}`;
 
 export default defineConfig(async () => ({
+	// Worktrees under .worktrees/ break rolldown tsconfig lookup during dep optimization.
+	optimizeDeps: { rolldownOptions: { tsconfig: false } },
 	resolve: { alias: { $lib: fileURLToPath(new URL('./src/lib', import.meta.url)) } },
 	plugins: [
 		tailwindcss(),
