@@ -6,19 +6,20 @@
 <title>learning-site: главная</title>
 <link rel="stylesheet" href="tokens.css">
 <link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="shortcuts.css">
 </head>
 <body>
 
 <header class="site-header">
   <div class="wrap header-inner">
-    <a class="logo" href="index.html"><span class="logo-dot" aria-hidden="true"></span>learning-site</a>
+    <a class="logo" href="index.html" data-home><span class="logo-dot" aria-hidden="true"></span>learning-site</a>
     <div class="header-actions">
-      <button class="search" type="button" aria-label="Поиск, сочетание ⌘K">
+      <button class="search" type="button" data-search aria-label="Поиск, сочетание ⌘K">
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
         <span class="search-label">Поиск</span>
-        <kbd>⌘K</kbd>
+        <kbd data-kbd="mod+k">⌘K</kbd>
       </button>
-      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему">
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Переключить тему" title="Сменить тему (T)">
         <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
         <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
       </button>
@@ -29,8 +30,18 @@
 <main class="wrap">
 
   <section class="hero">
-    <h1>Машинное обучение по шагам</h1>
-    <p class="hero-lead">Главы с интерактивными демо, лабораторными заданиями и вопросами для самопроверки. Прогресс и заметки остаются у вас.</p>
+    <div class="hero-text">
+      <h1>Машинное обучение по шагам</h1>
+      <p class="hero-lead">Главы с интерактивными демо, лабораторными заданиями и вопросами для самопроверки. Прогресс и заметки остаются у вас.</p>
+    </div>
+    <svg class="hero-art" viewBox="0 0 280 220" aria-hidden="true">
+      <path class="hero-line" d="M48 56 L140 110 L232 52 M140 110 L96 184 M140 110 L220 176"/>
+      <g data-topic="dl"><circle class="hero-fill" cx="48" cy="56" r="26"/></g>
+      <g data-topic="classic-ml"><rect class="hero-fill" x="116" y="86" width="48" height="48" rx="10"/></g>
+      <g data-topic="mlops"><polygon class="hero-fill" points="232,20 262,72 202,72"/></g>
+      <g data-topic="cs"><circle class="hero-fill" cx="96" cy="184" r="18"/></g>
+      <g data-topic="compute"><rect class="hero-fill" x="204" y="150" width="36" height="36" rx="8"/></g>
+    </svg>
   </section>
 
   <section class="continue" data-topic="dl" aria-labelledby="continue-title">
@@ -65,7 +76,7 @@
 
     <div class="topic-grid">
 
-      <article class="topic-card" data-topic="dl">
+      <article class="topic-card is-active" data-topic="dl">
         <div class="topic-top">
           <span class="topic-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.2 7.2 15.8 11M8.2 16.8 15.8 13"/></svg>
@@ -79,9 +90,12 @@
           <li><span class="num">02</span><a href="#">Multi-head attention</a></li>
           <li><span class="num">03</span><a href="#">Трансформер-блок</a></li>
         </ol>
-        <div class="progress">
-          <span class="bar"><i style="width: 20%"></i></span>
-          <span class="progress-label">20%</span>
+        <div class="card-foot">
+          <div class="progress">
+            <span class="bar"><i style="width: 20%"></i></span>
+            <span class="progress-label">20%</span>
+          </div>
+          <button class="card-map" type="button" data-map-go="dl">Карта <span aria-hidden="true">→</span></button>
         </div>
       </article>
 
@@ -99,9 +113,12 @@
           <li><span class="num">02</span><a href="#">Логистическая регрессия</a></li>
           <li><span class="num">03</span><a href="#">Деревья решений</a></li>
         </ol>
-        <div class="progress">
-          <span class="bar"><i style="width: 45%"></i></span>
-          <span class="progress-label">45%</span>
+        <div class="card-foot">
+          <div class="progress">
+            <span class="bar"><i style="width: 45%"></i></span>
+            <span class="progress-label">45%</span>
+          </div>
+          <button class="card-map" type="button" data-map-go="classic-ml">Карта <span aria-hidden="true">→</span></button>
         </div>
       </article>
 
@@ -119,9 +136,12 @@
           <li><span class="num">02</span><a href="#">Эксперименты и трекинг</a></li>
           <li><span class="num">03</span><a href="#">Сервинг моделей</a></li>
         </ol>
-        <div class="progress">
-          <span class="bar"><i style="width: 0%"></i></span>
-          <span class="progress-label">0%</span>
+        <div class="card-foot">
+          <div class="progress">
+            <span class="bar"><i style="width: 0%"></i></span>
+            <span class="progress-label">0%</span>
+          </div>
+          <button class="card-map" type="button" data-map-go="mlops">Карта <span aria-hidden="true">→</span></button>
         </div>
       </article>
 
@@ -139,9 +159,12 @@
           <li><span class="num">02</span><a href="#">Хеш-таблицы</a></li>
           <li><span class="num">03</span><a href="#">Параллелизм</a></li>
         </ol>
-        <div class="progress">
-          <span class="bar"><i style="width: 10%"></i></span>
-          <span class="progress-label">10%</span>
+        <div class="card-foot">
+          <div class="progress">
+            <span class="bar"><i style="width: 10%"></i></span>
+            <span class="progress-label">10%</span>
+          </div>
+          <button class="card-map" type="button" data-map-go="cs">Карта <span aria-hidden="true">→</span></button>
         </div>
       </article>
 
@@ -159,80 +182,64 @@
           <li><span class="num">02</span><a href="#">Матричное умножение на железе</a></li>
           <li><span class="num">03</span><a href="#">Квантование</a></li>
         </ol>
-        <div class="progress">
-          <span class="bar"><i style="width: 0%"></i></span>
-          <span class="progress-label">0%</span>
+        <div class="card-foot">
+          <div class="progress">
+            <span class="bar"><i style="width: 0%"></i></span>
+            <span class="progress-label">0%</span>
+          </div>
+          <button class="card-map" type="button" data-map-go="compute">Карта <span aria-hidden="true">→</span></button>
         </div>
       </article>
 
     </div>
   </section>
 
-  <section class="map" data-topic="dl" aria-labelledby="map-title">
+  <section class="map" id="map" data-topic="dl" aria-labelledby="map-title">
     <div class="section-head">
-      <p class="eyebrow">Карта · DL Theory</p>
-      <h2 id="map-title">Порядок чтения</h2>
+      <p class="eyebrow">Порядок чтения</p>
+      <h2 id="map-title">Карта · DL Theory</h2>
       <p class="section-sub">Стрелка показывает, что нужно знать до темы. Закрашены пройденные узлы, обведён текущий.</p>
     </div>
 
-    <div class="map-card">
+    <div class="map-tabs" role="group" aria-label="Топик карты">
+      <button class="map-tab" type="button" data-map-tab="dl" data-topic="dl" aria-pressed="true"><span class="tab-dot" aria-hidden="true"></span>DL Theory <kbd>1</kbd></button>
+      <button class="map-tab" type="button" data-map-tab="classic-ml" data-topic="classic-ml" aria-pressed="false"><span class="tab-dot" aria-hidden="true"></span>Classic ML <kbd>2</kbd></button>
+      <button class="map-tab" type="button" data-map-tab="mlops" data-topic="mlops" aria-pressed="false"><span class="tab-dot" aria-hidden="true"></span>MLOps <kbd>3</kbd></button>
+      <button class="map-tab" type="button" data-map-tab="cs" data-topic="cs" aria-pressed="false"><span class="tab-dot" aria-hidden="true"></span>CompScience <kbd>4</kbd></button>
+      <button class="map-tab" type="button" data-map-tab="compute" data-topic="compute" aria-pressed="false"><span class="tab-dot" aria-hidden="true"></span>Compute <kbd>5</kbd></button>
+      <span class="map-last" id="map-last">по последней открытой главе</span>
+    </div>
+
+    <!-- DL Theory: реальный граф -->
+    <div class="map-card" data-graph="dl">
       <div class="map-wrap">
-        <svg class="map-svg" viewBox="0 0 1000 310" role="img" aria-labelledby="map-svg-title">
-          <title id="map-svg-title">Граф пререквизитов DL Theory</title>
+        <svg class="map-svg" viewBox="0 0 1000 310" role="img" aria-labelledby="map-dl-title">
+          <title id="map-dl-title">Граф пререквизитов DL Theory</title>
           <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <marker id="arrow-dl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
               <path class="map-arrow" d="M0 0 L10 5 L0 10 z"/>
             </marker>
           </defs>
-
           <g class="map-edges">
-            <path class="map-edge" d="M184 70 H216" marker-end="url(#arrow)"/>
-            <path class="map-edge" d="M300 96 V136" marker-end="url(#arrow)"/>
-            <path class="map-edge" d="M184 160 H216" marker-end="url(#arrow)"/>
-            <path class="map-edge" d="M384 160 H416" marker-end="url(#arrow)"/>
-            <path class="map-edge" d="M500 224 V186" marker-end="url(#arrow)"/>
-            <path class="map-edge" d="M584 160 C 600 160, 600 70, 616 70" marker-end="url(#arrow)"/>
-            <path class="map-edge" d="M784 70 C 800 70, 800 160, 816 160" marker-end="url(#arrow)"/>
-            <path class="map-edge" d="M784 250 C 800 250, 800 160, 816 160" marker-end="url(#arrow)"/>
-            <path class="map-edge" d="M584 250 H616" marker-end="url(#arrow)"/>
+            <path class="map-edge" d="M184 70 H216" marker-end="url(#arrow-dl)"/>
+            <path class="map-edge" d="M300 96 V136" marker-end="url(#arrow-dl)"/>
+            <path class="map-edge" d="M184 160 H216" marker-end="url(#arrow-dl)"/>
+            <path class="map-edge" d="M384 160 H416" marker-end="url(#arrow-dl)"/>
+            <path class="map-edge" d="M500 224 V186" marker-end="url(#arrow-dl)"/>
+            <path class="map-edge" d="M584 160 C 600 160, 600 70, 616 70" marker-end="url(#arrow-dl)"/>
+            <path class="map-edge" d="M784 70 C 800 70, 800 160, 816 160" marker-end="url(#arrow-dl)"/>
+            <path class="map-edge" d="M784 250 C 800 250, 800 160, 816 160" marker-end="url(#arrow-dl)"/>
+            <path class="map-edge" d="M584 250 H616" marker-end="url(#arrow-dl)"/>
           </g>
-
-          <g class="map-node is-done">
-            <rect x="16" y="44" width="168" height="52" rx="10"/>
-            <text x="100" y="70">Линейная алгебра</text>
-          </g>
-          <g class="map-node is-done">
-            <rect x="216" y="44" width="168" height="52" rx="10"/>
-            <text x="300" y="70">Скалярное произведение</text>
-          </g>
-          <g class="map-node is-done">
-            <rect x="16" y="134" width="168" height="52" rx="10"/>
-            <text x="100" y="160">Вероятности</text>
-          </g>
-          <g class="map-node is-done">
-            <rect x="216" y="134" width="168" height="52" rx="10"/>
-            <text x="300" y="160">Softmax</text>
-          </g>
-          <g class="map-node is-current">
-            <rect x="416" y="134" width="168" height="52" rx="10"/>
-            <text x="500" y="160">Attention</text>
-          </g>
-          <g class="map-node is-done">
-            <rect x="416" y="224" width="168" height="52" rx="10"/>
-            <text x="500" y="250">Эмбеддинги</text>
-          </g>
-          <g class="map-node">
-            <rect x="616" y="44" width="168" height="52" rx="10"/>
-            <text x="700" y="70">Multi-head attention</text>
-          </g>
-          <g class="map-node">
-            <rect x="616" y="224" width="168" height="52" rx="10"/>
-            <text x="700" y="250">Residual и LayerNorm</text>
-          </g>
-          <g class="map-node">
-            <rect x="816" y="134" width="168" height="52" rx="10"/>
-            <text x="900" y="160">Трансформер</text>
-          </g>
+          <g class="map-node is-done"><rect x="16" y="44" width="168" height="52" rx="10"/><text x="100" y="70">Линейная алгебра</text></g>
+          <g class="map-node is-done"><rect x="216" y="44" width="168" height="52" rx="10"/><text x="300" y="70">Скалярное произведение</text></g>
+          <g class="map-node is-done"><rect x="16" y="134" width="168" height="52" rx="10"/><text x="100" y="160">Вероятности</text></g>
+          <g class="map-node is-done"><rect x="216" y="134" width="168" height="52" rx="10"/><text x="300" y="160">Softmax</text></g>
+          <g class="map-node is-current"><rect x="416" y="134" width="168" height="52" rx="10"/><text x="500" y="160">Attention</text></g>
+          <g class="map-node is-done"><rect x="416" y="224" width="168" height="52" rx="10"/><text x="500" y="250">Эмбеддинги</text></g>
+          <g class="map-node"><rect x="616" y="44" width="168" height="52" rx="10"/><text x="700" y="70">Multi-head attention</text></g>
+          <g class="map-node"><rect x="616" y="224" width="168" height="52" rx="10"/><text x="700" y="250">Residual и LayerNorm</text></g>
+          <g class="map-node"><rect x="816" y="134" width="168" height="52" rx="10"/><text x="900" y="160">Трансформер</text></g>
         </svg>
       </div>
       <ul class="map-legend">
@@ -241,6 +248,137 @@
         <li><span class="swatch swatch-todo"></span>Впереди</li>
       </ul>
     </div>
+
+    <!-- Classic ML: черновой граф -->
+    <div class="map-card" data-graph="classic-ml" hidden>
+      <div class="map-wrap">
+        <svg class="map-svg" viewBox="0 0 1000 310" role="img" aria-labelledby="map-cml-title">
+          <title id="map-cml-title">Граф пререквизитов Classic ML</title>
+          <defs>
+            <marker id="arrow-cml" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="map-arrow" d="M0 0 L10 5 L0 10 z"/>
+            </marker>
+          </defs>
+          <g class="map-edges">
+            <path class="map-edge" d="M184 70 H216" marker-end="url(#arrow-cml)"/>
+            <path class="map-edge" d="M300 96 V136" marker-end="url(#arrow-cml)"/>
+            <path class="map-edge" d="M184 160 H216" marker-end="url(#arrow-cml)"/>
+            <path class="map-edge" d="M384 70 H416" marker-end="url(#arrow-cml)"/>
+            <path class="map-edge" d="M384 160 H416" marker-end="url(#arrow-cml)"/>
+            <path class="map-edge" d="M584 160 H616" marker-end="url(#arrow-cml)"/>
+            <path class="map-edge" d="M500 186 V250 H616" marker-end="url(#arrow-cml)"/>
+            <path class="map-edge" d="M784 150 C 800 150, 800 70, 816 70" marker-end="url(#arrow-cml)"/>
+            <path class="map-edge" d="M784 170 C 800 170, 800 250, 816 250" marker-end="url(#arrow-cml)"/>
+            <path class="map-edge" d="M784 250 H816" marker-end="url(#arrow-cml)"/>
+          </g>
+          <g class="map-node is-done"><rect x="16" y="44" width="168" height="52" rx="10"/><text x="100" y="70">Линейная алгебра</text></g>
+          <g class="map-node is-done"><rect x="16" y="134" width="168" height="52" rx="10"/><text x="100" y="160">Вероятности</text></g>
+          <g class="map-node is-done"><rect x="216" y="44" width="168" height="52" rx="10"/><text x="300" y="70">Линейная регрессия</text></g>
+          <g class="map-node is-current"><rect x="216" y="134" width="168" height="52" rx="10"/><text x="300" y="160">Логистическая рег.</text></g>
+          <g class="map-node"><rect x="416" y="44" width="168" height="52" rx="10"/><text x="500" y="70">Регуляризация</text></g>
+          <g class="map-node"><rect x="416" y="134" width="168" height="52" rx="10"/><text x="500" y="160">Метрики качества</text></g>
+          <g class="map-node"><rect x="616" y="134" width="168" height="52" rx="10"/><text x="700" y="160">Деревья решений</text></g>
+          <g class="map-node"><rect x="616" y="224" width="168" height="52" rx="10"/><text x="700" y="250">Кросс-валидация</text></g>
+          <g class="map-node"><rect x="816" y="44" width="168" height="52" rx="10"/><text x="900" y="70">Случайный лес</text></g>
+          <g class="map-node"><rect x="816" y="224" width="168" height="52" rx="10"/><text x="900" y="250">Градиентный бустинг</text></g>
+        </svg>
+      </div>
+      <ul class="map-legend">
+        <li><span class="swatch swatch-done"></span>Пройдено</li>
+        <li><span class="swatch swatch-current"></span>Текущая глава</li>
+        <li><span class="swatch swatch-todo"></span>Впереди</li>
+      </ul>
+    </div>
+
+    <!-- MLOps: заглушка -->
+    <div class="map-card" data-graph="mlops" hidden>
+      <p class="map-stub">Граф этой темы ещё не составлен: показана заглушка.</p>
+      <div class="map-wrap">
+        <svg class="map-svg" viewBox="0 0 1000 220" role="img" aria-labelledby="map-mlops-title">
+          <title id="map-mlops-title">Заглушка графа MLOps Practices</title>
+          <defs>
+            <marker id="arrow-mlops" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="map-arrow" d="M0 0 L10 5 L0 10 z"/>
+            </marker>
+          </defs>
+          <g class="map-edges">
+            <path class="map-edge" d="M284 160 H316" marker-end="url(#arrow-mlops)"/>
+            <path class="map-edge" d="M484 160 H516" marker-end="url(#arrow-mlops)"/>
+            <path class="map-edge" d="M684 160 H716" marker-end="url(#arrow-mlops)"/>
+          </g>
+          <g class="map-node is-done"><rect x="116" y="134" width="168" height="52" rx="10"/><text x="200" y="160">Версии данных</text></g>
+          <g class="map-node is-current"><rect x="316" y="134" width="168" height="52" rx="10"/><text x="400" y="160">Эксперименты</text></g>
+          <g class="map-node"><rect x="516" y="134" width="168" height="52" rx="10"/><text x="600" y="160">Пайплайны</text></g>
+          <g class="map-node"><rect x="716" y="134" width="168" height="52" rx="10"/><text x="800" y="160">Сервинг моделей</text></g>
+        </svg>
+      </div>
+      <ul class="map-legend">
+        <li><span class="swatch swatch-done"></span>Пройдено</li>
+        <li><span class="swatch swatch-current"></span>Текущая глава</li>
+        <li><span class="swatch swatch-todo"></span>Впереди</li>
+      </ul>
+    </div>
+
+    <!-- CompScience: заглушка -->
+    <div class="map-card" data-graph="cs" hidden>
+      <p class="map-stub">Граф этой темы ещё не составлен: показана заглушка.</p>
+      <div class="map-wrap">
+        <svg class="map-svg" viewBox="0 0 1000 220" role="img" aria-labelledby="map-cs-title">
+          <title id="map-cs-title">Заглушка графа CompScience</title>
+          <defs>
+            <marker id="arrow-cs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="map-arrow" d="M0 0 L10 5 L0 10 z"/>
+            </marker>
+          </defs>
+          <g class="map-edges">
+            <path class="map-edge" d="M184 160 H216" marker-end="url(#arrow-cs)"/>
+            <path class="map-edge" d="M384 160 H416" marker-end="url(#arrow-cs)"/>
+            <path class="map-edge" d="M584 160 H616" marker-end="url(#arrow-cs)"/>
+            <path class="map-edge" d="M784 160 H816" marker-end="url(#arrow-cs)"/>
+          </g>
+          <g class="map-node is-done"><rect x="16" y="134" width="168" height="52" rx="10"/><text x="100" y="160">Сложность</text></g>
+          <g class="map-node is-current"><rect x="216" y="134" width="168" height="52" rx="10"/><text x="300" y="160">Хеш-таблицы</text></g>
+          <g class="map-node"><rect x="416" y="134" width="168" height="52" rx="10"/><text x="500" y="160">Деревья поиска</text></g>
+          <g class="map-node"><rect x="616" y="134" width="168" height="52" rx="10"/><text x="700" y="160">Графы</text></g>
+          <g class="map-node"><rect x="816" y="134" width="168" height="52" rx="10"/><text x="900" y="160">Параллелизм</text></g>
+        </svg>
+      </div>
+      <ul class="map-legend">
+        <li><span class="swatch swatch-done"></span>Пройдено</li>
+        <li><span class="swatch swatch-current"></span>Текущая глава</li>
+        <li><span class="swatch swatch-todo"></span>Впереди</li>
+      </ul>
+    </div>
+
+    <!-- Compute: заглушка -->
+    <div class="map-card" data-graph="compute" hidden>
+      <p class="map-stub">Граф этой темы ещё не составлен: показана заглушка.</p>
+      <div class="map-wrap">
+        <svg class="map-svg" viewBox="0 0 1000 220" role="img" aria-labelledby="map-compute-title">
+          <title id="map-compute-title">Заглушка графа Compute</title>
+          <defs>
+            <marker id="arrow-compute" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="map-arrow" d="M0 0 L10 5 L0 10 z"/>
+            </marker>
+          </defs>
+          <g class="map-edges">
+            <path class="map-edge" d="M284 160 H316" marker-end="url(#arrow-compute)"/>
+            <path class="map-edge" d="M484 160 H516" marker-end="url(#arrow-compute)"/>
+            <path class="map-edge" d="M684 160 H716" marker-end="url(#arrow-compute)"/>
+          </g>
+          <g class="map-node is-done"><rect x="116" y="134" width="168" height="52" rx="10"/><text x="200" y="160">Память GPU</text></g>
+          <g class="map-node is-current"><rect x="316" y="134" width="168" height="52" rx="10"/><text x="400" y="160">Матмул на железе</text></g>
+          <g class="map-node"><rect x="516" y="134" width="168" height="52" rx="10"/><text x="600" y="160">Квантование</text></g>
+          <g class="map-node"><rect x="716" y="134" width="168" height="52" rx="10"/><text x="800" y="160">Профилирование</text></g>
+        </svg>
+      </div>
+      <ul class="map-legend">
+        <li><span class="swatch swatch-done"></span>Пройдено</li>
+        <li><span class="swatch swatch-current"></span>Текущая глава</li>
+        <li><span class="swatch swatch-todo"></span>Впереди</li>
+      </ul>
+    </div>
+
   </section>
 
 </main>
@@ -249,9 +387,11 @@
   <div class="wrap footer-inner">
     <a href="https://github.com/mematvey/learning-site">GitHub: mematvey/learning-site</a>
     <p>Заметки и прогресс хранятся локально и в вашем приватном репозитории.</p>
+    <p class="footer-hint">Нажмите <kbd>?</kbd> — все шорткаты</p>
   </div>
 </footer>
 
+<script src="shortcuts.js" defer></script>
 <script>
 (function () {
   var root = document.documentElement;
@@ -259,10 +399,57 @@
     var t = new URLSearchParams(location.search).get('theme');
     if (t) root.dataset.theme = t;
   } catch (e) { /* ignore */ }
-  var btn = document.getElementById('theme-toggle');
-  btn.addEventListener('click', function () {
-    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+
+  document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    });
   });
+
+  // Карта топиков: топик последней открытой главы (сейчас DL Theory).
+  var LAST = 'dl';
+  var TOPICS = ['dl', 'classic-ml', 'mlops', 'cs', 'compute'];
+  var NAMES = { 'dl': 'DL Theory', 'classic-ml': 'Classic ML', 'mlops': 'MLOps Practices', 'cs': 'CompScience', 'compute': 'Compute' };
+  var section = document.getElementById('map');
+  var title = document.getElementById('map-title');
+  var lastNote = document.getElementById('map-last');
+
+  function setMap(topic) {
+    if (!NAMES[topic]) return;
+    section.dataset.topic = topic;
+    title.textContent = 'Карта · ' + NAMES[topic];
+    section.querySelectorAll('[data-map-tab]').forEach(function (tab) {
+      tab.setAttribute('aria-pressed', tab.dataset.mapTab === topic ? 'true' : 'false');
+    });
+    section.querySelectorAll('[data-graph]').forEach(function (p) {
+      p.hidden = p.dataset.graph !== topic;
+    });
+    document.querySelectorAll('.topic-card').forEach(function (c) {
+      c.classList.toggle('is-active', c.dataset.topic === topic);
+    });
+    lastNote.hidden = topic !== LAST;
+  }
+
+  section.querySelectorAll('[data-map-tab]').forEach(function (tab) {
+    tab.addEventListener('click', function () { setMap(tab.dataset.mapTab); });
+  });
+  document.querySelectorAll('[data-map-go]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      setMap(btn.dataset.mapGo);
+      section.scrollIntoView({ block: 'start' });
+    });
+  });
+
+  // Клавиши 1–5 переключают карту; не срабатывают при фокусе в полях ввода.
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var el = document.activeElement;
+    if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+    var n = parseInt(e.key, 10);
+    if (n >= 1 && n <= TOPICS.length) setMap(TOPICS[n - 1]);
+  });
+
+  lastNote.hidden = section.dataset.topic !== LAST;
 })();
 </script>
 </body>
