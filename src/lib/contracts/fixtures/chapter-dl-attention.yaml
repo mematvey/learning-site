@@ -1,0 +1,24 @@
+# Frontmatter of content/dl/attention/index.svx
+id: dl/attention
+title: Scaled dot-product attention
+topic: dl
+summary: Как запрос, ключ и значение превращаются во взвешенную сумму и зачем делить на корень из d.
+prereqs: [dl/softmax, dl/matmul-basics]
+concepts:
+  - { id: attention-scores, title: Оценки внимания }
+requires: [softmax]
+keywords: [attention, softmax, scaled dot-product]
+minutes: { c1: 8, c2: 15, c3: 25, c4: 35 }
+labs: [dl-attention-numpy]
+sources:
+  - id: vaswani2017
+    kind: paper
+    title: Attention Is All You Need
+    authors: Vaswani A. et al.
+    venue: NeurIPS
+    year: 2017
+    url: https://arxiv.org/abs/1706.03762
+    accessed: 2026-10-16
+    supports: [math-scale]
+aliases: []
+status: draft

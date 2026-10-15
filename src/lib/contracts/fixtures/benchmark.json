@@ -1,0 +1,11 @@
+{
+	"schema_version": 1,
+	"id": "matmul-throughput",
+	"title": "Пропускная способность matmul",
+	"hardware": { "gpu": "NVIDIA RTX 4090", "cuda": "12.4" },
+	"software": { "torch": "2.5.1" },
+	"method": "10 прогревов, 100 повторов, медиана",
+	"date": "2026-10-16",
+	"series": { "tflops": { "x": [512, 1024, 2048], "y": [20, 55, 80], "label": "TFLOPS" } },
+	"source": { "command": "uv run python bench/matmul.py", "repo_commit": "abc1234" }
+}

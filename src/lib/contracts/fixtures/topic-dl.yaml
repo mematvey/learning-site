@@ -1,0 +1,11 @@
+# content/dl/topic.yaml
+id: dl
+title: DL Theory
+description: 'Теория глубокого обучения: от градиентов до внимания.'
+order: 1
+icon: network
+accent:
+  topic: { light: '#4f46e5', dark: '#818cf8' }
+  soft: { light: '#eef2ff', dark: '#1e1b4b' }
+chapters: [softmax, matmul-basics, attention]
+featured: [dl/attention]
