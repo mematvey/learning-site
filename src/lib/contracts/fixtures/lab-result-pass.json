@@ -1,0 +1,14 @@
+{
+	"schema_version": 1,
+	"lab_id": "dl-attention-numpy",
+	"status": "pass",
+	"source": "local",
+	"tests": [
+		{ "name": "shape", "status": "pass", "hidden": false },
+		{ "name": "rows_sum_to_one", "status": "pass", "hidden": false },
+		{ "name": "hidden_1", "status": "pass", "hidden": true }
+	],
+	"metrics": { "max_row_error": 0.0000001 },
+	"series": { "loss": { "x": [0, 1, 2], "y": [1.2, 0.7, 0.4], "label": "loss" } },
+	"duration_ms": 203
+}

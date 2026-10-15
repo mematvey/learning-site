@@ -1,0 +1,20 @@
+{
+	"schemaVersion": 1,
+	"labId": "dl-attention-numpy",
+	"chapter": "dl/attention",
+	"updated": "2026-10-16T09:30:00Z",
+	"passed": false,
+	"lastResult": {
+		"schema_version": 1,
+		"lab_id": "dl-attention-numpy",
+		"status": "fail",
+		"tests": [{ "name": "shape", "status": "pass", "hidden": false }],
+		"duration_ms": 184,
+		"source": "local"
+	},
+	"draft": {
+		"code": "import numpy as np\n",
+		"savedAt": "2026-10-16T09:29:00Z",
+		"starterHash": "0000000000000000000000000000000000000000000000000000000000000000"
+	}
+}

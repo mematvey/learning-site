@@ -1,0 +1,11 @@
+{
+	"schemaVersion": 1,
+	"id": "dl/attention",
+	"updated": "2026-10-16T09:20:00Z",
+	"visited": "2026-10-16T09:00:00Z",
+	"lastVisit": "2026-10-16T09:20:00Z",
+	"scroll": { "blockId": "attn-formula", "offset": 0.3 },
+	"sectionsReached": ["idea", "intuition"],
+	"levels": { "c": 3, "d": 2 },
+	"done": false
+}

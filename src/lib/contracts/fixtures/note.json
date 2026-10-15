@@ -1,0 +1,17 @@
+{
+	"schemaVersion": 1,
+	"id": "01JC3X4N8Q0Z9M7K2V5R6T1WYA",
+	"chapter": "dl/attention",
+	"anchor": {
+		"blockId": "scores-def",
+		"exact": "скалярное произведение запроса и ключа",
+		"prefix": "считаются как ",
+		"suffix": ". Дальше"
+	},
+	"text": "Почему именно скалярное, а не расстояние?",
+	"tags": ["вопрос"],
+	"status": "open",
+	"created": "2026-10-16T10:12:00Z",
+	"updated": "2026-10-16T10:12:00Z",
+	"layer": { "c": 2, "d": 1 }
+}
