@@ -1,0 +1,40 @@
+@import 'tailwindcss';
+@import './lib/theme/tokens.css';
+
+/* @fontsource-variable/inter registers the family as 'Inter Variable'. */
+:root {
+	--font-sans:
+		'Inter Variable', 'Inter', 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/*
+ * Tailwind utilities map to the token variables. `inline` keeps var() references
+ * unresolved so that scoped overrides (e.g. [data-topic] on a child) still apply.
+ * Font stacks mirror --font-* in tokens.css (cannot reference them: same name).
+ */
+@theme inline {
+	--color-bg: var(--bg);
+	--color-surface: var(--surface);
+	--color-surface-2: var(--surface-2);
+	--color-border: var(--border);
+	--color-text: var(--text);
+	--color-text-muted: var(--text-muted);
+	--color-accent: var(--accent);
+	--color-topic: var(--topic);
+	--color-topic-soft: var(--topic-soft);
+	--color-warn: var(--warn);
+	--color-warn-bg: var(--warn-bg);
+	--color-ok: var(--ok);
+	--color-fail: var(--fail);
+	--color-cat-1: var(--cat-1);
+	--color-cat-2: var(--cat-2);
+	--color-cat-3: var(--cat-3);
+	--color-cat-4: var(--cat-4);
+	--color-cat-5: var(--cat-5);
+	--color-cat-6: var(--cat-6);
+
+	--font-serif: 'Literata', 'Source Serif 4', Georgia, serif;
+	--font-sans:
+		'Inter Variable', 'Inter', 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+}
