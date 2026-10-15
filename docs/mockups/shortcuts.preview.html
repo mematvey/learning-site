@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru" data-topic="dl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Шорткаты: превью</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="shortcuts.css">
+  <style>
+    /* Заглушки целей для превью: только переменные из tokens.css */
+    .pv-header {
+      display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+      padding: var(--space-3) var(--space-6);
+      background: var(--surface); border-bottom: 1px solid var(--border);
+    }
+    .pv-logo { font-family: var(--font-serif); font-weight: 600; color: var(--text); text-decoration: none; }
+    .pv-search-wrap { position: relative; flex: 1 1 260px; max-width: 360px; }
+    .pv-search {
+      width: 100%; padding: 6px 56px 6px 10px;
+      font: inherit; font-size: var(--fs-sm); color: var(--text);
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    }
+    .pv-search-wrap kbd { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); }
+    .pv-btn {
+      margin: 0; padding: 6px 12px;
+      font: inherit; font-size: var(--fs-sm); color: var(--text);
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .pv-main { max-width: var(--text-width); margin: 0 auto; padding: var(--space-8) var(--space-4); }
+    .pv-main h2 { margin: var(--space-8) 0 var(--space-2); font-family: var(--font-serif); font-size: var(--fs-h2); line-height: 1.2; color: var(--text); }
+    .pv-main p { margin: 0 0 var(--space-3); font-size: var(--fs-base); color: var(--text); }
+    .pv-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+    .pv-lab { margin-top: var(--space-6); padding: var(--space-4); background: var(--surface-2); border-radius: var(--radius); font-size: var(--fs-sm); }
+    .pv-lab p { margin: 0 0 var(--space-2); font-size: var(--fs-sm); }
+    .pv-nav { display: flex; justify-content: space-between; margin-top: var(--space-12); font-size: var(--fs-sm); }
+    .pv-nav a { color: var(--topic); text-decoration: none; }
+    .pv-foot { margin-top: var(--space-12); font-size: var(--fs-sm); color: var(--text-muted); }
+  </style>
+  <script>
+    (function () {
+      var m = /[?&]theme=(\w+)/.exec(location.search);
+      if (m) document.documentElement.setAttribute('data-theme', m[1]);
+    })();
+  </script>
+</head>
+<body>
+  <header class="pv-header">
+    <a class="pv-logo" href="#" data-home data-shortcut="g h">learning-site</a>
+    <div class="pv-search-wrap">
+      <input class="pv-search" type="search" placeholder="Поиск по сайту" aria-label="Поиск" data-search>
+      <kbd data-kbd="mod+k">⌘K</kbd>
+    </div>
+    <button class="pv-btn" type="button" data-theme-toggle data-shortcut="t" title="Сменить тему">Тема</button>
+    <button class="pv-btn" type="button" data-levels-toggle data-shortcut="l" title="Уровни объяснения">Уровень ▾</button>
+  </header>
+
+  <main class="pv-main">
+    <h1 style="font-family: var(--font-serif); font-size: var(--fs-h1); margin: 0;">Превью шорткатов</h1>
+    <p>Заглушки целей: поиск, тема, уровни, заметки, навигация по разделам. Справка открыта по умолчанию (<code>?help=0</code> закрывает).</p>
+
+    <section id="intuition">
+      <h2>Интуиция</h2>
+      <p>Раздел для проверки J и K: прокрутка к следующему и предыдущему разделу.</p>
+      <div class="pv-actions">
+        <button class="pv-btn" type="button" data-note-btn data-shortcut="n" title="Заметка к выделению">Заметка</button>
+        <button class="pv-btn" type="button" data-mark-done data-shortcut="m" title="Отметить пройденным">Отметить пройденным</button>
+      </div>
+    </section>
+
+    <section id="math">
+      <h2>Математика</h2>
+      <p>Второй раздел. Заголовок попадает в тост «Раздел: Математика».</p>
+    </section>
+
+    <section id="code">
+      <h2>Код</h2>
+      <p>Третий раздел с имитацией лаба: строка с шорткатами редактора.</p>
+      <div class="pv-lab">
+        <p>Запустить <kbd data-kbd="mod+enter">Ctrl+Enter</kbd>, сохранить черновик <kbd data-kbd="mod+s">Ctrl+S</kbd>,
+          сбросить <kbd data-kbd="mod+shift+backspace">Ctrl+Shift+Backspace</kbd>, выйти <kbd data-kbd="esc">Esc</kbd>.</p>
+      </div>
+    </section>
+
+    <nav class="pv-nav">
+      <a href="#" data-prev data-shortcut="[">← Предыдущая глава</a>
+      <a href="#" data-next data-shortcut="]">Следующая глава →</a>
+    </nav>
+
+    <p class="pv-foot">Нажмите <kbd data-kbd="?">?</kbd> — все шорткаты.</p>
+  </main>
+
+  <script src="shortcuts.js"></script>
+  <script>
+    // Превью: окно справки открыто по умолчанию (нужно для shoot.py); ?help=0 закрывает.
+    if (new URLSearchParams(location.search).get('help') !== '0') window.Shortcuts.openHelp();
+    // Заглушка переключателя темы
+    document.querySelector('[data-theme-toggle]').addEventListener('click', function () {
+      var root = document.documentElement;
+      root.setAttribute('data-theme', root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+  </script>
+</body>
+</html>
