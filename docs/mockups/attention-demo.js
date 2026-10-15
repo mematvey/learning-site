@@ -13,6 +13,34 @@
   var VB_H = 170;
   var SEED = 20240607;
 
+  // Формулы: KaTeX (trust нужен для \htmlClass). Без window.katex остаётся текстовый фолбэк из разметки.
+  var TEX = {
+    fOn: '\\alpha_{ij} = \\mathrm{softmax}_j\\!\\left(\\dfrac{\\htmlClass{ent-q}{q_i}\\cdot\\htmlClass{ent-k}{k_j}}{\\sqrt{d}}\\right)',
+    fOff: '\\alpha_{ij} = \\mathrm{softmax}_j\\!\\left(\\htmlClass{ent-q}{q_i}\\cdot\\htmlClass{ent-k}{k_j}\\right)',
+    alpha: '\\alpha_{ij}',
+    alphaQ: '\\alpha_{qj}\\,\\htmlClass{ent-v}{v_j}',
+    qRows: '\\htmlClass{ent-q}{Q}',
+    kCols: '\\htmlClass{ent-k}{K}',
+    out: 'O',
+    sqrtd: '1/\\sqrt{d}',
+    d: 'd'
+  };
+  function math(key, fallback) {
+    return '<span class="ad-tex" data-key="' + key + '">' + fallback + '</span>';
+  }
+  function renderMath() {
+    if (!window.katex) return;
+    var nodes = document.querySelectorAll('#attention-demo .ad-tex:not([data-math])');
+    Array.prototype.forEach.call(nodes, function (el) {
+      var src = TEX[el.getAttribute('data-key')];
+      if (!src) return;
+      try {
+        window.katex.render(src, el, { trust: true, throwOnError: false });
+        el.setAttribute('data-math', '1');
+      } catch (err) { /* остаётся текстовый фолбэк */ }
+    });
+  }
+
   // mulberry32: детерминированный PRNG, одинаковые векторы при каждой загрузке.
   function mulberry32(a) {
     return function () {
@@ -131,26 +159,29 @@
       '<figure class="ad">' +
         '<div class="ad-controls">' +
           '<div class="ad-ctl">' +
-            '<span class="ad-label">Масштаб 1/√d</span>' +
+            '<span class="ad-label">Масштаб ' + math('sqrtd', '1/√d') + '</span>' +
             '<button type="button" class="ad-switch" role="switch" aria-label="Масштаб 1/√d" aria-checked="true"><span class="ad-knob"></span></button>' +
             '<span class="ad-state"></span>' +
           '</div>' +
           '<label class="ad-ctl">' +
-            '<span class="ad-label">Размерность d</span>' +
+            '<span class="ad-label">Размерность ' + math('d', '<i>d</i>') + '</span>' +
             '<input class="ad-range" type="range" min="4" max="256" step="4" value="64">' +
             '<output class="ad-d"></output>' +
           '</label>' +
-          '<p class="ad-formula">α<sub>ij</sub> = softmax<sub>j</sub>( q<sub>i</sub>·k<sub>j</sub> <span class="ad-scale">/ √d</span> )</p>' +
+          '<div class="ad-formula">' +
+            '<span class="ad-f ad-f-on">' + math('fOn', 'α<sub>ij</sub> = softmax<sub>j</sub>(q<sub>i</sub>·k<sub>j</sub> / √d)') + '</span>' +
+            '<span class="ad-f ad-f-off">' + math('fOff', 'α<sub>ij</sub> = softmax<sub>j</sub>(q<sub>i</sub>·k<sub>j</sub>)') + '</span>' +
+          '</div>' +
         '</div>' +
         '<div class="ad-tokens">' +
           '<svg class="ad-arcs" viewBox="0 0 ' + VB_W + ' ' + VB_H + '" aria-hidden="true">' + arcsHtml + labelsHtml + '</svg>' +
           '<div class="ad-chips" role="group" aria-label="Токены предложения">' + chipsHtml + '</div>' +
           '<div class="ad-vbars">' + vbarsHtml + '</div>' +
-          '<p class="ad-vnote">Столбцы — вклад значений: α<sub>qj</sub>·v<sub>j</sub>. Их сумма и есть выход O для запроса.</p>' +
+          '<p class="ad-vnote">Столбцы — вклад значений: ' + math('alphaQ', 'α<sub>qj</sub>·v<sub>j</sub>') + '. Их сумма и есть выход ' + math('out', 'O') + ' для запроса.</p>' +
         '</div>' +
         '<div class="ad-bottom">' +
           '<div class="ad-map">' +
-            '<p class="ad-map-t">Веса α<sub>ij</sub>: строки — запросы Q, столбцы — ключи K</p>' +
+            '<p class="ad-map-t">Веса ' + math('alpha', 'α<sub>ij</sub>') + ': строки — запросы ' + math('qRows', 'Q') + ', столбцы — ключи ' + math('kCols', 'K') + '</p>' +
             '<div class="ad-grid">' + gridHead + gridRows + '</div>' +
             '<div class="ad-legend"><span>0</span><span class="ad-ramp"></span><span>1</span></div>' +
           '</div>' +
@@ -176,6 +207,8 @@
       swState: container.querySelector('.ad-state'),
       range: container.querySelector('.ad-range'),
       dOut: container.querySelector('.ad-d'),
+      fOn: container.querySelector('.ad-f-on'),
+      fOff: container.querySelector('.ad-f-off'),
       chips: all(container, '.ad-chip'),
       rows: all(container, '.ad-grid .ad-row:not(.ad-head)'),
       cells: all(container, '.ad-cell'),
@@ -244,10 +277,12 @@
     var row = A[q];
 
     refs.root.classList.toggle('is-off', !state.scaled);
+    refs.fOn.setAttribute('aria-hidden', String(!state.scaled));
+    refs.fOff.setAttribute('aria-hidden', String(state.scaled));
     refs.sw.setAttribute('aria-checked', String(state.scaled));
     refs.swState.textContent = state.scaled ? 'вкл' : 'выкл';
     refs.range.value = String(state.d);
-    refs.dOut.textContent = 'd = ' + state.d;
+    refs.dOut.innerHTML = math('d', '<i>d</i>') + ' = ' + state.d;
 
     refs.chips.forEach(function (c, i) {
       c.classList.toggle('is-q', i === q);
@@ -327,6 +362,8 @@
     var container = document.getElementById('attention-demo');
     if (!container) return;
     build(container);
+    renderMath();
+    window.addEventListener('load', renderMath); // если katex.js загрузился позже виджета
     update();
   }
 
