@@ -1,5 +1,7 @@
 /* Главная. Все цвета и отступы берутся из tokens.css. */
 
+[hidden] { display: none !important; }
+
 .wrap {
   max-width: 1080px;
   margin: 0 auto;
@@ -14,6 +16,17 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 h1, h2, h3, p, ol { margin: 0; }
 button { font: inherit; color: inherit; }
+h1, h2, h3 { font-family: var(--font-serif); font-weight: 600; }
+kbd {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 0 5px;
+}
 
 .eyebrow {
   font-size: var(--fs-sm);
@@ -52,8 +65,9 @@ button { font: inherit; color: inherit; }
   align-items: center;
   gap: var(--space-2);
   color: var(--text);
-  font-weight: 650;
-  font-size: var(--fs-base);
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 18px;
   letter-spacing: -0.01em;
 }
 .logo:hover { text-decoration: none; }
@@ -84,14 +98,13 @@ button { font: inherit; color: inherit; }
 }
 .search:hover { border-color: var(--text-muted); }
 .search kbd {
-  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-muted);
-  border: 1px solid var(--border);
-  border-radius: 4px;
+  background: none;
+  border-width: 1px;
   padding: 0 4px;
 }
-.search svg { color: var(--text-muted); flex: none; }
+.search svg { color: var(--text-muted); flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
 .search-label { display: none; }
 @media (min-width: 720px) {
   .search-label { display: inline; }
@@ -126,27 +139,44 @@ button { font: inherit; color: inherit; }
 [data-theme='dark'] .theme-toggle .icon-sun { display: block; }
 [data-theme='dark'] .theme-toggle .icon-moon { display: none; }
 
-.search svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
-
 /* ---------- Герой ---------- */
 
 .hero {
-  padding: var(--space-16) 0 var(--space-12);
-  max-width: 680px;
+  padding: var(--space-12) 0 var(--space-12);
+  display: grid;
+  gap: var(--space-8);
+  align-items: center;
 }
+.hero-text { max-width: 620px; }
 .hero h1 {
-  font-size: var(--fs-h1);
-  line-height: 1.15;
-  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.1;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
 .hero-lead {
   margin-top: var(--space-4);
   font-size: var(--fs-body);
+  line-height: 1.6;
   color: var(--text-muted);
+  max-width: 560px;
 }
+.hero-art {
+  display: none;
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  justify-self: end;
+}
+.hero-line { fill: none; stroke: var(--border); stroke-width: 2; }
+.hero-fill { fill: var(--topic); }
 @media (min-width: 720px) {
-  .hero h1 { font-size: 46px; }
+  .hero {
+    grid-template-columns: 1fr 280px;
+    padding: var(--space-16) 0 var(--space-12);
+  }
+  .hero h1 { font-size: 56px; }
+  .hero-art { display: block; }
 }
 
 /* ---------- Продолжить ---------- */
@@ -181,8 +211,8 @@ button { font: inherit; color: inherit; }
 .art-node.is-hot { stroke: var(--surface); stroke-width: 3; }
 .continue-body { display: grid; gap: var(--space-2); }
 .continue h2 {
-  font-size: var(--fs-h3);
-  font-weight: 650;
+  font-size: 26px;
+  font-weight: 600;
   letter-spacing: -0.01em;
   margin-top: var(--space-1);
 }
@@ -254,6 +284,7 @@ button { font: inherit; color: inherit; }
 .map {
   margin-top: var(--space-16);
 }
+.map { scroll-margin-top: 80px; }
 .section-head {
   display: grid;
   gap: var(--space-2);
@@ -261,7 +292,7 @@ button { font: inherit; color: inherit; }
 }
 .section-head h2 {
   font-size: var(--fs-h2);
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.015em;
 }
 .section-sub {
@@ -308,6 +339,10 @@ button { font: inherit; color: inherit; }
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--topic) 40%, var(--border));
 }
+.topic-card.is-active {
+  border-color: var(--topic);
+  box-shadow: 0 0 0 2px var(--topic);
+}
 .topic-top {
   display: flex;
   align-items: center;
@@ -333,7 +368,7 @@ button { font: inherit; color: inherit; }
 }
 .topic-card h3 {
   font-size: var(--fs-h3);
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.01em;
   margin-top: calc(var(--space-2) * -1);
 }
@@ -368,9 +403,66 @@ button { font: inherit; color: inherit; }
 .chapter-list a { color: var(--text); }
 .chapter-list a:hover { color: var(--topic); }
 
-.topic-card .progress { margin-top: auto; }
+.card-foot {
+  margin-top: auto;
+  display: grid;
+  gap: var(--space-3);
+}
+.card-map {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--topic);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.card-map:hover { text-decoration: underline; }
 
 /* ---------- Карта пререквизитов ---------- */
+
+.map-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.map-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.map-tab:hover { border-color: var(--topic); }
+.map-tab kbd { font-size: 11px; color: var(--text-muted); background: none; }
+.map-tab[aria-pressed='true'] {
+  background: var(--topic-soft);
+  border-color: var(--topic);
+  font-weight: 600;
+}
+.tab-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--topic);
+}
+.map-last {
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--text-muted);
+  margin-left: var(--space-2);
+}
 
 .map-card {
   background: var(--surface);
@@ -378,6 +470,11 @@ button { font: inherit; color: inherit; }
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   box-shadow: var(--shadow);
+}
+.map-stub {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
 }
 .map-wrap {
   overflow-x: auto;
@@ -399,11 +496,10 @@ button { font: inherit; color: inherit; }
   fill: var(--surface-2);
   stroke: var(--border);
   stroke-width: 1;
-  transition: fill var(--dur) var(--ease), stroke var(--dur) var(--ease);
 }
 .map-node text {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 12px;
   fill: var(--text);
   text-anchor: middle;
   dominant-baseline: middle;
@@ -452,3 +548,4 @@ button { font: inherit; color: inherit; }
   display: grid;
   gap: var(--space-2);
 }
+.footer-hint kbd { font-size: 12px; }
