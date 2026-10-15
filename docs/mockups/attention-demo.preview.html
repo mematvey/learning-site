@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ru" data-topic="dl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Демо внимания: превью</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="attention-demo.css">
+  <style>
+    body { padding: var(--space-8) var(--space-6); }
+    main { max-width: var(--wide-width); margin: 0 auto; }
+  </style>
+  <script>
+    (function () {
+      var m = /[?&]theme=(light|dark)/.exec(location.search);
+      document.documentElement.setAttribute('data-theme', m ? m[1] : 'light');
+    })();
+  </script>
+</head>
+<body>
+  <main>
+    <div id="attention-demo"></div>
+  </main>
+  <script src="attention-demo.js"></script>
+</body>
+</html>
