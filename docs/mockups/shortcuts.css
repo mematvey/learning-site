@@ -1,0 +1,187 @@
+/* Шорткаты: клавиши (kbd), окно справки (.kbd-*), тост (.kbd-toast).
+ * Только токены из tokens.css. */
+
+kbd {
+  display: inline-block;
+  min-width: 1.5em;
+  padding: 0 0.4em;
+  margin: 0 0.1em;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  line-height: 1.6;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  vertical-align: 0.1em;
+}
+
+/* ---- Окно справки ---- */
+.kbd-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--text) 35%, transparent);
+}
+.kbd-backdrop[hidden] { display: none; }
+
+.kbd-dialog {
+  width: min(720px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: var(--space-6) var(--space-8);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow), 0 24px 60px color-mix(in srgb, var(--text) 25%, transparent);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.kbd-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-6);
+}
+
+.kbd-title {
+  flex: 1 1 auto;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.kbd-seg {
+  display: inline-flex;
+  padding: 2px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+}
+
+.kbd-seg button {
+  margin: 0;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.kbd-seg button[aria-pressed="true"] {
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 15%, transparent);
+}
+
+.kbd-close {
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.kbd-close:hover { color: var(--text); background: var(--surface-2); }
+
+.kbd-dialog button:focus-visible {
+  outline: 2px solid var(--topic);
+  outline-offset: 2px;
+}
+
+.kbd-groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6) var(--space-8);
+}
+
+.kbd-group h3 {
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  font-family: var(--font-serif);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-muted);
+}
+
+.kbd-group ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kbd-group li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.kbd-group li:last-child { border-bottom: 0; }
+
+.kbd-desc { color: var(--text); }
+
+.kbd-group kbd { flex: none; }
+
+.kbd-foot {
+  margin: var(--space-6) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .kbd-dialog { padding: var(--space-4); }
+  .kbd-groups { grid-template-columns: 1fr; }
+}
+
+/* ---- Тост ---- */
+.kbd-toast {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-6);
+  z-index: 1001;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+
+.kbd-toast.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
