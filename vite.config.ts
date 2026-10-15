@@ -1,4 +1,5 @@
 /// <reference types="vitest/config" />
+import { fileURLToPath } from 'node:url';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
@@ -10,6 +11,7 @@ import { defineConfig } from 'vite';
 const base = (process.env.BASE_PATH ?? '') as '' | `/${string}`;
 
 export default defineConfig(async () => ({
+	resolve: { alias: { $lib: fileURLToPath(new URL('./src/lib', import.meta.url)) } },
 	plugins: [
 		tailwindcss(),
 		...(await sveltekit({
