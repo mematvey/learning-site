@@ -19,12 +19,25 @@
 	} from '$lib/contracts/context';
 	import type { ChapterEntry, GlossaryRegistry } from '$lib/contracts/registry';
 	import type { Source } from '$lib/contracts/chapter';
-	import type { Theme } from '$lib/contracts/progress';
+	import type { ChapterId, Note } from '$lib/contracts';
+	import type { AnchorResolution, NotesStore } from '$lib/contracts/interfaces';
 	import type { LevelState } from '$lib/contracts/levels';
+	import { resolveChapterId } from '$lib/content/registry';
+	import {
+		anchorFromSelection,
+		chapterTextIndex,
+		clearHighlights,
+		createNotesStore,
+		highlightRange,
+		rangeInBlock,
+		resolveAnchor,
+	} from '$lib/notes';
+	import { trackChapter } from '$lib/progress';
+	import { applyTopic } from '$lib/theme/theme';
+	import { ensureProgress, progressState, shell } from '$lib/shell.svelte';
 	import type { ChapterLink } from '../../routes/[topic]/[slug]/chapter-data';
 	import { formatMinutes } from '../../routes/[topic]/[slug]/chapter-data';
-	import SiteHeader from './SiteHeader.svelte';
-	import LevelPopover from './LevelPopover.svelte';
+	import NotesLayer from './notes/NotesLayer.svelte';
 	import Toc from './Toc.svelte';
 
 	/** Chapter page: header, title block, prose, footer. The chapter body is the compiled `.svx`. */
@@ -41,12 +54,24 @@
 
 	let { chapter, topic, prereqs, prev, next, glossary, Content, onMarkDone }: Props = $props();
 
-	// Levels: store and URL sync live in $lib/levels (V3).
-	provideLevels();
+	// Levels: store and URL sync live in $lib/levels (V3). Saved levels go through the progress
+	// store, which opens lazily on the client only (no IndexedDB while prerendering).
+	provideLevels({
+		progress:
+			typeof window !== 'undefined'
+				? {
+						getSettings: () => ensureProgress().then((store) => store.getSettings()),
+						update: (patch) => ensureProgress().then((store) => store.update(patch)),
+					}
+				: null,
+	});
 	const levelsCtx = getContext<LevelsContext>(LEVELS_CONTEXT);
 
 	// Chapter data for Term, Cite, Figure numbering.
-	const figureIds = new SvelteMap<string, number>();
+	// A plain Map on purpose: numbers are assigned while figures render (inside deriveds), where
+	// writing reactive state is not allowed. Numbering follows the render order.
+	// eslint-disable-next-line svelte/prefer-svelte-reactivity
+	const figureIds = new Map<string, number>();
 	const chapterContext: ChapterContext = {
 		get id() {
 			return chapter.id;
@@ -108,50 +133,139 @@
 	};
 	setContext(DEMOS_CONTEXT, demos);
 
-	// Theme: local toggle on <html data-theme>; persistence belongs to the shell theme module (V4a).
-	let themeChoice = $state<Theme | null>(null);
-	const theme = $derived<Theme>(themeChoice ?? 'light');
-	onMount(() => {
-		themeChoice = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-	});
-	function toggleTheme() {
-		themeChoice = theme === 'dark' ? 'light' : 'dark';
-		document.documentElement.dataset.theme = themeChoice;
-	}
-
-	let done = $state(false);
-	function markDone() {
-		done = !done;
-		onMarkDone?.(done);
-	}
-
+	// The site header lives in the root layout: this page only supplies breadcrumbs and levels.
 	const crumbs = $derived([
 		...(topic ? [{ label: topic.title, href: `${siteBase}/` }] : []),
 		{ label: chapter.title },
 	]);
+	$effect(() => {
+		shell.crumbs = crumbs;
+		shell.levels = {
+			applied: levelsCtx.applied,
+			onApply: (state: LevelState) => {
+				levelsCtx.setDraft(state);
+				levelsCtx.apply();
+			},
+		};
+		applyTopic(chapter.topic);
+		return () => {
+			shell.crumbs = [];
+			shell.levels = null;
+			applyTopic(undefined);
+		};
+	});
+
+	// "Done" mark, restored from the progress store.
+	let done = $state(false);
+	$effect(() => {
+		const store = progressState.store;
+		if (!store) return;
+		let alive = true;
+		store
+			.getChapter(chapter.id as ChapterId)
+			.then((record) => {
+				if (alive && record) done = record.done;
+			})
+			.catch(() => {});
+		return () => (alive = false);
+	});
+	function markDone() {
+		done = !done;
+		onMarkDone?.(done);
+		const store = progressState.store;
+		if (!store || store.readOnly) return;
+		store.update({ chapters: [{ id: chapter.id as ChapterId, done }] }).catch(() => {});
+	}
+
+	// Reading progress: sections reached and position (after the content is mounted).
+	let textEl = $state<HTMLElement | undefined>();
+	$effect(() => {
+		const store = progressState.store;
+		if (!store || !textEl) return;
+		return trackChapter(store, chapter.id as ChapterId, { root: textEl });
+	});
+
+	// Notes: store, anchor resolution and highlighting of the quotes.
+	let notesStore = $state<NotesStore | undefined>();
+	let resolutions = $state<Record<string, AnchorResolution>>({});
+	onMount(() => {
+		let closed = false;
+		let close: (() => void) | undefined;
+		createNotesStore({ resolveChapter: (id) => resolveChapterId(id) as ChapterId })
+			.then((opened) => {
+				if (closed) return opened.close();
+				notesStore = opened;
+				close = () => opened.close();
+			})
+			.catch(() => {
+				/* IndexedDB unavailable: notes stay off, reading works */
+			});
+		return () => {
+			closed = true;
+			close?.();
+		};
+	});
+
+	let chapterNotes = $state<Note[]>([]);
+	$effect(() => {
+		const store = notesStore;
+		if (!store) return;
+		const id = chapter.id as ChapterId;
+		const load = () =>
+			store
+				.listByChapter(id)
+				.then((list) => (chapterNotes = list))
+				.catch(() => {});
+		void load();
+		return store.subscribe((changed) => {
+			if (changed === id) void load();
+		});
+	});
+	$effect(() => {
+		const root = textEl;
+		if (!root) return;
+		const notes = chapterNotes;
+		clearHighlights(root);
+		const index = chapterTextIndex(root);
+		const next: Record<string, AnchorResolution> = {};
+		for (const note of notes) {
+			const resolution = resolveAnchor(note.anchor, index);
+			next[note.id] = resolution;
+			if (resolution.status === 'orphaned') continue;
+			const { blockId, start, end } = resolution.range;
+			const esc = CSS.escape(blockId);
+			const block = root.querySelector<HTMLElement>(
+				`[data-block][id="${esc}"], [data-figure-id="${esc}"]`,
+			);
+			const range = block ? rangeInBlock(block, start, end) : null;
+			if (range) highlightRange(range);
+		}
+		resolutions = next;
+		return () => clearHighlights(root);
+	});
+	function showLayer(noteId: string) {
+		const layer = chapterNotes.find((n) => n.id === noteId)?.layer;
+		if (!layer) return;
+		levelsCtx.setDraft(layer);
+		levelsCtx.apply();
+	}
+
 	const labCount = $derived(chapter.labs?.length ?? 0);
 	const sources: Source[] = $derived(chapter.sources ?? []);
 </script>
 
 <div class="chapter" data-topic={chapter.topic}>
-	<SiteHeader {crumbs} {theme} onToggleTheme={toggleTheme}>
-		{#snippet levels()}
-			<LevelPopover
-				applied={levelsCtx.applied}
-				onApply={(state: LevelState) => {
-					levelsCtx.setDraft(state);
-					levelsCtx.apply();
-				}}
-			/>
-		{/snippet}
-	</SiteHeader>
-
 	<div class="page">
 		<div class="toc-col">
 			<Toc items={chapter.sections} />
 		</div>
 
-		<main class="text prose">
+		<main
+			class="text prose"
+			bind:this={textEl}
+			data-pagefind-body
+			data-pagefind-meta="title:{chapter.title}"
+		>
 			<header class="chapter-head">
 				{#if topic}
 					<p class="eyebrow">{topic.title}</p>
@@ -168,7 +282,7 @@
 						<span class="dot" aria-hidden="true">·</span>
 						<span>Пререквизиты</span>
 						{#each prereqs as p (p.id)}
-							<a class="chip" href={resolve(`${p.id}/` as `${string}/${string}/`)}>{p.title}</a>
+							<a class="chip" href={resolve(p.href as '/')}>{p.title}</a>
 						{/each}
 					{/if}
 				</div>
@@ -202,11 +316,7 @@
 
 			<nav class="chapter-nav" aria-label="Соседние главы">
 				{#if prev}
-					<a
-						href={resolve(`${prev.id}/` as `${string}/${string}/`)}
-						class="chapter-nav-link"
-						data-prev
-					>
+					<a href={resolve(prev.href as '/')} class="chapter-nav-link" data-prev>
 						<span class="chapter-nav-dir">← Предыдущая</span>
 						<span class="chapter-nav-title">{prev.title}</span>
 					</a>
@@ -214,17 +324,27 @@
 					<span></span>
 				{/if}
 				{#if next}
-					<a
-						href={resolve(`${next.id}/` as `${string}/${string}/`)}
-						class="chapter-nav-link next"
-						data-next
-					>
+					<a href={resolve(next.href as '/')} class="chapter-nav-link next" data-next>
 						<span class="chapter-nav-dir">Следующая →</span>
 						<span class="chapter-nav-title">{next.title}</span>
 					</a>
 				{/if}
 			</nav>
 		</main>
+
+		<aside class="notes-col" aria-label="Заметки">
+			{#if notesStore}
+				<NotesLayer
+					store={notesStore}
+					chapter={chapter.id as ChapterId}
+					root={textEl}
+					{anchorFromSelection}
+					layer={levelsCtx.applied}
+					{resolutions}
+					onShowLayer={showLayer}
+				/>
+			{/if}
+		</aside>
 	</div>
 </div>
 
@@ -244,6 +364,11 @@
 		margin-right: 40px;
 		position: sticky;
 		top: 88px;
+	}
+	.notes-col {
+		grid-column: 3;
+		margin-left: 40px;
+		min-width: 0;
 	}
 	.text {
 		grid-column: 2;
@@ -389,6 +514,10 @@
 		}
 		.text {
 			grid-column: 1;
+		}
+		.notes-col {
+			grid-column: 1;
+			margin-left: 0;
 		}
 	}
 	@media (max-width: 900px) {

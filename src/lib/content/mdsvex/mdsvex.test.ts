@@ -81,6 +81,16 @@ describe('block ids', () => {
 	});
 });
 
+describe('sections', () => {
+	it('wraps each h2 and its content in section.sec', async () => {
+		const code = await build('## Один {#one}\n\nТекст.\n\n## Два {#two}\n\nЕщё.\n');
+		expect(code.match(/<section class="sec"/g)).toHaveLength(2);
+		expect(code).toContain('aria-labelledby="one"');
+		expect(code.match(/<\/section>/g)).toHaveLength(2);
+		assertSvelteValid(code);
+	});
+});
+
 describe('component auto-import', () => {
 	it('adds imports for used components to a new script', async () => {
 		const code = await build('<Level c={3}>\n\nВывод.\n\n</Level>\n');

@@ -43,8 +43,12 @@
 		d: 'd',
 	};
 
+	// The props only seed the initial state: the demo owns it afterwards.
+	/* svelte-ignore state_referenced_locally */
 	let scaled = $state(initial?.scaled ?? true);
+	/* svelte-ignore state_referenced_locally */
 	let query = $state(isQueryIndex(initial?.query) ? initial.query : 1);
+	/* svelte-ignore state_referenced_locally */
 	let d = $state(snapD(initial?.d ?? 64));
 	let hover = $state<{ i: number; j: number } | null>(null);
 	let root: HTMLElement | undefined = $state();
@@ -74,7 +78,7 @@
 			const src = TEX[el.dataset.key ?? ''];
 			if (!src) return;
 			try {
-				katex.render(src, el, { trust: true, throwOnError: false });
+				katex.render(src, el, { trust: true, strict: 'ignore', throwOnError: false });
 			} catch {
 				/* keep fallback text */
 			}
@@ -91,6 +95,8 @@
 
 <figure
 	class="ad"
+	id="demo-attention"
+	data-demo="attention"
 	class:is-off={!scaled}
 	class:hl-q={hl === 'q'}
 	class:hl-k={hl === 'k'}
@@ -274,6 +280,7 @@
 		</div>
 	</div>
 
+	<!-- svelte-ignore a11y_figcaption_index -->
 	<figcaption class="ad-caption">
 		<p class="ad-cap-t">Рис. 1. Куда смотрит «{TOKENS[query] ?? ''}» в предложении</p>
 		<p class="ad-note">{note}</p>
@@ -311,10 +318,8 @@
 	.ad :global(*::after) {
 		box-sizing: border-box;
 	}
-	.ad ul,
 	.ad ol,
 	.ad li,
-	.ad figure,
 	.ad figcaption,
 	.ad details,
 	.ad summary {
@@ -322,8 +327,7 @@
 		padding: 0;
 		list-style: none;
 	}
-	.ad sub,
-	.ad sup {
+	.ad sub {
 		font-size: 0.75em;
 		line-height: 0;
 	}

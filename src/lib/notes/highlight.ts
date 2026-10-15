@@ -6,7 +6,9 @@ export const NOTE_HL_CLASS = 'note-hl';
  * surrounding DOM (formulas, inline markup) keeps its structure. Returns the created marks.
  */
 export function highlightRange(range: Range): HTMLElement[] {
-	const root = range.commonAncestorContainer;
+	// A range inside one text node has the text node as ancestor; a walker needs an element root.
+	const ancestor = range.commonAncestorContainer;
+	const root = ancestor.nodeType === Node.TEXT_NODE ? (ancestor.parentNode ?? ancestor) : ancestor;
 	const doc = root.ownerDocument ?? (root as Document);
 	const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 
@@ -45,4 +47,26 @@ export function clearHighlights(root: ParentNode): void {
 		parent.removeChild(mark);
 		parent.normalize();
 	}
+}
+
+/** DOM range over characters `start..end` of the text of `block` (offsets into `textContent`). */
+export function rangeInBlock(block: HTMLElement, start: number, end: number): Range | null {
+	const doc = block.ownerDocument;
+	const walker = doc.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+	const range = doc.createRange();
+	let pos = 0;
+	let started = false;
+	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+		const len = (node as Text).length;
+		if (!started && start < pos + len) {
+			range.setStart(node, start - pos);
+			started = true;
+		}
+		if (started && end <= pos + len) {
+			range.setEnd(node, end - pos);
+			return range;
+		}
+		pos += len;
+	}
+	return null;
 }

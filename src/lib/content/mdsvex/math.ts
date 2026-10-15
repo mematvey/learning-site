@@ -3,7 +3,7 @@ import { checkBlockId } from './block-ids';
 import { type MdNode, type PluginFile, walk } from './tree';
 
 /** Inline `$...$`: no leading `$` (so `$$` is left to the block rule), escapes allowed. */
-const INLINE_RE = /^\$((?:\.|[^$\\n])+)\$/;
+const INLINE_RE = /^\$((?:\\.|[^$\\\n])+)\$/;
 
 /**
  * Display `$$...$$` as a block: the closing `$$` ends the line, and an optional

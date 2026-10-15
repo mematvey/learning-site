@@ -34,15 +34,19 @@ function clickEl(selector: string): boolean {
 }
 
 function focusSearch(): boolean {
-	const input = document.querySelector<HTMLElement & { select?: () => void }>(TARGET.search);
-	if (!input) return false;
-	input.focus();
-	input.select?.();
+	const el = document.querySelector<HTMLElement & { select?: () => void }>(TARGET.search);
+	if (!el) return false;
+	// A search field is focused; the header search button opens the search dialog.
+	if (el instanceof HTMLButtonElement) el.click();
+	else {
+		el.focus();
+		el.select?.();
+	}
 	return true;
 }
 
 function sectionTitle(sec: Element): string {
-	const h = sec.querySelector('h1, h2, h3');
+	const h = sec.matches('h1, h2, h3') ? sec : sec.querySelector('h1, h2, h3');
 	return h?.textContent?.trim() || sec.id;
 }
 

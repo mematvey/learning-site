@@ -14,7 +14,7 @@
 	}
 </script>
 
-<a class="demo-link" href={`#demo-${demo}`} data-demo={demo} onclick={activate}
+<a class="demo-link" href={`#demo-${demo}`} data-demo-link={demo} onclick={activate}
 	>{@render children()}</a
 >
 

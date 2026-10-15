@@ -14,3 +14,5 @@ dev = ["ruff", "pytest", "pyyaml", "numpy"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+# Fixtures mimic lab files (tests rely on names injected by the harness).
+extend-exclude = ["scripts/__fixtures__"]

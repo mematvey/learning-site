@@ -7,7 +7,7 @@ import type { LevelState } from './levels';
 import type { Note } from './notes';
 import type { Theme } from './progress';
 import type { PrereqGraphData } from './registry';
-import type { AnchorResolution } from './interfaces';
+import type { AnchorResolution, LabRunner, ProgressStore } from './interfaces';
 
 /**
  * Prop contracts of Svelte components (Svelte 5 runes). Each stub in `src/lib/components/**`
@@ -129,6 +129,10 @@ export interface CodeLabProps {
 	/** Slot for custom visualizers below the result. */
 	children?: Snippet;
 	onResult?: (result: LabResult) => void;
+	/** Progress store for drafts and pass state. Default: the page-wide store once it is open. */
+	progress?: ProgressStore;
+	/** Runner override. Default: the shared Worker runner from `$lib/labs`. */
+	runner?: LabRunner;
 }
 
 /** Result panels: Summary, Tests, Diff table, Chart (visualizers bound by the lab). */
@@ -170,6 +174,8 @@ export interface SiteHeaderProps {
 	onToggleTheme: () => void;
 	/** Slot for `LevelPopover` (chapter pages only). */
 	levels?: Snippet;
+	/** Slot for the search button and dialog (`SearchDialog`). */
+	search?: Snippet;
 }
 
 export interface ThemeToggleProps {

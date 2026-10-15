@@ -23,7 +23,9 @@ const SCRIPT_OPEN_RE = /<script(?:\s[^>]*)?>/;
 function usedComponents(tree: MdNode): Set<string> {
 	const used = new Set<string>();
 	walk(tree, (node) => {
-		if (node.type !== 'html' || typeof node.value !== 'string') return;
+		// Inline tags with Svelte-style attributes (`state={{ a: 1 }}`) are not valid HTML for the
+		// markdown parser and stay in text nodes, so both node types are scanned.
+		if ((node.type !== 'html' && node.type !== 'text') || typeof node.value !== 'string') return;
 		for (const name of Object.keys(COMPONENT_IMPORTS)) {
 			if (new RegExp(`<${name}(?=[\\s/>])`).test(node.value)) used.add(name);
 		}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { SvelteMap } from 'svelte/reactivity';
-	import type { ProgressStore } from '$lib/contracts/interfaces';
+	import { ensureProgress } from '$lib/shell.svelte';
 	import type { ChapterId, LabId, TopicId } from '$lib/contracts/ids';
 	import type { ChapterEntry, TopicEntry } from '$lib/contracts/registry';
 	import ContinueCard from '$lib/components/ContinueCard.svelte';
@@ -34,14 +34,8 @@
 	let doneIds = $state<ChapterId[]>([]);
 	let cont = $state<ContinueState | null>(null);
 
-	const progressLoaders = import.meta.glob('/src/lib/progress/index.ts');
-
 	async function loadProgress(): Promise<void> {
-		const loader = Object.values(progressLoaders)[0];
-		if (!loader) return;
-		const mod = (await loader()) as { openProgressStore?: () => Promise<ProgressStore> };
-		if (!mod.openProgressStore) return;
-		const store = await mod.openProgressStore();
+		const store = await ensureProgress();
 		const { chapters, labs } = await store.list();
 
 		doneIds = chapters.filter((c) => c.done).map((c) => c.id);

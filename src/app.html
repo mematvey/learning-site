@@ -3,6 +3,21 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script>
+			// Keep in sync with THEME_INIT_SCRIPT in src/lib/theme/theme.ts.
+			(function () {
+				var saved = null;
+				try {
+					saved = localStorage.getItem('learning-site:theme');
+				} catch (e) {}
+				var system = false;
+				try {
+					system = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				} catch (e) {}
+				var dark = saved === 'dark' || (saved !== 'light' && system);
+				document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

@@ -4,6 +4,7 @@ import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { mdsvex } from 'mdsvex';
+import { remarkPlugins, rehypePlugins } from './src/lib/content/mdsvex/index';
 import { defineConfig } from 'vite';
 
 // SvelteKit 3 reads its configuration from this file (svelte.config.js is no longer used).
@@ -21,10 +22,11 @@ export default defineConfig(async () => ({
 			preprocess: [
 				mdsvex({
 					extensions: ['.svx'],
-					// Custom remark plugins (block ids, notes anchors) go here later.
-					remarkPlugins: [],
-					// Custom rehype plugins (KaTeX at build time, level components) go here later.
-					rehypePlugins: [],
+					// Smart quotes would rewrite attribute quotes in inline component tags.
+					smartypants: false,
+					// Block ids, build-time KaTeX and auto-imported content components.
+					remarkPlugins,
+					rehypePlugins,
 				}),
 			],
 			adapter: adapter(),
@@ -32,8 +34,9 @@ export default defineConfig(async () => ({
 			paths: { base },
 		})),
 	],
+	server: { fs: { allow: ['content', 'labs', 'data', 'src', '.svelte-kit', 'node_modules'] } },
 	test: {
 		environment: 'jsdom',
-		include: ['src/**/*.test.ts'],
+		include: ['src/**/*.test.ts', 'content/**/*.test.ts', 'scripts/**/*.test.ts'],
 	},
 }));

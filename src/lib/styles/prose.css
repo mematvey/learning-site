@@ -17,6 +17,9 @@
 	scroll-margin-top: 96px;
 	padding-top: var(--space-16);
 }
+:where(.prose) h2[id]:not(figure *) {
+	scroll-margin-top: 96px;
+}
 :where(.prose) .sec + .sec {
 	border-top: 1px solid var(--border);
 }

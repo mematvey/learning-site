@@ -20,7 +20,7 @@
 	interface Props {
 		store: NotesStore;
 		chapter: ChapterId;
-		/** Chapter container. Blocks are looked up as `[data-block="<id>"]` inside it. */
+		/** Chapter container. Blocks are looked up as `[data-block][id="<id>"]` (or `[data-figure-id]`) inside it. */
 		root: HTMLElement | undefined;
 		/** Builds the anchor from the selection (the anchor logic lives in `$lib/notes`). */
 		anchorFromSelection: AnchorFromSelection;
@@ -75,7 +75,8 @@
 
 	function blockEl(id: string): HTMLElement | null {
 		if (!root) return null;
-		return root.querySelector<HTMLElement>(`[data-block="${CSS.escape(id)}"]`);
+		const esc = CSS.escape(id);
+		return root.querySelector<HTMLElement>(`[data-block][id="${esc}"], [data-figure-id="${esc}"]`);
 	}
 
 	function statusOf(n: Note, el: HTMLElement | null): Status {

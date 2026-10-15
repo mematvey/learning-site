@@ -41,6 +41,8 @@ export function createLevels(options: LevelsOptions = {}): LevelsStore {
 	const writeUrl = options.writeUrl ?? writeLevelsToUrl;
 
 	let applied = $state<LevelState>(resolveLevels(fromUrl, progress ? null : readSavedLevels()));
+	// The draft starts as a copy of the applied state and then moves independently.
+	// svelte-ignore state_referenced_locally
 	let draft = $state<LevelState>({ ...applied });
 	let touched = false;
 

@@ -56,7 +56,7 @@ export const TARGET = {
 	noteButton: '[data-note-btn]',
 	markDone: '[data-mark-done]',
 	home: 'a[data-home]',
-	section: 'section[id]',
+	section: 'main h2[id]',
 } as const;
 
 /** Window in ms in which `h` must follow `g`. */
