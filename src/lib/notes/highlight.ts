@@ -6,7 +6,9 @@ export const NOTE_HL_CLASS = 'note-hl';
  * surrounding DOM (formulas, inline markup) keeps its structure. Returns the created marks.
  */
 export function highlightRange(range: Range): HTMLElement[] {
-	const root = range.commonAncestorContainer;
+	// A range inside one text node has the text node as ancestor; a walker needs an element root.
+	const ancestor = range.commonAncestorContainer;
+	const root = ancestor.nodeType === Node.TEXT_NODE ? (ancestor.parentNode ?? ancestor) : ancestor;
 	const doc = root.ownerDocument ?? (root as Document);
 	const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 

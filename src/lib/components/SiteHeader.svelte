@@ -1,17 +1,11 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import type { SiteHeaderProps } from '$lib/contracts/component-props';
 	import { resolveTheme, watchSystemDark } from '$lib/theme/theme';
 	import ThemeToggle from './ThemeToggle.svelte';
 
-	interface Props extends SiteHeaderProps {
-		/** Search field slot (`SearchDialog` from the search package). */
-		search?: Snippet;
-	}
-
 	/** Site header: breadcrumbs, search, levels slot, theme toggle, reading progress. */
-	let { crumbs = [], theme, onToggleTheme, levels, search }: Props = $props();
+	let { crumbs = [], theme, onToggleTheme, levels, search }: SiteHeaderProps = $props();
 
 	let systemDark = $state(false);
 	$effect(() => watchSystemDark((dark) => (systemDark = dark)));

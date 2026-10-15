@@ -33,6 +33,10 @@ jobs:
 
       - run: uv run ruff check .
 
+      - run: uv run pytest -q
+
+      - run: uv run python scripts/lab_check.py
+
       - run: npm run build
         env:
           BASE_PATH: /learning-site

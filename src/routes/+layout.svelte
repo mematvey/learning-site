@@ -52,7 +52,8 @@
 		theme = readStoredTheme();
 		const stopWatch = watchSystemDark((dark) => (systemDark = dark));
 		const stopShortcuts = installShortcuts({
-			onHelp: () => (helpOpen = true),
+			// Deferred: the help window itself closes on `?`, and it would see the same keydown.
+			onHelp: () => setTimeout(() => (helpOpen = true), 0),
 			isHelpOpen: () => helpOpen,
 		});
 		return () => {

@@ -68,7 +68,10 @@
 	const levelsCtx = getContext<LevelsContext>(LEVELS_CONTEXT);
 
 	// Chapter data for Term, Cite, Figure numbering.
-	const figureIds = new SvelteMap<string, number>();
+	// A plain Map on purpose: numbers are assigned while figures render (inside deriveds), where
+	// writing reactive state is not allowed. Numbering follows the render order.
+	// eslint-disable-next-line svelte/prefer-svelte-reactivity
+	const figureIds = new Map<string, number>();
 	const chapterContext: ChapterContext = {
 		get id() {
 			return chapter.id;

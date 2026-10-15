@@ -78,7 +78,7 @@
 			const src = TEX[el.dataset.key ?? ''];
 			if (!src) return;
 			try {
-				katex.render(src, el, { trust: true, throwOnError: false });
+				katex.render(src, el, { trust: true, strict: 'ignore', throwOnError: false });
 			} catch {
 				/* keep fallback text */
 			}

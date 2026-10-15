@@ -78,7 +78,7 @@
 | `StepCards` | `components/StepCards.svelte` | `steps`, `demo?`, `initial?`, `onStep?` |
 | `Quiz` | `components/Quiz.svelte` | `id`, `q`, `kind?: self \| interview`, `level?` |
 | `Cite` | `components/Cite.svelte` | `id` |
-| `CodeLab` | `components/CodeLab.svelte` | `lab`, `mode?`, `onResult?` |
+| `CodeLab` | `components/CodeLab.svelte` | `lab`, `mode?`, `onResult?`, `progress?`, `runner?` |
 | `LabResultPanel` | `components/LabResultPanel.svelte` | `result: LabResult`, `visualizers?` |
 | `LevelPopover` | `components/LevelPopover.svelte` | `applied`, `onApply`, `open?` |
 | `TopicCard` | `components/TopicCard.svelte` | `topic`, `title`, `description`, `chapterCount`, `chapters`, `progress`, `mapHref` |
@@ -90,7 +90,7 @@
 | `KbdHint` | `components/KbdHint.svelte` | `keys` (`mod+k`) |
 | `ShortcutsHelp` | `components/ShortcutsHelp.svelte` | `open`, `onClose` |
 | `ThemeToggle` | `components/ThemeToggle.svelte` | `theme`, `onToggle` |
-| `SiteHeader` | `components/SiteHeader.svelte` | `topic?`, `crumbs?`, `theme`, `onToggleTheme`, `levels?` |
+| `SiteHeader` | `components/SiteHeader.svelte` | `topic?`, `crumbs?`, `theme`, `onToggleTheme`, `levels?`, `search?` |
 | `Toc` | `components/Toc.svelte` | `items`, `activeId?` |
 | `LineChart` | `components/charts/LineChart.svelte` | `title`, `desc`, `series`, `xLabel`, `yLabel` |
 | `BarChart` | `components/charts/BarChart.svelte` | `title`, `desc`, `bars`, `orientation?` |

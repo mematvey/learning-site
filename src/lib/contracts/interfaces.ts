@@ -154,7 +154,7 @@ export type AnchorResolution =
 
 /**
  * Builds an anchor from the user's selection inside the chapter container.
- * Finds the closest ancestor with a block id (`[data-block-id]`), takes the selected text as
+ * Finds the closest ancestor with a block id (`[data-block]`, id in the `id` attribute), takes the selected text as
  * `exact` and up to `ANCHOR_CONTEXT_CHARS` characters of context on each side.
  * For figures sets `figureId` and `element` (from `data-element`).
  * Returns null if the selection is empty, collapsed, or has no block ancestor.

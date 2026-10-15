@@ -140,6 +140,17 @@ describe('highlightRange', () => {
 		root.remove();
 	});
 
+	it('wraps a quote that lies inside a single text node', () => {
+		const root = setup('<p data-block id="p-one">Простой текст абзаца.</p>');
+		const p = root.querySelector('p')!;
+		const range = document.createRange();
+		range.setStart(p.firstChild!, 0);
+		range.setEnd(p.firstChild!, 7);
+		expect(highlightRange(range)).toHaveLength(1);
+		expect(p.querySelector('mark.note-hl')?.textContent).toBe('Простой');
+		root.remove();
+	});
+
 	it('chapterTextIndex reads blocks including hidden layers', () => {
 		const root = setup(
 			'<h2 data-block id="sec-one">Раздел</h2><p data-block id="p-two" hidden>Скрытый</p><figure data-figure-id="fig-a"></figure>',
