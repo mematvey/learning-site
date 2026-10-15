@@ -9,44 +9,49 @@
 <link rel="stylesheet" href="attention-demo.css">
 <link rel="stylesheet" href="steps-demo.css">
 <link rel="stylesheet" href="lab-demo.css">
+<link rel="stylesheet" href="shortcuts.css">
 <link rel="stylesheet" href="chapter.css">
 </head>
 <body>
 
 <header class="topbar">
   <div class="topbar-inner">
-    <a class="brand" href="#">learning-site</a>
+    <a class="brand" href="#" data-home>learning-site</a>
     <nav class="crumbs" aria-label="Путь к главе">
       <a href="#">DL Theory</a><span aria-hidden="true">›</span><a href="#">Трансформеры</a><span aria-hidden="true">›</span><span aria-current="page">Attention</span>
     </nav>
     <label class="search">
       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <input type="search" placeholder="Поиск по курсу" aria-label="Поиск по курсу">
-      <kbd>⌘K</kbd>
+      <input type="search" placeholder="Поиск по курсу" aria-label="Поиск по курсу" data-search>
+      <kbd data-kbd="mod+k">Ctrl K</kbd>
     </label>
-    <button class="icon-btn" id="theme-toggle" type="button" aria-label="Сменить тему">
+    <div class="levels-wrap">
+      <button class="levels-btn" id="levels-toggle" type="button" data-levels-toggle aria-expanded="false" aria-controls="levels-pop" title="Уровень изложения">
+        <span class="lvl-prefix">Уровень:</span> <span id="lvl-label">Основа · Идея</span> <span class="caret" aria-hidden="true">▾</span><kbd class="lvl-key">L</kbd>
+      </button>
+      <div class="levels-pop" id="levels-pop" role="dialog" aria-label="Уровни изложения" hidden>
+        <div class="level-group">
+          <div class="level-head"><span class="level-title">Сложность</span><output id="c-out" for="c-slider">Основа</output></div>
+          <input type="range" id="c-slider" min="0" max="3" step="1" value="1" aria-label="Сложность">
+          <div class="ticks ticks-4" aria-hidden="true"><span>Интуиция</span><span>Основа</span><span>Формально</span><span>Исследователь</span></div>
+        </div>
+        <div class="level-group">
+          <div class="level-head"><span class="level-title">Глубина</span><output id="d-out" for="d-slider">Идея</output></div>
+          <input type="range" id="d-slider" min="0" max="2" step="1" value="0" aria-label="Глубина">
+          <div class="ticks ticks-3" aria-hidden="true"><span>Идея</span><span>Реализация</span><span>Железо</span></div>
+        </div>
+        <div class="levels-foot">
+          <button class="btn-primary" id="apply" type="button" hidden>Применить</button>
+        </div>
+      </div>
+    </div>
+    <button class="icon-btn" id="theme-toggle" type="button" aria-label="Сменить тему" data-theme-toggle title="Сменить тему (T)">
       <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
     </button>
   </div>
   <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
 </header>
-
-<section class="levels" aria-label="Уровни изложения">
-  <div class="levels-inner">
-    <div class="level-group">
-      <div class="level-head"><span class="level-title">Сложность</span><output id="c-out" for="c-slider">Основа</output></div>
-      <input type="range" id="c-slider" min="0" max="3" step="1" value="1" aria-label="Сложность">
-      <div class="ticks ticks-4" aria-hidden="true"><span>Интуиция</span><span>Основа</span><span>Формально</span><span>Исследователь</span></div>
-    </div>
-    <div class="level-group">
-      <div class="level-head"><span class="level-title">Глубина</span><output id="d-out" for="d-slider">Идея</output></div>
-      <input type="range" id="d-slider" min="0" max="2" step="1" value="0" aria-label="Глубина">
-      <div class="ticks ticks-3" aria-hidden="true"><span>Идея</span><span>Реализация</span><span>Железо</span></div>
-    </div>
-    <button class="btn-primary" id="apply" type="button" hidden>Применить</button>
-  </div>
-</section>
 
 <div class="page">
 <nav class="toc" aria-label="Оглавление">
@@ -62,7 +67,7 @@
   </ol>
 </nav>
 
-<main class="text">
+<main class="text prose">
   <header class="chapter-head">
     <p class="eyebrow">DL Theory · Трансформеры</p>
     <h1>Scaled dot-product attention</h1>
@@ -76,7 +81,7 @@
       <a class="chip" href="#">Скалярное произведение</a>
       <a class="chip" href="#">Softmax</a>
     </div>
-    <button class="btn-outline" id="mark-done" type="button" aria-pressed="false">Отметить пройденным</button>
+    <button class="btn-outline" id="mark-done" type="button" aria-pressed="false" data-mark-done title="Отметить пройденным (M)">Отметить пройденным</button>
   </header>
 
   <section id="idea" class="sec">
@@ -135,7 +140,9 @@
   <section id="code" class="sec">
     <h2>Код</h2>
     <p>Ниже лаба на NumPy. Реализуйте функцию <code>attention(Q, K, V, mask=None)</code>, запустите тесты и посмотрите на распределение весов по строке. Тесты проверяют масштаб, маску и форму выхода.</p>
-    <div id="lab-demo" class="demo-slot"></div>
+    <figure class="fig-wide">
+      <div id="lab-demo" class="demo-slot"></div>
+    </figure>
 
     <div data-d-min="3" class="depth-block">
       <span class="badge-hw">⚙ Железо</span>
@@ -186,20 +193,22 @@
   </section>
 
   <nav class="chapter-nav" aria-label="Соседние главы">
-    <a href="#" class="chapter-nav-link">
+    <a href="#" class="chapter-nav-link" data-prev>
       <span class="chapter-nav-dir">← Предыдущая</span>
       <span class="chapter-nav-title">Softmax</span>
     </a>
-    <a href="#" class="chapter-nav-link next">
+    <a href="#" class="chapter-nav-link next" data-next>
       <span class="chapter-nav-dir">Следующая →</span>
       <span class="chapter-nav-title">Multi-head attention</span>
     </a>
   </nav>
+  <footer class="foot-hint">Нажмите <kbd>?</kbd> — все шорткаты</footer>
 </main>
 </div>
 
-<button class="sel-note" id="sel-note" type="button" hidden>💬 Заметка</button>
+<button class="sel-note" id="sel-note" type="button" hidden data-note-btn>💬 Заметка</button>
 
+<script src="shortcuts.js"></script>
 <script src="attention-demo.js"></script>
 <script src="steps-demo.js"></script>
 <script src="lab-demo.js"></script>
@@ -236,21 +245,23 @@
   var cSlider = document.getElementById('c-slider');
   var dSlider = document.getElementById('d-slider');
   var apply = document.getElementById('apply');
+  var lvlBtn = document.getElementById('levels-toggle');
+  var lvlLabel = document.getElementById('lvl-label');
+  var pop = document.getElementById('levels-pop');
   var applied = { c: 1, d: 0 };
 
+  // В URL уровни 1-based: c=2 это «Основа», d=1 это «Идея».
   function initial(key, max, def) {
     var v = parseInt(params.get(key), 10);
-    return isNaN(v) ? def : Math.min(max, Math.max(0, v - (key === 'c' ? 1 : 1)));
+    return isNaN(v) ? def : Math.min(max, Math.max(0, v - 1));
   }
-  // В URL уровни 1-based: c=2 это «Основа», d=1 это «Идея».
   applied.c = initial('c', 3, 1);
   applied.d = initial('d', 2, 0);
   cSlider.value = applied.c;
   dSlider.value = applied.d;
 
   function markTicks(sel, idx) {
-    var spans = document.querySelectorAll(sel + ' span');
-    spans.forEach(function (s, i) { s.classList.toggle('on', i === idx); });
+    document.querySelectorAll(sel + ' span').forEach(function (s, i) { s.classList.toggle('on', i === idx); });
   }
 
   function showLabels() {
@@ -258,13 +269,26 @@
     document.getElementById('d-out').textContent = D[dSlider.value];
     markTicks('.ticks-4', +cSlider.value);
     markTicks('.ticks-3', +dSlider.value);
-    var dirty = +cSlider.value !== applied.c || +dSlider.value !== applied.d;
-    apply.hidden = !dirty;
+    apply.hidden = +cSlider.value === applied.c && +dSlider.value === applied.d;
   }
+
+  function setPopover(open) {
+    pop.hidden = !open;
+    lvlBtn.setAttribute('aria-expanded', String(open));
+    if (open) cSlider.focus({ preventScroll: true });
+  }
+  lvlBtn.addEventListener('click', function () { setPopover(pop.hidden); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !pop.hidden) { setPopover(false); lvlBtn.focus(); }
+  });
+  document.addEventListener('mousedown', function (e) {
+    if (!pop.hidden && !e.target.closest('.levels-wrap')) setPopover(false);
+  });
 
   function setLevels(c, d) {
     // c: 0..3 (индекс слайдера), d: 0..2
     var cl = c + 1, dl = d + 1;
+    lvlLabel.textContent = C[c] + ' · ' + D[d];
     document.querySelectorAll('[data-c-min]').forEach(function (el) {
       el.hidden = cl < +el.getAttribute('data-c-min');
     });
@@ -296,10 +320,10 @@
     setLevels(applied.c, applied.d);
     writeUrl(applied.c, applied.d);
     apply.hidden = true;
+    setPopover(false);
   });
   setLevels(applied.c, applied.d);
   showLabels();
-  apply.hidden = true;
 
   // Математика
   if (window.renderMathInElement) {
