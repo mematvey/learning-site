@@ -94,11 +94,16 @@
   --shadow: 0 0 0 1px var(--border);
 }
 
-[data-theme='dark'][data-topic='dl'] { --topic: #818cf8; --topic-soft: #1e1b4b; }
-[data-theme='dark'][data-topic='classic-ml'] { --topic: #2dd4bf; --topic-soft: #0f2a28; }
-[data-theme='dark'][data-topic='mlops'] { --topic: #fb923c; --topic-soft: #2a1a10; }
-[data-theme='dark'][data-topic='cs'] { --topic: #a78bfa; --topic-soft: #221a3a; }
-[data-theme='dark'][data-topic='compute'] { --topic: #4ade80; --topic-soft: #10261a; }
+[data-theme='dark'][data-topic='dl'],
+[data-theme='dark'] [data-topic='dl'] { --topic: #818cf8; --topic-soft: #1e1b4b; }
+[data-theme='dark'][data-topic='classic-ml'],
+[data-theme='dark'] [data-topic='classic-ml'] { --topic: #2dd4bf; --topic-soft: #0f2a28; }
+[data-theme='dark'][data-topic='mlops'],
+[data-theme='dark'] [data-topic='mlops'] { --topic: #fb923c; --topic-soft: #2a1a10; }
+[data-theme='dark'][data-topic='cs'],
+[data-theme='dark'] [data-topic='cs'] { --topic: #a78bfa; --topic-soft: #221a3a; }
+[data-theme='dark'][data-topic='compute'],
+[data-theme='dark'] [data-topic='compute'] { --topic: #4ade80; --topic-soft: #10261a; }
 
 @media (prefers-reduced-motion: reduce) {
   :root { --dur-fast: 0ms; --dur: 0ms; }
