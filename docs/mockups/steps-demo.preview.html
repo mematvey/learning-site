@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru" data-topic="dl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>steps-demo preview</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="steps-demo.css">
+  <style>
+    body { padding: var(--space-12) var(--space-6); }
+    .pv { max-width: var(--wide-width); margin: 0 auto; }
+  </style>
+  <script>
+    (function () {
+      try {
+        var t = new URLSearchParams(location.search).get('theme');
+        if (t) document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* без параметров тема остаётся светлой */ }
+    })();
+  </script>
+</head>
+<body>
+  <main class="pv">
+    <div id="steps-demo"></div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  <script src="steps-demo.js"></script>
+</body>
+</html>
