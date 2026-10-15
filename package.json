@@ -15,7 +15,7 @@
 		"prebuild": "npm run gen",
 		"build": "vite build && pagefind --site build",
 		"preview": "vite preview",
-		"precheck": "npm run gen",
+		"precheck": "npm run gen && svelte-kit sync",
 		"check": "svelte-check --tsconfig ./tsconfig.json && eslint . && prettier --check . && npm run check:content && vitest run",
 		"lint": "eslint .",
 		"format": "prettier --write .",
