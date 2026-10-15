@@ -46,3 +46,25 @@ export function clearHighlights(root: ParentNode): void {
 		parent.normalize();
 	}
 }
+
+/** DOM range over characters `start..end` of the text of `block` (offsets into `textContent`). */
+export function rangeInBlock(block: HTMLElement, start: number, end: number): Range | null {
+	const doc = block.ownerDocument;
+	const walker = doc.createTreeWalker(block, NodeFilter.SHOW_TEXT);
+	const range = doc.createRange();
+	let pos = 0;
+	let started = false;
+	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+		const len = (node as Text).length;
+		if (!started && start < pos + len) {
+			range.setStart(node, start - pos);
+			started = true;
+		}
+		if (started && end <= pos + len) {
+			range.setEnd(node, end - pos);
+			return range;
+		}
+		pos += len;
+	}
+	return null;
+}

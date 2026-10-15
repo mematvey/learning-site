@@ -28,6 +28,8 @@ export interface Registry {
 	/** Topics sorted by `order`. */
 	getTopics(): TopicEntry[];
 	getTopic(id: string): TopicEntry | undefined;
+	/** All chapters in registry order. */
+	getChapters(): ChapterEntry[];
 	/** Chapter by canonical id (`dl/attention`). Does not follow aliases; see `resolveChapterId`. */
 	getChapter(id: string): ChapterEntry | undefined;
 	/** Chapters of a topic in reading order. */
@@ -49,6 +51,7 @@ export function makeRegistry(data: RegistryData): Registry {
 	return {
 		getTopics: () => [...sortedTopics],
 		getTopic: (id) => topics.get(id),
+		getChapters: () => [...data.chapters],
 		getChapter: (id) => chapters.get(id as ChapterId),
 		getChaptersByTopic: (topicId) => {
 			const topic = topics.get(topicId);
@@ -118,6 +121,7 @@ export function getRegistry(): Registry {
 
 export const getTopics = () => getRegistry().getTopics();
 export const getTopic = (id: string) => getRegistry().getTopic(id);
+export const getChapters = () => getRegistry().getChapters();
 export const getChapter = (id: string) => getRegistry().getChapter(id);
 export const getChaptersByTopic = (topicId: string) => getRegistry().getChaptersByTopic(topicId);
 export const getLab = (id: string) => getRegistry().getLab(id);

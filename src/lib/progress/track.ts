@@ -99,7 +99,7 @@ export function trackChapter(
 				}
 			}
 		});
-		for (const section of root.querySelectorAll('section[id]')) observer.observe(section);
+		for (const section of root.querySelectorAll('section[id], h2[id]')) observer.observe(section);
 	}
 
 	const onScroll = () => measurePosition();

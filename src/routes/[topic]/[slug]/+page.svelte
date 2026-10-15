@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Component } from 'svelte';
 	import ChapterPage from '$lib/components/ChapterPage.svelte';
-	import type { GlossaryRegistry } from '$lib/contracts/registry';
+	import { getGlossary } from '$lib/content/registry';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -12,13 +12,9 @@
 		eager: true,
 		import: 'default',
 	}) as Record<string, Component>;
-	const glossaryModules = import.meta.glob('/src/generated/glossary.json', {
-		eager: true,
-		import: 'default',
-	}) as Record<string, GlossaryRegistry>;
 
 	const Content = $derived(contentModules[`/content/${data.chapter.id}/index.svx`] as Component);
-	const glossary = $derived(Object.values(glossaryModules)[0] ?? {});
+	const glossary = getGlossary();
 </script>
 
 <svelte:head>

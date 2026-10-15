@@ -9,6 +9,7 @@
 		type LabRunner,
 		type ProgressStore,
 	} from '$lib/contracts';
+	import { progressState } from '$lib/shell.svelte';
 	import KbdHint from './KbdHint.svelte';
 	import LabResultPanel from './LabResultPanel.svelte';
 	import CodeEditor from './lab/CodeEditor.svelte';
@@ -24,7 +25,17 @@
 		progress?: ProgressStore;
 	}
 
-	let { lab: labId, mode = 'run', onResult, runner, progress, children }: Props = $props();
+	let {
+		lab: labId,
+		mode = 'run',
+		onResult,
+		runner,
+		progress: progressProp,
+		children,
+	}: Props = $props();
+
+	// Without an explicit store, the page-wide progress store is used once it is open.
+	const progress = $derived(progressProp ?? progressState.store ?? undefined);
 
 	const runnerModules = import.meta.glob('/src/lib/labs/index.ts') as Record<
 		string,
@@ -95,6 +106,8 @@
 	}
 
 	$effect(() => {
+		// Reload when the progress store opens: the saved draft lives there.
+		void progress;
 		void load(labId);
 	});
 
