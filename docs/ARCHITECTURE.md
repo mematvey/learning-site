@@ -292,21 +292,25 @@ Pagefind индексирует `build/` после prerender.
 
 ### 5.1 Frontmatter главы (`content/<topic>/<slug>/index.svx`)
 
+Схема: `src/lib/contracts/chapter.ts` (`ChapterFrontmatter`). Поля с пометкой «нет» необязательны.
+
 | Поле | Тип | Обяз. | Смысл |
 |---|---|---|---|
-| `id` | string `<topic>/<slug>` | да | стабильный id; совпадает с путём |
+| `id` | `<topic>/<slug>` (ChapterId) | да | стабильный id; совпадает с путём |
 | `title` | string | да | название главы |
-| `topic` | enum id темы | да | `dl`, `classic-ml`, `mlops`, `cs`, `compute` |
+| `topic` | id темы | да | `dl`, `classic-ml`, `mlops`, `cs`, `compute` |
 | `summary` | string | да | 1–2 предложения; для карточек и поиска |
-| `prereqs` | string[] (id глав) | да (может быть `[]`) | граф зависимостей между главами |
-| `concepts` | `{id, title}[]` | нет | понятия, которые вводит глава (узлы графа понятий) |
-| `requires` | string[] (id понятий) | нет | понятия, которые глава использует |
+| `prereqs` | ChapterId[] | да (может быть `[]`) | граф зависимостей между главами |
+| `concepts` | `{id, title}[]` | нет | понятия, которые вводит глава (узлы графа понятий); `id` это TermId |
+| `requires` | TermId[] | нет | понятия, которые глава использует |
 | `keywords` | string[] | да | ключевые слова для поиска |
-| `minutes` | `{c1..c4?}` или число | да | оценка времени чтения; можно по уровням сложности |
-| `labs` | string[] (id лабов) | нет | лабы главы; должны существовать |
-| `sources` | `{title, url, note?, accessed}`[] | да для глав с фактами | источники фактов и чисел про железо/API |
-| `aliases` | string[] | нет | прежние id главы (дублируется в таблицу алиасов при генерации) |
-| `status` | `draft \| review \| ready` | нет | draft-главы не попадают в навигацию продакшена |
+| `minutes` | число или `{c1..c4}` | да | оценка времени чтения; в объекте хотя бы одно из `c1..c4` |
+| `labs` | LabId[] | нет | лабы главы; должны существовать |
+| `sources` | `Source[]` | нет в схеме; линтер требует для глав с фактами | источники фактов и чисел про железо/API |
+| `aliases` | ChapterId[] | нет | прежние id главы (сводятся в `data/aliases.yaml` при генерации) |
+| `status` | `draft \| review \| published` | нет | draft-главы не попадают в навигацию продакшена |
+
+`Source`: `id` (латиница и цифры, для `<Cite id>`), `kind` (`paper \| doc \| spec \| repo`), `title` и `url` обязательны. Необязательны `authors`, `venue`, `year`, `note`, `supports` (id блоков, которые опираются на источник). `accessed` (ISO-дата проверки) в схеме необязателен; линтер требует его для документации с числами про железо и API.
 
 ```yaml
 ---
@@ -320,8 +324,9 @@ keywords: [attention, softmax, scaled dot-product]
 minutes: {c1: 8, c2: 15, c3: 25, c4: 35}
 labs: [dl-attention-numpy]
 sources:
-  - {title: "Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", accessed: 2026-10-16}
+  - {id: vaswani2017, kind: paper, title: "Attention Is All You Need", url: "https://arxiv.org/abs/1706.03762", year: 2017, supports: [idea-qkv]}
 aliases: []
+status: draft
 ---
 ```
 
@@ -331,34 +336,44 @@ aliases: []
 Оценки внимания считаются как скалярное произведение запроса и ключа. {#scores-def}
 
 <Level c={3}>
-$$ \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V $$ {#attn-formula}
+
+$$
+\mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
+$$
+{#attn-formula}
+
 </Level>
 
 <Figure id="fig-attn-heatmap" alt="Тепловая карта весов внимания">...</Figure>
 ```
 
+`{#id}` в конце абзаца, заголовка или пункта списка. Для display-формулы `{#id}` стоит отдельной строкой сразу после закрывающего `$$`. У рисунка id задаётся пропом `id`.
+
 ### 5.2 `labs/<lab-id>/lab.yaml`
+
+Схема: `src/lib/contracts/lab.ts` (`Lab`). Пути относительны папки лаба.
 
 | Поле | Тип | Обяз. | Смысл |
 |---|---|---|---|
-| `id` | string `<topic>-<slug>` | да | совпадает с именем папки |
+| `id` | `<topic>-<slug>` (LabId) | да | совпадает с именем папки |
 | `title` | string | да | название |
-| `chapter` | string | да | id главы-владельца |
-| `runtime` | `python \| js` | да | среда выполнения в браузере |
-| `starter` | path | да | стартовый код (`starter.py`) |
-| `solution` | path | да | эталон (`solution.py`), не попадает в сборку сайта |
-| `tests.visible` | path | да | `tests_visible.py`, показываются и дают диффы |
+| `chapter` | `<topic>/<slug>` (ChapterId) | да | id главы-владельца |
+| `runtime` | `pyodide \| js \| simulator \| external-notebook` | да | среда выполнения |
+| `starter` | path | да, кроме `simulator` | стартовый код (`starter.py`) |
+| `solution` | path | да, кроме `simulator` | эталон (`solution.py`), не попадает в сборку сайта |
+| `tests.visible` | path | да, кроме `simulator` | `tests_visible.py`, показываются и дают диффы |
 | `tests.hidden` | path | нет | `tests_hidden.py`, в клиент отдаётся как данные для выполнения, текст не показывается |
-| `visualizers` | `{type, source, options?}`[] | нет | какие визуализаторы и какие поля `LabResult` рисуют |
-| `timeout` | секунды | нет | по умолчанию 10 |
-| `packages` | string[] | нет | пакеты Pyodide (из белого списка) |
-| `external` | `{colab?: bool, kaggle?: bool, gpu?: bool}` | нет | для Compute/DL: генерировать ноутбук (раздел 6) |
+| `simulator` | ключ компонента `[a-z][a-z0-9-]*` | да для `simulator` | какой симулятор вместо кода |
+| `visualizers` | `{type, source, options?}`[] | нет | `type` это зарегистрированный визуализатор; `source` это путь в `LabResult`: `arrays.<имя>`, `series.<имя>`, `metrics` или `tests` |
+| `timeout` | секунды | нет | по умолчанию 10, не больше 120 |
+| `packages` | string[] | нет | пакеты Pyodide (из белого списка линтера) |
+| `external` | `{colab?, kaggle?, gpu?}` | да для `external-notebook` | для Compute/DL: генерировать ноутбук (раздел 6) |
 
 ```yaml
 id: dl-attention-numpy
 title: Attention на NumPy
 chapter: dl/attention
-runtime: python
+runtime: pyodide
 starter: starter.py
 solution: solution.py
 tests: {visible: tests_visible.py, hidden: tests_hidden.py}
@@ -373,79 +388,85 @@ packages: [numpy]
 
 ### 5.3 `LabResult`
 
+Схема: `src/lib/contracts/lab-result.ts`. Ключи snake_case: формат пишут Worker, Python и внешние запуски.
+
 | Поле | Тип | Обяз. | Смысл |
 |---|---|---|---|
-| `schema_version` | int | да | версия формата |
-| `lab_id` | string | да | id лаба |
-| `status` | `passed \| failed \| error \| timeout` | да | итог |
+| `schema_version` | `1` | да | версия формата; другая версия отвергается с понятной ошибкой |
+| `lab_id` | LabId | да | id лаба |
+| `status` | `pass \| fail \| error \| timeout` | да | итог |
 | `tests` | массив | да | результаты тестов (см. ниже) |
 | `metrics` | `Record<string, number \| string>` | нет | числовые метрики (loss, accuracy, время ядра) |
-| `series` | `Record<string, {x: number[], y: number[], label?}>` | нет | временные ряды (кривая обучения) |
-| `arrays` | `Record<string, {shape: number[], dtype, data}>` | нет | массивы для heatmap/matrix (данные в плоском виде) |
+| `series` | `Record<string, {x, y, label?}>` | нет | временные ряды (кривая обучения); `x` и `y` одной длины |
+| `arrays` | `Record<string, {shape, dtype, data}>` | нет | массивы для heatmap/matrix; `data` в плоском row-major виде, `data.length` равен произведению `shape` |
 | `duration_ms` | number | да | общее время |
-| `stdout` | string | нет | вывод программы (с обрезкой по размеру) |
-| `error` | `{type, message, line?}` | при `error` | ошибка вне тестов |
+| `stdout`, `stderr` | string | нет | вывод программы (с обрезкой по размеру) |
+| `error` | `{type, message, line?}` | да при `error` и `timeout` | ошибка вне тестов |
 | `source` | `local \| external` | да | где выполнено (`external` для импорта из Colab/Kaggle) |
 | `env` | `{device?, notes?}` | нет | для внешнего запуска: железо, версии |
+
+Инвариант: при `pass` не может быть тестов со статусом `fail` или `error`.
 
 Элемент `tests[]`:
 
 | Поле | Тип | Обяз. | Смысл |
 |---|---|---|---|
 | `name` | string | да | имя теста |
-| `status` | `passed \| failed \| error \| skipped` | да | результат |
-| `hidden` | bool | да | скрытый тест (поля ожидания не заполняются) |
+| `status` | `pass \| fail \| error \| skipped` | да | результат |
+| `hidden` | bool | да | скрытый тест: `expected`, `actual`, `diff`, `message` не заполняются |
 | `message` | string | нет | человекочитаемое пояснение |
 | `expected`, `actual` | JSON | нет | значения (для видимых) |
-| `diff` | `{kind, summary, cells?}` | нет | различие (для массивов: макс. отклонение, список позиций) |
+| `diff` | `{kind, summary, max_abs?, cells?}` | нет | `kind`: `scalar \| array \| text`; `cells` до 50 позиций `{index, expected, actual}` |
 | `location` | `{file, line}` | нет | где упало |
 
 ```json
 {
-  "schema_version": 1, "lab_id": "dl-attention-numpy", "status": "failed", "source": "local",
+  "schema_version": 1, "lab_id": "dl-attention-numpy", "status": "fail", "source": "local",
   "tests": [
-    {"name": "shape", "status": "passed", "hidden": false},
-    {"name": "rows_sum_to_one", "status": "failed", "hidden": false,
+    {"name": "shape", "status": "pass", "hidden": false},
+    {"name": "rows_sum_to_one", "status": "fail", "hidden": false,
      "message": "Строки весов должны давать сумму 1",
      "expected": 1.0, "actual": 3.7, "location": {"file": "starter.py", "line": 12}}
   ],
-  "arrays": {"weights": {"shape": [4, 4], "dtype": "float32", "data": [0.1, 0.2]}},
+  "arrays": {"weights": {"shape": [1, 2], "dtype": "float32", "data": [0.9, 0.1]}},
   "duration_ms": 184
 }
 ```
 
 ### 5.4 Заметка
 
-Путь: `user-data/notes/<topic>/<chapter>/<ulid>.json`; ответ агента рядом: `<ulid>.answer.md`. `<chapter>` это slug главы; полный id восстанавливается как `<topic>/<chapter>`. ULID задаёт порядок по времени и исключает коллизии между устройствами.
+Схема: `src/lib/contracts/notes.ts`. Ключи camelCase: записи пишет браузер.
+
+Путь: `user-data/notes/<topic>/<slug>/<ulid>.json`; ответ агента рядом: `<ulid>.answer.md`. `<slug>` это slug главы, полный id `<topic>/<slug>`. ULID задаёт порядок по времени и исключает коллизии между устройствами.
 
 | Поле | Тип | Обяз. | Смысл |
 |---|---|---|---|
-| `schema_version` | int | да | версия |
+| `schemaVersion` | `1` | да | версия формата |
 | `id` | ULID | да | совпадает с именем файла |
-| `chapter` | string (`<topic>/<slug>`) | да | на момент создания |
+| `chapter` | `<topic>/<slug>` | да | на момент создания (разрешается через алиасы) |
 | `anchor` | объект | да | см. ниже |
 | `text` | string (markdown) | да | комментарий автора |
 | `tags` | string[] | нет | теги |
 | `status` | `open \| answered` | да | `answered` ставится, когда появился `.answer.md` |
-| `created`, `updated` | ISO 8601 | да | время |
+| `created`, `updated` | ISO 8601 (UTC) | да | время |
 | `layer` | `{c, d}` | нет | слой, в котором создана (подсказка при скрытом слое) |
 
-Якорь (в духе W3C Web Annotation):
+Якорь `anchor` (плоский, в духе W3C Web Annotation TextQuoteSelector):
 
-| Поле | Тип | Смысл |
-|---|---|---|
-| `block_id` | string | id блока из `{#block-id}` |
-| `selector.exact` | string | выделенная цитата |
-| `selector.prefix`, `selector.suffix` | string | контекст до и после (~32 символа) |
-| `figure_id` | string? | id рисунка (`Figure id`) |
-| `element` | string? | элемент в рисунке (например, `row=2,col=3`, id сущности) |
-| `position` | `anchored \| orphaned` | вычисляется на клиенте, в файл пишется последнее известное |
+| Поле | Тип | Обяз. | Смысл |
+|---|---|---|---|
+| `blockId` | BlockId | да | ближайший блок с `{#block-id}` (или id рисунка) |
+| `exact` | string, непустая | да | выделенная цитата |
+| `prefix`, `suffix` | string, до 32 символов | да | контекст до и после выделения |
+| `figureId` | BlockId | нет | id рисунка, если выделение внутри `Figure` |
+| `element` | string | нет | элемент в рисунке (например, `row=2,col=3` или id сущности) |
+| `position` | `anchored \| orphaned` | нет | вычисляется на клиенте; в файл пишется последнее известное |
 
 ```json
 {
-  "schema_version": 1, "id": "01JC3X4N8Q0Z9M7K2V5R6T1WYA", "chapter": "dl/attention",
-  "anchor": {"block_id": "scores-def",
-    "selector": {"exact": "скалярное произведение запроса и ключа", "prefix": "считаются как ", "suffix": ". Дальше"}},
+  "schemaVersion": 1, "id": "01JC3X4N8Q0Z9M7K2V5R6T1WYA", "chapter": "dl/attention",
+  "anchor": {"blockId": "scores-def", "exact": "скалярное произведение запроса и ключа",
+             "prefix": "считаются как ", "suffix": ". Дальше"},
   "text": "Почему именно скалярное, а не расстояние?",
   "tags": ["вопрос"], "status": "open",
   "created": "2026-10-16T10:12:00Z", "updated": "2026-10-16T10:12:00Z"
@@ -454,34 +475,40 @@ packages: [numpy]
 
 ### 5.5 Прогресс
 
-Одна запись на главу и одна на лаб; файлы `user-data/progress/<topic>/<chapter>.json` и `user-data/progress/labs/<lab-id>.json`. Глобальные настройки: `user-data/settings.json` (выбранные уровни, тема; токен сюда не пишется).
+Схема: `src/lib/contracts/progress.ts`. Ключи camelCase, `schemaVersion` в каждой записи. Хранение: IndexedDB; файлы `user-data/progress/**` и экспорт имеют ту же форму.
 
-Запись главы:
+Одна запись на главу: `user-data/progress/<topic>/<slug>.json`. Одна запись на лаб: `user-data/progress/labs/<lab-id>.json`. Глобальные настройки: `user-data/settings.json` (уровни, тема; токен сюда не пишется).
+
+Запись главы (`ChapterProgress`):
 
 | Поле | Тип | Смысл |
 |---|---|---|
-| `schema_version`, `id`, `updated` | | служебные |
+| `schemaVersion`, `id`, `updated` | | служебные; `id` это `<topic>/<slug>` |
 | `visited` | ISO 8601 / `null` | первое посещение |
-| `last_visit` | ISO 8601 | последнее |
-| `scroll` | `{block_id, offset}` | позиция (по блоку, не по пикселям) |
-| `sections_reached` | string[] | id разделов, до которых дошёл |
+| `lastVisit` | ISO 8601, необязательно | последнее посещение |
+| `scroll` | `{blockId, offset}`, необязательно | позиция по блоку, не по пикселям; `offset` от 0 до 1 внутри блока |
+| `sectionsReached` | string[] | id разделов (`idea`, `math`, …), до которых дошёл |
 | `levels` | `{c, d}` | применённые положения слайдеров |
-| `done` | bool | отметка «пройдено» (необязательная) |
+| `done` | bool | отметка «пройдено» (вручную) |
 
-Запись лаба:
+Запись лаба (`LabProgress`):
 
 | Поле | Тип | Смысл |
 |---|---|---|
-| `lab_id`, `chapter`, `updated` | | служебные |
-| `passed` | bool, `passed_at` | тесты зелёные |
-| `last_result` | краткий `LabResult` (без массивов) | последнее состояние |
-| `draft` | `{code, saved_at, starter_hash}` | черновик и хэш стартера, на котором он основан |
+| `schemaVersion`, `labId`, `chapter`, `updated` | | служебные |
+| `passed` | bool, `passedAt` (ISO 8601, необязательно) | тесты зелёные |
+| `lastResult` | `LabResultSummary` (без `arrays`, `series`, `stdout`), необязательно | последнее состояние; ключи snake_case, как у `LabResult` |
+| `draft` | `{code, savedAt, starterHash}`, необязательно | черновик; `starterHash` это sha-256 (hex, 64 символа) стартера, на котором он основан |
+
+Настройки (`Settings`): `schemaVersion`, `updated`, `levels` (необязательно), `theme` (`light \| dark \| system`).
+
+Экспорт (`ProgressExport`): `format: "learning-site-export"`, `schemaVersion`, `exportedAt`, `settings` (необязательно), `chapters[]`, `labs[]`, `notes[]`. Токенов нет.
 
 ```json
-{"schema_version": 1, "id": "dl/attention", "visited": "2026-10-16T09:00:00Z",
- "scroll": {"block_id": "attn-formula", "offset": 0.3},
- "sections_reached": ["idea", "intuition"], "levels": {"c": 3, "d": 2}, "done": false,
- "updated": "2026-10-16T09:20:00Z"}
+{"schemaVersion": 1, "id": "dl/attention", "updated": "2026-10-16T09:20:00Z",
+ "visited": "2026-10-16T09:00:00Z", "lastVisit": "2026-10-16T09:20:00Z",
+ "scroll": {"blockId": "attn-formula", "offset": 0.3},
+ "sectionsReached": ["idea", "intuition"], "levels": {"c": 3, "d": 2}, "done": false}
 ```
 
 ### 5.6 Версии схем
