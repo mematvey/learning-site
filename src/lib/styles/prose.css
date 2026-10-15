@@ -1,0 +1,81 @@
+/* Prose of a chapter. Every rule is scoped by :where(.prose) and excludes figure (widgets):
+   widgets stand inside figure.figure and must not inherit these styles. :where() keeps
+   the specificity at zero so component classes win. */
+
+@import 'katex/dist/katex.min.css';
+
+[hidden] {
+	display: none !important;
+}
+
+:where(.prose) a:not(figure *) {
+	color: var(--accent);
+	text-underline-offset: 3px;
+}
+
+:where(.prose) .sec {
+	scroll-margin-top: 96px;
+	padding-top: var(--space-16);
+}
+:where(.prose) .sec + .sec {
+	border-top: 1px solid var(--border);
+}
+:where(.prose) .sec > h2:not(figure *) {
+	font-family: var(--font-serif);
+	font-size: 30px;
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: -0.015em;
+	margin: 0 0 var(--space-6);
+}
+:where(.prose) .sec > h2:not(figure *)::before {
+	content: '';
+	display: block;
+	width: 28px;
+	height: 3px;
+	border-radius: 2px;
+	background: var(--topic);
+	margin-bottom: var(--space-3);
+}
+:where(.prose) h3:not(figure *) {
+	font-family: var(--font-serif);
+	font-size: var(--fs-h3);
+	font-weight: 600;
+	line-height: 1.25;
+	letter-spacing: -0.01em;
+	margin: var(--space-12) 0 var(--space-4);
+}
+:where(.prose) p:not(figure *) {
+	margin: 0 0 var(--space-6);
+}
+:where(.prose) ul:not(figure *),
+:where(.prose) ol:not(figure *) {
+	padding-left: var(--space-6);
+	margin: 0 0 var(--space-6);
+}
+:where(.prose) li:not(figure *) {
+	margin-bottom: var(--space-3);
+}
+:where(.prose) code:not(figure *) {
+	font-family: var(--font-mono);
+	font-size: 0.88em;
+	background: var(--surface-2);
+	padding: 1px 6px;
+	border-radius: var(--radius-sm);
+}
+
+/* Display formulas from the build step: `<div class="math-display">`. */
+:where(.prose) .math-display:not(figure *) {
+	overflow-x: auto;
+	padding: var(--space-2) 0;
+	margin: var(--space-6) 0;
+}
+:where(.prose) .katex-display:not(figure *) {
+	margin: var(--space-2) 0;
+}
+
+@media (max-width: 900px) {
+	:where(.prose) .sec > h2:not(figure *) {
+		font-size: 26px;
+	}
+}
