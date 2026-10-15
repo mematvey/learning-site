@@ -1,0 +1,13 @@
+docs/mockups/**
+build
+.svelte-kit
+.worktrees
+node_modules
+playwright-report
+test-results
+user-data
+package-lock.json
+CLAUDE.md
+docs
+tasks
+.claude
