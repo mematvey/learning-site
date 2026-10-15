@@ -1,0 +1,131 @@
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import type { AliasesRegistry } from '../../src/lib/contracts/registry';
+import type {
+	ChapterEntry,
+	GlossaryRegistry,
+	LabEntry,
+	PrereqGraphData,
+	SectionEntry,
+	TopicEntry,
+} from '../../src/lib/contracts/registry';
+import { collectAliases, prereqLookup } from './check';
+import type { LoadedContent } from './load';
+import { topoOrder } from './graph';
+
+/** The generated registries, in the shapes of `src/lib/contracts/registry.ts`. */
+export interface Registries {
+	topics: TopicEntry[];
+	chapters: ChapterEntry[];
+	labs: LabEntry[];
+	glossary: GlossaryRegistry;
+	prereqGraph: PrereqGraphData;
+	aliases: AliasesRegistry;
+}
+
+/**
+ * Builds registries from loaded content. Call only when `checkContent` reports no errors:
+ * this function assumes references resolve and the graph has no cycles.
+ */
+export function buildRegistries(loaded: LoadedContent): Registries {
+	const prereqsOf = prereqLookup(loaded);
+	const byId = new Map(loaded.chapters.map((ch) => [ch.data.id, ch]));
+
+	const topics: TopicEntry[] = [];
+	const chapters: ChapterEntry[] = [];
+	const orderByTopic = new Map<string, string[]>();
+
+	for (const topic of loaded.topics) {
+		const members = loaded.chapters
+			.filter((ch) => ch.topicDir === topic.data.id)
+			.map((ch) => ch.data.id);
+		const explicit = topic.data.chapters?.map((slug) => `${topic.data.id}/${slug}`);
+		const ordered = explicit ?? topoOrder(members, prereqsOf);
+		orderByTopic.set(topic.data.id, ordered);
+		topics.push({ ...topic.data, chapterIds: ordered });
+	}
+	topics.sort((a, b) => a.order - b.order || (a.id < b.id ? -1 : 1));
+
+	for (const ch of loaded.chapters) {
+		const order = orderByTopic.get(ch.topicDir) ?? [];
+		const index = order.indexOf(ch.data.id);
+		const prevId = index > 0 ? (order[index - 1] ?? null) : null;
+		const nextId = index >= 0 && index < order.length - 1 ? (order[index + 1] ?? null) : null;
+		const blocks = [...ch.scan.blocks, ...ch.scan.figures]
+			.sort((a, b) => a.line - b.line)
+			.map((b) => b.id);
+		const sections: SectionEntry[] = ch.scan.sections.map((s) => ({
+			id: s.id,
+			title: s.title,
+			level: s.level,
+		}));
+		chapters.push({
+			...ch.data,
+			path: ch.file,
+			href: `/${ch.topicDir}/${ch.dir.split('/')[1] ?? ''}/`,
+			index: Math.max(index, 0),
+			prev: prevId,
+			next: nextId,
+			blocks,
+			sections,
+		});
+	}
+	chapters.sort((a, b) => {
+		const ta = topics.findIndex((t) => t.id === a.topic);
+		const tb = topics.findIndex((t) => t.id === b.topic);
+		return ta - tb || a.index - b.index;
+	});
+
+	const labs: LabEntry[] = loaded.labs.map((lab) => {
+		const chapter = byId.get(lab.data.chapter);
+		const entry: LabEntry = {
+			...lab.data,
+			dir: `labs/${lab.dir}`,
+			topic: chapter?.topicDir ?? '',
+		};
+		if (lab.data.starter) {
+			const text = readFileSync(join(loaded.root, 'labs', lab.dir, lab.data.starter));
+			entry.starterHash = createHash('sha256').update(text).digest('hex');
+		}
+		return entry;
+	});
+
+	const glossary: GlossaryRegistry = {};
+	for (const g of loaded.glossary) glossary[g.data.id] = g.data;
+
+	return {
+		topics,
+		chapters,
+		labs,
+		glossary,
+		prereqGraph: buildGraph(loaded),
+		aliases: collectAliases(loaded).aliases,
+	};
+}
+
+/** Chapter and concept nodes; edges point from the prerequisite to the dependent node. */
+function buildGraph(loaded: LoadedContent): PrereqGraphData {
+	const nodes: PrereqGraphData['nodes'] = [];
+	const edges: PrereqGraphData['edges'] = [];
+	const concepts = new Set<string>();
+
+	for (const ch of loaded.chapters) {
+		nodes.push({ id: ch.data.id, kind: 'chapter', title: ch.data.title, topic: ch.data.topic });
+		for (const concept of ch.data.concepts ?? []) {
+			if (concepts.has(concept.id)) continue;
+			concepts.add(concept.id);
+			nodes.push({ id: concept.id, kind: 'concept', title: concept.title, topic: ch.data.topic });
+		}
+	}
+	for (const ch of loaded.chapters) {
+		for (const p of ch.data.prereqs) edges.push({ from: p, to: ch.data.id, kind: 'prereq' });
+		for (const concept of ch.data.concepts ?? []) {
+			edges.push({ from: ch.data.id, to: concept.id, kind: 'introduces' });
+		}
+		for (const term of ch.data.requires ?? []) {
+			if (concepts.has(term)) edges.push({ from: term, to: ch.data.id, kind: 'requires' });
+		}
+	}
+	return { nodes, edges };
+}

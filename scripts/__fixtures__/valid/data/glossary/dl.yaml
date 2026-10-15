@@ -1,0 +1,15 @@
+- id: attention
+  term: внимание
+  term_en: attention
+  definition: Механизм, который взвешивает элементы последовательности по их релевантности запросу.
+  chapter: dl/attention
+- id: softmax
+  term: softmax
+  definition: Нормировка вектора оценок в распределение вероятностей.
+  chapter: dl/softmax
+- id: variance
+  term: дисперсия
+  term_en: variance
+  definition: Мера разброса значений относительно среднего.
+  chapter: dl/attention
+  layer: { c: 3, d: 1 }
