@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ru" data-topic="dl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Лаб с кодом: превью</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="lab-demo.css">
+  <style>
+    body { padding: var(--space-8) var(--space-4); }
+    .preview { max-width: var(--text-width); margin: 0 auto; }
+    .preview-note { font-size: var(--fs-sm); color: var(--text-muted); margin: 0; }
+    .preview .lab { margin-top: var(--space-4); }
+  </style>
+  <script>
+    (function () {
+      var m = /[?&]theme=(\w+)/.exec(location.search);
+      if (m) document.documentElement.setAttribute('data-theme', m[1]);
+    })();
+  </script>
+</head>
+<body>
+  <main class="preview">
+    <p class="preview-note">Превью виджета «Код» (lab-demo). Раздел «Код» главы Attention.</p>
+    <div id="lab-demo"></div>
+  </main>
+  <script src="lab-demo.js"></script>
+</body>
+</html>
