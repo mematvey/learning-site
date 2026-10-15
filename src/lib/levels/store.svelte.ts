@@ -23,7 +23,7 @@ export interface LevelsOptions {
 	writeUrl?: (state: LevelState) => void;
 }
 
-export interface LevelsStore extends LevelsContext {}
+export type LevelsStore = LevelsContext;
 
 function clampAxis(axis: Axis, value: number): number {
 	const { min, max } = AXIS_BOUNDS[axis];
