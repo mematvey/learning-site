@@ -1,33 +1,35 @@
 /* Контракт макета: общие токены. Правит только оркестратор. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Literata:opsz,wght@7..72,500;7..72,600;7..72,700&display=swap');
 :root {
-  --bg: #fbfbfa;
-  --surface: #ffffff;
-  --surface-2: #f3f4f6;
-  --border: #e5e7eb;
-  --text: #1a1d23;
-  --text-muted: #5b6270;
+  --bg: #faf6ef;
+  --surface: #fffdf8;
+  --surface-2: #f3ede2;
+  --border: #e7dfd1;
+  --text: #211c16;
+  --text-muted: #6b6155;
   --accent: #2563eb;
   --warn: #b45309;
-  --warn-bg: #fff7ed;
+  --warn-bg: #fdf1e1;
   --ok: #15803d;
   --fail: #b91c1c;
 
   /* Категориальная палитра: сущности в тексте и на графиках */
-  --cat-1: #2563eb; /* Q */
-  --cat-2: #d97706; /* K */
-  --cat-3: #059669; /* V */
+  --cat-1: #2f5bd8; /* Q */
+  --cat-2: #d9480f; /* K */
+  --cat-3: #2b8a3e; /* V */
   --cat-4: #db2777;
   --cat-5: #7c3aed;
   --cat-6: #0891b2;
 
   /* Последовательная шкала для тепловых карт: от --seq-0 к --seq-1 */
-  --seq-0: #eef2ff;
-  --seq-1: #1e3a8a;
+  --seq-0: #f5eee2;
+  --seq-1: #27408b;
 
   /* Акцент темы: тонкое отличие между топиками (полоса в шапке, бейдж, маркеры) */
   --topic: #4f46e5;
   --topic-soft: #eef2ff;
 
+  --font-serif: 'Literata', 'Source Serif 4', Georgia, serif; /* заголовки */
   --font-sans: 'Inter', 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Consolas, monospace;
 
@@ -52,7 +54,7 @@
   --radius-sm: 6px;
   --radius: 10px;
   --radius-lg: 16px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.06);
+  --shadow: 0 1px 2px rgb(60 40 10 / 0.05), 0 6px 20px rgb(60 40 10 / 0.07);
 
   --text-width: 700px;
   --wide-width: 1100px;
@@ -69,27 +71,27 @@
 [data-topic='compute'] { --topic: #15803d; --topic-soft: #f0fdf4; }
 
 [data-theme='dark'] {
-  --bg: #0f1115;
-  --surface: #171a21;
-  --surface-2: #1f232c;
-  --border: #2a2f3a;
-  --text: #e6e8ec;
-  --text-muted: #9aa3b2;
+  --bg: #15130f;
+  --surface: #1d1a15;
+  --surface-2: #26221b;
+  --border: #383126;
+  --text: #eee7db;
+  --text-muted: #ab9f8e;
   --accent: #7aa2ff;
   --warn: #f0b45a;
-  --warn-bg: #2a2114;
+  --warn-bg: #2d2214;
   --ok: #5fd38a;
   --fail: #ff7b7b;
 
-  --cat-1: #7aa2ff;
-  --cat-2: #fbbf24;
-  --cat-3: #34d399;
+  --cat-1: #86a8ff;
+  --cat-2: #ff9a5c;
+  --cat-3: #5cd17a;
   --cat-4: #f472b6;
   --cat-5: #a78bfa;
   --cat-6: #22d3ee;
 
-  --seq-0: #1b2030;
-  --seq-1: #8fb0ff;
+  --seq-0: #221f1a;
+  --seq-1: #9db7ff;
 
   --shadow: 0 0 0 1px var(--border);
 }
