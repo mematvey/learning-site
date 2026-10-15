@@ -8,9 +8,19 @@
   <link rel="stylesheet" href="lab-demo.css">
   <style>
     body { padding: var(--space-8) var(--space-4); }
-    .preview { max-width: var(--text-width); margin: 0 auto; }
-    .preview-note { font-size: var(--fs-sm); color: var(--text-muted); margin: 0; }
-    .preview .lab { margin-top: var(--space-4); }
+    .preview-note { max-width: var(--text-width); margin: 0 auto; font-size: var(--fs-sm); color: var(--text-muted); }
+    /* Имитация прозы главы: те же правила, что в chapter.css, которые могут задеть виджет. */
+    .prose-sim { max-width: var(--text-width); margin: 0 auto; }
+    .prose-sim p { margin: 0 0 var(--space-6); }
+    .prose-sim h3 { font-size: var(--fs-h3); margin: var(--space-12) 0 var(--space-4); font-weight: 650; line-height: 1.25; }
+    .prose-sim code { background: var(--surface-2); padding: 1px 6px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.88em; }
+    .prose-sim ul { padding-left: var(--space-6); margin: 0 0 var(--space-6); }
+    .prose-sim li { margin-bottom: var(--space-3); }
+    .prose-sim .fig-wide {
+      width: min(var(--wide-width), 100vw - 48px);
+      margin: 0 0 var(--space-8) 50%;
+      transform: translateX(-50%);
+    }
   </style>
   <script>
     (function () {
@@ -20,10 +30,19 @@
   </script>
 </head>
 <body>
-  <main class="preview">
-    <p class="preview-note">Превью виджета «Код» (lab-demo). Раздел «Код» главы Attention.</p>
-    <div id="lab-demo"></div>
-  </main>
+  <p class="preview-note">Превью виджета «Код» (lab-demo) внутри имитации прозы главы Attention.</p>
+  <div class="prose-sim">
+    <h3>Код</h3>
+    <p>Ниже лаба на NumPy. Реализуйте функцию <code>attention(Q, K, V, mask=None)</code>, запустите тесты и посмотрите на распределение весов по строке.</p>
+    <ul>
+      <li>Тесты проверяют масштаб, маску и форму выхода.</li>
+    </ul>
+    <figure class="fig-wide">
+      <div id="lab-demo"></div>
+    </figure>
+    <h3>Память: почему attention упирается в HBM</h3>
+    <p>Текст после виджета, чтобы было видно, что отступы не разъехались.</p>
+  </div>
   <script src="lab-demo.js"></script>
 </body>
 </html>
