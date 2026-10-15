@@ -91,6 +91,8 @@
 
 <figure
 	class="ad"
+	id="demo-attention"
+	data-demo="attention"
 	class:is-off={!scaled}
 	class:hl-q={hl === 'q'}
 	class:hl-k={hl === 'k'}

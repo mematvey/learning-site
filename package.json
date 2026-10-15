@@ -7,10 +7,16 @@
 		"node": ">=24"
 	},
 	"scripts": {
+		"gen": "node scripts/gen-registry.ts",
+		"check:content": "node scripts/check-content.ts",
+		"lab:check": "uv run python scripts/lab_check.py",
+		"predev": "npm run gen",
 		"dev": "vite dev",
+		"prebuild": "npm run gen",
 		"build": "vite build && pagefind --site build",
 		"preview": "vite preview",
-		"check": "svelte-check --tsconfig ./tsconfig.json && eslint . && prettier --check . && vitest run",
+		"precheck": "npm run gen",
+		"check": "svelte-check --tsconfig ./tsconfig.json && eslint . && prettier --check . && npm run check:content && vitest run",
 		"lint": "eslint .",
 		"format": "prettier --write .",
 		"test": "vitest run",
