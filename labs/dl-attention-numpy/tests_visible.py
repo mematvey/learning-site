@@ -42,6 +42,23 @@ def test_weights_rows_sum_to_one_visible():
     assert np.allclose(sums, 1.0, atol=1e-6), f"row sums must be 1, got {sums.tolist()}"
 
 
+def test_causal_mask_blocks_future():
+    # Causal mask: query i may attend only to keys j <= i.
+    rng = np.random.default_rng(5)
+    Q = rng.normal(size=(3, 2))
+    K = rng.normal(size=(3, 2))
+    V = rng.normal(size=(3, 2))
+    mask = np.tril(np.ones((3, 3), dtype=bool))
+    _, weights = attention(Q, K, V, mask=mask)
+    assert np.all(weights[~mask] == 0.0), (
+        f"future positions must get zero weight, got {weights.tolist()}"
+    )
+    assert np.allclose(weights[0], [1.0, 0.0, 0.0], atol=1e-9), (
+        f"first query sees only the first key, got {weights[0].tolist()}"
+    )
+    assert np.allclose(weights.sum(axis=-1), 1.0, atol=1e-6), "row sums must be 1 with mask"
+
+
 def test_report_weights_for_heatmap():
     # Passes the weight matrix to the heatmap visualizer for a small random case.
     rng = np.random.default_rng(0)
