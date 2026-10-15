@@ -1,0 +1,8 @@
+id: cs
+title: CompScience
+description: 'Алгоритмы и структуры данных, оценка сложности и связь с железом.'
+order: 4
+icon: cpu
+accent:
+  topic: { light: '#7c3aed', dark: '#a78bfa' }
+  soft: { light: '#f5f3ff', dark: '#221a3a' }

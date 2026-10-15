@@ -1,0 +1,8 @@
+id: compute
+title: Compute
+description: 'Вычисления на GPU: что делают CUDA и Triton и когда это нужно.'
+order: 5
+icon: chip
+accent:
+  topic: { light: '#15803d', dark: '#4ade80' }
+  soft: { light: '#f0fdf4', dark: '#10261a' }
