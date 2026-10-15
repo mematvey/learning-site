@@ -36,6 +36,10 @@
   letter-spacing: 0.02em;
 }
 
+.sc .sc-title {
+  font-family: var(--font-serif);
+}
+
 .sc-title {
   margin: 0;
   font-size: var(--fs-h3);

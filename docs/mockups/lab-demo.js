@@ -84,10 +84,10 @@
 
   function fmt(v) { return (v >= 0 ? ' ' : '') + v.toFixed(3); }
 
-  function chartSVG(pass) {
-    var W = 600, H = 200, L = 40, R = 8, T = 10, B = 28, MAX = 0.5;
+  function chartSVG(pass, W) {
+    var H = 220, L = 40, R = 8, T = 10, B = 28, MAX = 0.5;
     var ih = H - T - B, iw = W - L - R, gw = iw / TOKENS.length, bw = 16;
-    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Столбчатая диаграмма весов внимания: ожидаемые и ваши значения">';
+    var s = '<svg width="' + W + '" height="' + H + '" role="img" aria-label="Столбчатая диаграмма весов внимания: ожидаемые и ваши значения">';
     [0, 0.25, 0.5].forEach(function (v) {
       var y = T + ih - (v / MAX) * ih;
       s += '<line class="lab-grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '"/>';
@@ -137,7 +137,7 @@
     return '<div class="lab-out-head"><span class="lab-summary ' + (failCount ? 'is-fail' : 'is-ok') + '"><i></i>' +
       summary + '</span><span class="lab-time">' + secs.toFixed(2) + ' с</span></div>' +
       '<ul class="lab-tests">' + list + '</ul>' +
-      '<figure class="lab-chart">' + chartSVG(pass) +
+      '<figure class="lab-chart"><div class="lab-chart-slot" data-pass="' + (pass ? 1 : 0) + '"></div>' +
       '<figcaption><span class="lab-legend"><span class="lab-sw lab-sw-exp"></span>ожидаемые</span>' +
       '<span class="lab-legend"><span class="lab-sw lab-sw-you"></span>ваши</span>' +
       'Веса внимания для запроса «сел»</figcaption></figure>';
@@ -195,6 +195,21 @@
       band.style.display = showBand ? '' : 'none';
     }
 
+    // График рисуется в реальной ширине контейнера (текст не масштабируется).
+    function fitChart() {
+      var slot = out.querySelector('.lab-chart-slot');
+      if (!slot) return;
+      var w = Math.max(280, Math.floor(slot.clientWidth));
+      slot.innerHTML = chartSVG(slot.getAttribute('data-pass') === '1', w);
+    }
+    function setOut(html) { out.innerHTML = html; fitChart(); }
+    var lastW = 0;
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () {
+        if (out.clientWidth !== lastW) { lastW = out.clientWidth; fitChart(); }
+      }).observe(out);
+    }
+
     function setStatus(text) { status.textContent = text; }
 
     function askReset(show) {
@@ -235,7 +250,7 @@
         var pass = runs >= 2;
         showBand = !pass;
         paint();
-        out.innerHTML = resultHTML(pass, Math.max(0.4, (Date.now() - t0) / 1000));
+        setOut(resultHTML(pass, Math.max(0.4, (Date.now() - t0) / 1000)));
         setStatus(pass ? 'Все тесты зелёные' : '');
       }, 600);
     }
@@ -248,7 +263,7 @@
       showBand = true;
       saved.textContent = 'Стартовый код восстановлен';
       paint();
-      out.innerHTML = resultHTML(false, 0.42);
+      setOut(resultHTML(false, 0.42));
       setStatus('');
     }
 
@@ -291,7 +306,7 @@
     var draft = storage('get');
     ta.value = draft !== null ? draft : STARTER;
     paint();
-    out.innerHTML = resultHTML(false, 0.42);
+    setOut(resultHTML(false, 0.42));
   }
 
   function init() {

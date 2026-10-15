@@ -61,6 +61,7 @@
 .ad-label { color: var(--text-muted); white-space: nowrap; }
 .ad-state,
 .ad-d {
+  white-space: nowrap;
   min-width: 6ch;
   color: var(--text);
   font-family: var(--font-mono);
@@ -236,7 +237,9 @@
   margin-bottom: var(--space-3);
   color: var(--text-muted);
 }
-.ad-side-t {
+.ad .ad-map-t,
+.ad .ad-side-t { margin: 0 0 var(--space-3); }
+.ad .ad-side-t {
   font-family: var(--font-serif);
   font-size: 17px;
   font-weight: 600;
@@ -335,7 +338,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-4);
+  margin-top: var(--space-6);
+  padding-bottom: var(--space-2);
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 12px;
@@ -409,7 +413,7 @@
   padding-top: var(--space-4);
   border-top: 1px solid var(--border);
 }
-.ad-cap-t {
+.ad .ad-cap-t {
   font-family: var(--font-serif);
   font-size: 17px;
   font-weight: 600;
