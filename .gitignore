@@ -1,0 +1,7 @@
+node_modules/
+build/
+.svelte-kit/
+__pycache__/
+.venv/
+.worktrees/
+user-data/
