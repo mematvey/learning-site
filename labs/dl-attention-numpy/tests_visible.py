@@ -1,0 +1,53 @@
+"""Visible tests. `attention` and `report_array` are provided by the runner.
+
+The runner executes starter.py (or solution.py) in the same namespace first.
+"""
+
+# ruff: noqa: F821
+import numpy as np
+
+
+def test_output_shapes():
+    Q = np.zeros((4, 8))
+    K = np.zeros((6, 8))
+    V = np.zeros((6, 5))
+    out, weights = attention(Q, K, V)
+    assert out.shape == (4, 5), f"expected output shape (4, 5), got {out.shape}"
+    assert weights.shape == (4, 6), f"expected weights shape (4, 6), got {weights.shape}"
+
+
+def test_small_hand_case():
+    # One query, two keys, d = 2: scores are [1/sqrt(2), 0] after scaling.
+    Q = np.array([[1.0, 0.0]])
+    K = np.array([[1.0, 0.0], [0.0, 1.0]])
+    V = np.array([[1.0, 2.0], [3.0, 4.0]])
+    out, weights = attention(Q, K, V)
+    expected_w = np.array([[0.669782, 0.330218]])
+    expected_out = np.array([[1.660436, 2.660436]])
+    assert np.allclose(weights, expected_w, rtol=1e-4, atol=1e-4), (
+        f"weights mismatch: expected {expected_w.tolist()}, got {weights.tolist()}"
+    )
+    assert np.allclose(out, expected_out, rtol=1e-4, atol=1e-4), (
+        f"output mismatch: expected {expected_out.tolist()}, got {out.tolist()}"
+    )
+
+
+def test_weights_rows_sum_to_one_visible():
+    rng = np.random.default_rng(0)
+    Q = rng.normal(size=(3, 4))
+    K = rng.normal(size=(5, 4))
+    V = rng.normal(size=(5, 2))
+    _, weights = attention(Q, K, V)
+    sums = weights.sum(axis=-1)
+    assert np.allclose(sums, 1.0, atol=1e-6), f"row sums must be 1, got {sums.tolist()}"
+
+
+def test_report_weights_for_heatmap():
+    # Passes the weight matrix to the heatmap visualizer for a small random case.
+    rng = np.random.default_rng(0)
+    Q = rng.normal(size=(4, 8))
+    K = rng.normal(size=(4, 8))
+    V = rng.normal(size=(4, 8))
+    _, weights = attention(Q, K, V)
+    report_array("weights", weights)
+    assert weights.shape == (4, 4), f"expected weights shape (4, 4), got {weights.shape}"
