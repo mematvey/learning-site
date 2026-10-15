@@ -1,0 +1,21 @@
+---
+id: dl/softmax
+title: Softmax
+topic: dl
+summary: Как превратить вектор оценок в распределение вероятностей.
+prereqs: []
+concepts:
+  - { id: softmax, title: Softmax }
+keywords: [softmax]
+minutes: 8
+---
+
+## Определение {#def-softmax-section}
+
+Softmax переводит вектор оценок в вероятности. Сумма выходов равна 1. {#softmax-sum}
+
+<Level c={3}>
+
+Формально: $\sigma(x)_i = e^{x_i} / \sum_j e^{x_j}$ {#softmax-formula}
+
+</Level>

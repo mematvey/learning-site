@@ -1,0 +1,42 @@
+---
+id: dl/attention
+title: Scaled dot-product attention
+topic: dl
+summary: Как запрос, ключ и значение превращаются во взвешенную сумму.
+prereqs: [dl/softmax]
+concepts:
+  - { id: attention-scores, title: Оценки внимания }
+requires: [softmax]
+keywords: [attention, softmax]
+minutes: { c1: 8, c2: 15, c3: 25 }
+labs: [dl-attention-numpy]
+sources:
+  - id: vaswani2017
+    kind: paper
+    title: Attention Is All You Need
+    url: https://arxiv.org/abs/1706.03762
+    year: 2017
+    supports: [math-scale]
+aliases: [dl/scaled-attention]
+status: draft
+---
+
+## Идея {#idea}
+
+<Term id="attention"></Term> смотрит на все токены сразу. Оценки получаются из <Term id="softmax"></Term>.
+
+<Level c={3}>
+
+Дисперсия растёт вместе с размерностью. {#variance-note}
+
+Здесь <Term id="variance"></Term> показывает разброс оценок.
+
+</Level>
+
+## Масштабирование {#math-scale}
+
+<Figure id="fig-arcs" caption="Веса внимания" alt="Шесть токенов в ряд.">
+
+Веса одного запроса.
+
+</Figure>
