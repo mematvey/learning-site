@@ -30,11 +30,12 @@
     '    return weights @ V'
   ].join('\n');
 
+  // Порядок важен: первый упавший тест раскрывается по умолчанию.
   var TESTS = [
-    { name: 'test_shape', desc: 'форма выхода (n, d_v)' },
-    { name: 'test_rows_sum_to_one', desc: 'строки весов суммируются в 1' },
-    { name: 'test_mask', desc: 'маска убирает запрещённые позиции' },
-    { name: 'test_scaling', desc: 'масштабирование 1/√d' }
+    { name: 'test_shape', desc: 'форма выхода (n, d_v)', ok: true },
+    { name: 'test_rows_sum_to_one', desc: 'строки весов суммируются в 1', ok: true },
+    { name: 'test_scaling', desc: 'масштабирование 1/√d', ok: false, loc: 'attention.py:17' },
+    { name: 'test_mask', desc: 'маска убирает запрещённые позиции', ok: false, loc: 'attention.py:18' }
   ];
 
   // Веса внимания для запроса «сел» (строка 2) и вывод для трёх первых компонент.
@@ -103,27 +104,37 @@
     return s + '</svg>';
   }
 
-  function resultHTML(pass, secs) {
-    var summary = pass ? '4 из 4 тестов прошли' : '3 из 4 тестов прошли';
-    var list = TESTS.map(function (t) {
-      var failed = !pass && t.name === 'test_scaling';
-      var head = '<summary><span class="lab-mark">' + (failed ? '✕' : '✓') + '</span>' +
-        '<code>' + t.name + '</code><span class="lab-desc">' + t.desc + '</span></summary>';
-      if (!failed) return '<li class="lab-test">' + head + '</li>';
+  function detailHTML(t) {
+    if (t.name === 'test_scaling') {
       var rows = OUT_EXP.map(function (e, i) {
         var d = Math.abs(e - OUT_YOU[i]);
         var bad = d > 1e-6;
         return '<tr><td>[' + i + ']</td><td>' + fmt(e) + '</td><td' + (bad ? ' class="is-bad"' : '') + '>' +
           fmt(OUT_YOU[i]) + '</td><td' + (bad ? ' class="is-bad"' : '') + '>' + d.toFixed(3) + '</td></tr>';
       }).join('');
-      return '<li class="lab-test is-fail"><details open>' + head +
-        '<div class="lab-detail">' +
-        '<p class="lab-msg">test_scaling: ожидалось max|Δ| &lt; 1e-6, получено <b>0.083</b></p>' +
-        '<p class="lab-loc">lab.py:' + ERR_LINE + ' · <span class="tk-k">scores</span> = Q @ K.T</p>' +
+      return '<p class="lab-msg">test_scaling: ожидалось max|Δ| &lt; 1e-6, получено <b>0.083</b></p>' +
+        '<p class="lab-loc">' + t.loc + ' · <span class="tk-k">scores</span> = Q @ K.T</p>' +
         '<table class="lab-cmp"><thead><tr><th>выход, строка 2</th><th>ожидалось</th><th>получено</th><th>|Δ|</th></tr></thead>' +
-        '<tbody>' + rows + '</tbody></table></div></details></li>';
+        '<tbody>' + rows + '</tbody></table>';
+    }
+    return '<p class="lab-msg">test_mask: позиция 3 под маской получила вес <b>0.041</b>, ожидалось 0</p>' +
+      '<p class="lab-loc">' + t.loc + ' · # TODO: маска</p>';
+  }
+
+  function resultHTML(pass, secs) {
+    var failCount = pass ? 0 : TESTS.filter(function (t) { return !t.ok; }).length;
+    var summary = (TESTS.length - failCount) + ' из ' + TESTS.length + ' тестов прошли';
+    var firstFail = null;
+    var list = TESTS.map(function (t) {
+      var failed = !pass && !t.ok;
+      if (failed && !firstFail) firstFail = t.name;
+      var head = '<summary><span class="lab-mark">' + (failed ? '✕' : '✓') + '</span>' +
+        '<code>' + t.name + '</code><span class="lab-desc">' + t.desc + '</span></summary>';
+      var body = failed ? '<div class="lab-detail">' + detailHTML(t) + '</div>' : '';
+      var open = failed && t.name === firstFail ? ' open' : '';
+      return '<li class="lab-test' + (failed ? ' is-fail' : '') + '"><details' + open + '>' + head + body + '</details></li>';
     }).join('');
-    return '<div class="lab-out-head"><span class="lab-summary ' + (pass ? 'is-ok' : 'is-fail') + '"><i></i>' +
+    return '<div class="lab-out-head"><span class="lab-summary ' + (failCount ? 'is-fail' : 'is-ok') + '"><i></i>' +
       summary + '</span><span class="lab-time">' + secs.toFixed(2) + ' с</span></div>' +
       '<ul class="lab-tests">' + list + '</ul>' +
       '<figure class="lab-chart">' + chartSVG(pass) +
@@ -139,12 +150,13 @@
           '<div class="lab-title"><h3 id="lab-title">Лаб: реализуйте attention на NumPy</h3>' +
           '<span class="lab-badge">Python · Pyodide</span></div>' +
           '<div class="lab-actions">' +
-            '<button type="button" class="lab-btn" data-act="reset">Сбросить</button>' +
-            '<button type="button" class="lab-btn lab-btn-primary" data-act="run">▶ Запустить</button>' +
+            '<button type="button" class="lab-btn" data-act="reset" title="Сбросить к стартовому коду: Ctrl+Shift+Backspace">Сбросить</button>' +
+            '<button type="button" class="lab-btn lab-btn-primary" data-act="run" title="Запустить: Ctrl+Enter">▶ Запустить <kbd data-kbd="mod+enter">Ctrl+Enter</kbd></button>' +
           '</div>' +
         '</header>' +
         '<div class="lab-file-bar"><span>attention.py</span>' +
-          '<span class="lab-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> запустить</span></div>' +
+          '<span class="lab-hint"><kbd data-kbd="mod+enter">Ctrl+Enter</kbd> запуск · ' +
+          '<kbd data-kbd="mod+s">Ctrl+S</kbd> черновик · <kbd>Esc</kbd> выход</span></div>' +
         '<div class="lab-body">' +
           '<div class="lab-gutter" aria-hidden="true"></div>' +
           '<div class="lab-code">' +
@@ -153,8 +165,13 @@
             '<textarea class="lab-input" spellcheck="false" wrap="off" aria-label="Код лаба"></textarea>' +
           '</div>' +
         '</div>' +
-        '<div class="lab-foot"><span class="lab-saved">Черновик сохранён · 2 мин назад</span>' +
-          '<span class="lab-status"></span></div>' +
+        '<div class="lab-foot">' +
+          '<span class="lab-saved">Черновик сохранён · 2 мин назад</span>' +
+          '<span class="lab-status"></span>' +
+          '<span class="lab-ask" hidden><span>Сбросить код к стартовому?</span>' +
+            '<button type="button" class="lab-btn lab-btn-mini lab-btn-danger" data-act="reset-yes">Сбросить</button>' +
+            '<button type="button" class="lab-btn lab-btn-mini" data-act="reset-no">Отмена</button></span>' +
+        '</div>' +
         '<div class="lab-out" aria-live="polite"></div>' +
       '</section>';
 
@@ -162,7 +179,7 @@
     var ta = q('.lab-input'), pre = q('.lab-hl'), gutter = q('.lab-gutter');
     var band = q('.lab-band'), out = q('.lab-out'), saved = q('.lab-saved');
     var status = q('.lab-status'), btnRun = q('[data-act="run"]');
-    var code = q('.lab-code');
+    var ask = q('.lab-ask'), code = q('.lab-code');
     var runs = 0, busy = false, showBand = true;
 
     code.style.setProperty('--line', ERR_LINE);
@@ -180,11 +197,21 @@
 
     function setStatus(text) { status.textContent = text; }
 
-    function onInput() {
-      paint();
+    function askReset(show) {
+      ask.hidden = !show;
+      if (show) q('[data-act="reset-yes"]').focus();
+      else if (document.activeElement && ask.contains(document.activeElement)) btnRun.focus();
+    }
+
+    function saveDraft() {
       storage('set', ta.value);
       saved.textContent = 'Черновик сохранён · только что';
       setStatus('');
+    }
+
+    function onInput() {
+      paint();
+      saveDraft();
     }
 
     function run() {
@@ -213,6 +240,18 @@
       }, 600);
     }
 
+    function reset() {
+      askReset(false);
+      ta.value = STARTER;
+      storage('del');
+      runs = 0;
+      showBand = true;
+      saved.textContent = 'Стартовый код восстановлен';
+      paint();
+      out.innerHTML = resultHTML(false, 0.42);
+      setStatus('');
+    }
+
     function insert(text) {
       ta.setRangeText(text, ta.selectionStart, ta.selectionEnd, 'end');
       onInput();
@@ -220,7 +259,11 @@
 
     ta.addEventListener('input', onInput);
     ta.addEventListener('keydown', function (e) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); return; }
+      var mod = e.ctrlKey || e.metaKey;
+      var k = (e.key || '').toLowerCase();
+      if (mod && e.key === 'Enter') { e.preventDefault(); run(); return; }
+      if (mod && k === 's') { e.preventDefault(); saveDraft(); return; }
+      if (mod && e.shiftKey && e.key === 'Backspace') { e.preventDefault(); askReset(true); return; }
       if (e.key === 'Tab' && !e.shiftKey) { e.preventDefault(); insert('    '); return; }
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -233,16 +276,16 @@
       }
     });
 
-    q('[data-act="reset"]').addEventListener('click', function () {
-      ta.value = STARTER;
-      storage('del');
-      runs = 0;
-      showBand = true;
-      saved.textContent = 'Стартовый код восстановлен';
-      paint();
-      out.innerHTML = resultHTML(false, 0.42);
-      setStatus('');
+    // Esc: сначала закрыть подтверждение, затем выйти из редактора.
+    root.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (!ask.hidden) { askReset(false); return; }
+      if (document.activeElement === ta) ta.blur();
     });
+
+    q('[data-act="reset"]').addEventListener('click', function () { askReset(ask.hidden); });
+    q('[data-act="reset-yes"]').addEventListener('click', reset);
+    q('[data-act="reset-no"]').addEventListener('click', function () { askReset(false); });
     btnRun.addEventListener('click', run);
 
     var draft = storage('get');
