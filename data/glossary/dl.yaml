@@ -30,7 +30,7 @@
 - id: causal-mask
   term: каузальная маска
   term_en: causal mask
-  definition: Маска, которая запрещает токену смотреть на будущие позиции; добавляется к оценкам до softmax.
+  definition: Маска, которая запрещает токену смотреть на будущие позиции; запрещённые позиции получают −∞ до softmax.
   chapter: dl/attention
 - id: flash-attention
   term: FlashAttention
