@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>learning-site: главная</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="index.html"><span class="logo-dot" aria-hidden="true"></span>learning-site</a>
+    <div class="header-actions">
+      <button class="search" type="button" aria-label="Поиск, сочетание ⌘K">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+        <span class="search-label">Поиск</span>
+        <kbd>⌘K</kbd>
+      </button>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Переключить тему">
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>Машинное обучение по шагам</h1>
+    <p class="hero-lead">Главы с интерактивными демо, лабораторными заданиями и вопросами для самопроверки. Прогресс и заметки остаются у вас.</p>
+  </section>
+
+  <section class="continue" data-topic="dl" aria-labelledby="continue-title">
+    <div class="continue-art" aria-hidden="true">
+      <svg viewBox="0 0 160 120">
+        <path class="art-arc" d="M18 84 C 40 20, 120 20, 142 84"/>
+        <circle cx="18" cy="84" r="7" class="art-node"/>
+        <circle cx="46" cy="84" r="7" class="art-node" opacity=".35"/>
+        <circle cx="74" cy="84" r="7" class="art-node is-hot"/>
+        <circle cx="102" cy="84" r="7" class="art-node" opacity=".35"/>
+        <circle cx="130" cy="84" r="7" class="art-node" opacity=".2"/>
+        <circle cx="142" cy="84" r="7" class="art-node" opacity=".5"/>
+      </svg>
+    </div>
+    <div class="continue-body">
+      <p class="eyebrow">Продолжить · DL Theory</p>
+      <h2 id="continue-title">Scaled dot-product attention</h2>
+      <p class="continue-desc">Как внимание считает веса по сходству запроса и ключа и почему результат делят на √d.</p>
+      <div class="progress progress-lg">
+        <span class="bar"><i style="width: 60%"></i></span>
+        <span class="progress-label">60% · Лаб не пройден</span>
+      </div>
+    </div>
+    <a class="btn-primary" href="chapter.html">Продолжить <span aria-hidden="true">→</span></a>
+  </section>
+
+  <section class="topics" aria-labelledby="topics-title">
+    <div class="section-head">
+      <p class="eyebrow">Темы</p>
+      <h2 id="topics-title">Что изучаем</h2>
+    </div>
+
+    <div class="topic-grid">
+
+      <article class="topic-card" data-topic="dl">
+        <div class="topic-top">
+          <span class="topic-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M8.2 7.2 15.8 11M8.2 16.8 15.8 13"/></svg>
+          </span>
+          <span class="badge">12 глав</span>
+        </div>
+        <h3>DL Theory</h3>
+        <p class="topic-desc">Как устроены нейросети: от внимания и трансформеров до обучения и регуляризации.</p>
+        <ol class="chapter-list">
+          <li><span class="num">01</span><a href="chapter.html">Scaled dot-product attention</a></li>
+          <li><span class="num">02</span><a href="#">Multi-head attention</a></li>
+          <li><span class="num">03</span><a href="#">Трансформер-блок</a></li>
+        </ol>
+        <div class="progress">
+          <span class="bar"><i style="width: 20%"></i></span>
+          <span class="progress-label">20%</span>
+        </div>
+      </article>
+
+      <article class="topic-card" data-topic="classic-ml">
+        <div class="topic-top">
+          <span class="topic-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+          </span>
+          <span class="badge">18 глав</span>
+        </div>
+        <h3>Classic ML</h3>
+        <p class="topic-desc">Регрессия, деревья и ансамбли: базовые модели и то, как измерять их качество.</p>
+        <ol class="chapter-list">
+          <li><span class="num">01</span><a href="#">Линейная регрессия</a></li>
+          <li><span class="num">02</span><a href="#">Логистическая регрессия</a></li>
+          <li><span class="num">03</span><a href="#">Деревья решений</a></li>
+        </ol>
+        <div class="progress">
+          <span class="bar"><i style="width: 45%"></i></span>
+          <span class="progress-label">45%</span>
+        </div>
+      </article>
+
+      <article class="topic-card" data-topic="mlops">
+        <div class="topic-top">
+          <span class="topic-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg>
+          </span>
+          <span class="badge">9 глав</span>
+        </div>
+        <h3>MLOps Practices</h3>
+        <p class="topic-desc">Данные, эксперименты и выкатка моделей так, чтобы результат воспроизводился.</p>
+        <ol class="chapter-list">
+          <li><span class="num">01</span><a href="#">Версионирование данных</a></li>
+          <li><span class="num">02</span><a href="#">Эксперименты и трекинг</a></li>
+          <li><span class="num">03</span><a href="#">Сервинг моделей</a></li>
+        </ol>
+        <div class="progress">
+          <span class="bar"><i style="width: 0%"></i></span>
+          <span class="progress-label">0%</span>
+        </div>
+      </article>
+
+      <article class="topic-card" data-topic="cs">
+        <div class="topic-top">
+          <span class="topic-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8 4 4 8l4 4M16 4l4 4-4 4M14 3l-4 18"/></svg>
+          </span>
+          <span class="badge">15 глав</span>
+        </div>
+        <h3>CompScience</h3>
+        <p class="topic-desc">Алгоритмы, структуры данных и параллелизм: что стоит за быстрым кодом.</p>
+        <ol class="chapter-list">
+          <li><span class="num">01</span><a href="#">Сложность алгоритмов</a></li>
+          <li><span class="num">02</span><a href="#">Хеш-таблицы</a></li>
+          <li><span class="num">03</span><a href="#">Параллелизм</a></li>
+        </ol>
+        <div class="progress">
+          <span class="bar"><i style="width: 10%"></i></span>
+          <span class="progress-label">10%</span>
+        </div>
+      </article>
+
+      <article class="topic-card" data-topic="compute">
+        <div class="topic-top">
+          <span class="topic-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"/></svg>
+          </span>
+          <span class="badge">7 глав</span>
+        </div>
+        <h3>Compute</h3>
+        <p class="topic-desc">Что происходит в GPU: память, пропускная способность и квантование.</p>
+        <ol class="chapter-list">
+          <li><span class="num">01</span><a href="#">Память GPU</a></li>
+          <li><span class="num">02</span><a href="#">Матричное умножение на железе</a></li>
+          <li><span class="num">03</span><a href="#">Квантование</a></li>
+        </ol>
+        <div class="progress">
+          <span class="bar"><i style="width: 0%"></i></span>
+          <span class="progress-label">0%</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="map" data-topic="dl" aria-labelledby="map-title">
+    <div class="section-head">
+      <p class="eyebrow">Карта · DL Theory</p>
+      <h2 id="map-title">Порядок чтения</h2>
+      <p class="section-sub">Стрелка показывает, что нужно знать до темы. Закрашены пройденные узлы, обведён текущий.</p>
+    </div>
+
+    <div class="map-card">
+      <div class="map-wrap">
+        <svg class="map-svg" viewBox="0 0 1000 310" role="img" aria-labelledby="map-svg-title">
+          <title id="map-svg-title">Граф пререквизитов DL Theory</title>
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path class="map-arrow" d="M0 0 L10 5 L0 10 z"/>
+            </marker>
+          </defs>
+
+          <g class="map-edges">
+            <path class="map-edge" d="M184 70 H216" marker-end="url(#arrow)"/>
+            <path class="map-edge" d="M300 96 V136" marker-end="url(#arrow)"/>
+            <path class="map-edge" d="M184 160 H216" marker-end="url(#arrow)"/>
+            <path class="map-edge" d="M384 160 H416" marker-end="url(#arrow)"/>
+            <path class="map-edge" d="M500 224 V186" marker-end="url(#arrow)"/>
+            <path class="map-edge" d="M584 160 C 600 160, 600 70, 616 70" marker-end="url(#arrow)"/>
+            <path class="map-edge" d="M784 70 C 800 70, 800 160, 816 160" marker-end="url(#arrow)"/>
+            <path class="map-edge" d="M784 250 C 800 250, 800 160, 816 160" marker-end="url(#arrow)"/>
+            <path class="map-edge" d="M584 250 H616" marker-end="url(#arrow)"/>
+          </g>
+
+          <g class="map-node is-done">
+            <rect x="16" y="44" width="168" height="52" rx="10"/>
+            <text x="100" y="70">Линейная алгебра</text>
+          </g>
+          <g class="map-node is-done">
+            <rect x="216" y="44" width="168" height="52" rx="10"/>
+            <text x="300" y="70">Скалярное произведение</text>
+          </g>
+          <g class="map-node is-done">
+            <rect x="16" y="134" width="168" height="52" rx="10"/>
+            <text x="100" y="160">Вероятности</text>
+          </g>
+          <g class="map-node is-done">
+            <rect x="216" y="134" width="168" height="52" rx="10"/>
+            <text x="300" y="160">Softmax</text>
+          </g>
+          <g class="map-node is-current">
+            <rect x="416" y="134" width="168" height="52" rx="10"/>
+            <text x="500" y="160">Attention</text>
+          </g>
+          <g class="map-node is-done">
+            <rect x="416" y="224" width="168" height="52" rx="10"/>
+            <text x="500" y="250">Эмбеддинги</text>
+          </g>
+          <g class="map-node">
+            <rect x="616" y="44" width="168" height="52" rx="10"/>
+            <text x="700" y="70">Multi-head attention</text>
+          </g>
+          <g class="map-node">
+            <rect x="616" y="224" width="168" height="52" rx="10"/>
+            <text x="700" y="250">Residual и LayerNorm</text>
+          </g>
+          <g class="map-node">
+            <rect x="816" y="134" width="168" height="52" rx="10"/>
+            <text x="900" y="160">Трансформер</text>
+          </g>
+        </svg>
+      </div>
+      <ul class="map-legend">
+        <li><span class="swatch swatch-done"></span>Пройдено</li>
+        <li><span class="swatch swatch-current"></span>Текущая глава</li>
+        <li><span class="swatch swatch-todo"></span>Впереди</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <a href="https://github.com/mematvey/learning-site">GitHub: mematvey/learning-site</a>
+    <p>Заметки и прогресс хранятся локально и в вашем приватном репозитории.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try {
+    var t = new URLSearchParams(location.search).get('theme');
+    if (t) root.dataset.theme = t;
+  } catch (e) { /* ignore */ }
+  var btn = document.getElementById('theme-toggle');
+  btn.addEventListener('click', function () {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  });
+})();
+</script>
+</body>
+</html>
