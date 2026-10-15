@@ -9,3 +9,5 @@ test-results/
 playwright-report/
 src/generated/
 static/pagefind/
+.pytest_cache/
+.ruff_cache/
