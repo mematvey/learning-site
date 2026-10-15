@@ -1,0 +1,287 @@
+/* Пошаговые карточки (M3). Все цвета, отступы и шрифты из tokens.css. */
+
+.sc {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: var(--space-8);
+  align-items: center;
+  max-width: var(--wide-width);
+  padding: var(--space-8);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-family: var(--font-sans);
+  outline: none;
+}
+
+.sc:focus-visible {
+  box-shadow: 0 0 0 2px var(--topic), var(--shadow);
+}
+
+/* Карточка шага */
+.sc-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.sc-count {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--topic);
+  letter-spacing: 0.02em;
+}
+
+.sc-title {
+  margin: 0;
+  font-size: var(--fs-h3);
+  line-height: 1.25;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sc-text {
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  color: var(--text);
+}
+
+.sc-formula {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  font-size: 20px;
+  overflow-x: auto;
+}
+
+.sc-formula .katex-display {
+  margin: 0;
+}
+
+.sc-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.sc-btn {
+  font: inherit;
+  font-size: var(--fs-sm);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
+}
+
+.sc-btn:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.sc-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.sc-btn-primary {
+  background: var(--topic);
+  border-color: var(--topic);
+  color: var(--surface);
+}
+
+.sc-btn-primary:hover:not(:disabled) {
+  background: var(--topic);
+  opacity: 0.9;
+}
+
+.sc-btn:focus-visible,
+.sc-dot:focus-visible,
+.sc-alt summary:focus-visible {
+  outline: 2px solid var(--topic);
+  outline-offset: 2px;
+}
+
+.sc-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sc-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--text-muted) 40%, transparent);
+  cursor: pointer;
+  transition: width var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.sc-dot[aria-current='step'] {
+  width: 22px;
+  background: var(--topic);
+}
+
+/* Схема матриц */
+.sc-fig {
+  margin: 0;
+  min-width: 0;
+}
+
+.sc-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-sans);
+}
+
+.m-q { --m: var(--cat-1); }
+.m-k { --m: var(--cat-2); }
+.m-v { --m: var(--cat-3); }
+.m-s { --m: var(--topic); }
+.m-a { --m: var(--topic); }
+.m-o { --m: var(--cat-4); }
+
+.sc-m {
+  opacity: 0.28;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.sc-m.is-on {
+  opacity: 1;
+}
+
+.sc-box {
+  fill: color-mix(in srgb, var(--m) 14%, transparent);
+  stroke: var(--m);
+  stroke-width: 1.5;
+}
+
+.sc-grid {
+  fill: none;
+  stroke: color-mix(in srgb, var(--m) 35%, transparent);
+  stroke-width: 1;
+}
+
+.sc-name {
+  fill: var(--m);
+  font-size: 16px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.sc-dim {
+  fill: var(--text-muted);
+  font-size: 12px;
+  text-anchor: middle;
+}
+
+.sc-op {
+  fill: var(--text-muted);
+  font-size: 22px;
+  text-anchor: middle;
+}
+
+.sc-line {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+}
+
+.sc-head {
+  fill: var(--text-muted);
+}
+
+.sc-soft {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.sc-pop {
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.sc-pop.is-on {
+  opacity: 1;
+}
+
+.sc-pill {
+  fill: var(--topic-soft);
+  stroke: var(--topic);
+  stroke-width: 1;
+}
+
+.sc-pill-t {
+  fill: var(--topic);
+  font-size: 14px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.sc-cap {
+  margin: var(--space-3) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.sc-note {
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  min-height: 3em;
+}
+
+.sc-note b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.sc-alt {
+  margin-top: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+
+.sc-alt summary {
+  cursor: pointer;
+  width: max-content;
+}
+
+.sc-alt p {
+  margin: var(--space-2) 0 0;
+  line-height: var(--lh-body);
+}
+
+/* Появление текста карточки при смене шага */
+.sc-card.is-in > * {
+  animation: sc-in var(--dur) var(--ease) both;
+}
+
+@keyframes sc-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 760px) {
+  .sc {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    padding: var(--space-6);
+  }
+}
