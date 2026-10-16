@@ -1,0 +1,45 @@
+- id: experiment
+  term: эксперимент
+  term_en: experiment
+  definition: Набор запусков, которые проверяют один вопрос, например, какие настройки обучения дают лучшую метрику на валидации.
+  chapter: mlops/experiment-tracking
+- id: run
+  term: запуск
+  term_en: run
+  definition: Одно выполнение обучения с фиксированными параметрами, своей историей метрик и набором артефактов.
+  chapter: mlops/experiment-tracking
+- id: hyperparameter
+  term: гиперпараметр
+  term_en: hyperparameter
+  definition: Настройка, которую задаёт исследователь до обучения и которую модель не подбирает сама, например скорость обучения или размер батча.
+  chapter: mlops/experiment-tracking
+- id: metric
+  term: метрика
+  term_en: metric
+  definition: Число, которым оценивают запуск, например точность или значение функции потерь на валидационной выборке.
+  chapter: mlops/experiment-tracking
+- id: artifact
+  term: артефакт
+  term_en: artifact
+  definition: 'Файл, созданный запуском и сохранённый вместе с ним: веса модели, графики, предсказания.'
+  chapter: mlops/experiment-tracking
+- id: reproducibility
+  term: воспроизводимость
+  term_en: reproducibility
+  definition: Свойство результата, при котором повторный запуск с теми же кодом, данными, параметрами и сидом даёт тот же результат.
+  chapter: mlops/experiment-tracking
+- id: random-seed
+  term: сид генератора
+  term_en: random seed
+  definition: Начальное значение генератора случайных чисел; при одинаковом сиде последовательность случайных чисел повторяется.
+  chapter: mlops/experiment-tracking
+- id: grid-search
+  term: перебор по сетке
+  term_en: grid search
+  definition: Подбор гиперпараметров, при котором проверяются все комбинации значений из заданной сетки.
+  chapter: mlops/experiment-tracking
+- id: random-search
+  term: случайный поиск
+  term_en: random search
+  definition: Подбор гиперпараметров, при котором комбинации берутся наугад из заданных диапазонов.
+  chapter: mlops/experiment-tracking
