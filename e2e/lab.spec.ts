@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { expect, test } from '@playwright/test';
+import { gotoReady } from './helpers';
 
 const solutionPath = fileURLToPath(
 	new URL('../labs/dl-attention-numpy/solution.py', import.meta.url),
@@ -11,7 +12,7 @@ test('starter code fails, reference solution passes all tests', async ({ page })
 	test.slow();
 	test.setTimeout(180_000);
 
-	await page.goto('/dl/attention/');
+	await gotoReady(page, '/dl/attention/');
 	const editor = page.getByRole('textbox', { name: 'Код лаба' });
 	const run = page.getByRole('button', { name: /Запустить/ });
 	const panel = page.getByRole('region', { name: 'Результат лаба' });
