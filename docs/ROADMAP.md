@@ -7,6 +7,7 @@
 | 2. Вертикальный срез | `dl/attention`: уровни, демо, шаги, лаб в Pyodide, заметки, прогресс, поиск, шорткаты, темы, CI | готово; e2e и мобильная версия дорабатываются (волна S) |
 | 3. Ядро компонентов | графики, демо по папке `components/demos/` (подключаются в главы автоматически), режим вопросов собеседования | по мере волн контента |
 | 4. Волна W1 | DL Theory: `softmax`, `multi-head-attention`, `layer-norm`; Classic ML: `linear-regression`, `logistic-regression`, `bias-variance` | в работе |
+| 4b. Статистика | топик `stats`, глава `stats/classical-probability`: 9 интерактивных задач, общая карточка задачи `components/problems/`, математика `src/lib/prob/` | готово |
 | 5. Синхронизация | `SyncAdapter` в приватный data-репозиторий (GitHub API), экспорт/импорт заметок, `notes pack` для агента | не начато |
 
 ## Как идёт каждая волна
