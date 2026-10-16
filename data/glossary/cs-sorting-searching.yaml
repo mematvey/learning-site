@@ -1,0 +1,35 @@
+- id: cs-comparison-sort
+  term: сортировка сравнениями
+  term_en: comparison sort
+  definition: Сортировка, которая получает порядок элементов только через попарные сравнения двух элементов.
+  chapter: cs/sorting-searching
+- id: cs-stable-sort
+  term: устойчивая сортировка
+  term_en: stable sort
+  definition: Сортировка, которая сохраняет исходный относительный порядок элементов с равными ключами.
+  chapter: cs/sorting-searching
+- id: cs-in-place
+  term: сортировка на месте
+  term_en: in-place
+  definition: Сортировка, которая переставляет элементы внутри исходного массива, используя лишь небольшую дополнительную память.
+  chapter: cs/sorting-searching
+- id: cs-divide-and-conquer
+  term: разделяй и властвуй
+  term_en: divide and conquer
+  definition: Приём, при котором задача делится на независимые части меньшего размера, части решаются рекурсивно, а решения объединяются.
+  chapter: cs/sorting-searching
+- id: cs-pivot
+  term: опорный элемент
+  term_en: pivot
+  definition: Элемент, относительно которого быстрая сортировка делит список на меньшие и большие значения.
+  chapter: cs/sorting-searching
+- id: cs-binary-search
+  term: бинарный поиск
+  term_en: binary search
+  definition: Поиск в отсортированном списке, который на каждом шаге сравнивает значение с серединой отрезка и отбрасывает половину отрезка.
+  chapter: cs/sorting-searching
+- id: cs-loop-invariant
+  term: инвариант цикла
+  term_en: loop invariant
+  definition: Утверждение о состоянии переменных, которое верно перед каждой итерацией цикла и доказывает корректность цикла.
+  chapter: cs/sorting-searching
