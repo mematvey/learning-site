@@ -23,7 +23,7 @@
   term_en: sparsity
   definition: Свойство решения, при котором большая часть весов равна нулю. Признаки с нулевыми весами не участвуют в предсказании.
   chapter: classic-ml/regularization
-- id: standardization
+- id: feature-standardization
   term: стандартизация признаков
   term_en: feature standardization
   definition: Преобразование признака, которое вычитает среднее и делит на стандартное отклонение. Параметры берутся с обучающей выборки.
