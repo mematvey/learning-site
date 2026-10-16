@@ -1,5 +1,5 @@
 id: compute-cuda-basics
-title: Основы CUDA
+title: Симулятор индексации CUDA
 chapter: compute/cuda-basics
 runtime: pyodide
 starter: starter.py
