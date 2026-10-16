@@ -546,9 +546,16 @@
 		background: color-mix(in srgb, var(--warn) 14%, var(--surface));
 	}
 
+	/* Formulas scroll inside this box on narrow screens instead of widening the page. */
 	.ld-formulas {
 		display: grid;
 		gap: var(--space-2);
+		min-width: 0;
+		max-width: 100%;
+		box-sizing: border-box;
+		overflow-x: auto;
+		scrollbar-width: thin;
+		padding-bottom: var(--space-3);
 		color: var(--text);
 		font-size: 15px;
 	}

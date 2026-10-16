@@ -69,12 +69,23 @@
 
 /* Display formulas from the build step: `<div class="math-display">`. */
 :where(.prose) .math-display:not(figure *) {
+	max-width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
 	overflow-x: auto;
-	padding: var(--space-2) 0;
+	overflow-y: hidden;
+	scrollbar-width: thin;
+	padding: var(--space-2) 0 var(--space-3);
 	margin: var(--space-6) 0;
 }
 :where(.prose) .katex-display:not(figure *) {
 	margin: var(--space-2) 0;
+}
+/* Formulas scroll inside their block on narrow screens; the page itself never scrolls sideways. */
+:where(.prose) .math-display:not(figure *) .katex-display {
+	width: max-content;
+	max-width: none;
+	margin: var(--space-2) auto;
 }
 
 @media (max-width: 900px) {
