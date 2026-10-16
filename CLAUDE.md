@@ -86,5 +86,8 @@
 
 ## Окружение
 
+- Никогда не завершать процессы по имени (`taskkill /IM node.exe`, `pkill node`): только свои, по PID. На машине работают другие агенты и программы пользователя.
+- У параллельных агентов общий каталог шелла: каждую команду начинать с `cd <свой worktree> &&`.
+
 - Windows; Bash-инструмент это Git Bash. Python только через `uv` (`uv run ...`, `uv run --with <pkg> ...`).
 - Скриншоты макета: `uv run --with playwright python docs/mockups/shoot.py <page.html>`.
