@@ -9,6 +9,7 @@ import {
 	PrereqGraphData,
 	TopicsRegistry,
 } from '../../src/lib/contracts/registry';
+import { RoadmapsRegistry } from '../../src/lib/contracts/roadmap';
 import type { CliArgs } from './args';
 import { buildRegistries } from './build';
 import { checkContent } from './check';
@@ -63,6 +64,7 @@ export function runGenerate(args: CliArgs): number {
 		['glossary', registries.glossary, GlossaryRegistry],
 		['prereqGraph', registries.prereqGraph, PrereqGraphData],
 		['aliases', registries.aliases, AliasesRegistry],
+		['roadmaps', registries.roadmaps, RoadmapsRegistry],
 	];
 	mkdirSync(args.out, { recursive: true });
 	for (const [key, value, schema] of outputs) {

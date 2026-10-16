@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import type { RoadmapEntry } from '../../src/lib/contracts/roadmap';
 import type { AliasesRegistry } from '../../src/lib/contracts/registry';
 import type {
 	ChapterEntry,
@@ -22,6 +23,7 @@ export interface Registries {
 	glossary: GlossaryRegistry;
 	prereqGraph: PrereqGraphData;
 	aliases: AliasesRegistry;
+	roadmaps: RoadmapEntry[];
 }
 
 /**
@@ -107,6 +109,7 @@ export function buildRegistries(loaded: LoadedContent): Registries {
 		glossary,
 		prereqGraph: buildGraph(loaded),
 		aliases: collectAliases(loaded).aliases,
+		roadmaps: buildRoadmaps(loaded),
 	};
 }
 
@@ -134,4 +137,29 @@ function buildGraph(loaded: LoadedContent): PrereqGraphData {
 		}
 	}
 	return { nodes, edges };
+}
+
+/** Minutes of a chapter at the base level (c2), falling back to any known value. */
+function baseMinutes(minutes: LoadedContent['chapters'][number]['data']['minutes']): number {
+	if (typeof minutes === 'number') return minutes;
+	return minutes.c2 ?? minutes.c1 ?? minutes.c3 ?? minutes.c4 ?? 0;
+}
+
+/** Roadmaps sorted by id with the derived chapter count and time estimate. */
+function buildRoadmaps(loaded: LoadedContent): RoadmapEntry[] {
+	const byId = new Map(loaded.chapters.map((ch) => [ch.data.id, ch]));
+	return loaded.roadmaps
+		.map(({ data }) => {
+			const ids = data.steps.flatMap((s) => s.chapters);
+			const computed = ids.reduce((sum, id) => {
+				const ch = byId.get(id);
+				return sum + (ch ? baseMinutes(ch.data.minutes) : 0);
+			}, 0);
+			return {
+				...data,
+				estimatedMinutes: data.estimatedMinutes ?? Math.round(computed),
+				chapterCount: ids.length,
+			};
+		})
+		.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
 }

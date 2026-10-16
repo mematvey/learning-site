@@ -17,6 +17,7 @@ export const GENERATED_FILES = {
 	glossary: 'glossary.json',
 	prereqGraph: 'prereq-graph.json',
 	aliases: 'aliases.json',
+	roadmaps: 'roadmaps.json',
 } as const;
 
 /** `topics.json`: topics sorted by `order`; `chapterIds` are in reading order. */

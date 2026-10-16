@@ -1,0 +1,26 @@
+id: gpu-compute-path
+title: 'Путь в GPU-вычисления'
+summary: 'От устройства GPU до оптимизации умножения матриц, с остановкой на иерархии памяти.'
+audience: 'Для тех, кто хочет понять, как код ложится на GPU, и писать ядра на CUDA и Triton.'
+goal: 'Объяснить, почему производительность упирается в память, и оптимизировать простое ядро.'
+steps:
+  - title: 'Иерархия памяти'
+    description: 'Кэши и локальность данных на CPU: фундамент для разговора о памяти GPU.'
+    chapters: [cs/memory-cache]
+  - title: 'Архитектура GPU'
+    description: 'Потоковые мультипроцессоры, варпы и модель исполнения.'
+    chapters: [compute/gpu-architecture]
+  - title: 'Основы CUDA'
+    description: 'Сетка, блоки и потоки, запуск первого ядра.'
+    chapters: [compute/cuda-basics]
+    labs: [compute-cuda-basics]
+  - title: 'Доступ к памяти'
+    description: 'Слияние обращений к глобальной памяти и его влияние на скорость.'
+    chapters: [compute/memory-coalescing]
+  - title: 'Введение в Triton'
+    description: 'Блочный подход к ядрам на Python.'
+    chapters: [compute/triton-intro]
+    labs: [compute-triton-intro]
+  - title: 'Оптимизация умножения матриц'
+    description: 'Тайлинг и повторное использование данных: куда уходит время в matmul.'
+    chapters: [compute/matmul-optimization]

@@ -1,0 +1,30 @@
+id: ml-interview
+title: 'Классический ML к собеседованию'
+summary: 'Девять тем классического машинного обучения, которые чаще всего спрашивают на собеседованиях.'
+audience: 'Для готовящихся к интервью на позиции ML-инженера и дата-сайентиста.'
+goal: 'Уверенно объяснять базовые модели, компромисс смещения и разброса, регуляризацию и метрики.'
+steps:
+  - title: 'Линейная регрессия и смещение-разброс'
+    description: 'Простейшая модель, функция потерь, градиентный спуск и главный компромисс обучения.'
+    chapters: [classic-ml/linear-regression, classic-ml/bias-variance]
+    labs: [classic-ml-linear-regression, classic-ml-bias-variance]
+  - title: 'Регуляризация и логистическая регрессия'
+    description: 'L1 и L2 против переобучения, затем классификация: сигмоида, кросс-энтропия, вероятностный взгляд.'
+    chapters: [classic-ml/regularization, classic-ml/logistic-regression]
+    labs: [classic-ml-regularization, classic-ml-logistic-regression]
+  - title: 'Деревья и ансамбли'
+    description: 'Решающие деревья, бэггинг и бустинг: почему ансамбли работают лучше одиночных моделей.'
+    chapters: [classic-ml/decision-trees, classic-ml/ensembles]
+    labs: [classic-ml-decision-trees, classic-ml-ensembles]
+  - title: 'Метрические методы и SVM'
+    description: 'Ближайшие соседи, опорные векторы и ядра.'
+    chapters: [classic-ml/knn-svm]
+    labs: [classic-ml-knn-svm]
+  - title: 'Кластеризация и снижение размерности'
+    description: 'Обучение без учителя: k-means и метод главных компонент.'
+    chapters: [classic-ml/clustering-pca]
+    labs: [classic-ml-clustering-pca]
+  - title: 'Метрики и валидация'
+    description: 'Как честно оценить модель: кросс-валидация, precision и recall, ROC и утечки данных.'
+    chapters: [classic-ml/metrics-validation]
+    labs: [classic-ml-metrics-validation]
