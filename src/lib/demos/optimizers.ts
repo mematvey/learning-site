@@ -15,12 +15,12 @@ export const AXIS = 5;
 export const KAPPA_MIN = 1;
 export const KAPPA_MAX = 20;
 export const KAPPA_STEP = 1;
-export const KAPPA_DEFAULT = 10;
+export const KAPPA_DEFAULT = 20;
 
 export const LR_MIN = 0.01;
 export const LR_MAX = 0.5;
 export const LR_STEP = 0.01;
-export const LR_DEFAULT = 0.1;
+export const LR_DEFAULT = 0.07;
 
 export const MOMENTUM_MIN = 0;
 export const MOMENTUM_MAX = 0.99;
