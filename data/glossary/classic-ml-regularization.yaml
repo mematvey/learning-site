@@ -1,0 +1,40 @@
+- id: l2-penalty
+  term: L2-штраф
+  term_en: L2 penalty
+  definition: Штраф за сумму квадратов весов. Уменьшает каждый вес пропорционально его величине; обычно не обнуляет веса.
+  chapter: classic-ml/regularization
+- id: l1-penalty
+  term: L1-штраф
+  term_en: L1 penalty
+  definition: Штраф за сумму модулей весов. Тянет каждый вес к нулю с одинаковой силой, поэтому часть весов может стать ровно нулём.
+  chapter: classic-ml/regularization
+- id: penalty-strength
+  term: сила регуляризации
+  term_en: penalty strength
+  definition: Коэффициент λ перед штрафом в функции потерь. При нуле штрафа нет, с ростом силы веса сжимаются сильнее.
+  chapter: classic-ml/regularization
+- id: shrinkage
+  term: сжатие весов
+  term_en: shrinkage
+  definition: Уменьшение модуля весов под действием штрафа. Сжатие смещает оценки к нулю, поэтому регуляризация вносит смещение.
+  chapter: classic-ml/regularization
+- id: sparsity
+  term: разреженность
+  term_en: sparsity
+  definition: Свойство решения, при котором большая часть весов равна нулю. Признаки с нулевыми весами не участвуют в предсказании.
+  chapter: classic-ml/regularization
+- id: standardization
+  term: стандартизация признаков
+  term_en: feature standardization
+  definition: Преобразование признака, которое вычитает среднее и делит на стандартное отклонение. Параметры берутся с обучающей выборки.
+  chapter: classic-ml/regularization
+- id: soft-thresholding
+  term: мягкое пороговое преобразование
+  term_en: soft-thresholding
+  definition: Функция S_t(z) = sign(z)·max(|z| − t, 0). Сдвигает значение к нулю на t и обнуляет всё, что по модулю не больше t.
+  chapter: classic-ml/regularization
+- id: coordinate-descent
+  term: координатный спуск
+  term_en: coordinate descent
+  definition: Метод минимизации, который на каждом шаге меняет одну координату, остальные фиксирует, и проходит координаты по очереди.
+  chapter: classic-ml/regularization
