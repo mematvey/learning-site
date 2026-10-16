@@ -1,0 +1,11 @@
+id: dl-multi-head-attention
+title: Multi-head attention на NumPy
+chapter: dl/multi-head-attention
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+visualizers:
+  - { type: heatmap, source: arrays.weights }
+timeout: 10
+packages: [numpy]
