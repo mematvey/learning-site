@@ -1,0 +1,35 @@
+- id: law-of-large-numbers
+  term: закон больших чисел
+  term_en: law of large numbers
+  definition: 'Среднее большого числа независимых измерений одной величины приближается к её математическому ожиданию при росте числа измерений.'
+  chapter: stats/limit-theorems
+- id: central-limit-theorem
+  term: центральная предельная теорема
+  term_en: central limit theorem
+  definition: 'Сумма многих независимых слагаемых, центрированная и поделённая на своё стандартное отклонение, при росте числа слагаемых приближается к стандартному нормальному распределению. Нужна конечная дисперсия слагаемых.'
+  chapter: stats/limit-theorems
+- id: sample-mean
+  term: выборочное среднее
+  term_en: sample mean
+  definition: 'Среднее арифметическое нескольких измерений одной величины. По выборке оно оценивает ожидание величины.'
+  chapter: stats/limit-theorems
+- id: standard-error
+  term: стандартная ошибка
+  term_en: standard error
+  definition: 'Стандартное отклонение выборочного среднего. Для независимых измерений оно равно стандартному отклонению одного измерения, делённому на корень из числа измерений.'
+  chapter: stats/limit-theorems
+- id: expected-value
+  term: математическое ожидание
+  term_en: expected value
+  definition: 'Среднее значение величины по её возможным значениям, взвешенное их вероятностями.'
+  chapter: stats/limit-theorems
+- id: dispersion
+  term: дисперсия
+  term_en: variance
+  definition: 'Средний квадрат отклонения величины от её математического ожидания. Показывает, насколько сильно значения разбросаны вокруг среднего.'
+  chapter: stats/limit-theorems
+- id: iid
+  term: независимые одинаково распределённые величины
+  term_en: independent and identically distributed (i.i.d.)
+  definition: 'Величины, которые независимы друг от друга и имеют одно и то же распределение. Так обычно моделируют повторные измерения одного процесса.'
+  chapter: stats/limit-theorems
