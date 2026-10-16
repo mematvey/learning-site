@@ -132,25 +132,26 @@ def run_impl(lab_dir: Path, cfg: dict, impl_name: str) -> dict:
 # ---------------------------------------------------------------------------
 
 
+def _load_harness():
+    import importlib.util
+
+    path = Path(__file__).resolve().parent.parent / "src" / "lib" / "labs" / "harness.py"
+    spec = importlib.util.spec_from_file_location("lab_harness", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def _worker(lab_dir: Path, impl_name: str) -> None:
     cfg = load_config(lab_dir)
     tests_files = [cfg["tests"]["visible"]]
     if "hidden" in cfg["tests"]:
         tests_files.append(cfg["tests"]["hidden"])
 
-    arrays: dict[str, dict] = {}
-
-    def report_array(name: str, values) -> None:
-        import numpy as np
-
-        arr = np.asarray(values)
-        arrays[name] = {
-            "shape": list(arr.shape),
-            "dtype": str(arr.dtype),
-            "data": [float(x) for x in arr.reshape(-1)],
-        }
-
-    namespace: dict = {"__name__": "__lab__", "report_array": report_array}
+    # Same helpers as in the browser (assert_close, report_*), so one test file works in both.
+    harness = _load_harness()
+    report = harness._Report()
+    namespace: dict = {"__name__": "__lab__", **harness._helpers(report)}
     captured = io.StringIO()
     tests: list[dict] = []
     with redirect_stdout(captured):
@@ -161,7 +162,7 @@ def _worker(lab_dir: Path, impl_name: str) -> None:
             for fn_name in fn_names:
                 tests.append(_run_test(namespace[fn_name], fn_name, hidden, lab_dir))
 
-    out = {"tests": tests, "arrays": arrays, "stdout": captured.getvalue()}
+    out = {"tests": tests, "arrays": report.arrays, "stdout": captured.getvalue()}
     sys.stdout.write(json.dumps(out))
 
 
