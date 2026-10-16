@@ -1,5 +1,5 @@
 import { openDB, type IDBPDatabase } from 'idb';
-import { ulid } from 'ulid';
+import { monotonicFactory } from 'ulid';
 import {
 	Note,
 	type ChapterId,
@@ -9,6 +9,9 @@ import {
 	type Ulid,
 	type Unsubscribe,
 } from '$lib/contracts';
+
+// Monotonic: ids created within the same millisecond still sort in creation order.
+const ulid = monotonicFactory();
 
 const STORE = 'notes';
 const CHAPTER_INDEX = 'chapter';
