@@ -7,13 +7,14 @@ import {
 	firstFailedIndex,
 	formatNumber,
 	isDraftStale,
+	USER_FILE,
 } from './format';
 
 const t = (name: string, status: TestResult['status'], line?: number): TestResult => ({
 	name,
 	status,
 	hidden: false,
-	...(line !== undefined ? { location: { file: 'attention.py', line } } : {}),
+	...(line !== undefined ? { location: { file: USER_FILE, line } } : {}),
 });
 
 describe('lab result helpers', () => {
@@ -32,6 +33,16 @@ describe('lab result helpers', () => {
 		expect(errorLine(tests)).toBe(17);
 		expect(firstFailedIndex([t('a', 'pass')])).toBe(-1);
 		expect(errorLine([t('a', 'pass')])).toBeNull();
+	});
+
+	it('does not mark the editor for a failure located in a test file', () => {
+		const inTests: TestResult = {
+			name: 'test_shape',
+			status: 'fail',
+			hidden: false,
+			location: { file: 'tests_visible.py', line: 9 },
+		};
+		expect(errorLine([inTests])).toBeNull();
 	});
 
 	it('formats signed numbers', () => {

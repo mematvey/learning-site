@@ -280,21 +280,8 @@
 		</div>
 	</div>
 
-	<!-- svelte-ignore a11y_figcaption_index -->
-	<figcaption class="ad-caption">
-		<p class="ad-cap-t">Рис. 1. Куда смотрит «{TOKENS[query] ?? ''}» в предложении</p>
-		<p class="ad-note">{note}</p>
-	</figcaption>
-
-	<details class="ad-alt">
-		<summary>Описание рисунка</summary>
-		<p>
-			Предложение «кот сел на коврик потому что» разбито на шесть токенов. Выбранный токен-запрос
-			(синий) соединён дугами со всеми токенами: чем толще и ярче дуга, тем больше его внимание к
-			этому ключу. Ниже те же веса в виде таблицы 6×6: строка — запрос, столбец — ключ, каждая
-			строка в сумме даёт 1. Переключатель масштаба 1/√d и слайдер d меняют разброс весов.
-		</p>
-	</details>
+	<!-- Caption, number and text alternative come from the enclosing Figure; this line only describes the current row. -->
+	<p class="ad-note">{note}</p>
 </figure>
 
 <style>
@@ -320,7 +307,6 @@
 	}
 	.ad ol,
 	.ad li,
-	.ad figcaption,
 	.ad details,
 	.ad summary {
 		margin: 0;
@@ -737,31 +723,9 @@
 		font-family: var(--font-mono);
 	}
 
-	/* Caption, note, text alternative */
-	.ad-caption {
-		margin: var(--space-8) 0 0;
-		padding-top: var(--space-4);
-		border-top: 1px solid var(--border);
-	}
-	.ad-cap-t {
-		font-family: var(--font-serif);
-		font-size: 17px;
-		font-weight: 600;
-		color: var(--text);
-	}
+	/* Row description under the chart */
 	.ad-note {
-		margin-top: var(--space-2);
-		color: var(--text-muted);
-	}
-	.ad-alt {
 		margin-top: var(--space-4);
-	}
-	.ad-alt summary {
-		color: var(--accent);
-		cursor: pointer;
-	}
-	.ad-alt p {
-		margin-top: var(--space-2);
 		color: var(--text-muted);
 	}
 

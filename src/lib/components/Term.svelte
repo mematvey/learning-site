@@ -23,13 +23,15 @@
 {#if entry}
 	<!-- Focusable on purpose: the glossary tooltip must be reachable by keyboard. -->
 	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-	<abbr class="term" tabindex="0" aria-describedby={tipId} data-term={id}>
-		{#if children}{@render children()}{:else}{entry.term}{/if}
-		<span role="tooltip" id={tipId} class="term-tip">
-			{#if entry.term_en}<span class="term-en">{entry.term_en}</span>{/if}
-			{entry.definition}
-		</span>
-	</abbr>
+	<!-- No whitespace between the nodes: the markup must not add spaces around the term text. -->
+	<abbr class="term" tabindex="0" aria-describedby={tipId} data-term={id}
+		>{#if children}{@render children()}{:else}{entry.term}{/if}<span
+			role="tooltip"
+			id={tipId}
+			class="term-tip"
+			>{#if entry.term_en}<span class="term-en">{entry.term_en}</span>{/if}{entry.definition}</span
+		></abbr
+	>
 {:else}
 	<!-- Unknown term id: the content linter reports it; render the text without a tooltip. -->
 	<span class="term-missing" data-term={id}
