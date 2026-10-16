@@ -1,0 +1,53 @@
+- id: decision-tree
+  term: дерево решений
+  term_en: decision tree
+  definition: Модель, которая задаёт цепочку вопросов о признаках; каждый вопрос делит объекты на две группы, ответ берётся из листа, в который попал объект.
+  chapter: classic-ml/decision-trees
+- id: split
+  term: разбиение
+  term_en: split
+  definition: Пара признак и порог, которая делит объекты узла на левую и правую части.
+  chapter: classic-ml/decision-trees
+- id: impurity
+  term: неоднородность
+  term_en: impurity
+  definition: Мера того, насколько перемешаны классы в узле; равна нулю в чистом узле.
+  chapter: classic-ml/decision-trees
+- id: gini
+  term: индекс Джини
+  term_en: Gini index
+  definition: Неоднородность узла, сумма p(1 − p) по классам, где p доля класса в узле; равна 1 минус сумма квадратов долей.
+  chapter: classic-ml/decision-trees
+  layer: { c: 2, d: 1 }
+- id: entropy
+  term: энтропия
+  term_en: entropy
+  definition: Неоднородность узла, минус сумма p log p по классам; равна нулю в чистом узле.
+  chapter: classic-ml/decision-trees
+  layer: { c: 2, d: 1 }
+- id: information-gain
+  term: прирост информации
+  term_en: information gain
+  definition: Уменьшение энтропии в узле после разбиения; разность между энтропией узла и взвешенной энтропией его частей.
+  chapter: classic-ml/decision-trees
+  layer: { c: 2, d: 1 }
+- id: leaf
+  term: лист
+  term_en: leaf
+  definition: Узел дерева без дальнейших вопросов; предсказание для объектов, попавших в лист, берётся из него.
+  chapter: classic-ml/decision-trees
+- id: greedy-split
+  term: жадный выбор разбиения
+  term_en: greedy split
+  definition: Выбор разбиения для текущего узла по локальному критерию, без учёта последствий для следующих узлов.
+  chapter: classic-ml/decision-trees
+- id: max-depth
+  term: максимальная глубина
+  term_en: max depth
+  definition: Ограничение числа уровней вопросов в дереве; меньшая глубина уменьшает переобучение.
+  chapter: classic-ml/decision-trees
+- id: pruning
+  term: обрезка дерева
+  term_en: pruning
+  definition: Упрощение выросшего дерева, то есть удаление поддеревьев, которые мало улучшают качество и подстраиваются под шум.
+  chapter: classic-ml/decision-trees
