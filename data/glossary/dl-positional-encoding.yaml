@@ -1,0 +1,15 @@
+- id: positional-encoding
+  term: позиционное кодирование
+  term_en: positional encoding
+  definition: Сигнал о номере токена в последовательности, который добавляется ко входу или встраивается в вычисление внимания; без него внимание не различает порядок токенов.
+  chapter: dl/positional-encoding
+- id: sinusoidal-encoding
+  term: синусоидальное кодирование
+  term_en: sinusoidal positional encoding
+  definition: Позиционное кодирование из пар синусов и косинусов разных частот; его вектор складывается с вектором токена.
+  chapter: dl/positional-encoding
+- id: rope
+  term: RoPE
+  term_en: rotary position embedding
+  definition: Позиционное кодирование, которое поворачивает пары компонент запроса и ключа на угол, пропорциональный позиции; скалярное произведение после поворота зависит только от разности позиций.
+  chapter: dl/positional-encoding
