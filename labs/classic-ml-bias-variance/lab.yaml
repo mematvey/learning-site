@@ -1,0 +1,13 @@
+id: classic-ml-bias-variance
+title: Смещение и разброс на полиномах
+chapter: classic-ml/bias-variance
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+visualizers:
+  - { type: curve, source: series.bias2 }
+  - { type: curve, source: series.variance }
+  - { type: curve, source: series.mse }
+timeout: 10
+packages: [numpy]
