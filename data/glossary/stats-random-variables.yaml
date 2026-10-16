@@ -1,0 +1,30 @@
+- id: random-variable
+  term: случайная величина
+  term_en: random variable
+  definition: 'Функция, которая каждому исходу опыта ставит в соответствие число. Её значения заранее не известны, но вероятности их появления заданы.'
+  chapter: stats/random-variables
+- id: pmf
+  term: функция вероятностей
+  term_en: probability mass function
+  definition: 'Для дискретной величины задаёт вероятность каждого значения: p(x) = P(X = x). Значения неотрицательны и в сумме дают единицу.'
+  chapter: stats/random-variables
+- id: expectation
+  term: математическое ожидание
+  term_en: expected value
+  definition: 'Взвешенное среднее значений величины: сумма значений, умноженных на их вероятности. Показывает, к чему сходится среднее многих опытов.'
+  chapter: stats/random-variables
+- id: rv-variance
+  term: дисперсия
+  term_en: variance
+  definition: 'Среднее квадрата отклонения величины от её математического ожидания. Показывает, насколько значения разбросаны вокруг среднего.'
+  chapter: stats/random-variables
+- id: standard-deviation
+  term: стандартное отклонение
+  term_en: standard deviation
+  definition: 'Квадратный корень из дисперсии. Измеряется в тех же единицах, что и сама величина.'
+  chapter: stats/random-variables
+- id: linearity-expectation
+  term: линейность математического ожидания
+  term_en: linearity of expectation
+  definition: 'Ожидание суммы равно сумме ожиданий, и это верно даже для зависимых величин. Ожидание умножения на константу и сдвига ведёт себя линейно.'
+  chapter: stats/random-variables
