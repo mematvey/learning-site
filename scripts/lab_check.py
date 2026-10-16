@@ -162,7 +162,13 @@ def _worker(lab_dir: Path, impl_name: str) -> None:
             for fn_name in fn_names:
                 tests.append(_run_test(namespace[fn_name], fn_name, hidden, lab_dir))
 
-    out = {"tests": tests, "arrays": report.arrays, "stdout": captured.getvalue()}
+    out = {
+        "tests": tests,
+        "arrays": report.arrays,
+        "series": report.series,
+        "metrics": report.metrics,
+        "stdout": captured.getvalue(),
+    }
     sys.stdout.write(json.dumps(out))
 
 
