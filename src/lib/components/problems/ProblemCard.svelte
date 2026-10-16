@@ -3,7 +3,6 @@
 	import { CHAPTER_CONTEXT, type ChapterContext } from '$lib/contracts/context';
 	import { FALLBACK_LEVELS, useLevels } from '$lib/levels';
 	import type { ProblemDef, ProblemParams, Rational } from '$lib/prob/types';
-	import AnswerView from './AnswerView.svelte';
 	import Experiment from './Experiment.svelte';
 	import ParamPanel from './ParamPanel.svelte';
 	import Spoilers from './Spoilers.svelte';
@@ -121,15 +120,14 @@
 		onReset={reset}
 	/>
 
-	<AnswerView questions={problem.questions} {exact} {valid} />
-
-	{#if viz}
-		<div class="pc-viz">{@render viz(safe)}</div>
-	{/if}
-
-	<Experiment {problem} params={safe} {exact} {valid} {paramsKey} />
-
-	<Spoilers {problem} params={safe} {exact} {valid} {depth} {onReveal} />
+	<Spoilers {problem} params={safe} {exact} {valid} {depth} {onReveal}>
+		{#snippet extra()}
+			{#if viz}
+				<div class="pc-viz">{@render viz(safe)}</div>
+			{/if}
+			<Experiment {problem} params={safe} {exact} {valid} {paramsKey} />
+		{/snippet}
+	</Spoilers>
 </section>
 
 <style>
