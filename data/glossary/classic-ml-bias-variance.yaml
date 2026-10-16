@@ -1,0 +1,50 @@
+- id: bias
+  term: смещение
+  term_en: bias
+  definition: "Разница между истинной зависимостью и средним предсказанием модели по всем возможным обучающим выборкам. Велико у слишком простой модели."
+  chapter: classic-ml/bias-variance
+- id: variance
+  term: разброс
+  term_en: variance
+  definition: "Насколько сильно предсказание модели меняется при смене обучающей выборки. Велик у слишком гибкой модели."
+  chapter: classic-ml/bias-variance
+- id: irreducible-error
+  term: неустранимая ошибка
+  term_en: irreducible error
+  definition: "Часть ошибки, которую не убрать ни одной моделью: шум в самих данных. Она задаёт нижнюю границу ожидаемой ошибки."
+  chapter: classic-ml/bias-variance
+- id: underfitting
+  term: недообучение
+  term_en: underfitting
+  definition: "Ситуация, когда модель плохо описывает даже обучающие данные: ошибка высокая и на обучении, и на новых данных."
+  chapter: classic-ml/bias-variance
+- id: overfitting
+  term: переобучение
+  term_en: overfitting
+  definition: "Ситуация, когда ошибка на обучающих данных низкая, а на новых высокая: модель подстроилась под шум конкретной выборки."
+  chapter: classic-ml/bias-variance
+- id: learning-curve
+  term: кривая обучения
+  term_en: learning curve
+  definition: "График ошибки на обучении и на валидации в зависимости от размера обучающей выборки. По зазору между кривыми видно, чего не хватает модели."
+  chapter: classic-ml/bias-variance
+- id: validation-set
+  term: валидационная выборка
+  term_en: validation set
+  definition: "Данные, которые не участвуют в обучении и используются для проверки и выбора модели. Тестовую выборку для выбора модели не используют."
+  chapter: classic-ml/bias-variance
+- id: cross-validation
+  term: кросс-валидация
+  term_en: cross-validation
+  definition: "Оценка модели, которая повторяет обучение и проверку на нескольких разбиениях данных и усредняет результаты."
+  chapter: classic-ml/bias-variance
+- id: regularization
+  term: регуляризация
+  term_en: regularization
+  definition: "Добавка к функции потерь, которая штрафует сложные решения, например большие веса. Уменьшает разброс ценой некоторого смещения."
+  chapter: classic-ml/bias-variance
+- id: double-descent
+  term: двойной спуск
+  term_en: double descent
+  definition: "Форма кривой ошибки, при которой после пика около порога интерполяции ошибка снова падает при дальнейшем росте модели."
+  chapter: classic-ml/bias-variance
