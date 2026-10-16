@@ -1,0 +1,39 @@
+- id: activation
+  term: активация
+  term_en: activation
+  definition: 'Нелинейная функция, которую слой применяет к своему взвешенному входу: a = f(Wx + b). Без неё стек линейных слоёв равен одному линейному слою.'
+  chapter: dl/activations-init
+- id: relu
+  term: ReLU
+  term_en: rectified linear unit
+  definition: 'Активация max(0, x): положительные входы проходят без изменений, отрицательные обнуляются.'
+  chapter: dl/activations-init
+- id: saturation
+  term: насыщение
+  term_en: saturation
+  definition: 'Режим, в котором функция почти постоянна, например сигмоида при больших по модулю входах. Её производная близка к нулю, и градиент почти не проходит назад.'
+  chapter: dl/activations-init
+- id: vanishing-gradient
+  term: затухающий градиент
+  term_en: vanishing gradient
+  definition: 'Ситуация, когда градиент при движении назад по слоям уменьшается до значений, при которых ранние слои почти не учатся.'
+  chapter: dl/activations-init
+- id: weight-initialization
+  term: инициализация весов
+  term_en: weight initialization
+  definition: 'Выбор начальных значений весов до обучения. Задаёт масштаб сигналов и градиентов в самом начале обучения.'
+  chapter: dl/activations-init
+- id: xavier-init
+  term: инициализация Xavier
+  term_en: Xavier (Glorot) initialization
+  definition: 'Инициализация с дисперсией весов 2 / (n_in + n_out). Выведена для линейных и tanh-подобных активаций и балансирует прямой и обратный проход.'
+  chapter: dl/activations-init
+- id: he-init
+  term: инициализация He
+  term_en: He (Kaiming) initialization
+  definition: 'Инициализация с дисперсией весов 2 / n_in. Компенсирует обнуление отрицательной части сигнала в ReLU.'
+  chapter: dl/activations-init
+- id: fan-in
+  term: fan-in
+  definition: 'Число входов нейрона или слоя; в формулах инициализации обозначается n_in.'
+  chapter: dl/activations-init
