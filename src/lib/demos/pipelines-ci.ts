@@ -37,6 +37,8 @@ export interface PipelineRun {
 	cache: Partial<Record<StepId, string>>;
 	/** Code version of each step. Editing the code increments it and changes the key. */
 	revs: Record<StepId, number>;
+	/** Parameter version of each step (config values). Changing a parameter changes the key. */
+	params: Record<StepId, number>;
 }
 
 export const STEPS: readonly StepDef[] = [
@@ -100,19 +102,20 @@ export function fnv1a(text: string): string {
 }
 
 /**
- * Cache key of every step: hash of (step id, code version, keys of the inputs).
+ * Cache key of every step: hash of (step id, code version, parameters, keys of the inputs).
  * A change in a step or in any step above it changes its key and the keys of all steps below it.
  */
 export function stepKeys(
 	revs: Record<StepId, number>,
 	steps: readonly StepDef[] = STEPS,
+	params: Partial<Record<StepId, number>> = {},
 ): Record<StepId, string> {
 	const keys = {} as Record<StepId, string>;
 	for (const id of topoOrder(steps)) {
 		const d = steps.find((s) => s.id === id);
 		if (!d) throw new Error(`unknown step ${id}`);
 		const inputs = d.deps.map((x) => keys[x]).join(',');
-		keys[id] = fnv1a(`${id}|rev=${revs[id]}|in=${inputs}`);
+		keys[id] = fnv1a(`${id}|rev=${revs[id]}|par=${params[id] ?? 0}|in=${inputs}`);
 	}
 	return keys;
 }
@@ -120,11 +123,13 @@ export function stepKeys(
 export function initialRun(): PipelineRun {
 	const status = {} as Record<StepId, StepStatus>;
 	const revs = {} as Record<StepId, number>;
+	const params = {} as Record<StepId, number>;
 	for (const s of STEPS) {
 		status[s.id] = 'pending';
 		revs[s.id] = 0;
+		params[s.id] = 0;
 	}
-	return { status, cache: {}, revs };
+	return { status, cache: {}, revs, params };
 }
 
 /** Same code and cache, every step pending again. Used before a new run. */
@@ -150,7 +155,7 @@ export function runNext(
 	if (!id) return run;
 	const d = steps.find((s) => s.id === id);
 	if (!d) throw new Error(`unknown step ${id}`);
-	const keys = stepKeys(run.revs, steps);
+	const keys = stepKeys(run.revs, steps, run.params);
 	const inputsOk = d.deps.every((x) => run.status[x] === 'ok' || run.status[x] === 'cached');
 
 	let status: StepStatus;
@@ -186,6 +191,11 @@ export function runAll(run: PipelineRun, fail: StepId | null): PipelineRun {
 /** Edits the code of a step: its key changes, so it and all steps below it are no longer cached. */
 export function editStep(run: PipelineRun, id: StepId): PipelineRun {
 	return { ...restart(run), revs: { ...run.revs, [id]: run.revs[id] + 1 } };
+}
+
+/** Edits a parameter of a step (for example the learning rate): its key changes like after a code edit. */
+export function editParam(run: PipelineRun, id: StepId): PipelineRun {
+	return { ...restart(run), params: { ...run.params, [id]: run.params[id] + 1 } };
 }
 
 /** The release is allowed only when deploy passed (run or cached), so every step before it passed too. */

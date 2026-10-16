@@ -3,6 +3,7 @@ import {
 	STEPS,
 	advance,
 	describeRun,
+	editParam,
 	editStep,
 	fnv1a,
 	initialRun,
@@ -149,6 +150,25 @@ describe('step cache', () => {
 		const again = runAll(ran, 'train');
 		expect(again.status.train).toBe('cached');
 		expect(released(again)).toBe(true);
+	});
+});
+
+describe('parameters in the key', () => {
+	it('changing a parameter changes the key of the step and the steps below it', () => {
+		const run = initialRun();
+		const base = stepKeys(run.revs, STEPS, run.params);
+		const edited = stepKeys(run.revs, STEPS, { ...run.params, train: 1 });
+		expect(edited.train).not.toBe(base.train);
+		expect(edited.evaluate).not.toBe(base.evaluate);
+		expect(edited.features).toBe(base.features);
+	});
+
+	it('editing a parameter re-runs the step and its successors, not the steps above', () => {
+		const ran = runAll(initialRun(), null);
+		const edited = runAll(editParam(ran, 'train'), null);
+		expect(edited.status.features).toBe('cached');
+		expect(edited.status.train).toBe('ok');
+		expect(edited.status.evaluate).toBe('ok');
 	});
 });
 
