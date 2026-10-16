@@ -1,0 +1,25 @@
+- id: big-o
+  term: O-нотация
+  term_en: big O
+  definition: Верхняя оценка роста числа операций T(n) при больших n с точностью до постоянного множителя; O(n²) значит, что рост не быстрее квадратичного.
+  chapter: cs/complexity
+- id: big-omega
+  term: Ω-нотация
+  term_en: big Omega
+  definition: Нижняя оценка роста T(n) при больших n с точностью до постоянного множителя; Ω(n²) значит, что рост не медленнее квадратичного.
+  chapter: cs/complexity
+- id: big-theta
+  term: Θ-нотация
+  term_en: big Theta
+  definition: 'Точная оценка роста T(n): одновременно O(f(n)) и Ω(f(n)) с точностью до постоянных множителей.'
+  chapter: cs/complexity
+- id: cs-worst-case
+  term: худший случай
+  term_en: worst case
+  definition: Наибольшее число операций среди всех входов заданного размера n. Оценка худшего случая верна для любого входа такого размера.
+  chapter: cs/complexity
+- id: cs-constant-factor
+  term: константа
+  term_en: constant factor
+  definition: Постоянный множитель, на который отличаются алгоритмы одинакового роста. O-нотация его не учитывает, но при реальных n он влияет на время.
+  chapter: cs/complexity
