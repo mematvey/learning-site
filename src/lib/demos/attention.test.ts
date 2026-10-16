@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
 	TOKEN_COUNT,
+	arcLabelPos,
 	arcPath,
 	attentionWeights,
 	makeVectors,
@@ -54,5 +55,11 @@ describe('helpers', () => {
 	it('self-arc is a loop path and other arcs start at the query', () => {
 		expect(arcPath(2, 2).startsWith('M')).toBe(true);
 		expect(arcPath(0, 5)).toMatch(/^M[\d.]+ 168 Q/);
+	});
+
+	it('arc geometry follows the real width of the arcs SVG', () => {
+		// Token 0 centre is width / 12 for any width, so the start point scales with the container.
+		expect(arcPath(0, 5, 240)).toMatch(/^M20 168 Q/);
+		expect(arcLabelPos(0, 0, 240)[0]).toBe(20);
 	});
 });

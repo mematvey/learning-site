@@ -21,6 +21,7 @@
 		isQueryIndex,
 		makeVectors,
 		rowOrder,
+		shortToken,
 		snapD,
 		sumOf,
 	} from '$lib/demos/attention';
@@ -52,6 +53,8 @@
 	let d = $state(snapD(initial?.d ?? 64));
 	let hover = $state<{ i: number; j: number } | null>(null);
 	let root: HTMLElement | undefined = $state();
+	/** Real width of the token block in px; arcs are drawn at this width (no viewBox scaling). */
+	let tokensW = $state(0);
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
 	const highlight = getContext<HighlightContext | undefined>(HIGHLIGHT_CONTEXT);
@@ -65,6 +68,9 @@
 	const sideSum = $derived(sumOf(row).toFixed(2));
 	const note = $derived(describeRow(query, row, d, scaled));
 	const grid = $derived(Array.from({ length: TOKEN_COUNT }, (_, i) => i));
+	const arcW = $derived(tokensW >= 240 ? tokensW : ARC_VB_W);
+	/** Narrow layout (matches the 560px CSS breakpoint). */
+	const narrow = $derived(tokensW > 0 && tokensW < 560);
 
 	function apply(patch: Partial<AttentionDemoState>): void {
 		if (typeof patch.scaled === 'boolean') scaled = patch.scaled;
@@ -145,10 +151,10 @@
 		</div>
 	</div>
 
-	<div class="ad-tokens">
+	<div class="ad-tokens" bind:clientWidth={tokensW}>
 		<svg
 			class="ad-arcs"
-			viewBox="0 0 {ARC_VB_W} {ARC_VB_H}"
+			viewBox="0 0 {arcW} {ARC_VB_H}"
 			role="img"
 			aria-labelledby="ad-arcs-title ad-arcs-desc"
 		>
@@ -161,19 +167,16 @@
 				{@const pair = hover !== null && hover.i === query && hover.j === j}
 				<path
 					class="ad-arc"
-					d={arcPath(query, j)}
+					d={arcPath(query, j, arcW)}
 					style:stroke-width={(1 + 14 * a + (pair ? 2 : 0)).toFixed(2)}
 					style:stroke-opacity={(0.12 + 0.88 * a).toFixed(2)}
 				></path>
 			{/each}
 			{#each row as a, j (j)}
-				{@const p = arcLabelPos(query, j)}
-				<text
-					class="ad-arc-l"
-					x={p[0].toFixed(1)}
-					y={p[1].toFixed(1)}
-					style:opacity={a >= 0.05 ? 1 : 0}>{a.toFixed(2)}</text
-				>
+				{@const p = arcLabelPos(query, j, arcW)}
+				{#if (!narrow || top3.includes(j)) && a >= 0.05}
+					<text class="ad-arc-l" x={p[0].toFixed(1)} y={p[1].toFixed(1)}>{a.toFixed(2)}</text>
+				{/if}
 			{/each}
 		</svg>
 
@@ -225,7 +228,11 @@
 				<div class="ad-row ad-head">
 					<span></span>
 					{#each TOKENS as token, j (j)}
-						<span class="ad-h">{token}</span>
+						<span class="ad-h" title={token}
+							><span class="ad-h-long">{token}</span><span class="ad-h-short" aria-hidden="true"
+								>{shortToken(token)}</span
+							></span
+						>
 					{/each}
 					<span class="ad-sum-h">Σ</span>
 				</div>
@@ -571,6 +578,9 @@
 	.ad-row.ad-head {
 		padding-top: 0;
 	}
+	.ad-h-short {
+		display: none;
+	}
 	.ad-h {
 		overflow: hidden;
 		color: var(--cat-2);
@@ -623,7 +633,7 @@
 		color: var(--text);
 	}
 	.ad-cell:hover,
-	.ad-cell:focus-visible {
+	.ad-cell:focus {
 		z-index: 3;
 		outline: none;
 	}
@@ -631,7 +641,7 @@
 		box-shadow: inset 0 0 0 2px var(--text);
 	}
 	.ad-cell:hover::after,
-	.ad-cell:focus-visible::after {
+	.ad-cell:focus::after {
 		content: 'α = ' attr(data-a);
 		position: absolute;
 		bottom: calc(100% + 6px);
@@ -780,6 +790,66 @@
 		}
 		.ad-cell {
 			font-size: 11px;
+		}
+	}
+
+	@media (max-width: 559px) {
+		/* Controls stack: the slider takes the full width */
+		.ad-controls {
+			flex-direction: column;
+			align-items: stretch;
+			gap: var(--space-3);
+		}
+		.ad-ctl {
+			flex-wrap: wrap;
+		}
+		.ad-range {
+			flex: 1 1 100%;
+			width: 100%;
+			min-width: 0;
+		}
+		.ad-formula {
+			font-size: 15px;
+		}
+		/* Chips and arc labels keep 12px; six tokens stay in one row.
+		 * `.ad .ad-chip`: `.ad button { font: inherit }` has higher specificity than `.ad-chip`. */
+		.ad .ad-chip {
+			width: calc(100% - 1px);
+			padding: 0;
+			font-size: 12px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		.ad-arc-l {
+			font-size: 12px;
+		}
+		/* Heatmap: colour only, the value is shown on hover/tap/focus */
+		.ad-row {
+			grid-template-columns: 52px repeat(6, minmax(0, 1fr)) 36px;
+		}
+		.ad-h {
+			font-size: 12px;
+		}
+		.ad .ad-rl {
+			font-size: 12px;
+			padding: 2px 2px;
+		}
+		.ad-h-long {
+			display: none;
+		}
+		.ad-h-short {
+			display: inline;
+		}
+		/* Value hidden by font-size; the tooltip sets its own size */
+		.ad-cell {
+			font-size: 0;
+		}
+		.ad-cell:hover::after,
+		.ad-cell:focus::after {
+			content: 'α = ' attr(data-a);
+		}
+		.ad-sum {
+			font-size: 12px;
 		}
 	}
 </style>
