@@ -154,4 +154,11 @@
 			min-width: 0;
 		}
 	}
+
+	@media (max-width: 640px) {
+		/* Search collapses to an icon button (see SearchDialog); slot keeps it on the right. */
+		.search-slot {
+			justify-content: flex-end;
+		}
+	}
 </style>

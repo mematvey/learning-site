@@ -257,6 +257,19 @@
 		.lvl-key {
 			display: none;
 		}
+		/* Anchor to the header (sticky topbar is the containing block) so the popover stays inside the 16px margins. */
+		.levels-wrap {
+			position: static;
+		}
+		.levels-pop {
+			left: 16px;
+			right: 16px;
+			width: auto;
+		}
+		/* Only the active tick label is shown, so the labels never overlap on narrow screens. */
+		.ticks span:not(.on) {
+			visibility: hidden;
+		}
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.ticks span {
