@@ -1,5 +1,5 @@
 id: dl-backprop
-title: Обратное распространение
+title: Обратный проход двухслойной сети на NumPy
 chapter: dl/backprop
 runtime: pyodide
 starter: starter.py
