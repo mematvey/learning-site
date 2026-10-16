@@ -1,0 +1,24 @@
+id: algorithms-basics
+title: 'Основы алгоритмов'
+summary: 'Раздел CS по порядку: сложность, сортировка, хеш-таблицы, графы и кэш.'
+audience: 'Для тех, кто хочет закрыть базу по алгоритмам и структурам данных.'
+goal: 'Оценивать сложность, выбирать подходящую структуру данных и понимать влияние памяти на скорость.'
+steps:
+  - title: 'Сложность'
+    description: 'O-нотация и оценка времени и памяти алгоритма.'
+    chapters: [cs/complexity]
+  - title: 'Сортировка и поиск'
+    description: 'Основные алгоритмы сортировки и бинарный поиск.'
+    chapters: [cs/sorting-searching]
+    labs: [cs-sorting-searching]
+  - title: 'Хеш-таблицы'
+    description: 'Хеш-функции, коллизии и амортизированная стоимость операций.'
+    chapters: [cs/hash-tables]
+    labs: [cs-hash-tables]
+  - title: 'Графы'
+    description: 'Обход в ширину и глубину, кратчайшие пути.'
+    chapters: [cs/graphs-algorithms]
+    labs: [cs-graphs-algorithms]
+  - title: 'Память и кэш'
+    description: 'Почему асимптотика не всё: локальность данных и кэши процессора.'
+    chapters: [cs/memory-cache]

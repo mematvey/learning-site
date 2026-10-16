@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import type { SiteHeaderProps } from '$lib/contracts/component-props';
 	import { resolveTheme, watchSystemDark } from '$lib/theme/theme';
 	import ThemeToggle from './ThemeToggle.svelte';
@@ -9,6 +10,7 @@
 
 	let systemDark = $state(false);
 	$effect(() => watchSystemDark((dark) => (systemDark = dark)));
+	const onRoadmaps = $derived(page.url.pathname.includes('/roadmaps'));
 	const resolved = $derived(resolveTheme(theme, systemDark));
 
 	let progress = $state(0);
@@ -30,6 +32,9 @@
 <header class="topbar">
 	<div class="topbar-inner">
 		<a class="brand" href={resolve('/')} data-home>learning-site</a>
+		<a class="nav-link" href={resolve('/roadmaps')} aria-current={onRoadmaps ? 'page' : undefined}
+			>Маршруты</a
+		>
 		<nav class="crumbs" aria-label="Путь к главе">
 			{#each crumbs as crumb, i (i)}
 				{#if i > 0}<span class="sep" aria-hidden="true">›</span>{/if}
@@ -82,6 +87,19 @@
 		color: var(--text);
 		text-decoration: none;
 		white-space: nowrap;
+	}
+
+	.nav-link {
+		flex: none;
+		font-size: var(--fs-sm);
+		color: var(--text-muted);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.nav-link:hover,
+	.nav-link[aria-current] {
+		color: var(--text);
 	}
 
 	.crumbs {

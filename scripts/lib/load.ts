@@ -6,6 +6,7 @@ import { AliasesFile } from '../../src/lib/contracts/aliases';
 import { ChapterFrontmatter } from '../../src/lib/contracts/chapter';
 import { GlossaryFile, type GlossaryEntry } from '../../src/lib/contracts/glossary';
 import { Lab } from '../../src/lib/contracts/lab';
+import { Roadmap } from '../../src/lib/contracts/roadmap';
 import { Topic } from '../../src/lib/contracts/topic';
 import { type Diagnostic, lineOf } from './diagnostics';
 import { type SvxScan, scanSvx } from './svx';
@@ -35,6 +36,14 @@ export interface LoadedLab {
 	data: Lab;
 }
 
+export interface LoadedRoadmap {
+	/** File name without extension, which must equal `data.id`. */
+	name: string;
+	file: string;
+	text: string;
+	data: Roadmap;
+}
+
 export interface LoadedGlossaryEntry {
 	file: string;
 	line: number;
@@ -47,6 +56,7 @@ export interface LoadedContent {
 	chapters: LoadedChapter[];
 	labs: LoadedLab[];
 	glossary: LoadedGlossaryEntry[];
+	roadmaps: LoadedRoadmap[];
 	/** Entries of `data/aliases.yaml`: old id -> new id. */
 	aliases: Record<string, string>;
 	aliasesFile: string;
@@ -153,6 +163,7 @@ export function loadContent(root: string): LoadedContent {
 		chapters: [],
 		labs: [],
 		glossary: [],
+		roadmaps: [],
 		aliases: {},
 		aliasesFile: 'data/aliases.yaml',
 		diagnostics,
@@ -213,6 +224,15 @@ export function loadContent(root: string): LoadedContent {
 			const line = lineOf(text, new RegExp(`id:\\s*${entry.id}\\s*$`), 1);
 			loaded.glossary.push({ file, line, data: entry });
 		}
+	}
+
+	for (const name of files(join(root, 'data', 'roadmaps'), /\.ya?ml$/)) {
+		const file = `data/roadmaps/${name}`;
+		const text = readFileSync(join(root, file), 'utf8');
+		const value = parseYaml(text, file, 1, diagnostics);
+		if (value === undefined) continue;
+		const data = validate(Roadmap, value, file, text, 1, diagnostics);
+		if (data) loaded.roadmaps.push({ name: name.replace(/\.ya?ml$/, ''), file, text, data });
 	}
 
 	if (existsSync(join(root, loaded.aliasesFile))) {

@@ -427,6 +427,69 @@ function checkGraph(
 		const file = chapters.get(cycle[0] ?? '')?.file ?? 'content';
 		out.push({ file, line: 1, message: `цикл в графе пререквизитов: ${cycle.join(' -> ')}` });
 	}
+	out.push(...checkRoadmaps(loaded));
+	return out;
+}
+
+/**
+ * Roadmap rules: id equals file name and is unique; chapters and labs exist; no chapter or lab
+ * is listed twice; a lab belongs to a chapter of its own step; the order never puts a chapter
+ * before its prerequisite that is also on the route (that would be a cycle with the graph).
+ */
+export function checkRoadmaps(loaded: LoadedContent): Diagnostic[] {
+	const out: Diagnostic[] = [];
+	const chapters = chapterIndex(loaded);
+	const labs = new Map(loaded.labs.map((lab) => [lab.data.id, lab.data]));
+	const seenIds = new Set<string>();
+
+	for (const road of loaded.roadmaps) {
+		const lines = road.text.split(/\r?\n/);
+		const at = (pattern: RegExp) => lineOf(lines, pattern, 1);
+		const add = (pattern: RegExp, message: string) =>
+			out.push({ file: road.file, line: at(pattern), message });
+
+		if (road.data.id !== road.name) {
+			add(/^id:/, `id "${road.data.id}" не совпадает с именем файла "${road.name}"`);
+		}
+		if (seenIds.has(road.data.id)) {
+			add(/^id:/, `маршрут "${road.data.id}" определён дважды`);
+		}
+		seenIds.add(road.data.id);
+
+		const position = new Map<string, number>();
+		const seenLabs = new Set<string>();
+		let index = 0;
+		for (const step of road.data.steps) {
+			const stepSet = new Set<string>(step.chapters);
+			for (const id of step.chapters) {
+				const pattern = itemPattern(id);
+				if (!chapters.has(id)) add(pattern, `глава "${id}" не найдена`);
+				if (position.has(id)) add(pattern, `глава "${id}" встречается в маршруте дважды`);
+				position.set(id, index++);
+			}
+			for (const labId of step.labs ?? []) {
+				const pattern = itemPattern(labId);
+				const lab = labs.get(labId);
+				if (!lab) add(pattern, `лаб "${labId}" не найден`);
+				else if (!stepSet.has(lab.chapter)) {
+					add(pattern, `лаб "${labId}" относится к главе "${lab.chapter}", которой нет в этапе`);
+				}
+				if (seenLabs.has(labId)) add(pattern, `лаб "${labId}" встречается в маршруте дважды`);
+				seenLabs.add(labId);
+			}
+		}
+		for (const [id, pos] of position) {
+			for (const prereq of chapters.get(id)?.data.prereqs ?? []) {
+				const prereqPos = position.get(prereq);
+				if (prereqPos !== undefined && prereqPos > pos) {
+					add(
+						itemPattern(id),
+						`порядок маршрута образует цикл: "${id}" стоит раньше своего пререквизита "${prereq}"`,
+					);
+				}
+			}
+		}
+	}
 	return out;
 }
 
@@ -488,4 +551,9 @@ function escapeRe(text: string): string {
 
 function sortKeys(map: Record<string, string>): Record<string, string> {
 	return Object.fromEntries(Object.entries(map).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
+}
+
+/** Matches a YAML list item holding exactly `id` (for diagnostic line numbers). */
+function itemPattern(id: string): RegExp {
+	return new RegExp(String.raw`(^|\s|-)${escapeRe(id)}\s*$`);
 }

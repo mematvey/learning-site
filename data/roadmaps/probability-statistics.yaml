@@ -1,0 +1,24 @@
+id: probability-statistics
+title: 'Вероятность и статистика'
+summary: 'Весь раздел «Статистика» по порядку: от классической вероятности до проверки гипотез.'
+audience: 'Для тех, кому нужна база по теории вероятностей перед машинным обучением и анализом данных.'
+goal: 'Считать вероятности, работать с распределениями и понимать, что говорят оценки и тесты.'
+steps:
+  - title: 'Классическая вероятность'
+    description: 'Пространство исходов, комбинаторика, условная вероятность и формула Байеса.'
+    chapters: [stats/classical-probability, stats/classical-probability-2]
+  - title: 'Случайные величины'
+    description: 'Математическое ожидание, дисперсия и их свойства.'
+    chapters: [stats/random-variables]
+  - title: 'Распределения'
+    description: 'Основные дискретные и непрерывные распределения и где они встречаются.'
+    chapters: [stats/distributions]
+    labs: [stats-distributions]
+  - title: 'Предельные теоремы'
+    description: 'Закон больших чисел и центральная предельная теорема.'
+    chapters: [stats/limit-theorems]
+    labs: [stats-limit-theorems]
+  - title: 'Оценивание и проверка гипотез'
+    description: 'Оценки параметров, доверительные интервалы и статистические тесты.'
+    chapters: [stats/estimation-testing]
+    labs: [stats-estimation-testing]

@@ -1,0 +1,20 @@
+id: ml-in-production
+title: 'ML в продакшене'
+summary: 'Пять глав MLOps: от версионирования данных до мониторинга дрейфа.'
+audience: 'Для тех, кто умеет обучать модели и хочет выводить их в эксплуатацию.'
+goal: 'Построить воспроизводимый цикл: данные, эксперименты, пайплайн, сервинг и мониторинг.'
+steps:
+  - title: 'Данные и эксперименты'
+    description: 'Версионирование данных и учёт экспериментов, чтобы любой результат можно было повторить.'
+    chapters: [mlops/data-versioning, mlops/experiment-tracking]
+    labs: [mlops-experiment-tracking]
+  - title: 'Пайплайны и CI'
+    description: 'Автоматизация обучения и проверок, непрерывная интеграция для ML.'
+    chapters: [mlops/pipelines-ci]
+  - title: 'Сервинг'
+    description: 'Как отдавать предсказания: пакетный и онлайн-режимы, задержка и пропускная способность.'
+    chapters: [mlops/serving]
+  - title: 'Мониторинг и дрейф'
+    description: 'Слежение за качеством и распределением данных после выката.'
+    chapters: [mlops/monitoring-drift]
+    labs: [mlops-monitoring-drift]

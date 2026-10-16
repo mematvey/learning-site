@@ -1,0 +1,30 @@
+id: transformers-from-scratch
+title: 'Трансформер с нуля'
+summary: 'От softmax до блока трансформера: шесть шагов, на каждом своя деталь и свой лаб на NumPy.'
+audience: 'Для тех, кто знает основы нейросетей и хочет понять, как устроен трансформер изнутри.'
+goal: 'Собрать блок трансформера из отдельных деталей и объяснить, зачем нужна каждая.'
+steps:
+  - title: 'Softmax и температура'
+    description: 'Превращение оценок в вероятности. Без этого непонятно, что делает внимание.'
+    chapters: [dl/softmax]
+    labs: [dl-softmax]
+  - title: 'Механизм внимания'
+    description: 'Запросы, ключи и значения, масштабирование скалярных произведений, взвешенная сумма.'
+    chapters: [dl/attention]
+    labs: [dl-attention-numpy]
+  - title: 'Несколько голов внимания'
+    description: 'Зачем делить внимание на головы и как объединять их выходы.'
+    chapters: [dl/multi-head-attention]
+    labs: [dl-multi-head-attention]
+  - title: 'Позиционное кодирование'
+    description: 'Как модель узнаёт порядок токенов, если внимание само его не видит.'
+    chapters: [dl/positional-encoding]
+    labs: [dl-positional-encoding]
+  - title: 'Нормализация слоя'
+    description: 'Стабилизация обучения глубоких стеков: LayerNorm и его место в блоке.'
+    chapters: [dl/layer-norm]
+    labs: [dl-layer-norm]
+  - title: 'Блок трансформера'
+    description: 'Сборка всего вместе с остаточными связями и MLP, итоговый лаб.'
+    chapters: [dl/transformer-block]
+    labs: [dl-transformer-block]
