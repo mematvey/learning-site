@@ -320,7 +320,7 @@
 		opacity: 0.12;
 	}
 	.rv-bar {
-		fill: var(--cat-1);
+		fill: var(--topic);
 	}
 	.rv-col:hover .rv-bar {
 		opacity: 0.85;

@@ -177,10 +177,10 @@
 					<line x1={tree.sick.x} y1={tree.sick.y} x2={tree.sickPos.x} y2={tree.sickPos.y} />
 				</g>
 				<text class="by-node" x={tree.root.x} y={tree.root.y - 8}>все {POPULATION}</text>
-				<text class="by-node" x={tree.sick.x} y={tree.sick.y - 8}>
+				<text class="by-node" x={tree.sick.x} y={tree.sick.y - 12}>
 					больны {formatCount(r.people.sick)}
 				</text>
-				<text class="by-node" x={tree.healthy.x} y={tree.healthy.y + 16}>
+				<text class="by-node" x={tree.healthy.x} y={tree.healthy.y + 20}>
 					здоровы {formatCount(r.people.healthy)}
 				</text>
 				<text class="by-leaf is-focus" x={tree.sickPos.x + 8} y={tree.sickPos.y + 4}>
@@ -324,6 +324,12 @@
 	.by-muted {
 		color: var(--text-muted);
 	}
+	.by-panel-t .by-muted {
+		display: block;
+		font-family: var(--font-sans);
+		font-size: 12px;
+		font-weight: 400;
+	}
 	.by-sym {
 		font-family: var(--font-serif);
 		font-size: 15px;
@@ -430,6 +436,14 @@
 	}
 	.by-leaf {
 		fill: var(--text);
+	}
+	/* Halo in the surface colour keeps labels readable where tree lines pass behind them */
+	.by-node,
+	.by-leaf {
+		paint-order: stroke;
+		stroke: var(--surface);
+		stroke-width: 4px;
+		stroke-linejoin: round;
 	}
 	.by-leaf.is-focus {
 		fill: var(--cat-1);

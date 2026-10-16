@@ -249,7 +249,7 @@ const pct = (share: number): string => `${Math.round(share * 100)}%`;
 /** Text under the interval chart. Numbers are computed, not typed. */
 export function describeCoverage(cov: Coverage, alpha: number): string {
 	return (
-		`Интервалы накрыли истинное μ = 0 в ${cov.covered} из ${cov.total} серий (${pct(cov.share)}). ` +
+		`Интервалы накрыли истинное μ = 0 в ${cov.covered} из ${cov.total} интервалов (${pct(cov.share)}). ` +
 		`По построению доля должна быть около ${pct(1 - alpha)}; отдельная серия может отличаться.`
 	);
 }
