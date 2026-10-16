@@ -45,7 +45,7 @@ def test_reference_run_reports_every_test():
     cfg = lab_check.load_config(REPO_ROOT / "labs" / LAB_ID)
     result = lab_check.run_impl(REPO_ROOT / "labs" / LAB_ID, cfg, cfg["solution"])
     assert result["status"] == "pass"
-    assert len(result["tests"]) == 12
+    assert len(result["tests"]) == 13
     assert sum(t["hidden"] for t in result["tests"]) == 8
     weights = result["arrays"]["weights"]
     assert weights["shape"] == [4, 4]
