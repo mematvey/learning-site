@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { TestResult } from '$lib/contracts';
 import {
+	comparePairs,
 	countTests,
 	errorLine,
 	extent,
@@ -71,5 +72,28 @@ describe('series extent', () => {
 				{ x: [0, 4], y: [0.1, 0.5] },
 			]),
 		).toEqual({ x0: 0, x1: 4, y0: 0.1, y1: 0.9 });
+	});
+});
+
+describe('comparePairs', () => {
+	it('pairs flat numeric arrays by position', () => {
+		expect(comparePairs([1, 2], [1, 2.5])).toEqual([
+			{ index: [0], expected: 1, actual: 1 },
+			{ index: [1], expected: 2, actual: 2.5 },
+		]);
+	});
+
+	it('walks nested arrays with the path as index', () => {
+		expect(comparePairs([[1, 2]], [[1, 3]])?.[1]).toEqual({
+			index: [0, 1],
+			expected: 2,
+			actual: 3,
+		});
+	});
+
+	it('returns null for shape or type mismatch', () => {
+		expect(comparePairs([1, 2], [1])).toBeNull();
+		expect(comparePairs([1], ['a'])).toBeNull();
+		expect(comparePairs(1, 1)).toBeNull();
 	});
 });

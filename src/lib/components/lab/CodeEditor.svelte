@@ -235,13 +235,21 @@
 
 <style>
 	.cm-host {
+		/* Fixed inline size: a long line cannot widen the lab frame. */
+		box-sizing: border-box;
+		width: 100%;
+		max-width: 100%;
 		min-width: 0;
+		contain: inline-size;
 		background: var(--surface);
 	}
 	.cm-host :global(.cm-editor) {
 		background: transparent;
+		max-width: 100%;
 	}
 	.cm-host :global(.cm-scroller) {
+		overflow-x: auto;
+		overflow-y: hidden;
 		font-family: var(--font-mono);
 		line-height: 22px;
 	}
