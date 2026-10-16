@@ -1,7 +1,7 @@
 /** Задача 2: два офиса с одинаковыми принтерами, события «тонер кончился». */
-import { add, fromDecimal, rat, sub } from '../rational';
+import { add, fromDecimal, mul, rat, sub } from '../rational';
 import type { ParamSpec, ProblemDef, Rational, SolutionStep } from '../types';
-import { formatDecimal, step, texFrac } from './util';
+import { formatDecimal, pct, step, texFrac } from './util';
 
 export type P2Params = { pA: number; pB: number; pAB: number };
 
@@ -79,18 +79,29 @@ function steps(p: P2Params): Record<string, SolutionStep[]> {
 	const { A, B, AB } = rationals(p);
 	const union = sub(add(A, B), AB);
 	const answer = sub(rat(1), union);
+	const product = mul(A, B);
+	const independent = product.num === AB.num && product.den === AB.den;
+	const independence = independent
+		? `Здесь P(A и B) = P(A)·P(B) = ${formatDecimal(product, 4)}, значит, события независимы.`
+		: `Для независимых событий P(A и B) было бы равно P(A)·P(B) = ${formatDecimal(product, 4)}, а в условии оно ${formatDecimal(AB, 2)}, поэтому события зависимы: знание о тонере в одном офисе меняет шансы во втором.`;
 	return {
 		a: [
 			step(
-				`P(A) = ${formatDecimal(A, 2)}, P(B) = ${formatDecimal(B, 2)}, P(A и B) = ${formatDecimal(AB, 2)}.`,
+				`Обозначим A: тонер кончился в первом офисе, B: во втором. Из условия P(A) = ${formatDecimal(A, 2)}, P(B) = ${formatDecimal(B, 2)}, P(A и B) = ${formatDecimal(AB, 2)}.`,
 			),
 			step(
-				'Тонер кончится хотя бы у одного: P(A ∪ B) = P(A) + P(B) − P(A ∩ B).',
+				'Нам нужно, чтобы тонер остался в обоих офисах, то есть не наступило ни A, ни B. Это противоположное событие к «хотя бы у одного кончился», поэтому сначала найдём вероятность «хотя бы у одного».',
+			),
+			step(
+				`Если просто сложить P(A) и P(B), случаи, когда тонер кончился в обоих офисах, попадут в сумму дважды: один раз как часть A, второй раз как часть B. Поэтому один раз вычитаем P(A и B) = ${formatDecimal(AB, 2)}. Так получается формула включений-исключений для двух событий.`,
 				`P(A\\cup B)=${texFrac(A)}+${texFrac(B)}-${texFrac(AB)}=${texFrac(union)}`,
 			),
 			step(
-				'Тонер останется в обоих: противоположное событие, ¬A ∩ ¬B.',
-				`P(\\bar A\\cap\\bar B)=1-P(A\\cup B)=${texFrac(answer)}`,
+				'Вероятности «хотя бы у одного кончился» и «ни у одного не кончился» вместе дают 1, поэтому вычитаем найденное из единицы.',
+				`P(\\bar A\\cap\\bar B)=1-P(A\\cup B)=1-${texFrac(union)}=${texFrac(answer)}`,
+			),
+			step(
+				`Что получилось: в ${pct(answer)} случаев к концу дня тонер останется в обоих офисах. ${independence}`,
 			),
 		],
 	};
@@ -104,11 +115,11 @@ function altSteps(p: P2Params): Record<string, SolutionStep[]> {
 	return {
 		a: [
 			step(
-				'Таблица 2×2: заполняем клетки по очереди. P(A ∩ ¬B) = P(A) − P(A ∩ B), P(¬A ∩ B) = P(B) − P(A ∩ B).',
+				'Таблица 2×2: четыре клетки «A и B», «только A», «только B», «ни A, ни B» не пересекаются и в сумме дают 1. Клетка «только A» получается, если из всего A убрать часть, где есть и B: P(A ∩ ¬B) = P(A) − P(A ∩ B). Так же для «только B».',
 				`P(A\\bar B)=${texFrac(onlyA)},\\quad P(\\bar A B)=${texFrac(onlyB)}`,
 			),
 			step(
-				'Клетка ¬A ∩ ¬B — остаток до единицы.',
+				'Клетка «ни A, ни B» это то, что остаётся до единицы после трёх известных клеток. Её значение и есть ответ, и оно совпадает с результатом по формуле.',
 				`P(\\bar A\\bar B)=1-${texFrac(AB)}-${texFrac(onlyA)}-${texFrac(onlyB)}=${texFrac(neither)}`,
 			),
 		],

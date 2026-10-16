@@ -20,6 +20,13 @@ export function formatDecimal(r: Rational, digits = 4): string {
 	return toNumber(r).toFixed(digits).replace('.', ',');
 }
 
+/** Percent with a Russian comma and a sensible precision, e.g. `12,5%` or `<0,01%` for tiny values. */
+export function pct(r: Rational): string {
+	const v = toNumber(r) * 100;
+	if (v > 0 && v < 0.01) return '<0,01%';
+	return `${v.toFixed(v >= 10 ? 1 : 2).replace('.', ',')}%`;
+}
+
 export function step(text: string, tex?: string): SolutionStep {
 	return tex === undefined ? { text } : { text, tex };
 }
