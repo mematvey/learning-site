@@ -1,4 +1,8 @@
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+/** Repository root derived from this file, so a shared shell cwd cannot redirect output. */
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 export interface CliArgs {
 	/** Content root (folder with `content/`, `labs/`, `data/`). */
@@ -7,7 +11,10 @@ export interface CliArgs {
 	out: string;
 }
 
-/** Parses `--root <dir>` and `--out <dir>`. Relative paths resolve against the current directory. */
+/**
+ * Parses `--root <dir>` and `--out <dir>`. Relative paths resolve against the current directory;
+ * without `--root` the repository that contains this script is used.
+ */
 export function parseArgs(argv: readonly string[], cwd = process.cwd()): CliArgs {
 	const value = (flag: string): string | undefined => {
 		const i = argv.indexOf(flag);
@@ -16,7 +23,8 @@ export function parseArgs(argv: readonly string[], cwd = process.cwd()): CliArgs
 		if (next === undefined || next.startsWith('--')) throw new Error(`${flag} needs a value`);
 		return next;
 	};
-	const root = resolve(cwd, value('--root') ?? '.');
+	const rootArg = value('--root');
+	const root = rootArg === undefined ? REPO_ROOT : resolve(cwd, rootArg);
 	const out = resolve(cwd, value('--out') ?? resolve(root, 'src/generated'));
 	return { root, out };
 }
