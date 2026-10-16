@@ -1,0 +1,8 @@
+id: stats
+title: Статистика
+description: 'Теория вероятностей и статистика: от комбинаторики до оценок, с задачами и симуляциями.'
+order: 6
+icon: dice
+accent:
+  topic: { light: '#be123c', dark: '#fb7185' }
+  soft: { light: '#fff1f2', dark: '#2a1418' }

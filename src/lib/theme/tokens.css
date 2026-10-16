@@ -83,6 +83,10 @@
 	--topic: #15803d;
 	--topic-soft: #f0fdf4;
 }
+[data-topic='stats'] {
+	--topic: #be123c;
+	--topic-soft: #fff1f2;
+}
 
 [data-theme='dark'] {
 	--bg: #15130f;
@@ -134,6 +138,11 @@
 [data-theme='dark'] [data-topic='compute'] {
 	--topic: #4ade80;
 	--topic-soft: #10261a;
+}
+[data-theme='dark'][data-topic='stats'],
+[data-theme='dark'] [data-topic='stats'] {
+	--topic: #fb7185;
+	--topic-soft: #2a1418;
 }
 
 @media (prefers-reduced-motion: reduce) {

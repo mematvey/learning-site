@@ -6,6 +6,16 @@ import { Note } from './notes';
 
 export const PROGRESS_SCHEMA_VERSION = 1;
 
+/** Per-problem state on problem pages (keyed by problem id, e.g. `p1`). */
+export const ProblemProgress = z.object({
+	/** The learner marked the problem as solved. */
+	solved: z.boolean().optional(),
+	/** The learner opened the worked solution or the answer. */
+	revealed: z.boolean().optional(),
+	updated: IsoDateTime.optional(),
+});
+export type ProblemProgress = z.infer<typeof ProblemProgress>;
+
 /** `user-data/progress/<topic>/<slug>.json`. Saved automatically. */
 export const ChapterProgress = z.object({
 	schemaVersion: z.literal(PROGRESS_SCHEMA_VERSION),
@@ -22,6 +32,8 @@ export const ChapterProgress = z.object({
 	levels: LevelState,
 	/** Optional manual "done" mark. */
 	done: z.boolean(),
+	/** Problem pages: solved / revealed marks per problem id. Optional, no version bump. */
+	problems: z.record(z.string(), ProblemProgress).optional(),
 });
 export type ChapterProgress = z.infer<typeof ChapterProgress>;
 
