@@ -36,7 +36,7 @@ export const DEFAULT_STATE: DecisionTreeDemoState = { depth: 2, criterion: 'gini
 const GAIN_EPS = 1e-12;
 
 /**
- * 31 points in [0, 1]². Class 1 forms a rough band in the upper-left and upper-right parts,
+ * 32 points in [0, 1]². Class 1 forms a rough band in the upper-left and upper-right parts,
  * with a few noisy points on both sides, so the first splits are clear and the deeper ones look
  * like memorisation.
  */
