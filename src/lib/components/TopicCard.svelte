@@ -25,7 +25,7 @@
 		</span>
 		<span class="badge">{chapterCount} глав</span>
 	</div>
-	<h3>{title}</h3>
+	<h3><a class="title-link" href={resolve('/[topic]', { topic })}>{title}</a></h3>
 	<p class="topic-desc">{description}</p>
 	<ol class="chapter-list">
 		{#each chapters as ch, i (ch.id)}
@@ -41,6 +41,9 @@
 			<span class="bar"><i style="width: {percent}%"></i></span>
 			<span class="progress-label">{percent}%</span>
 		</div>
+		<a class="card-all" href={resolve('/[topic]', { topic })}
+			>Все главы <span aria-hidden="true">→</span></a
+		>
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- in-page anchor (#map), not an app route -->
 		<a class="card-map" href={mapHref} onclick={() => onSelect?.(topic)}>
 			Карта <span aria-hidden="true">→</span>
@@ -79,6 +82,7 @@
 				border-color var(--dur) var(--ease);
 		}
 		.topic-card:hover {
+			border-color: var(--topic);
 			box-shadow: var(--shadow);
 			transform: translateY(-2px);
 		}
@@ -177,6 +181,22 @@
 	.progress-label {
 		white-space: nowrap;
 		font-variant-numeric: tabular-nums;
+	}
+	.title-link {
+		color: var(--text);
+	}
+	.title-link:hover {
+		color: var(--topic);
+		text-decoration: underline;
+	}
+	.card-all {
+		justify-self: start;
+		color: var(--topic);
+		font-size: var(--fs-sm);
+		font-weight: 600;
+	}
+	.card-all:hover {
+		text-decoration: underline;
 	}
 	.card-map {
 		justify-self: start;
