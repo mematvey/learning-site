@@ -2,7 +2,6 @@
 	import { getContext, onMount } from 'svelte';
 	import { DEMOS_CONTEXT, type DemosContext } from '$lib/contracts/context';
 	import {
-		BEST_PRACTICES_URL,
 		BLOCKS_DEFAULT,
 		BLOCKS_MAX,
 		BLOCKS_MIN,
@@ -256,31 +255,6 @@
 	</dl>
 
 	<p class="gp-note" aria-live="polite">{note}</p>
-
-	<div class="gp-notice">
-		<p class="gp-h2">Что заметить</p>
-		<ul>
-			<li>
-				Потоки исполняются группами по {WARP_SIZE}: например, блок из {THREADS_DEFAULT} потоков занимает
-				4 варпа, и в последнем 28 слотов пусты.
-			</li>
-			<li>
-				Блоки не выполняются «по одному»: несколько блоков живут на одном SM, а блоков больше, чем
-				SM, — они идут волнами.
-			</li>
-			<li>
-				Чем дальше память от SM, тем она больше и медленнее. Поэтому данные стараются держать в
-				регистрах и разделяемой памяти.
-			</li>
-			<li>
-				Точные задержки зависят от модели GPU: здесь даны только порядки величин. См.
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external documentation URL, not a site route -->
-				<a href={BEST_PRACTICES_URL} target="_blank" rel="noopener noreferrer"
-					>CUDA C++ Best Practices Guide</a
-				>.
-			</li>
-		</ul>
-	</div>
 </figure>
 
 <style>
@@ -569,23 +543,6 @@
 	.gp-note {
 		margin-top: var(--space-4);
 		color: var(--text-muted);
-	}
-
-	/* What to notice */
-	.gp-notice {
-		margin-top: var(--space-4);
-		padding: var(--space-3) var(--space-4);
-		background: var(--topic-soft);
-		border-radius: var(--radius);
-		color: var(--text);
-	}
-	.gp-h2 {
-		margin-bottom: var(--space-2);
-		font-family: var(--font-serif);
-		font-weight: 600;
-	}
-	.gp-notice li + li {
-		margin-top: var(--space-2);
 	}
 
 	@media (max-width: 720px) {

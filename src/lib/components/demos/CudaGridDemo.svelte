@@ -203,28 +203,6 @@
 	</dl>
 
 	<p class="cu-desc" aria-live="polite">{desc}</p>
-
-	<div class="cu-notice">
-		<p class="cu-h2">Что заметить</p>
-		<ul>
-			<li>
-				При N = 1000 и блоке 256 запускаются 4 блока, 1024 потока. Лишние 24 потока проходят
-				граничную проверку i &lt; N и ничего не делают.
-			</li>
-			<li>
-				Если N делится на B, лишних потоков нет. Сдвиньте N на единицу вверх от 1024, и появится
-				блок с одним работающим потоком.
-			</li>
-			<li>
-				Округление вниз, как в режиме «ошибка», оставляет без потоков последние элементы: при N =
-				1000 и B = 256 это 232 элемента.
-			</li>
-			<li>
-				Номер i однозначно задаётся номером блока и номером потока внутри блока. Поток с threadIdx 0
-				в блоке 3 работает с элементом 3 · 256 = 768.
-			</li>
-		</ul>
-	</div>
 </figure>
 
 <style>
@@ -461,20 +439,6 @@
 	.cu-desc {
 		margin-top: var(--space-4);
 		color: var(--text-muted);
-	}
-
-	/* What to notice */
-	.cu-notice {
-		margin-top: var(--space-4);
-		padding: var(--space-3) var(--space-4);
-		background: var(--topic-soft);
-		border-radius: var(--radius);
-		color: var(--text);
-	}
-	.cu-h2 {
-		margin-bottom: var(--space-1);
-		font-family: var(--font-serif);
-		font-weight: 600;
 	}
 
 	@media (prefers-reduced-motion: reduce) {

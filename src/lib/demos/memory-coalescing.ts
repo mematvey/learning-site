@@ -10,7 +10,8 @@
  *
  * Hardware constants are typical values, not measurements made for this demo:
  * - WARP_SIZE = 32: the number of threads in a warp on NVIDIA GPUs.
- * - Segment 128 bytes: a common L1 cache-line size; 32 bytes is the smaller sector size.
+ * - Segment 32 bytes: the transaction granularity (sector) for compute capability >= 6.0 per the
+ *   Best Practices Guide; 128 bytes is the L1 cache-line size, offered for comparison.
  * Sources: CUDA C++ Programming Guide (warps, global memory access)
  *   https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
  *   CUDA C++ Best Practices Guide (coalesced access to global memory)
@@ -22,10 +23,10 @@ export const WARP_SIZE = 32;
 /** Size of a float32 element in bytes. */
 export const ELEM_BYTES = 4;
 
-/** Segment sizes the demo offers: 32-byte sectors and 128-byte cache lines (typical values). */
+/** Segment sizes the demo offers: 32-byte sectors and 128-byte cache lines (sector and cache line). */
 export const SEGMENT_OPTIONS = [32, 128] as const;
 export type SegmentBytes = (typeof SEGMENT_OPTIONS)[number];
-export const DEFAULT_SEGMENT_BYTES: SegmentBytes = 128;
+export const DEFAULT_SEGMENT_BYTES: SegmentBytes = 32;
 
 export const STRIDE_MIN = 1;
 export const STRIDE_MAX = 32;

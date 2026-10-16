@@ -27,7 +27,7 @@ def program_mask(offsets, n):
 
 
 def add_kernel(x, y, block):
-    """Simulate out = x + y over blocks. Masked lanes are neither loaded nor stored.
+    """Simulate out = x + y over blocks. Masked lanes are never stored; their loads read index 0 as a stand-in.
 
     Each program loads with a mask: masked lanes read index 0 as a stand-in, so no
     access goes out of bounds. Then it adds and stores only the lanes the mask allows.

@@ -165,24 +165,6 @@
 	</dl>
 
 	<p class="mt-note" aria-live="polite">{note}</p>
-
-	<div class="mt-notice">
-		<p class="mt-h2">Что заметить</p>
-		<ul>
-			<li>
-				Выигрыш равен размеру тайла, если тайл делит n. При T больше n выигрыша сверх n нет: каждый
-				элемент читается один раз.
-			</li>
-			<li>
-				Тайл T = 1 даёт наивный алгоритм. Тайлы растут, и число чтений падает обратно
-				пропорционально T.
-			</li>
-			<li>
-				Размер тайла ограничен разделяемой памятью блока: большой тайл не всегда возможен. Модель не
-				учитывает кэши, поэтому реальное число обращений к памяти меньше.
-			</li>
-		</ul>
-	</div>
 </figure>
 
 <style>
@@ -377,20 +359,6 @@
 	.mt-note {
 		margin-top: var(--space-4);
 		color: var(--text-muted);
-	}
-
-	/* What to notice */
-	.mt-notice {
-		margin-top: var(--space-4);
-		padding: var(--space-3) var(--space-4);
-		background: var(--topic-soft);
-		border-radius: var(--radius);
-		color: var(--text);
-	}
-	.mt-h2 {
-		margin-bottom: var(--space-1);
-		font-family: var(--font-serif);
-		font-weight: 600;
 	}
 
 	/* Entity highlight from the text (HIGHLIGHT_CONTEXT) */
