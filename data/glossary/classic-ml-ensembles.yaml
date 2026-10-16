@@ -48,7 +48,7 @@
   term_en: gradient boosting
   definition: 'Бустинг, в котором новое дерево приближает антиградиент функции потерь по предсказаниям ансамбля. Для квадратичной потери это остатки.'
   chapter: classic-ml/ensembles
-- id: shrinkage
+- id: boosting-shrinkage
   term: сжатие
   term_en: shrinkage
   definition: 'Множитель вклада каждого нового дерева в градиентном бустинге. Меньше сжатие, гладче траектория, но больше деревьев нужно.'
