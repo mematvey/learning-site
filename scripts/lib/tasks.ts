@@ -12,14 +12,20 @@ import {
 import type { CliArgs } from './args';
 import { buildRegistries } from './build';
 import { checkContent } from './check';
-import { type Diagnostic, formatDiagnostic } from './diagnostics';
+import { type Diagnostic, formatDiagnostic, isError } from './diagnostics';
 import { loadContent } from './load';
 
-/** Prints diagnostics to stderr. Returns the process exit code: 0 when there are none, 1 otherwise. */
+/**
+ * Prints diagnostics to stderr. Returns the process exit code: 1 when there is at least one error,
+ * 0 otherwise (warnings are printed but do not fail the check).
+ */
 function report(diagnostics: Diagnostic[]): number {
 	for (const d of diagnostics) console.error(formatDiagnostic(d));
-	if (diagnostics.length > 0) {
-		console.error(`content: ${diagnostics.length} ошибок`);
+	const errors = diagnostics.filter(isError).length;
+	const warnings = diagnostics.length - errors;
+	if (warnings > 0) console.error(`content: ${warnings} предупреждений`);
+	if (errors > 0) {
+		console.error(`content: ${errors} ошибок`);
 		return 1;
 	}
 	return 0;

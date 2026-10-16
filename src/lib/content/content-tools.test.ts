@@ -1,11 +1,11 @@
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { parseArgs } from '../../../scripts/lib/args';
 import { buildRegistries } from '../../../scripts/lib/build';
 import { checkContent } from '../../../scripts/lib/check';
-import { formatDiagnostic, type Diagnostic } from '../../../scripts/lib/diagnostics';
+import { formatDiagnostic, isError, type Diagnostic } from '../../../scripts/lib/diagnostics';
 import { findCycle, topoOrder, transitivePrereqs } from '../../../scripts/lib/graph';
 import { loadContent } from '../../../scripts/lib/load';
 import { within } from '../../../scripts/lib/ranges';
@@ -26,7 +26,10 @@ function edit(file: string, from: string, to: string): void {
 	const abs = join(root, file);
 	const text = readFileSync(abs, 'utf8');
 	if (!text.includes(from)) throw new Error(`fixture edit: "${from}" not found in ${file}`);
-	writeFileSync(abs, text.replace(from, to));
+	writeFileSync(
+		abs,
+		text.replace(from, () => to),
+	);
 }
 
 function check(): Diagnostic[] {
@@ -152,6 +155,102 @@ describe('check-content errors', () => {
 	it('rejects an alias that names an existing chapter', () => {
 		edit('data/aliases.yaml', 'dl/old-softmax: dl/softmax', 'dl/attention: dl/softmax');
 		expect(messages(check()).some((m) => m.includes('совпадает с существующей главой'))).toBe(true);
+	});
+});
+
+describe('sources, citations and text attributes', () => {
+	const ATTENTION = 'content/dl/attention/index.svx';
+	const FENCE = '```';
+
+	it('rejects supports that names a block missing from the chapter', () => {
+		edit(ATTENTION, 'supports: [math-scale]', 'supports: [math-missing]');
+		const errors = check().filter(isError);
+		expect(errors).toHaveLength(1);
+		expect(errors[0]?.message).toContain('"math-missing"');
+		expect(errors[0]?.file).toBe(ATTENTION);
+		expect(errors[0]?.line).toBe(
+			readFileSync(join(root, ATTENTION), 'utf8')
+				.split('\n')
+				.findIndex((l) => l.includes('supports: [math-missing]')) + 1,
+		);
+	});
+
+	it('accepts supports that names a figure id', () => {
+		edit(ATTENTION, 'supports: [math-scale]', 'supports: [fig-arcs]');
+		expect(check()).toEqual([]);
+	});
+
+	it('warns, without an error, when a source with supports is never cited', () => {
+		edit(ATTENTION, '<Cite id="vaswani2017" />', '');
+		const d = check();
+		expect(d).toHaveLength(1);
+		expect(d[0]?.severity).toBe('warning');
+		expect(d[0]?.message).toContain('<Cite id="vaswani2017" />');
+		expect(d.filter(isError)).toEqual([]);
+		expect(formatDiagnostic(d[0] as Diagnostic)).toMatch(/: предупреждение: /);
+	});
+
+	it('does not count a Cite that sits inside fenced code', () => {
+		edit(ATTENTION, '<Cite id="vaswani2017" />', '');
+		appendFileSync(join(root, ATTENTION), `\n${FENCE}\n<Cite id="vaswani2017" />\n${FENCE}\n`);
+		const d = check();
+		expect(d.map((x) => x.severity)).toEqual(['warning']);
+	});
+
+	it('rejects TeX in an alt attribute', () => {
+		edit(ATTENTION, 'alt="Шесть токенов в ряд."', 'alt="Вес $\\alpha$ токена."');
+		const errors = check().filter(isError);
+		expect(errors).toHaveLength(1);
+		expect(errors[0]?.message).toContain('атрибут alt');
+		expect(errors[0]?.line).toBe(
+			readFileSync(join(root, ATTENTION), 'utf8')
+				.split('\n')
+				.findIndex((l) => l.includes('alt="Вес')) + 1,
+		);
+	});
+
+	it('rejects braces in a caption attribute, on the line of the attribute of a multi-line tag', () => {
+		edit(
+			ATTENTION,
+			'<Figure id="fig-arcs" caption="Веса внимания" alt="Шесть токенов в ряд.">',
+			'<Figure id="fig-arcs"\n  caption="Веса {внимания}"\n  alt="Шесть токенов в ряд.">',
+		);
+		const errors = check().filter(isError);
+		expect(errors).toHaveLength(1);
+		expect(errors[0]?.message).toContain('атрибут caption');
+		expect(errors[0]?.line).toBe(
+			readFileSync(join(root, ATTENTION), 'utf8')
+				.split('\n')
+				.findIndex((l) => l.includes('caption="Веса {')) + 1,
+		);
+	});
+
+	it('rejects a backslash in a notice attribute', () => {
+		edit(
+			ATTENTION,
+			'<Figure id="fig-arcs" caption="Веса внимания" alt="Шесть токенов в ряд.">',
+			'<Figure id="fig-arcs" caption="Веса внимания" alt="Шесть токенов в ряд." notice="сумма \\alpha = 1">',
+		);
+		const errors = check().filter(isError);
+		expect(errors).toHaveLength(1);
+		expect(errors[0]?.message).toContain('атрибут notice');
+	});
+
+	it('ignores TeX-like text inside fenced code', () => {
+		appendFileSync(
+			join(root, ATTENTION),
+			`\n${FENCE}\n<Figure id="fig-code" alt="$x^2$ {y}">\n${FENCE}\n`,
+		);
+		expect(check()).toEqual([]);
+	});
+
+	it('accepts plain text in q, caption, notice and alt', () => {
+		edit(
+			ATTENTION,
+			'<Figure id="fig-arcs" caption="Веса внимания" alt="Шесть токенов в ряд.">',
+			'<Figure id="fig-arcs" caption="Веса внимания: строка 1" alt="Шесть токенов в ряд." notice="сумма по строке равна 1">',
+		);
+		expect(check()).toEqual([]);
 	});
 });
 

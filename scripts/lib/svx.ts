@@ -31,7 +31,17 @@ export interface SvxScan {
 	terms: SvxTerm[];
 	/** Level/Variant tags whose attributes could not be read. */
 	badLevelTags: { line: number; text: string }[];
+	/** `<Cite id>` mentions (the id is the source id). */
+	cites: SvxItem[];
+	/** Text attributes (`q`, `caption`, `notice`, `alt`) with TeX or braces inside. */
+	badAttrs: { line: number; attr: string; value: string }[];
 }
+
+/** Text attributes of components that are shown as plain text, so they must not hold TeX. */
+const TEXT_ATTRS = ['q', 'caption', 'notice', 'alt'];
+const COMPONENT_TAG = /<([A-Z][A-Za-z0-9]*)\b([^>]*)>/g;
+const TEXT_ATTR = new RegExp(`\\b(${TEXT_ATTRS.join('|')})=(?:"([^"]*)"|\\{([^}]*)\\})`, 'g');
+const TEX_OR_BRACES = /[$\\{}]/;
 
 interface StackEntry {
 	layer: AxisRange;
@@ -54,6 +64,8 @@ export function scanSvx(body: string, firstLine: number): SvxScan {
 		figures: [],
 		terms: [],
 		badLevelTags: [],
+		cites: [],
+		badAttrs: [],
 	};
 	const stack: StackEntry[] = [];
 	let inFence = false;
@@ -110,7 +122,59 @@ export function scanSvx(body: string, firstLine: number): SvxScan {
 		}
 	});
 
+	scanComponentTags(body, firstLine, scan);
 	return scan;
+}
+
+/**
+ * Component tags over the whole body (tags may span lines), with fenced code blanked out.
+ * Collects `<Cite id>` and checks text attributes for TeX or braces.
+ */
+function scanComponentTags(body: string, firstLine: number, scan: SvxScan): void {
+	const masked = maskFences(body);
+	const lineAt = (index: number) => firstLine + countNewlines(masked, index);
+
+	for (const tag of masked.matchAll(COMPONENT_TAG)) {
+		const [, name = '', attrs = ''] = tag;
+		const attrsStart = (tag.index ?? 0) + 1 + name.length;
+		if (name === 'Cite') {
+			const id = /\bid="([^"]+)"/.exec(attrs)?.[1];
+			if (id !== undefined) scan.cites.push({ id, line: lineAt(attrsStart) });
+		}
+		for (const attr of attrs.matchAll(TEXT_ATTR)) {
+			const [, attrName = '', quoted, braced] = attr;
+			const value = quoted ?? braced ?? '';
+			const bad = braced !== undefined || TEX_OR_BRACES.test(value);
+			if (bad) {
+				scan.badAttrs.push({
+					line: lineAt(attrsStart + (attr.index ?? 0)),
+					attr: attrName,
+					value,
+				});
+			}
+		}
+	}
+}
+
+/** Same text with the lines of fenced code replaced by empty lines (line count is kept). */
+function maskFences(body: string): string {
+	let inFence = false;
+	return body
+		.split('\n')
+		.map((text) => {
+			if (/^\s*```/.test(text)) {
+				inFence = !inFence;
+				return '';
+			}
+			return inFence ? '' : text;
+		})
+		.join('\n');
+}
+
+function countNewlines(text: string, end: number): number {
+	let count = 0;
+	for (let i = 0; i < end; i++) if (text.charCodeAt(i) === 10) count++;
+	return count;
 }
 
 function currentLayer(stack: readonly StackEntry[]): AxisRange {

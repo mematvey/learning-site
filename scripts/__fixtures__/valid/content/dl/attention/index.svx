@@ -23,7 +23,7 @@ status: draft
 
 ## Идея {#idea}
 
-<Term id="attention"></Term> смотрит на все токены сразу. Оценки получаются из <Term id="softmax"></Term>.
+<Term id="attention"></Term> смотрит на все токены сразу. Оценки получаются из <Term id="softmax"></Term>. <Cite id="vaswani2017" />
 
 <Level c={3}>
 
