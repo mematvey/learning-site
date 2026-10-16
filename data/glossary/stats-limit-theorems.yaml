@@ -18,16 +18,6 @@
   term_en: standard error
   definition: 'Стандартное отклонение выборочного среднего. Для независимых измерений оно равно стандартному отклонению одного измерения, делённому на корень из числа измерений.'
   chapter: stats/limit-theorems
-- id: expected-value
-  term: математическое ожидание
-  term_en: expected value
-  definition: 'Среднее значение величины по её возможным значениям, взвешенное их вероятностями.'
-  chapter: stats/limit-theorems
-- id: dispersion
-  term: дисперсия
-  term_en: variance
-  definition: 'Средний квадрат отклонения величины от её математического ожидания. Показывает, насколько сильно значения разбросаны вокруг среднего.'
-  chapter: stats/limit-theorems
 - id: iid
   term: независимые одинаково распределённые величины
   term_en: independent and identically distributed (i.i.d.)
