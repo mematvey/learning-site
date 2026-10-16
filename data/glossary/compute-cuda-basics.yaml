@@ -1,0 +1,35 @@
+- id: cuda-kernel
+  term: ядро CUDA
+  term_en: kernel
+  definition: 'Функция, которую host запускает на GPU во многих потоках сразу. В CUDA C++ помечается ключевым словом __global__. Все потоки выполняют один код и различаются только номерами.'
+  chapter: compute/cuda-basics
+- id: cuda-thread
+  term: поток CUDA
+  term_en: thread
+  definition: 'Одна копия ядра со своими номерами: номером блока и номером внутри блока. Потоки запускаются вместе и не выполняют код по очереди.'
+  chapter: compute/cuda-basics
+- id: cuda-thread-block
+  term: блок потоков
+  term_en: thread block
+  definition: 'Группа потоков, которая получает общий номер блока. Потоки одного блока могут обмениваться данными через разделяемую память и синхронизироваться.'
+  chapter: compute/cuda-basics
+- id: cuda-grid
+  term: сетка блоков
+  term_en: grid
+  definition: 'Все блоки, запущенные одним вызовом ядра. Размер сетки задаётся числом блоков, а размер блока числом потоков в нём.'
+  chapter: compute/cuda-basics
+- id: cuda-global-index
+  term: глобальный индекс
+  term_en: global index
+  definition: 'Номер элемента данных, который обрабатывает поток. Считается как номер блока умножить на размер блока плюс номер потока внутри блока.'
+  chapter: compute/cuda-basics
+- id: cuda-bounds-check
+  term: граничная проверка
+  term_en: bounds check
+  definition: 'Условие в начале ядра, по которому поток работает только с существующими элементами, например если индекс меньше размера массива. Нужна, когда число потоков больше числа элементов.'
+  chapter: compute/cuda-basics
+- id: cuda-host-device
+  term: host и device
+  term_en: host, device
+  definition: 'Host это CPU и его память, device это GPU и его память. Ядро вызывает host, а выполняется оно на device, поэтому данные нужно перенести в память device.'
+  chapter: compute/cuda-basics
