@@ -6,6 +6,7 @@
 	import type { ChapterEntry, TopicEntry } from '$lib/contracts/registry';
 	import ContinueCard from '$lib/components/ContinueCard.svelte';
 	import PrereqGraph from '$lib/components/PrereqGraph.svelte';
+	import SiteMap from '$lib/components/SiteMap.svelte';
 	import TopicCard from '$lib/components/TopicCard.svelte';
 	import TopicTabs from '$lib/components/TopicTabs.svelte';
 	import type { PageData } from './$types';
@@ -166,6 +167,18 @@
 		</div>
 	</section>
 
+	<section class="sitemap-section" id="sitemap" aria-labelledby="sitemap-title">
+		<div class="section-head">
+			<p class="eyebrow">Всё содержание</p>
+			<h2 id="sitemap-title">Карта сайта</h2>
+			<p class="section-sub">
+				Все темы и главы одним графом. Стрелка ведёт от того, что нужно знать, к тому, что на этом
+				строится.
+			</p>
+		</div>
+		<SiteMap topics={data.topics} chapters={data.chapters} graph={data.graph} />
+	</section>
+
 	{#if current}
 		<section class="map" id="map" data-topic={current.id} aria-labelledby="map-title">
 			<div class="section-head">
@@ -255,6 +268,7 @@
 		}
 	}
 	.topics,
+	.sitemap-section,
 	.map {
 		margin-top: var(--space-12);
 	}
