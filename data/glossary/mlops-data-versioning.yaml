@@ -1,0 +1,30 @@
+- id: data-versioning
+  term: версионирование данных
+  term_en: data versioning
+  definition: Хранение истории наборов данных так, чтобы любую версию можно было восстановить и связать с кодом и результатом эксперимента.
+  chapter: mlops/data-versioning
+- id: content-hash
+  term: хеш содержимого
+  term_en: content hash
+  definition: Короткая строка, вычисленная из байтов файла; одинаковое содержимое даёт одинаковый хеш, любое изменение даёт другой.
+  chapter: mlops/data-versioning
+- id: dataset-version
+  term: версия набора данных
+  term_en: dataset version
+  definition: Фиксированное состояние набора данных, идентификатор которого строится из манифеста пар «путь и хеш».
+  chapter: mlops/data-versioning
+- id: data-pointer
+  term: файл-указатель
+  term_en: pointer file
+  definition: Маленький текстовый файл в Git, который хранит путь, размер и хеш настоящих данных; сами данные лежат во внешнем хранилище.
+  chapter: mlops/data-versioning
+- id: data-lineage
+  term: происхождение данных
+  term_en: data lineage
+  definition: Цепочка того, откуда взялись данные и какой код их обработал; позволяет связать результат с его входом.
+  chapter: mlops/data-versioning
+- id: reproducibility
+  term: воспроизводимость
+  term_en: reproducibility
+  definition: 'Свойство эксперимента: при одинаковых коде, данных, параметрах и seed повторный запуск даёт тот же результат.'
+  chapter: mlops/data-versioning
