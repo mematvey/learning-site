@@ -1,0 +1,68 @@
+- id: gpu-thread
+  term: поток
+  term_en: thread
+  definition: Одна нить выполнения на GPU; выполняет экземпляр ядра над своим элементом данных и имеет собственные регистры.
+  chapter: compute/gpu-architecture
+- id: gpu-warp
+  term: варп
+  term_en: warp
+  definition: Группа из 32 потоков, которые выполняют инструкции вместе; наименьшая исполняемая единица параллелизма на устройстве CUDA.
+  chapter: compute/gpu-architecture
+- id: gpu-sm
+  term: мультипроцессор
+  term_en: streaming multiprocessor, SM
+  definition: Блок GPU, на котором выполняются варпы. Держит несколько варпов одновременно и переключается между ними, пока один ждёт данные.
+  chapter: compute/gpu-architecture
+- id: gpu-block
+  term: блок потоков
+  term_en: thread block
+  definition: Набор потоков, которые запускаются вместе и могут обмениваться данными через разделяемую память.
+  chapter: compute/gpu-architecture
+  layer: { c: 1, d: 2 }
+- id: gpu-grid
+  term: сетка блоков
+  term_en: grid
+  definition: Все блоки одного запуска ядра.
+  chapter: compute/gpu-architecture
+  layer: { c: 1, d: 2 }
+- id: gpu-kernel
+  term: ядро
+  term_en: kernel
+  definition: Функция, которую запускают на GPU сразу во множестве потоков; каждый поток выполняет её над своим элементом данных.
+  chapter: compute/gpu-architecture
+  layer: { c: 1, d: 2 }
+- id: gpu-divergence
+  term: расхождение ветвлений
+  term_en: warp divergence
+  definition: Ситуация, когда потоки одного варпа по-разному проходят условие; устройство выполняет ветки по очереди, и часть потоков простаивает.
+  chapter: compute/gpu-architecture
+- id: gpu-register
+  term: регистры
+  term_en: register
+  definition: Память на кристалле, видимая одному потоку; доступ к ней имеет наименьшую задержку среди уровней памяти GPU.
+  chapter: compute/gpu-architecture
+  layer: { c: 1, d: 3 }
+- id: gpu-shared-memory
+  term: разделяемая память
+  term_en: shared memory
+  definition: Память на кристалле, видимая всем потокам одного блока; живёт, пока работает блок.
+  chapter: compute/gpu-architecture
+  layer: { c: 1, d: 3 }
+- id: gpu-global-memory
+  term: глобальная память
+  term_en: global memory
+  definition: Память вне кристалла, видимая всем потокам и хосту; самая медленная по задержке из основных уровней памяти GPU.
+  chapter: compute/gpu-architecture
+  layer: { c: 1, d: 3 }
+- id: gpu-occupancy
+  term: занятость
+  term_en: occupancy
+  definition: Отношение числа активных варпов на мультипроцессоре к максимально возможному числу. Высокая занятость не всегда означает высокую скорость.
+  chapter: compute/gpu-architecture
+  layer: { c: 1, d: 3 }
+- id: gpu-latency-hiding
+  term: скрытие задержек
+  term_en: latency hiding
+  definition: Приём, при котором пока один варп ждёт данные из памяти, мультипроцессор выполняет другие варпы, чтобы не простаивать.
+  chapter: compute/gpu-architecture
+  layer: { c: 1, d: 3 }
