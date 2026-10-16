@@ -1,5 +1,5 @@
 id: classic-ml-decision-trees
-title: Деревья решений
+title: Деревья решений на NumPy
 chapter: classic-ml/decision-trees
 runtime: pyodide
 starter: starter.py
