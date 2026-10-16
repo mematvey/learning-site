@@ -1,0 +1,30 @@
+- id: bayes-theorem
+  term: формула Байеса
+  term_en: Bayes' theorem
+  definition: 'Формула, которая находит вероятность гипотезы по результату опыта: произведение правдоподобия результата и априорной вероятности гипотезы делят на полную вероятность результата.'
+  chapter: stats/classical-probability-2
+- id: prior-probability
+  term: априорная вероятность
+  term_en: prior probability
+  definition: 'Вероятность гипотезы до получения результата опыта. Она задаётся до наблюдения и используется как исходная точка пересчёта.'
+  chapter: stats/classical-probability-2
+- id: posterior-probability
+  term: апостериорная вероятность
+  term_en: posterior probability
+  definition: 'Вероятность гипотезы после получения результата опыта. Считается по формуле Байеса из априорной вероятности и вероятности результата при гипотезе.'
+  chapter: stats/classical-probability-2
+- id: total-probability
+  term: формула полной вероятности
+  term_en: law of total probability
+  definition: 'Вероятность события равна сумме его вероятностей через каждую гипотезу из разбиения, взвешенных вероятностями гипотез.'
+  chapter: stats/classical-probability-2
+- id: sensitivity
+  term: чувствительность теста
+  term_en: sensitivity
+  definition: 'Доля больных, у которых тест даёт положительный результат. Вероятность положительного результата при условии болезни.'
+  chapter: stats/classical-probability-2
+- id: specificity
+  term: специфичность теста
+  term_en: specificity
+  definition: 'Доля здоровых, у которых тест даёт отрицательный результат. Вероятность отрицательного результата при условии отсутствия болезни.'
+  chapter: stats/classical-probability-2
