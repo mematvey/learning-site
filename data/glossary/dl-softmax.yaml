@@ -1,0 +1,29 @@
+- id: logit
+  term: логит
+  term_en: logit
+  definition: Ненормированная оценка модели для одного класса или варианта; до softmax может быть любым вещественным числом.
+  chapter: dl/softmax
+- id: temperature
+  term: температура
+  term_en: temperature
+  definition: Делитель логитов перед softmax, softmax(z / T). Малая T делает распределение резким, большая T делает его размытым.
+  chapter: dl/softmax
+- id: logsumexp
+  term: logsumexp
+  definition: Функция log(сумма exp(z_j)); считается устойчиво как m + log(сумма exp(z_j − m)), где m максимум.
+  chapter: dl/softmax
+- id: log-softmax
+  term: log-softmax
+  definition: Логарифм softmax, записанный как z_i − logsumexp(z); остаётся конечным даже для очень малых вероятностей.
+  chapter: dl/softmax
+- id: cross-entropy
+  term: кросс-энтропия
+  term_en: cross-entropy
+  definition: Потеря −Σ y_i log p_i между истинным распределением y и предсказанием p; для one-hot y равна −log p класса.
+  chapter: dl/softmax
+- id: online-softmax
+  term: онлайн-softmax
+  term_en: online softmax
+  definition: Способ считать softmax за один проход по данным, обновляя максимум и сумму по мере чтения элементов.
+  chapter: dl/softmax
+  layer: { c: 1, d: 3 }
