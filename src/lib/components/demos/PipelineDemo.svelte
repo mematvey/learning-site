@@ -12,6 +12,7 @@
 		STEP_IDS,
 		advance,
 		describeRun,
+		editParam,
 		editStep,
 		initialRun,
 		isFail,
@@ -50,7 +51,7 @@
 	const NODE_W = $derived(vertical ? 150 : 112);
 	const NODE_H = $derived(vertical ? 50 : 56);
 
-	const keys = $derived(stepKeys(run.revs));
+	const keys = $derived(stepKeys(run.revs, STEPS, run.params));
 	const desc = $derived(describeRun(run));
 	const isReleased = $derived(released(run));
 	const failTitle = $derived(
@@ -115,6 +116,10 @@
 		run = editStep(run, editId);
 	}
 
+	function changeParam(): void {
+		run = editParam(run, editId);
+	}
+
 	onMount(() =>
 		demos?.register('pipelines-ci', {
 			set: (patch) => apply(patch as Partial<PipelineDemoState>),
@@ -161,18 +166,19 @@
 		</div>
 
 		<div class="pl-edit">
-			<label class="pl-label" for="pl-edit-step">Правка кода</label>
+			<label class="pl-label" for="pl-edit-step">Правка шага</label>
 			<select id="pl-edit-step" class="pl-select" bind:value={editId}>
 				{#each STEP_IDS as id (id)}
 					<option value={id}>{STEPS.find((s) => s.id === id)?.title}</option>
 				{/each}
 			</select>
 			<button type="button" class="pl-btn" onclick={changeCode}>Изменить код</button>
+			<button type="button" class="pl-btn" onclick={changeParam}>Изменить параметр</button>
 		</div>
 	</div>
 
 	<div class="pl-formula" aria-hidden="true">
-		ключ<sub>s</sub> = H(версия кода<sub>s</sub>, ключи входов)
+		ключ<sub>s</sub> = H(версия кода<sub>s</sub>, параметры θ<sub>s</sub>, ключи входов)
 	</div>
 
 	<div class="pl-chart" bind:clientWidth={chartW}>
@@ -239,7 +245,8 @@
 				не было. Сбойный шаг в кеш не попадает.
 			</li>
 			<li>
-				Правка кода меняет ключ шага и всех шагов ниже него. Шаги выше по графу остаются из кеша.
+				Правка кода или параметра меняет ключ шага и всех шагов ниже него. Шаги выше по графу
+				остаются из кеша.
 			</li>
 		</ul>
 	</div>

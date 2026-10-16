@@ -33,15 +33,22 @@ sources:
     kind: doc
     title: Using jobs in a workflow (параметр needs)
     venue: GitHub Actions documentation
-    url: https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow
-    accessed: 2026-10-16
+    url: https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-jobs
+    accessed: 2026-10-17
+    supports: [code-expect]
+  - id: ghartifacts
+    kind: doc
+    title: Storing and sharing data from a workflow (upload-artifact, download-artifact)
+    venue: GitHub Actions documentation
+    url: https://docs.github.com/en/actions/tutorials/store-and-share-data
+    accessed: 2026-10-17
     supports: [code-expect]
   - id: ghcache
     kind: doc
     title: Caching dependencies to speed up workflows
     venue: GitHub Actions documentation
-    url: https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
-    accessed: 2026-10-16
+    url: https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching
+    accessed: 2026-10-17
     supports: [math-cache, mistake-cache]
 status: draft
 ---
@@ -72,7 +79,9 @@ status: draft
 
 </Figure>
 
-Шаги, у которых входы не менялись, берутся из <Term id="step-cache">кеша шагов</Term> (step cache) и не считаются заново. Поэтому повторный запуск после правки одного шага обычно занимает меньше времени, чем полный прогон. {#intuition-cache}
+Шаги, у которых ничего не менялось, берутся из <Term id="step-cache">кеша шагов</Term> (step cache) и не считаются заново. Для каждого шага вычисляют ключ кеша, то есть короткий отпечаток трёх вещей: версии кода шага, его параметров (например, скорости обучения) и ключей шагов, из которых он берёт данные. Если такой ключ уже есть в хранилище, берут готовый результат. Правка кода или параметра меняет ключ шага и всех шагов ниже него, а шаги выше остаются из кеша. Поэтому повторный запуск после правки одного шага обычно занимает меньше времени, чем полный прогон. {#intuition-cache}
+
+Тесты кода в демо идут отдельной веткой графа. Выкладка стартует только после двух вещей: оценки модели и прохождения тестов. {#intuition-tests}
 
 ## Математика {#math}
 
@@ -80,7 +89,7 @@ status: draft
 
 <Level c={2}>
 
-Шаг $s$ получает входы от своих предшественников и выдаёт результат. Чтобы не пересчитывать его зря, результат кешируют под ключом $k_s$. Ключ собирают из кода шага $\mathrm{code}_s$, его параметров $\theta_s$ и ключей входов $k_{\mathrm{in}(s)}$:
+Шаг $s$ получает входы от своих предшественников и выдаёт результат. Чтобы не пересчитывать его зря, результат кешируют под ключом $k_s$. Ключ кеша собирают из кода шага $\mathrm{code}_s$, его параметров $\theta_s$ и ключей входов $k_{\mathrm{in}(s)}$:
 
 $$
 k_s = H(\mathrm{code}_s, \theta_s, k_{\mathrm{in}(s)})
@@ -108,7 +117,7 @@ $$
 
 ## Код {#code}
 
-Лаба к этой главе нет. Ниже минимальная конфигурация GitHub Actions: три задачи связаны через `needs`. Модули `train`, `evaluate` и `deploy` условные, их пишете вы.
+Лаба к этой главе нет. Ниже минимальная конфигурация GitHub Actions: задачи связаны через `needs`, а результат обучения передаётся между задачами как артефакт. Каждая задача идёт на своём раннере (runner), общего диска у них нет, поэтому без `upload-artifact` и `download-artifact` `evaluate` не увидел бы веса. Модули `train`, `evaluate` и `deploy` условные, их пишете вы.
 
 ```yaml
 name: model-pipeline
@@ -116,32 +125,48 @@ on:
   push:
     branches: [main]
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m pytest
   train:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python -m train --config configs/base.yaml
+      - run: python -m train --config configs/base.yaml --out artifacts/model.npz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: model
+          path: artifacts/model.npz
   evaluate:
     needs: train
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python -m evaluate --min-auc 0.80
+      - uses: actions/download-artifact@v5
+        with:
+          name: model
+          path: artifacts
+      - run: python -m evaluate --model artifacts/model.npz --min-auc 0.80
   deploy:
-    needs: evaluate
+    needs: [evaluate, tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python -m deploy
+      - uses: actions/download-artifact@v5
+        with:
+          name: model
+          path: artifacts
+      - run: python -m deploy --model artifacts/model.npz
 ```
 
-Ожидаемое поведение: `deploy` стартует только после успешного `evaluate`. Если `evaluate` завершился с ошибкой, `deploy` пропускается, и модель не уходит в выкладку. Так работает параметр `needs` (см. <Cite id="ghneeds" />). {#code-expect}
+Ожидаемое поведение: `deploy` стартует только после успешных `evaluate` и `tests`. Если любая из этих задач завершилась с ошибкой, `deploy` пропускается, и модель не уходит в выкладку. Так работает параметр `needs` (см. <Cite id="ghneeds" />). Файл с весами задачи получают через артефакт: `train` загружает его, `evaluate` и `deploy` скачивают (см. <Cite id="ghartifacts" />). {#code-expect}
 
 ## Частые ошибки {#mistakes}
 
 - CI зелёный, а модель деградировала: проверяется код, но не метрики. Добавьте <Term id="quality-gate">контроль качества</Term> с порогами. {#mistake-metrics}
-- Кеш не учитывает параметры: шаг пропущен, хотя поменялся конфиг, и выкладка получает результат старой конфигурации. Ключ должен включать всё, от чего зависит результат. {#mistake-cache}
-- Оценка на той же выборке, по которой подбирали порог: метрика завышена, и порог пропускает модель, которая хуже на новых данных. {#mistake-leak}
+- Ключ кеша не учитывает параметры: шаг пропущен, хотя поменялся конфиг, и выкладка получает результат старой конфигурации. Ключ должен включать всё, от чего зависит результат. {#mistake-cache}
 - Обучение без фиксации случайности: два запуска одного кода дают разные метрики, и разницу между запусками не отличить от эффекта изменения. {#mistake-seed}
 - Выкладка без пути назад: если новая модель плохо ведёт себя в продакшене, нужен быстрый возврат к предыдущей версии. Откат проектируют заранее, а не во время инцидента. {#mistake-rollback}
 
@@ -155,7 +180,7 @@ jobs:
 
 <Quiz id="quiz-cache" q="Поменяли только шаг обучения (learning rate) в конфиге, код и данные прежние. Что будет с кешем шага обучения?">
 
-Ключ кеша включает параметры шага, поэтому ключ меняется, и шаг пересчитывается. Результат старой конфигурации не используется.
+Ключ кеша составляется в том числе из параметров шага, поэтому ключ меняется, и шаг пересчитывается. Результат старой конфигурации не используется.
 
 </Quiz>
 

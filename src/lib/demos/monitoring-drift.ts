@@ -28,11 +28,17 @@ export const PSI_BINS = 10;
 /** Shares below this value are floored so that ln(p / q) stays finite. */
 export const PSI_EPS = 1e-4;
 
-/** Common reading of PSI: below 0.1 stable, 0.1 to 0.25 a shift to watch, above 0.25 a serious shift. */
+/**
+ * Conventional PSI thresholds, chosen for the demo only: below 0.1 stable, 0.1 to 0.25 a shift to watch,
+ * above 0.25 a serious shift. No source fixes them; in a real system they are tuned to the task.
+ */
 export const PSI_WARN = 0.1;
 export const PSI_ALERT = 0.25;
 
-/** Kolmogorov critical constant c(alpha) for alpha = 0.05 (two-sample test, asymptotic). */
+/**
+ * Kolmogorov critical constant for alpha = 0.05 (two-sample test, asymptotic).
+ * From P(D > c * sqrt((n + m) / (n m))) ~ 2 exp(-2 c^2) = alpha: c = sqrt(-ln(alpha / 2) / 2) = 1.358.
+ */
 export const KS_C_05 = 1.358;
 
 /** Histogram range and bin width used for drawing the two densities. */

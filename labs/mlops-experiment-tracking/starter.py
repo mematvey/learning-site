@@ -22,9 +22,10 @@ def new_run(run_id, params, env=None):
 def log_metric(run, name, value):
     """Appends one value to the history of metric `name` (one value per step).
 
-    value: an int or a float (not a bool). Raises TypeError otherwise.
+    value: an int or a float (not a bool). Raises TypeError otherwise and
+    ValueError if the value is not finite (nan or inf).
     """
-    # TODO: check the type of `value`, then append it to run["metrics"][name]
+    # TODO: check the type of `value` and that it is finite, then append it to run["metrics"][name]
     # (create the list on the first call)
     raise NotImplementedError
 

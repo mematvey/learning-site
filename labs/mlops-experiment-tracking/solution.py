@@ -29,7 +29,8 @@ def new_run(run_id, params, env=None):
 def log_metric(run, name, value):
     """Appends one value to the history of metric `name` (one value per step).
 
-    value: an int or a float (not a bool). Raises TypeError otherwise.
+    value: an int or a float (not a bool). Raises TypeError otherwise and
+    ValueError if the value is not finite (nan or inf).
     """
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise TypeError(f"metric value must be a number, got {value!r}")
