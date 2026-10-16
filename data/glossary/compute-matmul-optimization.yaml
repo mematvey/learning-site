@@ -1,0 +1,15 @@
+- id: matmul-tiling
+  term: тайлинг
+  term_en: tiling
+  definition: Разбиение матриц на тайлы, которые блок загружает в быструю память и использует многократно, чтобы уменьшить число чтений из глобальной памяти.
+  chapter: compute/matmul-optimization
+- id: matmul-tile
+  term: тайл
+  term_en: tile
+  definition: Квадратный блок матрицы со стороной T, который блок потоков загружает целиком и использует для многих вычислений.
+  chapter: compute/matmul-optimization
+- id: matmul-data-reuse
+  term: переиспользование данных
+  term_en: data reuse
+  definition: Использование одного и того же загруженного элемента несколькими вычислениями; тайлинг увеличивает этот коэффициент в T раз по сравнению с наивным умножением.
+  chapter: compute/matmul-optimization
