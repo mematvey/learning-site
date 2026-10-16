@@ -15,10 +15,16 @@ export function firstFailedIndex(tests: TestResult[]): number {
 	return tests.findIndex((t) => t.status === 'fail' || t.status === 'error');
 }
 
-/** Line of the first failing test that has a location (used to highlight the editor line). */
-export function errorLine(tests: TestResult[]): number | null {
+/** File name the harness gives the learner's code (see `USER_FILE` in `labs/harness.py`). */
+export const USER_FILE = 'code.py';
+
+/**
+ * Line of the first failing test whose location is in the learner's file (used to highlight
+ * the editor line). Failures located in the test files (`tests_*.py`) do not mark the editor.
+ */
+export function errorLine(tests: TestResult[], userFile: string = USER_FILE): number | null {
 	const failed = tests.find(
-		(t) => (t.status === 'fail' || t.status === 'error') && t.location !== undefined,
+		(t) => (t.status === 'fail' || t.status === 'error') && t.location?.file === userFile,
 	);
 	return failed?.location?.line ?? null;
 }

@@ -1,9 +1,19 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { EditorState, StateEffect, StateField } from '@codemirror/state';
-	import { Decoration, type DecorationSet, EditorView, keymap } from '@codemirror/view';
+	import { EditorState, RangeSetBuilder, StateEffect, StateField } from '@codemirror/state';
+	import {
+		Decoration,
+		type DecorationSet,
+		EditorView,
+		ViewPlugin,
+		type ViewUpdate,
+		keymap,
+	} from '@codemirror/view';
+	import { HighlightStyle, syntaxHighlighting, syntaxTree } from '@codemirror/language';
 	import { python } from '@codemirror/lang-python';
 	import { basicSetup } from 'codemirror';
+	// Transitive dependency of @codemirror/language: it does not re-export the tag set.
+	import { tags as t } from '@lezer/highlight';
 
 	interface Props {
 		value: string;
@@ -85,6 +95,72 @@
 		},
 	]);
 
+	// Site palette: only tokens from the theme file, no red for strings. Both themes read the same vars.
+	const siteHighlight = HighlightStyle.define([
+		{
+			tag: [t.keyword, t.controlKeyword, t.definitionKeyword, t.moduleKeyword],
+			color: 'var(--cat-5)',
+		},
+		{ tag: [t.operatorKeyword, t.modifier, t.self, t.null], color: 'var(--cat-5)' },
+		{ tag: [t.string, t.character, t.attributeValue], color: 'var(--cat-3)' },
+		{ tag: [t.number, t.integer, t.float, t.bool, t.atom, t.unit], color: 'var(--cat-2)' },
+		{
+			tag: [t.comment, t.lineComment, t.blockComment, t.docComment],
+			color: 'var(--text-muted)',
+			fontStyle: 'italic',
+		},
+		{
+			tag: [t.function(t.variableName), t.function(t.propertyName), t.definition(t.variableName)],
+			color: 'var(--cat-1)',
+		},
+		{ tag: [t.className, t.typeName, t.namespace, t.macroName], color: 'var(--cat-6)' },
+		{ tag: [t.meta, t.annotation], color: 'var(--cat-4)' },
+		{ tag: [t.operator, t.punctuation, t.bracket, t.separator], color: 'var(--text-muted)' },
+	]);
+
+	// Python docstrings are plain strings in the grammar: a string that is the first statement of
+	// a module, function or class body is marked as documentation (muted, not string-coloured).
+	const docstringMark = Decoration.mark({ class: 'cm-docstring' });
+	const docstrings = ViewPlugin.fromClass(
+		class {
+			decorations: DecorationSet;
+			constructor(view: EditorView) {
+				this.decorations = this.build(view);
+			}
+			update(update: ViewUpdate) {
+				if (
+					update.docChanged ||
+					update.viewportChanged ||
+					syntaxTree(update.startState) !== syntaxTree(update.state)
+				) {
+					this.decorations = this.build(update.view);
+				}
+			}
+			build(view: EditorView): DecorationSet {
+				const builder = new RangeSetBuilder<Decoration>();
+				const tree = syntaxTree(view.state);
+				for (const { from, to } of view.visibleRanges) {
+					tree.iterate({
+						from,
+						to,
+						enter(node) {
+							if (node.name !== 'String') return;
+							const stmt = node.node.parent;
+							if (stmt?.name !== 'ExpressionStatement') return;
+							const owner = stmt.parent?.name;
+							if (owner !== 'Script' && owner !== 'Body') return;
+							const prev = stmt.prevSibling;
+							if (prev !== null && prev.name !== ':') return;
+							builder.add(node.from, node.to, docstringMark);
+						},
+					});
+				}
+				return builder.finish();
+			}
+		},
+		{ decorations: (v) => v.decorations },
+	);
+
 	const theme = EditorView.theme({
 		'&': { color: 'var(--text)', backgroundColor: 'transparent', fontSize: '13px' },
 		'&.cm-focused': { outline: '2px solid var(--accent)', outlineOffset: '-2px' },
@@ -103,6 +179,11 @@
 		'.cm-selectionBackground, &.cm-focused .cm-selectionBackground': {
 			backgroundColor: 'color-mix(in srgb, var(--accent) 25%, transparent) !important',
 		},
+		// The syntax token inside the mark carries its own colour: override it for docstrings.
+		'.cm-docstring, .cm-docstring *': {
+			color: 'var(--text-muted) !important',
+			fontStyle: 'italic',
+		},
 		'.cm-lab-err': {
 			backgroundColor: 'color-mix(in srgb, var(--fail) 10%, transparent)',
 			boxShadow: 'inset 3px 0 0 var(--fail)',
@@ -118,6 +199,8 @@
 				extensions: [
 					labKeys,
 					basicSetup,
+					syntaxHighlighting(siteHighlight),
+					docstrings,
 					python(),
 					errorField,
 					theme,

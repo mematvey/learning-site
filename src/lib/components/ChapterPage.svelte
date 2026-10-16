@@ -268,7 +268,14 @@
 		>
 			<header class="chapter-head">
 				{#if topic}
-					<p class="eyebrow">{topic.title}</p>
+					<!-- Pagefind: the topic is a page-level meta and filter. Level is per block, not per page. -->
+					<p
+						class="eyebrow"
+						data-pagefind-meta="topic:{topic.title}"
+						data-pagefind-filter="topic:{topic.title}"
+					>
+						{topic.title}
+					</p>
 				{/if}
 				<h1>{chapter.title}</h1>
 				<p class="lead">{chapter.summary}</p>
