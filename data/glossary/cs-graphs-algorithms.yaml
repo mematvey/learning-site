@@ -1,0 +1,50 @@
+- id: graph-graph
+  term: граф
+  term_en: graph
+  definition: Набор вершин и рёбер, которые соединяют пары вершин. Граф может быть ориентированным (ребро ведёт от одной вершины к другой) или неориентированным.
+  chapter: cs/graphs-algorithms
+- id: graph-vertex
+  term: вершина
+  term_en: vertex
+  definition: Объект графа - перекрёсток, пользователь, состояние. В коде вершину обычно хранят как ключ словаря или как число.
+  chapter: cs/graphs-algorithms
+- id: graph-edge
+  term: ребро
+  term_en: edge
+  definition: Связь между двумя вершинами. В ориентированном графе ребро ведёт от одной вершины к другой.
+  chapter: cs/graphs-algorithms
+- id: graph-weight
+  term: вес ребра
+  term_en: edge weight
+  definition: Число, приписанное ребру - длина дороги, стоимость, задержка. Если весов нет, длина пути равна числу рёбер на нём.
+  chapter: cs/graphs-algorithms
+- id: graph-adjacency-list
+  term: список смежности
+  term_en: adjacency list
+  definition: Способ хранить граф, при котором каждой вершине соответствует список её соседей (и весов рёбер). Память расходуется пропорционально числу вершин и рёбер.
+  chapter: cs/graphs-algorithms
+- id: graph-bfs
+  term: обход в ширину
+  term_en: breadth-first search (BFS)
+  definition: Обход, который посещает вершины слоями по числу рёбер от стартовой вершины. Использует очередь. В графе без весов даёт пути с наименьшим числом рёбер.
+  chapter: cs/graphs-algorithms
+- id: graph-dfs
+  term: обход в глубину
+  term_en: depth-first search (DFS)
+  definition: Обход, который уходит по ребру как можно дальше и возвращается назад, когда дальше идти нельзя. Использует стек, явный или неявный через рекурсию.
+  chapter: cs/graphs-algorithms
+- id: graph-shortest-path
+  term: кратчайший путь
+  term_en: shortest path
+  definition: Путь между двумя вершинами с наименьшей суммой весов рёбер на нём. В графе без весов это путь с наименьшим числом рёбер.
+  chapter: cs/graphs-algorithms
+- id: graph-relaxation
+  term: релаксация
+  term_en: relaxation
+  definition: Проверка ребра (u, v) - если путь до u плюс вес ребра короче известного пути до v, оценка расстояния до v уменьшается.
+  chapter: cs/graphs-algorithms
+- id: graph-dijkstra
+  term: алгоритм Дейкстры
+  term_en: Dijkstra's algorithm
+  definition: Поиск кратчайших путей от одной вершины при неотрицательных весах рёбер. На каждом шаге закрывается вершина с наименьшей текущей оценкой расстояния, затем выполняется релаксация её рёбер.
+  chapter: cs/graphs-algorithms
