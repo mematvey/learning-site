@@ -1,0 +1,80 @@
+- id: unsupervised
+  term: обучение без учителя
+  term_en: unsupervised learning
+  definition: Постановка, где у объектов нет правильных ответов, и алгоритм ищет структуру в самих признаках.
+  chapter: classic-ml/clustering-pca
+- id: clustering
+  term: кластеризация
+  term_en: clustering
+  definition: Разбиение объектов на группы (кластеры) так, чтобы объекты внутри группы были похожи друг на друга.
+  chapter: classic-ml/clustering-pca
+- id: cluster
+  term: кластер
+  term_en: cluster
+  definition: Группа объектов, которую алгоритм кластеризации отнёс друг к другу.
+  chapter: classic-ml/clustering-pca
+- id: centroid
+  term: центроид
+  term_en: centroid
+  definition: Среднее арифметическое объектов кластера; представитель группы, относительно которого k-means измеряет расстояния.
+  chapter: classic-ml/clustering-pca
+- id: k-means
+  term: метод k-средних
+  term_en: k-means
+  definition: Алгоритм кластеризации с заранее заданным числом групп k. Чередует назначение объектов ближайшему центру и пересчёт центров, пока разбиение не перестанет меняться.
+  chapter: classic-ml/clustering-pca
+- id: kmeans-plus-plus
+  term: k-means++
+  term_en: k-means++
+  definition: Способ выбора стартовых центров, при котором следующий центр выбирается с вероятностью, пропорциональной квадрату расстояния до ближайшего уже выбранного центра.
+  chapter: classic-ml/clustering-pca
+- id: inertia
+  term: внутрикластерная сумма квадратов
+  term_en: within-cluster sum of squares
+  definition: Сумма квадратов расстояний от объектов до центров их кластеров; k-means минимизирует её.
+  chapter: classic-ml/clustering-pca
+  layer: { c: 2, d: 1 }
+- id: elbow-method
+  term: метод локтя
+  term_en: elbow method
+  definition: 'Эвристика выбора k по графику внутрикластерной суммы квадратов: берут точку, после которой падение заметно замедляется.'
+  chapter: classic-ml/clustering-pca
+- id: pca
+  term: метод главных компонент
+  term_en: principal component analysis, PCA
+  definition: Преобразование признаков в новые оси, вдоль которых разброс данных максимален; обычно оставляют первые несколько осей.
+  chapter: classic-ml/clustering-pca
+- id: principal-component
+  term: главная компонента
+  term_en: principal component
+  definition: Ось в пространстве признаков, вдоль которой данные разбросаны сильнее всего среди осей, перпендикулярных предыдущим.
+  chapter: classic-ml/clustering-pca
+- id: dimensionality-reduction
+  term: снижение размерности
+  term_en: dimensionality reduction
+  definition: Замена исходных признаков меньшим числом новых признаков с сохранением по возможности большей части информации.
+  chapter: classic-ml/clustering-pca
+- id: explained-variance
+  term: доля объяснённой дисперсии
+  term_en: explained variance ratio
+  definition: Часть общего разброса данных, которую сохраняет выбранная главная компонента или набор компонент.
+  chapter: classic-ml/clustering-pca
+- id: standardization
+  term: стандартизация
+  term_en: standardization
+  definition: Приведение признака к нулевому среднему и единичному стандартному отклонению.
+  chapter: classic-ml/clustering-pca
+  layer: { c: 2, d: 1 }
+- id: svd
+  term: сингулярное разложение
+  term_en: singular value decomposition, SVD
+  definition: Разложение матрицы на произведение матрицы с ортонормированными столбцами, диагональной матрицы сингулярных чисел и транспонированной матрицы с ортонормированными строками.
+  chapter: classic-ml/clustering-pca
+  layer: { c: 2, d: 1 }
+- id: covariance-matrix
+  term: ковариационная матрица
+  term_en: covariance matrix
+  symbol: Σ
+  definition: Матрица попарных ковариаций признаков; на её диагонали стоят дисперсии признаков.
+  chapter: classic-ml/clustering-pca
+  layer: { c: 3, d: 1 }
