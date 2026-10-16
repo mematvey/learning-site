@@ -15,7 +15,7 @@ const EXPECTED: Record<string, Record<string, Rational>> = {
 	p4: { a: rat(5, 204), b: rat(5, 34) },
 	p5: { a: rat(57, 115), b: rat(19, 138), c: rat(19, 46) },
 	p6: { a: rat(5, 11) },
-	p7: { a: rat(1, 120) },
+	p7: { a: rat(1, 120), b: rat(1, 720) },
 	p8: { a: rat(1, 60) },
 	p9: { a: rat(950, 2639), b: rat(21167, 23751) },
 };
@@ -45,8 +45,16 @@ describe('exact answers at default parameters', () => {
 		expect(toNumber(EXPECTED.p9?.b ?? rat(0))).toBeCloseTo(0.8912, 4);
 	});
 
-	it('p7 and p8 with other parameters (task 7b, task 8 alternate)', () => {
+	it('p7 with other parameters and the condition text', () => {
 		expect(p7.exact({ cards: 6, len: 6 }).a).toEqual(rat(1, 720));
+		expect(p7.exact({ cards: 4, len: 2 }).b).toEqual(rat(1, 24));
+		const text = p7.condition(p7.defaults);
+		expect(text).toContain('а)');
+		expect(text).toContain('б)');
+		expect(text).toContain('123456');
+	});
+
+	it('p8 with other parameters (task 8 alternate)', () => {
 		expect(p8.exact({ ones: 3, twos: 2, threes: 1 }).a).toEqual(rat(1, 60));
 	});
 });
