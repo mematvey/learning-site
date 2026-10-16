@@ -196,30 +196,6 @@
 	</dl>
 
 	<p class="cl-note" aria-live="polite">{desc}</p>
-
-	<div class="cl-notice">
-		<p class="cl-h2">Что заметить</p>
-		<ul>
-			<li>
-				Шаг 1 и выровненное начало: все потоки читают один непрерывный сегмент, одна транзакция.
-			</li>
-			<li>
-				Сдвиг начала на один элемент даёт две транзакции, даже когда шаг 1: выравнивание важно.
-			</li>
-			<li>
-				С ростом шага адреса расходятся, транзакций становится больше, а в каждой лишь часть байт
-				нужна потокам.
-			</li>
-			<li>
-				Обход столбца матрицы, которая хранится по строкам, даёт большой шаг. При шаге 32 каждый
-				поток попадает в свой сегмент.
-			</li>
-			<li>
-				Меньший сегмент (32 байта) уменьшает лишние байты при разреженном доступе, но непрерывный
-				доступ делает больше транзакций.
-			</li>
-		</ul>
-	</div>
 </figure>
 
 <style>
@@ -348,11 +324,6 @@
 		font-weight: 600;
 		color: var(--text);
 	}
-	.cl-h2 {
-		margin-bottom: var(--space-1);
-		font-family: var(--font-serif);
-		font-weight: 600;
-	}
 
 	/* Warp strip: 32 threads in two rows of 16 */
 	.cl-warp {
@@ -380,7 +351,8 @@
 		display: block;
 		width: 100%;
 		height: auto;
-		min-width: 300px;
+		min-width: 360px;
+		max-width: 480px;
 		overflow: visible;
 	}
 	.cl-row-label {
@@ -422,15 +394,6 @@
 	.cl-note {
 		margin-top: var(--space-4);
 		color: var(--text-muted);
-	}
-
-	/* What to notice */
-	.cl-notice {
-		margin-top: var(--space-4);
-		padding: var(--space-3) var(--space-4);
-		background: var(--topic-soft);
-		border-radius: var(--radius);
-		color: var(--text);
 	}
 
 	/* Entity highlight from the text (HIGHLIGHT_CONTEXT) */

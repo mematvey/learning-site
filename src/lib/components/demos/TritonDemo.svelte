@@ -13,7 +13,6 @@
 		N_MIN,
 		applyPatch,
 		describeGrid,
-		hasTail,
 		lastBlockUseful,
 		maskedLanes,
 		programCount,
@@ -52,7 +51,6 @@
 			lanes: programLanes(st.n, st.block, pid),
 		})),
 	);
-	const tail = $derived(hasTail(st.n, st.block));
 	const masked = $derived(maskedLanes(st.n, st.block));
 	const useful = $derived(lastBlockUseful(st.n, st.block));
 	const lost = $derived(uncoveredByFloor(st.n, st.block));
@@ -161,28 +159,6 @@
 	</dl>
 
 	<p class="tr-note" aria-live="polite">{desc}</p>
-
-	<div class="tr-notice">
-		<p class="tr-h2">Что заметить</p>
-		<ul>
-			<li>
-				Число программ растёт скачком, когда n переходит через кратное B. Хвост всегда короче
-				полного блока.
-			</li>
-			<li>
-				{#if tail}
-					Серые клетки последнего блока не участвуют в вычислениях: маска закрывает их на загрузке и
-					на записи.
-				{:else}
-					При n, кратном B, хвоста нет, и маска ничего не отбрасывает.
-				{/if}
-			</li>
-			<li>
-				Если взять // вместо округления вверх, потеряется {lost} позиций при текущих значениях (0 означает,
-				что потерь нет).
-			</li>
-		</ul>
-	</div>
 </figure>
 
 <style>
@@ -358,20 +334,6 @@
 	.tr-note {
 		margin-top: var(--space-4);
 		color: var(--text-muted);
-	}
-
-	/* What to notice */
-	.tr-notice {
-		margin-top: var(--space-4);
-		padding: var(--space-3) var(--space-4);
-		background: var(--topic-soft);
-		border-radius: var(--radius);
-		color: var(--text);
-	}
-	.tr-h2 {
-		margin-bottom: var(--space-1);
-		font-family: var(--font-serif);
-		font-weight: 600;
 	}
 
 	.tr.hl-q .tr-stats {

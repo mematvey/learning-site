@@ -60,6 +60,12 @@
   definition: Отношение числа активных варпов на мультипроцессоре к максимально возможному числу. Высокая занятость не всегда означает высокую скорость.
   chapter: compute/gpu-architecture
   layer: { c: 1, d: 3 }
+- id: gpu-hbm
+  term: HBM
+  term_en: high-bandwidth memory
+  definition: Тип памяти, который используют как глобальную память ускорителей вроде A100; отличается высокой пропускной способностью.
+  chapter: compute/gpu-architecture
+  layer: { c: 1, d: 3 }
 - id: gpu-latency-hiding
   term: скрытие задержек
   term_en: latency hiding
