@@ -8,7 +8,7 @@ concepts:
   - { id: experiment, title: Эксперимент }
   - { id: run, title: Запуск }
   - { id: hyperparameter, title: Гиперпараметр }
-  - { id: metric, title: Метрика }
+  - { id: run-metric, title: Метрика }
   - { id: artifact, title: Артефакт }
   - { id: reproducibility, title: Воспроизводимость }
   - { id: random-seed, title: Сид генератора }
