@@ -191,12 +191,8 @@
 	.mt dl,
 	.mt dd,
 	.mt dt,
-	.mt p,
-	.mt ul {
+	.mt p {
 		margin: 0;
-	}
-	.mt ul {
-		padding-left: var(--space-4);
 	}
 	.mt button {
 		font: inherit;

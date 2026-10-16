@@ -185,12 +185,8 @@
 	.tr dl,
 	.tr dd,
 	.tr dt,
-	.tr p,
-	.tr ul {
+	.tr p {
 		margin: 0;
-	}
-	.tr ul {
-		padding-left: var(--space-4);
 	}
 	.tr button {
 		font: inherit;

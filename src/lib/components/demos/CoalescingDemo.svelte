@@ -222,12 +222,8 @@
 	.cl dl,
 	.cl dd,
 	.cl dt,
-	.cl p,
-	.cl ul {
+	.cl p {
 		margin: 0;
-	}
-	.cl ul {
-		padding-left: var(--space-4);
 	}
 	.cl button {
 		font: inherit;

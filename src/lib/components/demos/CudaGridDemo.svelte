@@ -229,12 +229,8 @@
 	.cu dl,
 	.cu dd,
 	.cu dt,
-	.cu p,
-	.cu ul {
+	.cu p {
 		margin: 0;
-	}
-	.cu ul {
-		padding-left: var(--space-4);
 	}
 	.cu button {
 		font: inherit;
