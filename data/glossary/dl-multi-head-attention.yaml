@@ -1,0 +1,26 @@
+- id: multi-head-attention
+  term: многоголовое внимание
+  term_en: multi-head attention
+  definition: Несколько голов внимания, работающих параллельно; каждая со своими проекциями, а результаты склеиваются и проецируются обратно в ширину модели.
+  chapter: dl/multi-head-attention
+- id: attention-head
+  term: голова внимания
+  term_en: attention head
+  definition: Одна из параллельных копий внимания в многоголовом внимании со своими проекциями запросов, ключей и значений.
+  chapter: dl/multi-head-attention
+- id: kv-cache
+  term: KV-кэш
+  term_en: KV cache
+  definition: Сохранённые ключи и значения предыдущих позиций при пошаговой генерации; экономят пересчёт, но занимают память и читаются на каждом шаге.
+  chapter: dl/multi-head-attention
+  layer: { c: 1, d: 3 }
+- id: multi-query-attention
+  term: multi-query attention
+  definition: Вариант, в котором все головы запросов используют одну общую пару ключ–значение; кэш уменьшается во столько раз, сколько было голов.
+  chapter: dl/multi-head-attention
+  layer: { c: 1, d: 3 }
+- id: grouped-query-attention
+  term: grouped-query attention
+  definition: Промежуточный вариант между многоголовым и multi-query. Головы запросов делятся на группы, и каждая группа использует свою пару ключ–значение.
+  chapter: dl/multi-head-attention
+  layer: { c: 1, d: 3 }
