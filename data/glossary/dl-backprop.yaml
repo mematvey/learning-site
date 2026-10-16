@@ -1,0 +1,32 @@
+- id: backprop
+  term: обратное распространение
+  term_en: backpropagation
+  definition: Способ вычислить градиент потери по всем весам сети. Прямой проход запоминает значения, обратный проход по цепному правилу проходит граф от выхода ко входу.
+  chapter: dl/backprop
+- id: computation-graph
+  term: граф вычислений
+  term_en: computation graph
+  definition: Ориентированный граф, где узлы выполняют операции, а рёбра переносят значения от одного узла к следующему.
+  chapter: dl/backprop
+- id: forward-pass
+  term: прямой проход
+  term_en: forward pass
+  definition: Вычисление значений узлов от входа к потере. Промежуточные значения сохраняются, потому что обратный проход использует их.
+  chapter: dl/backprop
+- id: backward-pass
+  term: обратный проход
+  term_en: backward pass
+  definition: Обход графа от потери к входам. Каждый узел умножает приходящий градиент на свою локальную производную и передаёт результат дальше.
+  chapter: dl/backprop
+- id: chain-rule
+  term: цепное правило
+  term_en: chain rule
+  definition: Правило дифференцирования сложной функции. Производная по x равна произведению производной по промежуточной величине y и производной y по x; при нескольких путях вклады складываются.
+  chapter: dl/backprop
+  layer: { c: 2, d: 1 }
+- id: numerical-gradient
+  term: численный градиент
+  term_en: numerical gradient
+  definition: Оценка производной по конечной разности, например (f(w + eps) − f(w − eps)) / (2 eps). Требует двух прямых проходов на каждый параметр, поэтому служит проверкой аналитического градиента, а не способом обучения.
+  chapter: dl/backprop
+  layer: { c: 1, d: 2 }
