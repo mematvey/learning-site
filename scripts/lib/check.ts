@@ -190,6 +190,8 @@ export function checkContent(loaded: LoadedContent): Diagnostic[] {
 		}
 
 		out.push(...checkBlocks(ch));
+		out.push(...checkSources(ch, lines));
+		out.push(...checkTextAttrs(ch));
 		out.push(...checkTerms(ch, glossary, prereqsOf, lines));
 	}
 
@@ -275,6 +277,62 @@ function checkBlocks(ch: LoadedChapter): Diagnostic[] {
 		});
 	}
 	return out;
+}
+
+/**
+ * `sources[].supports`: every id must be a block or figure of this chapter (error);
+ * a source with `supports` should be cited in the text with `<Cite id>` (warning).
+ */
+function checkSources(ch: LoadedChapter, lines: string[]): Diagnostic[] {
+	const out: Diagnostic[] = [];
+	const targets = new Set([...ch.scan.blocks, ...ch.scan.figures].map((b) => b.id));
+	const cited = new Set(ch.scan.cites.map((c) => c.id));
+	for (const source of ch.data.sources ?? []) {
+		if (!source.supports || source.supports.length === 0) continue;
+		const line = supportsLine(lines, source.id, ch.idLine);
+		for (const id of source.supports) {
+			if (!targets.has(id)) {
+				out.push({
+					file: ch.file,
+					line,
+					message: `источник "${source.id}": supports ссылается на блок "${id}", которого нет в главе`,
+				});
+			}
+		}
+		if (!cited.has(source.id)) {
+			out.push({
+				file: ch.file,
+				line,
+				message: `источник "${source.id}" указан в supports, но в тексте нет <Cite id="${source.id}" />`,
+				severity: 'warning',
+			});
+		}
+	}
+	return out;
+}
+
+/** Line of `supports:` for the source `id` in the frontmatter; falls back to the `id:` line. */
+function supportsLine(lines: string[], id: string, fallback: number): number {
+	const escaped = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	const start = lines.findIndex((text) =>
+		new RegExp(`^\\s*-?\\s*id:\\s*${escaped}\\s*$`).test(text),
+	);
+	if (start === -1) return fallback;
+	for (let i = start + 1; i < lines.length; i++) {
+		const text = lines[i] ?? '';
+		if (/^\s*-?\s*id:/.test(text) || text.trim() === '---') break;
+		if (/^\s*supports:/.test(text)) return i + 1;
+	}
+	return start + 1;
+}
+
+/** Text attributes (`q`, `caption`, `notice`, `alt`) must be plain text: no TeX, no braces. */
+function checkTextAttrs(ch: LoadedChapter): Diagnostic[] {
+	return ch.scan.badAttrs.map((bad) => ({
+		file: ch.file,
+		line: bad.line,
+		message: `атрибут ${bad.attr} содержит TeX или фигурные скобки ("${bad.value}"): текст без формул, формулы пишите в тексте главы`,
+	}));
 }
 
 /** `<Term id>`: the term exists, and it is not used on a level where its definition is hidden. */
