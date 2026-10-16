@@ -3,11 +3,6 @@
   term_en: estimator
   definition: Функция от выборки, которая даёт число-приближение неизвестного параметра распределения.
   chapter: stats/estimation-testing
-- id: standard-error
-  term: стандартная ошибка
-  term_en: standard error
-  definition: Стандартное отклонение оценки при повторении выборки. Для выборочного среднего равна σ/√n, где σ стандартное отклонение одного наблюдения.
-  chapter: stats/estimation-testing
 - id: confidence-interval
   term: доверительный интервал
   term_en: confidence interval

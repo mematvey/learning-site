@@ -6,7 +6,6 @@ summary: "Как по выборке оценить параметр с дове
 prereqs: [stats/limit-theorems]
 concepts:
   - { id: estimator, title: Оценка }
-  - { id: standard-error, title: Стандартная ошибка }
   - { id: confidence-interval, title: Доверительный интервал }
   - { id: t-distribution, title: t-распределение }
   - { id: null-hypothesis, title: Нулевая гипотеза }
