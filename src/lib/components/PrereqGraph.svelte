@@ -1,286 +1,213 @@
-<script lang="ts" module>
-	import type { PrereqGraphData } from '$lib/contracts/registry';
-	import type { TopicId } from '$lib/contracts/ids';
-	import { SvelteMap } from 'svelte/reactivity';
-
-	/** Chapter node width in CSS px; text wraps inside it. */
-	export const NODE_W = 180;
-	const COL_GAP = 56;
-	const ROW_GAP = 16;
-	const PAD = 16;
-	/** Node title: 13px text, about 20 Cyrillic characters per line, at most 3 lines. */
-	const TITLE_CHARS = 20;
-	const TITLE_LINES = 3;
-	const LINE_H = 18;
-	const NODE_PAD_Y = 8;
-	/** Concept chips under the expanded chapter: 12px text, at most 2 lines each. */
-	const CHIP_CHARS = 22;
-	const CHIP_LINES = 2;
-	const CHIP_LINE_H = 15;
-	const CHIP_CHAR_W = 6.8;
-	const CHIP_PAD_X = 7;
-	const CHIP_PAD_Y = 4;
-	const CHIP_GAP = 5;
-	const CHIP_TOP_GAP = 8;
-	const MAX_CHIPS = 6;
-
-	export interface LayoutChip {
-		lines: string[];
-		x: number;
-		y: number;
-		w: number;
-		h: number;
-	}
-
-	export interface LayoutNode {
-		id: string;
-		kind: 'chapter';
-		lines: string[];
-		x: number;
-		y: number;
-		w: number;
-		h: number;
-		layer: number;
-		/** Concept chips; only the expanded chapter has them. */
-		chips: LayoutChip[];
-	}
-
-	export interface LayoutEdge {
-		from: string;
-		to: string;
-		/** SVG path data, from the right side of `from` to the left side of `to`. */
-		d: string;
-	}
-
-	export interface PrereqLayout {
-		nodes: LayoutNode[];
-		edges: LayoutEdge[];
-		width: number;
-		height: number;
-	}
-
-	/**
-	 * Greedy word wrap by character count. Words longer than a line are split; text beyond
-	 * `maxLines` is cut with an ellipsis. Character counts stand in for measured text width,
-	 * which keeps the layout pure and testable.
-	 */
-	export function wrapText(text: string, maxChars: number, maxLines: number): string[] {
-		const lines: string[] = [];
-		let cur = '';
-		for (const word of text.trim().split(/\s+/).filter(Boolean)) {
-			if (cur && cur.length + 1 + word.length <= maxChars) {
-				cur += ' ' + word;
-				continue;
-			}
-			if (cur) lines.push(cur);
-			let rest = word;
-			while (rest.length > maxChars) {
-				lines.push(rest.slice(0, maxChars));
-				rest = rest.slice(maxChars);
-			}
-			cur = rest;
-		}
-		if (cur) lines.push(cur);
-		if (lines.length <= maxLines) return lines;
-		const kept = lines.slice(0, maxLines);
-		const last = kept[maxLines - 1] ?? '';
-		kept[maxLines - 1] = last.slice(0, maxChars - 1).trimEnd() + '…';
-		return kept;
-	}
-
-	/**
-	 * Lays chapters out left to right: a chapter sits one column right of its deepest prerequisite.
-	 * Chapters of one column stack top to bottom in input order. Concept nodes are not drawn as
-	 * graph nodes; the concepts of `expanded` become chips under that chapter. Throws on a cycle
-	 * (check-content rejects cycles, so this guards against broken generated data).
-	 */
-	export function layoutPrereq(
-		graph: PrereqGraphData,
-		topic?: TopicId,
-		expanded?: string,
-	): PrereqLayout {
-		const chapters = graph.nodes.filter(
-			(n) => n.kind === 'chapter' && (!topic || n.topic === topic),
-		);
-		const ids = new Set(chapters.map((n) => n.id));
-		const edges = graph.edges.filter(
-			(e) => e.kind === 'prereq' && ids.has(e.from) && ids.has(e.to),
-		);
-
-		// Longest-path relaxation; more passes than nodes means a cycle.
-		const layer = new SvelteMap<string, number>();
-		for (const n of chapters) layer.set(n.id, 0);
-		let changed = true;
-		for (let pass = 0; changed; pass++) {
-			if (pass > chapters.length) throw new Error('prereq graph has a cycle');
-			changed = false;
-			for (const e of edges) {
-				const next = (layer.get(e.from) ?? 0) + 1;
-				if (next > (layer.get(e.to) ?? 0)) {
-					layer.set(e.to, next);
-					changed = true;
-				}
-			}
-		}
-
-		const titleOf = new SvelteMap(graph.nodes.map((n) => [n.id, n.title]));
-		const titleLines = new SvelteMap(
-			chapters.map((n) => [n.id, wrapText(n.title, TITLE_CHARS, TITLE_LINES)]),
-		);
-		const maxTitleLines = Math.max(1, ...Array.from(titleLines.values(), (l) => l.length));
-		const nodeH = NODE_PAD_Y * 2 + maxTitleLines * LINE_H;
-
-		const chipLabels = graph.edges
-			.filter((e) => e.kind === 'introduces' && e.from === expanded && ids.has(e.from))
-			.map((e) => titleOf.get(e.to))
-			.filter((t): t is string => !!t);
-		const shown = chipLabels.slice(0, MAX_CHIPS);
-		if (chipLabels.length > MAX_CHIPS) shown.push(`+${chipLabels.length - MAX_CHIPS} ещё`);
-
-		const cursor = new SvelteMap<number, number>();
-		const nodes: LayoutNode[] = chapters.map((n) => {
-			const l = layer.get(n.id) ?? 0;
-			const y = PAD + (cursor.get(l) ?? 0);
-			const isExpanded = n.id === expanded;
-			const chips: LayoutChip[] = [];
-			if (isExpanded) {
-				let cy = y + nodeH + CHIP_TOP_GAP;
-				for (const label of shown) {
-					const lines = wrapText(label, CHIP_CHARS, CHIP_LINES);
-					const longest = Math.max(...lines.map((s) => s.length));
-					const w = Math.min(NODE_W, Math.ceil(longest * CHIP_CHAR_W) + CHIP_PAD_X * 2);
-					const h = CHIP_PAD_Y * 2 + lines.length * CHIP_LINE_H;
-					chips.push({ lines, x: 0, y: cy, w, h });
-					cy += h + CHIP_GAP;
-				}
-			}
-			const last = chips.at(-1);
-			const blockH = last ? last.y + last.h - y : nodeH;
-			cursor.set(l, (cursor.get(l) ?? 0) + blockH + ROW_GAP);
-			return {
-				id: n.id,
-				kind: 'chapter',
-				lines: titleLines.get(n.id) ?? [''],
-				x: PAD + l * (NODE_W + COL_GAP),
-				y,
-				w: NODE_W,
-				h: nodeH,
-				layer: l,
-				chips,
-			};
-		});
-
-		const byId = new SvelteMap(nodes.map((n) => [n.id, n]));
-		const layoutEdges: LayoutEdge[] = edges.map((e) => {
-			const a = byId.get(e.from);
-			const b = byId.get(e.to);
-			if (!a || !b) throw new Error(`edge refers to unknown node: ${e.from} -> ${e.to}`);
-			const x1 = a.x + a.w;
-			const y1 = a.y + a.h / 2;
-			const x2 = b.x;
-			const y2 = b.y + b.h / 2;
-			const c = (x2 - x1) / 2;
-			return {
-				from: e.from,
-				to: e.to,
-				d: `M${x1} ${y1} C${x1 + c} ${y1} ${x2 - c} ${y2} ${x2} ${y2}`,
-			};
-		});
-
-		const maxLayer = Math.max(0, ...nodes.map((n) => n.layer));
-		const tallest = Math.max(0, ...Array.from(cursor.values())) - ROW_GAP;
-		return {
-			nodes,
-			edges: layoutEdges,
-			width: PAD * 2 + (maxLayer + 1) * NODE_W + maxLayer * COL_GAP,
-			height: nodes.length ? PAD * 2 + Math.max(0, tallest) : PAD * 2,
-		};
-	}
-</script>
-
 <script lang="ts">
-	import type { PrereqGraphProps, PrereqNodeState } from '$lib/contracts/component-props';
+	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
+	import type { PrereqGraphProps } from '$lib/contracts/component-props';
 	import type { ChapterId } from '$lib/contracts/ids';
+	import { getChapters } from '$lib/content/registry';
+	import { ensureProgress } from '$lib/shell.svelte';
+	import {
+		LINE_H,
+		fitScale,
+		layoutGraph,
+		neighbor,
+		relatives,
+		revealRect,
+		statusOf,
+		zoomAt,
+		type Direction,
+		type ReadStatus,
+		type Viewport,
+	} from '$lib/graph/layout';
 
 	/**
-	 * Prerequisite map of one topic. The SVG is drawn at its real pixel size (measured with
-	 * ResizeObserver), never scaled through the viewBox, so text keeps 12–13px at any width.
+	 * Interactive map of chapter prerequisites. Two modes: the whole `topic`, or the
+	 * neighbourhood of `focus` when `depth` is set. Nodes are links (Enter opens the chapter);
+	 * arrow keys move between related chapters; hovering or focusing a node highlights its
+	 * prerequisites and dependents. The drawing is pannable and zoomable; a plain list below
+	 * is the text alternative.
 	 */
-	const { graph, focus, topic, done = [], onSelect }: PrereqGraphProps = $props();
+	interface Props extends PrereqGraphProps {
+		/** With `focus`: show only chapters within this many steps of it. */
+		depth?: number;
+		/** Lower viewport height cap, for the small graph on a chapter page. */
+		compact?: boolean;
+	}
+	const { graph, focus, topic, done = [], depth, compact = false, onSelect }: Props = $props();
 
 	const uid = $props.id();
 	const titleId = `prereq-title-${uid}`;
 	const markerId = `prereq-arrow-${uid}`;
+	const markerHiId = `prereq-arrow-hi-${uid}`;
 
-	/** Chapter picked by the reader; its concepts are shown as chips. Starts from `focus`. */
-	let picked = $state<string | undefined>(undefined);
-	const expanded = $derived(picked ?? focus);
-	const layout = $derived(layoutPrereq(graph, topic, expanded));
-	const doneSet = $derived(new Set<string>(done));
+	const layout = $derived(layoutGraph(graph, { topic, focus, depth }));
+	const hrefById = $derived(new Map(getChapters().map((c) => [c.id as string, c.href])));
+	const titleById = $derived(new Map(graph.nodes.map((n) => [n.id, n.title])));
+	const edgesPlain = $derived(graph.edges.filter((e) => e.kind === 'prereq'));
 
-	let wrapEl = $state<HTMLDivElement | undefined>(undefined);
-	let avail = $state(0);
+	// Progress: the `done` prop plus whatever the local store knows (client only).
+	let storeDone = $state<string[]>([]);
+	let storeVisited = $state<string[]>([]);
+	onMount(() => {
+		ensureProgress()
+			.then((s) => s.list())
+			.then(({ chapters }) => {
+				storeDone = chapters.filter((c) => c.done).map((c) => c.id);
+				storeVisited = chapters.filter((c) => c.visited !== null).map((c) => c.id);
+			})
+			.catch(() => {
+				// No readable progress: every chapter shows as not started.
+			});
+	});
+	const doneSet = $derived(new Set<string>([...done, ...storeDone]));
+	const visitedSet = $derived(new Set<string>(storeVisited));
+	const statusRu: Record<ReadStatus, string> = {
+		new: 'не начата',
+		progress: 'в процессе',
+		done: 'пройдена',
+	};
+
+	// Highlight.
+	let hoverId = $state<string | undefined>(undefined);
+	let focusId = $state<string | undefined>(undefined);
+	const active = $derived(hoverId ?? focusId);
+	const rel = $derived(active ? relatives(edgesPlain, active) : undefined);
+	const related = $derived(
+		active && rel ? new Set<string>([active, ...rel.ancestors, ...rel.descendants]) : undefined,
+	);
+	function edgeLit(from: string, to: string): boolean {
+		if (!active || !rel) return false;
+		const up = (id: string) => id === active || rel.ancestors.has(id);
+		const down = (id: string) => id === active || rel.descendants.has(id);
+		return (up(from) && up(to)) || (down(from) && down(to));
+	}
+
+	// Viewport: pan and zoom.
+	let viewEl = $state<HTMLDivElement | undefined>(undefined);
+	let viewW = $state(0);
+	let vp = $state<Viewport>({ scale: 1, x: 0, y: 0 });
+	const maxH = $derived(compact ? 320 : 520);
+	const viewH = $derived(Math.round(Math.min(maxH, Math.max(140, layout.height * vp.scale + 8))));
+
 	$effect(() => {
-		const el = wrapEl;
+		const el = viewEl;
 		if (!el) return;
-		avail = el.clientWidth;
+		viewW = el.clientWidth;
 		if (typeof ResizeObserver === 'undefined') return;
-		const ro = new ResizeObserver(() => {
-			avail = el.clientWidth;
-		});
+		const ro = new ResizeObserver(() => (viewW = el.clientWidth));
 		ro.observe(el);
 		return () => ro.disconnect();
 	});
 
-	/** Measured width, or the layout width before the first measurement. */
-	const measured = $derived(avail || layout.width);
-	const svgWidth = $derived(Math.max(layout.width, measured));
-	const offsetX = $derived(Math.max(0, (measured - layout.width) / 2));
+	function resetView() {
+		const scale = fitScale(layout.width, viewW);
+		let next: Viewport = { scale, x: Math.max(0, (viewW - layout.width * scale) / 2), y: 0 };
+		const cur = focus ? layout.nodes.find((n) => n.id === focus) : undefined;
+		if (cur) next = revealRect(next, cur, viewW, Math.min(maxH, layout.height * scale + 8), 24);
+		vp = next;
+	}
+	// Refit when the data or the available width changes.
+	$effect(() => {
+		void layout;
+		void viewW;
+		resetView();
+	});
 
-	function stateOf(id: string): PrereqNodeState {
-		if (doneSet.has(id)) return 'done';
-		if (focus === id) return 'current';
-		return 'ahead';
+	function zoom(factor: number) {
+		vp = zoomAt(vp, factor, viewW / 2, viewH / 2);
 	}
 
-	/** Chapter nodes are keyboard-reachable buttons; picking one shows its concepts. */
-	function nodeAttrs(id: string, title: string) {
-		return {
-			role: 'button',
-			'aria-label': title,
-			'aria-pressed': expanded === id,
-			tabindex: 0,
-			onclick: () => choose(id),
-			onkeydown: (e: KeyboardEvent) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					e.preventDefault();
-					choose(id);
-				}
-			},
-		};
+	let drag: { id: number; x: number; y: number; moved: boolean } | undefined;
+	let suppressClick = false;
+	function onPointerDown(e: PointerEvent) {
+		if (e.button !== 0 || (e.target as Element).closest('.map-controls')) return;
+		drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
+	}
+	function onPointerMove(e: PointerEvent) {
+		if (!drag || drag.id !== e.pointerId) return;
+		const dx = e.clientX - drag.x;
+		const dy = e.clientY - drag.y;
+		if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+		if (!drag.moved) viewEl?.setPointerCapture(e.pointerId);
+		drag.moved = true;
+		drag.x = e.clientX;
+		drag.y = e.clientY;
+		vp = { ...vp, x: vp.x + dx, y: vp.y + dy };
+	}
+	function onPointerUp(e: PointerEvent) {
+		if (!drag || drag.id !== e.pointerId) return;
+		suppressClick = drag.moved;
+		drag = undefined;
+		if (suppressClick) setTimeout(() => (suppressClick = false), 0);
+	}
+	function onWheel(e: WheelEvent) {
+		// Plain wheel keeps scrolling the page; Ctrl/Cmd + wheel zooms the map.
+		if (!e.ctrlKey && !e.metaKey) return;
+		e.preventDefault();
+		const box = viewEl?.getBoundingClientRect();
+		vp = zoomAt(
+			vp,
+			e.deltaY < 0 ? 1.12 : 1 / 1.12,
+			e.clientX - (box?.left ?? 0),
+			e.clientY - (box?.top ?? 0),
+		);
 	}
 
-	function choose(id: string) {
-		picked = id;
+	function onNodeClick(e: MouseEvent, id: string) {
+		if (suppressClick) {
+			e.preventDefault();
+			return;
+		}
 		onSelect?.(id as ChapterId);
 	}
 
-	const titleById = $derived(new SvelteMap(graph.nodes.map((n) => [n.id, n.title])));
+	const keyDir: Record<string, Direction> = {
+		ArrowLeft: 'left',
+		ArrowRight: 'right',
+		ArrowUp: 'up',
+		ArrowDown: 'down',
+	};
+	function onNodeKey(e: KeyboardEvent, id: string) {
+		const dir = keyDir[e.key];
+		if (!dir) return;
+		e.preventDefault();
+		const to = neighbor(layout, id, dir);
+		const node = layout.nodes.find((n) => n.id === to);
+		if (!to || !node) return;
+		vp = revealRect(vp, node, viewW, viewH, 16);
+		const el = viewEl?.querySelector<SVGAElement>(`a[data-id="${CSS.escape(to)}"]`);
+		el?.focus();
+	}
+
+	const listed = $derived(
+		[...layout.nodes]
+			.sort((a, b) => a.layer - b.layer)
+			.map((n) => ({
+				...n,
+				needs: layout.edges.filter((e) => e.to === n.id).map((e) => e.from),
+				opens: layout.edges.filter((e) => e.from === n.id).map((e) => e.to),
+			})),
+	);
 </script>
 
-<div class="map-card">
+<div class="map-card" class:is-compact={compact}>
 	{#if layout.nodes.length === 0}
-		<p class="map-empty">Карта появится, когда в теме будет больше глав.</p>
+		<p class="map-empty">Карта появится, когда в теме будут главы.</p>
 	{:else}
-		<div class="map-wrap" bind:this={wrapEl}>
-			<svg
-				class="map-svg"
-				style:width="{svgWidth}px"
-				style:height="{layout.height}px"
-				role="img"
-				aria-labelledby={titleId}
-			>
-				<title id={titleId}>Граф пререквизитов</title>
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="map-view"
+			style:height="{viewH}px"
+			bind:this={viewEl}
+			onpointerdown={onPointerDown}
+			onpointermove={onPointerMove}
+			onpointerup={onPointerUp}
+			onpointercancel={onPointerUp}
+			onwheel={onWheel}
+		>
+			<svg class="map-svg" role="group" aria-labelledby={titleId}>
+				<title id={titleId}
+					>Граф пререквизитов: стрелки ведут от нужной главы к той, что её использует</title
+				>
 				<defs>
 					<marker
 						id={markerId}
@@ -293,51 +220,116 @@
 					>
 						<path class="map-arrow" d="M0 0 L10 5 L0 10 z" />
 					</marker>
+					<marker
+						id={markerHiId}
+						viewBox="0 0 10 10"
+						refX="9"
+						refY="5"
+						markerWidth="7"
+						markerHeight="7"
+						orient="auto-start-reverse"
+					>
+						<path class="map-arrow-hi" d="M0 0 L10 5 L0 10 z" />
+					</marker>
 				</defs>
-				<g transform="translate({offsetX} 0)">
-					<g class="map-edges">
+				<g class="map-world" transform="translate({vp.x} {vp.y}) scale({vp.scale})">
+					<g>
 						{#each layout.edges as e (e.from + '>' + e.to)}
-							<path class="map-edge" d={e.d} marker-end="url(#{markerId})" />
+							{@const lit = edgeLit(e.from, e.to)}
+							<path
+								class="map-edge"
+								class:is-lit={lit}
+								class:is-dim={!!related && !lit}
+								d={e.d}
+								marker-end="url(#{lit ? markerHiId : markerId})"
+							/>
 						{/each}
 					</g>
 					{#each layout.nodes as n (n.id)}
-						{@const st = stateOf(n.id)}
+						{@const st = statusOf(n.id, doneSet, visitedSet)}
+						{@const href = hrefById.get(n.id)}
 						<g
-							class="map-node is-{st} is-clickable"
+							class="map-node is-{st}"
+							class:is-current={focus === n.id}
+							class:is-dim={!!related && !related.has(n.id)}
+							class:is-active={active === n.id}
+							data-topic={n.topic}
 							transform="translate({n.x} {n.y})"
-							{...nodeAttrs(n.id, titleById.get(n.id) ?? n.id)}
+							role="presentation"
+							onpointerenter={() => (hoverId = n.id)}
+							onpointerleave={() => (hoverId = undefined)}
 						>
-							<rect width={n.w} height={n.h} rx="10" />
-							{#each n.lines as line, i (i)}
-								<text
-									x={n.w / 2}
-									y={n.h / 2 + (i - (n.lines.length - 1) / 2) * LINE_H}
-									class="map-title">{line}</text
-								>
-							{/each}
-						</g>
-						{#each n.chips as c, ci (ci)}
-							<g class="map-chip" transform="translate({n.x + c.x} {c.y})">
-								<rect width={c.w} height={c.h} rx="6" />
-								{#each c.lines as line, li (li)}
-									<text x={c.w / 2} y={c.h / 2 + (li - (c.lines.length - 1) / 2) * CHIP_LINE_H}
-										>{line}</text
+							<a
+								href={href ? resolve(href as '/') : undefined}
+								data-id={n.id}
+								aria-label="{n.title}, {statusRu[st]}{focus === n.id ? ', текущая глава' : ''}"
+								aria-current={focus === n.id ? 'page' : undefined}
+								onfocus={() => (focusId = n.id)}
+								onblur={() => (focusId = undefined)}
+								onclick={(e) => onNodeClick(e, n.id)}
+								onkeydown={(e) => onNodeKey(e, n.id)}
+							>
+								<rect width={n.w} height={n.h} rx="10" />
+								{#each n.lines as line, i (i)}
+									<text
+										x={n.w / 2}
+										y={n.h / 2 + (i - (n.lines.length - 1) / 2) * LINE_H}
+										class="map-title">{line}</text
 									>
 								{/each}
-							</g>
-						{/each}
+								{#if st === 'done'}
+									<circle class="mark-bg" cx={n.w - 11} cy="11" r="7" />
+									<path class="mark-check" d="M{n.w - 14.5} 11 l2.4 2.6 l4.6 -5" />
+								{:else if st === 'progress'}
+									<circle class="mark-ring" cx={n.w - 11} cy="11" r="6" />
+									<path class="mark-half" d="M{n.w - 11} 5 a6 6 0 0 1 0 12 z" />
+								{/if}
+							</a>
+						</g>
 					{/each}
 				</g>
 			</svg>
+			<div class="map-controls" role="group" aria-label="Масштаб карты">
+				<button type="button" aria-label="Уменьшить" onclick={() => zoom(1 / 1.25)}>−</button>
+				<button type="button" aria-label="Увеличить" onclick={() => zoom(1.25)}>+</button>
+				<button type="button" aria-label="Вписать в окно" onclick={resetView}>⤢</button>
+			</div>
 		</div>
-		{#if layout.nodes.length === 1}
-			<p class="map-empty">Карта появится, когда в теме будет больше глав.</p>
-		{/if}
-		<ul class="map-legend">
-			<li><span class="swatch swatch-done"></span>Пройдено</li>
-			<li><span class="swatch swatch-current"></span>Текущая глава</li>
-			<li><span class="swatch swatch-todo"></span>Впереди</li>
+		<p class="map-hint">
+			Перетащите карту, чтобы сдвинуть; Ctrl и колесо или кнопки меняют масштаб. Стрелки клавиатуры
+			переходят между связанными главами, Enter открывает главу.
+		</p>
+		<ul class="map-legend" aria-label="Обозначения">
+			<li><span class="swatch swatch-new"></span>Не начата</li>
+			<li><span class="swatch swatch-progress"></span>В процессе</li>
+			<li><span class="swatch swatch-done"></span>Пройдена</li>
+			{#if focus}
+				<li><span class="swatch swatch-current"></span>Текущая глава</li>
+			{/if}
+			<li><span class="arrow-key" aria-hidden="true">→</span>Сначала левая, потом правая</li>
 		</ul>
+		<details class="map-list">
+			<summary>Список глав (текстовая версия)</summary>
+			<ul>
+				{#each listed as n (n.id)}
+					{@const href = hrefById.get(n.id)}
+					<li>
+						{#if href}<a href={resolve(href as '/')}>{n.title}</a>{:else}{n.title}{/if}
+						<span class="list-status">{statusRu[statusOf(n.id, doneSet, visitedSet)]}</span>
+						{#if n.needs.length}
+							<span class="list-rel"
+								>Нужно знать: {n.needs.map((i) => titleById.get(i) ?? i).join(', ')}.</span
+							>
+						{/if}
+						{#if n.opens.length}
+							<span class="list-rel"
+								>Открывает: {n.opens.map((i) => titleById.get(i) ?? i).join(', ')}.</span
+							>
+						{/if}
+					</li>
+				{/each}
+			</ul>
+		</details>
 	{/if}
 </div>
 
@@ -346,19 +338,59 @@
 		background: var(--surface);
 		border: 1px solid var(--border);
 		border-radius: var(--radius-lg);
-		padding: var(--space-6);
+		padding: var(--space-4);
 		box-shadow: var(--shadow);
+		min-width: 0;
 	}
-	.map-wrap {
-		overflow-x: auto;
-		-webkit-overflow-scrolling: touch;
+	.map-view {
+		position: relative;
+		overflow: hidden;
+		border-radius: var(--radius-md, 8px);
+		background: var(--bg);
+		cursor: grab;
+		touch-action: pan-y;
+		user-select: none;
+	}
+	.map-view:active {
+		cursor: grabbing;
 	}
 	.map-svg {
 		display: block;
-		max-width: none;
+		width: 100%;
+		height: 100%;
 	}
 	.map-empty {
-		margin: 0 0 var(--space-4);
+		margin: 0;
+		font-size: var(--fs-sm);
+		color: var(--text-muted);
+	}
+	.map-controls {
+		position: absolute;
+		top: var(--space-2);
+		right: var(--space-2);
+		display: flex;
+		gap: var(--space-1);
+	}
+	.map-controls button {
+		width: 32px;
+		height: 32px;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		background: var(--surface);
+		color: var(--text);
+		font-size: 16px;
+		line-height: 1;
+		cursor: pointer;
+	}
+	.map-controls button:hover {
+		border-color: var(--accent);
+	}
+	.map-controls button:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.map-hint {
+		margin: var(--space-3) 0 0;
 		font-size: var(--fs-sm);
 		color: var(--text-muted);
 	}
@@ -366,62 +398,98 @@
 		fill: none;
 		stroke: var(--text-muted);
 		stroke-width: 1.5;
-		opacity: 0.55;
+		opacity: 0.5;
+	}
+	.map-edge.is-lit {
+		stroke: var(--accent);
+		stroke-width: 2.5;
+		opacity: 1;
+	}
+	.map-edge.is-dim {
+		opacity: 0.12;
 	}
 	.map-arrow {
 		fill: var(--text-muted);
 		opacity: 0.7;
+	}
+	.map-arrow-hi {
+		fill: var(--accent);
+	}
+	.map-node a {
+		cursor: pointer;
+		outline: none;
 	}
 	.map-node rect {
 		fill: var(--surface-2);
 		stroke: var(--border);
 		stroke-width: 1;
 	}
-	.map-node text,
-	.map-chip text {
+	.map-node text {
 		font-family: var(--font-sans);
+		font-size: 13px;
 		fill: var(--text);
 		text-anchor: middle;
 		dominant-baseline: middle;
+		pointer-events: none;
 	}
-	.map-node .map-title {
-		font-size: 13px;
-	}
-	.map-chip rect {
+	.map-node.is-progress rect {
 		fill: var(--surface);
-		stroke: var(--border);
-		stroke-width: 1;
-	}
-	.map-chip text {
-		font-size: 12px;
-		fill: var(--text-muted);
+		stroke: var(--topic);
+		stroke-width: 1.5;
+		stroke-dasharray: 5 3;
 	}
 	.map-node.is-done rect {
 		fill: var(--topic-soft);
 		stroke: var(--topic);
 	}
 	.map-node.is-current rect {
-		fill: var(--surface);
 		stroke: var(--topic);
-		stroke-width: 2.5;
+		stroke-width: 3;
+		stroke-dasharray: none;
 	}
-	.map-node.is-current .map-title {
+	.map-node.is-current text {
 		font-weight: 650;
 	}
-	.map-node.is-clickable {
-		cursor: pointer;
+	.map-node.is-active rect,
+	.map-node a:focus-visible rect {
+		stroke: var(--accent);
+		stroke-width: 3;
+		stroke-dasharray: none;
 	}
-	.map-node:focus-visible rect {
+	.map-node.is-dim {
+		opacity: 0.3;
+	}
+	.mark-bg {
+		fill: var(--topic);
+	}
+	.mark-check {
+		fill: none;
+		stroke: var(--surface);
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.mark-ring {
+		fill: none;
 		stroke: var(--topic);
-		stroke-width: 2.5;
+		stroke-width: 1.5;
+	}
+	.mark-half {
+		fill: var(--topic);
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.map-node,
+		.map-edge {
+			transition: opacity 0.15s;
+		}
 	}
 	.map-legend {
 		list-style: none;
 		padding: 0;
-		margin: var(--space-4) 0 0;
+		margin: var(--space-3) 0 0;
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--space-4) var(--space-6);
+		gap: var(--space-2) var(--space-6);
 		font-size: var(--fs-sm);
 		color: var(--text-muted);
 	}
@@ -431,18 +499,67 @@
 		gap: var(--space-2);
 	}
 	.swatch {
-		width: 14px;
+		width: 16px;
 		height: 14px;
 		border-radius: 4px;
 		border: 1px solid var(--border);
 		background: var(--surface-2);
+		box-sizing: border-box;
+	}
+	.swatch-progress {
+		background: var(--surface);
+		border: 1.5px dashed var(--topic);
 	}
 	.swatch-done {
 		background: var(--topic-soft);
 		border-color: var(--topic);
 	}
 	.swatch-current {
-		background: var(--surface);
-		border: 2px solid var(--topic);
+		background: var(--surface-2);
+		border: 3px solid var(--topic);
+	}
+	.arrow-key {
+		color: var(--accent);
+		font-weight: 700;
+	}
+	.map-list {
+		margin-top: var(--space-4);
+		font-size: var(--fs-sm);
+	}
+	.map-list summary {
+		cursor: pointer;
+		color: var(--accent);
+		min-height: 24px;
+	}
+	.map-list summary:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.map-list ul {
+		list-style: none;
+		padding: 0;
+		margin: var(--space-3) 0 0;
+		display: grid;
+		gap: var(--space-3);
+	}
+	.map-list li {
+		overflow-wrap: anywhere;
+	}
+	.map-list a {
+		color: var(--accent);
+		font-weight: 600;
+	}
+	.list-status {
+		margin-left: var(--space-2);
+		color: var(--topic);
+	}
+	.list-rel {
+		display: block;
+		color: var(--text-muted);
+	}
+	@media (max-width: 480px) {
+		.map-card {
+			padding: var(--space-3);
+		}
 	}
 </style>

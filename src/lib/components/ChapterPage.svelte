@@ -21,7 +21,8 @@
 	import type { ChapterId, Note } from '$lib/contracts';
 	import type { AnchorResolution, NotesStore } from '$lib/contracts/interfaces';
 	import type { LevelState } from '$lib/contracts/levels';
-	import { resolveChapterId } from '$lib/content/registry';
+	import { getPrereqGraph, resolveChapterId } from '$lib/content/registry';
+	import PrereqGraph from './PrereqGraph.svelte';
 	import {
 		anchorFromSelection,
 		chapterTextIndex,
@@ -65,6 +66,14 @@
 				: null,
 	});
 	const levelsCtx = getContext<LevelsContext>(LEVELS_CONTEXT);
+
+	// Mini-graph: shown only when the chapter has prerequisites or dependents.
+	const prereqGraph = getPrereqGraph();
+	const hasNeighbours = $derived(
+		prereqGraph.edges.some(
+			(e) => e.kind === 'prereq' && (e.from === chapter.id || e.to === chapter.id),
+		),
+	);
 
 	// Chapter data for Term, Cite, Figure numbering.
 	// A plain Map on purpose: numbers are assigned while figures render (inside deriveds), where
@@ -306,6 +315,13 @@
 
 			<Content />
 
+			{#if hasNeighbours}
+				<section class="neighbourhood" aria-labelledby="neighbourhood-title">
+					<h2 id="neighbourhood-title">Что нужно знать и что открывает</h2>
+					<PrereqGraph graph={prereqGraph} focus={chapter.id as ChapterId} depth={2} compact />
+				</section>
+			{/if}
+
 			{#if sources.length > 0}
 				<section id="sources" class="sources">
 					<h2>Источники</h2>
@@ -383,6 +399,15 @@
 		font-size: var(--fs-body);
 		line-height: var(--lh-body);
 		color: var(--text);
+	}
+	.neighbourhood {
+		margin-top: var(--space-12);
+	}
+	.neighbourhood h2 {
+		font-family: var(--font-serif);
+		font-size: var(--fs-h2);
+		font-weight: 600;
+		margin-bottom: var(--space-4);
 	}
 	.chapter-head {
 		margin-bottom: var(--space-12);
