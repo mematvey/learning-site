@@ -314,7 +314,7 @@
 						{#each sources as s (s.id)}
 							<li id="src-{s.id}">
 								{[s.authors, s.title, s.venue, s.year].filter(Boolean).join('. ')}.
-								<a href={s.url} rel="external">{s.url}</a>
+								<a class="src-url" href={s.url} rel="external">{s.url}</a>
 							</li>
 						{/each}
 					</ol>
@@ -472,9 +472,10 @@
 	.sources li {
 		margin-bottom: var(--space-2);
 	}
-	.sources a {
+	/* Only the URL wraps anywhere; the rest of the entry keeps normal word wrapping. */
+	.sources .src-url {
 		color: var(--accent);
-		word-break: break-all;
+		overflow-wrap: anywhere;
 	}
 	.chapter-nav {
 		display: grid;
