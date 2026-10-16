@@ -4,7 +4,7 @@ import { hypergeomPmf } from '../hypergeom';
 import { mul, rat } from '../rational';
 import { sampleWithoutReplacement } from '../rng';
 import type { ParamSpec, ProblemDef, Rational, SolutionStep } from '../types';
-import { isInt, step, texFrac } from './util';
+import { isInt, pct, step, texFrac } from './util';
 
 export type P3Params = { N: number; K: number; n: number };
 
@@ -44,16 +44,22 @@ function steps(p: P3Params): Record<string, SolutionStep[]> {
 	return {
 		a: [
 			step(
-				`Всего способов выбрать ${n} вопроса из ${N}: C(${N}, ${n}) = ${all}.`,
+				`Идея: экзаменатор выбирает набор из ${n} вопросов наугад, все наборы равновозможны. Порядок вопросов не важен, поэтому наборы считаем сочетаниями.`,
+			),
+			step(
+				`Всего наборов: C(${N}, ${n}) = ${N}!/(${n}!·${N - n}!) = ${all}. Это знаменатель.`,
 				`\\binom{${N}}{${n}}=${all}`,
 			),
 			step(
-				`Благоприятных: все ${n} вопроса из ${K} известных: C(${K}, ${n}) = ${favourable}.`,
+				`Подходят наборы, целиком состоящие из вопросов, которые студент знает. Их выбирают только из ${K} известных: C(${K}, ${n}) = ${favourable}. Это числитель.`,
 				`\\binom{${K}}{${n}}=${favourable}`,
 			),
 			step(
-				'Делим благоприятные на все.',
+				'Вероятность равна доле подходящих наборов среди всех.',
 				`\\frac{${favourable}}{${all}}=${texFrac(exact(p).a as Rational)}`,
+			),
+			step(
+				`Что получилось: студент ответит на всё примерно с вероятностью ${pct(exact(p).a as Rational)}. Студент знает ${K} из ${N} вопросов, то есть долю ${pct(rat(K, N))}, но шанс получить только известные вопросы ниже этой доли: каждый дополнительный вопрос ещё раз рискует попасть на незнакомый.`,
 			),
 		],
 	};
@@ -69,8 +75,13 @@ function altSteps(p: P3Params): Record<string, SolutionStep[]> {
 	}
 	return {
 		a: [
-			step('Последовательно: каждый следующий вопрос из оставшихся должен быть известен.'),
-			step('Перемножаем вероятности шагов.', `${factors.join('\\cdot ')}=${texFrac(prob)}`),
+			step(
+				'Вопросы выбираются по одному без возвращения. Первый должен быть известным: K из N. После этого в запасе на один известный вопрос и на один вопрос вообще меньше, поэтому второй известен с шансом (K − 1) из (N − 1), и так далее.',
+			),
+			step(
+				'Шаги идут один за другим, поэтому шансы перемножаем. Ответ тот же, что через сочетания.',
+				`${factors.join('\\cdot ')}=${texFrac(prob)}`,
+			),
 		],
 	};
 }
