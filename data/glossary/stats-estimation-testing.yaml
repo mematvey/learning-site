@@ -1,0 +1,65 @@
+- id: estimator
+  term: оценка
+  term_en: estimator
+  definition: Функция от выборки, которая даёт число-приближение неизвестного параметра распределения.
+  chapter: stats/estimation-testing
+- id: standard-error
+  term: стандартная ошибка
+  term_en: standard error
+  definition: Стандартное отклонение оценки при повторении выборки. Для выборочного среднего равна σ/√n, где σ стандартное отклонение одного наблюдения.
+  chapter: stats/estimation-testing
+- id: confidence-interval
+  term: доверительный интервал
+  term_en: confidence interval
+  definition: Диапазон, построенный по выборке процедурой, которая при многократном повторении опыта накрывает истинное значение параметра в заданной доле случаев.
+  chapter: stats/estimation-testing
+- id: t-distribution
+  term: t-распределение
+  term_en: Student's t-distribution
+  definition: Распределение статистики (среднее минус μ) делить на (s/√n) при нормальных данных и неизвестной дисперсии. Имеет более тяжёлые хвосты, чем нормальное, и зависит от числа степеней свободы n−1.
+  chapter: stats/estimation-testing
+- id: null-hypothesis
+  term: нулевая гипотеза
+  term_en: null hypothesis
+  definition: Утверждение, которое проверяют, обычно «эффекта нет» или «значение равно заданному».
+  chapter: stats/estimation-testing
+- id: alternative-hypothesis
+  term: альтернативная гипотеза
+  term_en: alternative hypothesis
+  definition: Утверждение, которое принимают, если данные плохо согласуются с нулевой гипотезой.
+  chapter: stats/estimation-testing
+- id: test-statistic
+  term: статистика критерия
+  term_en: test statistic
+  definition: Число, которое считают по выборке и распределение которого известно, если нулевая гипотеза верна.
+  chapter: stats/estimation-testing
+- id: p-value
+  term: p-значение
+  term_en: p-value
+  definition: Вероятность получить результат не менее далёкий от нулевой гипотезы, чем наблюдаемый, если нулевая гипотеза верна. Это не вероятность самой гипотезы.
+  chapter: stats/estimation-testing
+- id: z-test
+  term: z-критерий
+  term_en: z-test
+  definition: Критерий о среднем, в котором статистика распределена нормально при известной дисперсии.
+  chapter: stats/estimation-testing
+- id: significance-level
+  term: уровень значимости
+  term_en: significance level
+  definition: Допустимая вероятность ошибки первого рода α, которую задают до проверки.
+  chapter: stats/estimation-testing
+- id: type-i-error
+  term: ошибка первого рода
+  term_en: type I error
+  definition: Отвержение нулевой гипотезы, когда она верна.
+  chapter: stats/estimation-testing
+- id: type-ii-error
+  term: ошибка второго рода
+  term_en: type II error
+  definition: Сохранение нулевой гипотезы, когда верна альтернативная. Вероятность обозначается β.
+  chapter: stats/estimation-testing
+- id: power
+  term: мощность критерия
+  term_en: power of a test
+  definition: Вероятность отвергнуть нулевую гипотезу, когда верна альтернативная. Равна 1 − β.
+  chapter: stats/estimation-testing
