@@ -1,0 +1,11 @@
+id: classic-ml-linear-regression
+title: Линейная регрессия на NumPy
+chapter: classic-ml/linear-regression
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+visualizers:
+  - { type: curve, source: series.loss }
+timeout: 10
+packages: [numpy]
