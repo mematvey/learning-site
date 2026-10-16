@@ -1,0 +1,35 @@
+- id: memory-hierarchy
+  term: иерархия памяти
+  term_en: memory hierarchy
+  definition: Система уровней памяти от маленькой и быстрой рядом с ядром до большой и медленной; доступ к нижним уровням стоит дороже.
+  chapter: cs/memory-cache
+- id: cache-line
+  term: линия кэша
+  term_en: cache line
+  definition: Блок соседних байтов, который кэш загружает и хранит целиком; запрос одного числа приносит всю линию.
+  chapter: cs/memory-cache
+- id: cache-hit
+  term: попадание в кэш
+  term_en: cache hit
+  definition: Обращение, при котором нужные данные уже есть в кэше и не нужно ждать загрузки из более медленной памяти.
+  chapter: cs/memory-cache
+- id: cache-miss
+  term: промах кэша
+  term_en: cache miss
+  definition: Обращение, при котором нужной линии в кэше нет; процессор ждёт, пока блок придёт из более медленной памяти.
+  chapter: cs/memory-cache
+- id: spatial-locality
+  term: пространственная локальность
+  term_en: spatial locality
+  definition: Свойство доступа, при котором соседние по адресу данные читаются подряд; такие обращения попадают в одну линию кэша.
+  chapter: cs/memory-cache
+- id: temporal-locality
+  term: временная локальность
+  term_en: temporal locality
+  definition: Свойство доступа, при котором одни и те же данные используются снова в ближайшее время.
+  chapter: cs/memory-cache
+- id: row-major-order
+  term: порядок по строкам
+  term_en: row-major order
+  definition: Способ хранения многомерного массива, при котором элементы одной строки лежат в памяти подряд, а строки идут одна за другой.
+  chapter: cs/memory-cache
