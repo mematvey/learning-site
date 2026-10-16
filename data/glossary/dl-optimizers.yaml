@@ -1,0 +1,29 @@
+- id: loss-surface
+  term: поверхность потерь
+  term_en: loss surface
+  definition: 'Функция потерь как поверхность над пространством весов: координаты точки это веса, высота это значение потерь.'
+  chapter: dl/optimizers
+- id: sgd
+  term: стохастический градиентный спуск
+  term_en: stochastic gradient descent (SGD)
+  definition: 'Шаг против градиента, посчитанного на минибатче: θ ← θ − η g. Градиент шумный, но дешёвый.'
+  chapter: dl/optimizers
+- id: momentum
+  term: инерция
+  term_en: momentum
+  definition: 'Накопление скорости из прошлых градиентов с коэффициентом β; сглаживает зигзаги поперёк оврага и ускоряет движение по дну.'
+  chapter: dl/optimizers
+- id: adam
+  term: Adam
+  definition: 'Оптимизатор с оценками первого и второго моментов градиента и поправкой на смещение; шаг делится на корень из второго момента для каждой координаты.'
+  chapter: dl/optimizers
+- id: ill-conditioning
+  term: плохая обусловленность
+  term_en: ill-conditioning
+  definition: 'Кривизна функции сильно различается по направлениям; отношение максимальной и минимальной кривизны велико, и градиентный спуск зигзагает.'
+  chapter: dl/optimizers
+- id: second-moment
+  term: второй момент градиента
+  term_en: second moment
+  definition: 'Скользящее среднее квадратов градиента; в Adam это оценка масштаба каждой координаты.'
+  chapter: dl/optimizers

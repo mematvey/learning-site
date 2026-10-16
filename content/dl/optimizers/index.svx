@@ -2,14 +2,234 @@
 id: dl/optimizers
 title: "Оптимизаторы: SGD, momentum, Adam"
 topic: dl
-summary: "Как разные правила обновления весов движутся по поверхности потерь."
+summary: "Как разные правила обновления весов движутся по поверхности потерь: почему голый SGD зигзагает, что добавляет momentum и зачем Adam делит шаг на масштаб каждой координаты."
 prereqs: [dl/backprop]
-keywords: []
+concepts:
+  - { id: loss-surface, title: Поверхность потерь }
+  - { id: sgd, title: Стохастический градиентный спуск }
+  - { id: momentum, title: Momentum }
+  - { id: adam, title: Adam }
+  - { id: ill-conditioning, title: Плохая обусловленность }
+  - { id: second-moment, title: Второй момент градиента }
+keywords:
+  - оптимизатор
+  - градиентный спуск
+  - momentum
+  - adam
+  - адаптивный шаг
 minutes: 20
 labs: [dl-optimizers]
+sources:
+  - id: kingma2014adam
+    kind: paper
+    title: "Adam: A Method for Stochastic Optimization"
+    authors: Kingma D. P., Ba J.
+    venue: ICLR
+    year: 2015
+    url: https://arxiv.org/abs/1412.6980
+    accessed: 2026-10-16
+    supports: [math-adam-words, math-adam-moments, math-adam-defaults]
+  - id: sutskever2013
+    kind: paper
+    title: On the importance of initialization and momentum in deep learning
+    authors: Sutskever I., Martens J., Dahl G., Hinton G.
+    venue: ICML
+    year: 2013
+    url: https://proceedings.mlr.press/v28/sutskever13.html
+    accessed: 2026-10-16
+    supports: [math-momentum-words]
+  - id: ruder2016
+    kind: paper
+    title: An overview of gradient descent optimization algorithms
+    authors: Ruder S.
+    year: 2016
+    url: https://arxiv.org/abs/1609.04747
+    accessed: 2026-10-16
+    supports: [idea-what]
+  - id: loshchilov2019
+    kind: paper
+    title: Decoupled Weight Decay Regularization
+    authors: Loshchilov I., Hutter F.
+    venue: ICLR
+    year: 2019
+    url: https://arxiv.org/abs/1711.05101
+    accessed: 2026-10-16
+    supports: [mistake-wd, math-convergence]
+  - id: reddi2018
+    kind: paper
+    title: On the Convergence of Adam and Beyond
+    authors: Reddi S. J., Kale S., Kumar S.
+    venue: ICLR
+    year: 2018
+    url: https://arxiv.org/abs/1904.09237
+    accessed: 2026-10-16
+    supports: [math-convergence]
+  - id: torchoptim
+    kind: doc
+    title: torch.optim
+    venue: PyTorch stable documentation
+    url: https://pytorch.org/docs/stable/optim.html
+    accessed: 2026-10-16
+    supports: [code-state]
+  - id: torchadam
+    kind: doc
+    title: torch.optim.Adam
+    venue: PyTorch stable documentation
+    url: https://pytorch.org/docs/stable/generated/torch.optim.Adam.html
+    accessed: 2026-10-16
+    supports: [hw-memory]
+aliases: []
 status: draft
 ---
 
 ## Идея {#idea}
 
-Черновик главы: текст ещё не написан. {#idea-stub}
+Оптимизатор (optimizer) задаёт правило, по которому веса сдвигаются после каждого вычисления градиента. SGD делает шаг против градиента, momentum добавляет инерцию, Adam дополнительно подстраивает размер шага отдельно для каждого веса. Обзор этих и соседних методов есть у <Cite id="ruder2016" />. {#idea-what}
+
+## Интуиция {#intuition}
+
+Представьте шарик, который катится по овражной местности и ищет самое низкое место. Градиент говорит только, куда сейчас уходит склон. Остаётся решить, насколько сильно верить этому направлению и помнить ли, куда шарик катился раньше. {#intuition-ball}
+
+<Variant c="1">
+
+Вы спускаетесь с холма в тумане и видите только землю под ногами: делаете шаг туда, куда идёт уклон. Если местность похожа на узкий овраг, вы прыгаете от одного склона к другому и медленно спускаетесь по дну. <Term id="momentum">Инерция (momentum)</Term> даёт шарику разгон: он перестаёт метаться и катится по дну быстрее. Adam дополнительно оценивает крутизну каждого направления и делает короткие шаги по крутым сторонам и длинные по пологим. {#analogy-hill}
+
+</Variant>
+
+<Variant c="2-4">
+
+Функция потерь $L(\theta)$ задаёт <Term id="loss-surface">поверхность потерь</Term> над всеми весами сразу. Оптимизатор на каждом шаге получает градиент и выбирает смещение весов. Разные оптимизаторы отличаются тем, какую историю учитывают: только текущий градиент (SGD), накопленную скорость (momentum) или оценки первого и второго моментов градиента (Adam). Формулы ниже. {#formal-roles}
+
+</Variant>
+
+Сравните три траектории на одной поверхности. Они стартуют из одной точки и делают шаги одного базового размера. {#intuition-demo}
+
+<Figure id="fig-optim-paths" alt="Контурные линии вытянутой овражной поверхности потерь. Три траектории стартуют из одной точки: SGD идёт зигзагами поперёк оврага, momentum сглаживает зигзаги и быстрее выходит к центру, Adam делает более ровные шаги по обеим осям." caption="Траектории SGD, momentum и Adam от одной точки старта" notice="при одинаковом старте и базовом шаге разные правила дают разные пути к минимуму.">
+
+<OptimizerDemo />
+
+</Figure>
+
+Почему SGD зигзагает? Если кривизна поверхности по разным осям заметно отличается, градиент указывает почти поперёк оврага, а не к минимуму. Такую ситуацию называют <Term id="ill-conditioning">плохой обусловленностью</Term> (ill-conditioning). В овраге один и тот же шаг слишком велик для крутой оси и слишком мал для пологой. {#intuition-zigzag}
+
+## Математика {#math}
+
+Во всех правилах есть общий ингредиент: градиент потерь на текущем шаге и шаг обучения, число, которое задаёт, насколько сильно менять веса. Методы отличаются тем, что делают с градиентом перед шагом. {#math-words}
+
+<Level c={2}>
+
+Пусть $\theta$ вектор весов, $g_t$ градиент функции потерь на минибатче (minibatch) на шаге $t$, $\eta > 0$ шаг обучения (learning rate). Правило обновления переводит $\theta_t$ в $\theta_{t+1}$.
+
+Стохастический градиентный спуск (<Term id="sgd">SGD</Term>, stochastic gradient descent) делает шаг против градиента: {#math-sgd-words}
+
+$$
+\theta_{t+1} = \theta_t - \eta\, g_t
+$$
+{#math-sgd}
+
+Momentum добавляет скорость $v_t$, которая накапливает прошлые градиенты с коэффициентом $\beta \in [0, 1)$:
+
+$$
+v_t = \beta\, v_{t-1} + g_t, \qquad \theta_{t+1} = \theta_t - \eta\, v_t
+$$
+{#math-momentum}
+
+Если градиент стабильно указывает в одну сторону, скорость растёт. Колебания поперёк оврага в среднем гасят друг друга, и путь выпрямляется. Об этом подходе и роли инерции в обучении глубоких сетей см. <Cite id="sutskever2013" />. {#math-momentum-words}
+
+Adam хранит две оценки: первый момент $m_t$ (скользящее среднее градиента) и <Term id="second-moment">второй момент</Term> $v_t$ (скользящее среднее квадрата градиента, поэлементно):
+
+$$
+m_t = \beta_1 m_{t-1} + (1 - \beta_1)\, g_t, \qquad v_t = \beta_2 v_{t-1} + (1 - \beta_2)\, g_t^2
+$$
+{#math-adam-moments}
+
+Оценки смещены к нулю в начале, поэтому их исправляют, и делают шаг:
+
+$$
+\hat m_t = \frac{m_t}{1 - \beta_1^t}, \qquad \hat v_t = \frac{v_t}{1 - \beta_2^t}, \qquad \theta_{t+1} = \theta_t - \eta\, \frac{\hat m_t}{\sqrt{\hat v_t} + \varepsilon}
+$$
+{#math-adam-update}
+
+Деление на $\sqrt{\hat v_t}$ делает шаг по каждой координате примерно одного масштаба: крутые координаты с большим градиентом не получают огромных шагов. Малое $\varepsilon$ защищает от деления на ноль. {#math-adam-words}
+
+В статье Adam предложены значения по умолчанию: $\eta = 10^{-3}$, $\beta_1 = 0.9$, $\beta_2 = 0.999$, $\varepsilon = 10^{-8}$. <Cite id="kingma2014adam" /> {#math-adam-defaults}
+
+</Level>
+
+<Level c={3}>
+
+Поправка на смещение выводится из рекуррентности. Оба $m_0$ и $v_0$ равны нулю. Разворачивая $m_t$, получаем $m_t = (1 - \beta_1)\sum_{i=1}^{t} \beta_1^{\,t-i} g_i$. Если градиенты одинаково распределены, $\mathbb{E}[g_i] = \mathbb{E}[g]$, то $\mathbb{E}[m_t] = (1 - \beta_1^t)\,\mathbb{E}[g]$, потому что сумма весов равна $1 - \beta_1^t$. Деление на $1 - \beta_1^t$ убирает этот множитель. Для $v_t$ вывод такой же, с $\beta_2$ и квадратами. {#math-bias-derivation}
+
+Без поправки первые шаги Adam искажены. Пусть $t = 1$: $m_1 = (1 - \beta_1) g_1$, $v_1 = (1 - \beta_2) g_1^2$, и без поправки шаг равен $\eta\, m_1 / \sqrt{v_1} = \eta\,\frac{1 - \beta_1}{\sqrt{1 - \beta_2}}\,\mathrm{sign}(g_1) \approx 3.2\,\eta\,\mathrm{sign}(g_1)$. С поправкой $\hat m_1 = g_1$ и $\hat v_1 = g_1^2$, и шаг равен $\eta\,\mathrm{sign}(g_1)$ с точностью до $\varepsilon$. {#math-first-step}
+
+На квадратичной функции $L = \tfrac12\,(\lambda_1 x^2 + \lambda_2 y^2)$ шаг SGD по каждой оси умножает координату на $(1 - \eta\lambda_k)$. Сходимость гарантирована при $\eta < 2/\lambda_{\max}$, то есть крутая ось ограничивает шаг, а пологая движется медленно. Отношение $\kappa = \lambda_{\max}/\lambda_{\min}$ и есть мера плохой обусловленности. {#math-conditioning}
+
+</Level>
+
+<Level c={4}>
+
+Адаптивные методы не гарантируют сходимость в общем случае. Reddi и соавторы построили простые задачи, на которых Adam в исходной форме не сходится, и предложили вариант AMSGrad. <Cite id="reddi2018" /> Adam с отдельно вынесенным затуханием весов (AdamW) разделяет регуляризацию и масштабирование градиента. <Cite id="loshchilov2019" /> {#math-convergence}
+
+</Level>
+
+## Код {#code}
+
+Реализуйте функции обновления для SGD, momentum и Adam. Каждая функция получает веса, градиент и состояние оптимизатора и возвращает новые веса и состояние. Ожидаемое поведение: при $\beta = 0$ momentum совпадает с SGD, а первый шаг Adam примерно равен $\eta\,\mathrm{sign}(g)$. {#code-lab}
+
+<CodeLab lab="dl-optimizers" />
+
+<Level d={2}>
+
+Состояние (скорость, $m$, $v$) должно иметь ту же форму, что и веса, и переживать шаги. В PyTorch оно хранится по каждому параметру в `optimizer.state`. <Cite id="torchoptim" /> {#code-state}
+
+Ядро шага Adam в NumPy занимает несколько строк. Главная ловушка здесь в квадрате градиента:
+
+```python
+m = beta1 * m + (1 - beta1) * g
+v = beta2 * v + (1 - beta2) * g * g  # elementwise square, not g @ g
+m_hat = m / (1 - beta1 ** t)
+v_hat = v / (1 - beta2 ** t)
+theta = theta - lr * m_hat / (np.sqrt(v_hat) + eps)
+```
+
+Каждый шаг читает и пишет массивы той же формы, что веса, поэтому стоимость по времени и памяти растёт линейно с числом параметров. {#code-numpy}
+
+</Level>
+
+<Level d={3}>
+
+Adam хранит два состояния на каждый параметр, то есть оптимизатор держит втрое больше чисел, чем сами веса: сами веса, $m$ и $v$. За один шаг на каждый параметр нужно прочитать веса, градиент, $m$ и $v$ и записать веса, $m$ и $v$. Если каждую операцию выполнять отдельным ядром GPU, эти данные многократно ходят через память. Поэтому реализации объединяют шаг в одно ядро (fused). Параметр `fused` в `torch.optim.Adam` включает такой вариант. <Cite id="torchadam" /> {#hw-memory}
+
+</Level>
+
+## Частые ошибки {#mistakes}
+
+<Callout kind="warn" title="Осторожно">
+
+Шаг обучения, подобранный для SGD, может оказаться слишком большим для Adam, и наоборот. Если перенести его без проверки, обучение расходится, а потери становятся NaN. Причина выглядит загадочной, хотя лечится подбором $\eta$ для каждого оптимизатора. {#mistake-lr}
+
+</Callout>
+
+- Квадрат градиента берут как скалярное произведение `g @ g` вместо поэлементного `g * g`. Тогда $v$ становится числом, и масштаб каждой координаты теряется. {#mistake-square}
+- Пропускают поправку на смещение. Первые шаги Adam получаются примерно в три раза больше $\eta$, и обучение может стартовать с рывка. {#mistake-bias}
+- Добавляют L2-регуляризацию в градиент Adam и называют это weight decay. При адаптивном масштабе эффект другой, поэтому и появился AdamW. <Cite id="loshchilov2019" /> {#mistake-wd}
+
+## Проверь себя {#check}
+
+<Quiz id="quiz-first-step" q="Почему на первом шаге Adam каждая координата сдвигается примерно на величину eta, независимо от размера градиента?">
+
+На первом шаге $\hat m_1 = g_1$ и $\hat v_1 = g_1^2$, поэтому $\hat m_1 / \sqrt{\hat v_1} = g_1 / |g_1| = \mathrm{sign}(g_1)$. Величина градиента сокращается, остаётся знак, а шаг равен $\eta$ с точностью до $\varepsilon$.
+
+</Quiz>
+
+<Quiz id="quiz-beta-zero" q="Что получится с momentum, если коэффициент beta поставить равным нулю?">
+
+Тогда $v_t = g_t$, и шаг $\theta_{t+1} = \theta_t - \eta\, g_t$ совпадает с SGD. Инерции не остаётся: momentum с $\beta = 0$ и есть обычный спуск.
+
+</Quiz>
+
+<Quiz id="quiz-bias" q="Зачем в Adam нужна поправка на смещение?">
+
+Оценки $m$ и $v$ стартуют с нуля и в первые шаги занижены. Поправка делит их на $1 - \beta^t$, и в среднем оценки становятся несмещёнными. Без неё первые шаги получаются слишком большими.
+
+</Quiz>
