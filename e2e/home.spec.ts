@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { collectErrors } from './helpers';
+import { collectErrors, gotoReady } from './helpers';
 
 test('home page opens, shows five topic cards and switches the map with key 2', async ({
 	page,
 }) => {
 	const errors = collectErrors(page);
-	await page.goto('/');
+	await gotoReady(page, '/');
 
 	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 	await expect(page.getByRole('article')).toHaveCount(5);

@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { gotoReady, reloadReady } from './helpers';
 
 test('level change applies only after «Применить» and survives reload', async ({ page }) => {
-	await page.goto('/dl/attention/');
+	await gotoReady(page, '/dl/attention/');
 
 	const c1 = page.locator('[data-variant-c="1"]');
 	const c24 = page.locator('[data-variant-c="2-4"]');
@@ -23,7 +24,7 @@ test('level change applies only after «Применить» and survives reload
 	await expect(c24).toBeHidden();
 	await expect(page).toHaveURL(/[?&]c=1(&|$)/);
 
-	await page.reload();
+	await reloadReady(page);
 	await expect(c1).toBeVisible();
 	await expect(c24).toBeHidden();
 });
