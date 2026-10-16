@@ -98,7 +98,7 @@
 		font-size: 13px;
 	}
 
-	@media (max-width: 1180px) {
+	@media (max-width: 1499px) {
 		.toc {
 			display: none;
 		}
