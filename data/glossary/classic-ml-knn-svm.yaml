@@ -1,0 +1,55 @@
+- id: k-nearest-neighbors
+  term: метод ближайших соседей
+  term_en: k-nearest neighbors (kNN)
+  definition: Классификатор, который относит объект к классу, самому частому среди k ближайших обучающих объектов. Обучающая выборка хранится целиком, работа происходит в момент запроса.
+  chapter: classic-ml/knn-svm
+- id: svm
+  term: метод опорных векторов
+  term_en: support vector machine (SVM)
+  definition: Линейный классификатор, который выбирает разделяющую границу с наибольшим зазором до ближайших объектов обоих классов. С ядрами он проводит и криволинейные границы.
+  chapter: classic-ml/knn-svm
+- id: margin
+  term: зазор
+  term_en: margin
+  definition: Расстояние от разделяющей границы до ближайших обучающих объектов с обеих сторон. У SVM ширина зазора равна 2 / ‖w‖.
+  chapter: classic-ml/knn-svm
+- id: support-vector
+  term: опорный вектор
+  term_en: support vector
+  definition: Обучающий объект, который лежит на краю зазора или внутри него. Только такие объекты определяют положение границы SVM.
+  chapter: classic-ml/knn-svm
+- id: soft-margin
+  term: мягкий зазор
+  term_en: soft margin
+  definition: Вариант SVM, в котором объекты могут попадать внутрь зазора или на неверную сторону. Штраф за такие нарушения задаёт параметр C.
+  chapter: classic-ml/knn-svm
+  layer: { c: 2, d: 1 }
+- id: hinge-loss
+  term: hinge-потеря
+  term_en: hinge loss
+  definition: Функция потерь max(0, 1 − y·f(x)). Равна нулю для объектов, правильно лежащих за зазором, и растёт линейно для нарушителей.
+  chapter: classic-ml/knn-svm
+  layer: { c: 3, d: 1 }
+- id: kernel
+  term: ядро
+  term_en: kernel
+  definition: Функция K(x, x'), которая задаёт сходство двух объектов так, будто они переведены в другое пространство признаков, и не строит это пространство явно.
+  chapter: classic-ml/knn-svm
+  layer: { c: 2, d: 1 }
+- id: rbf-kernel
+  term: радиальное ядро
+  term_en: radial basis function (RBF) kernel
+  definition: Ядро exp(−γ‖x − x'‖²). Сходство убывает с расстоянием между объектами; параметр γ задаёт, на какое расстояние действует один обучающий объект.
+  chapter: classic-ml/knn-svm
+  layer: { c: 2, d: 1 }
+- id: kernel-trick
+  term: трюк с ядром
+  term_en: kernel trick
+  definition: Приём, при котором скалярное произведение в формулах SVM заменяют ядром. Так получают нелинейную границу без явного построения нового пространства признаков.
+  chapter: classic-ml/knn-svm
+  layer: { c: 3, d: 1 }
+- id: curse-of-dimensionality
+  term: проклятие размерности
+  term_en: curse of dimensionality
+  definition: Группа явлений, при которых с ростом числа признаков объекты становятся далеки друг от друга, и методы, опирающиеся на расстояния и локальные соседства, теряют точность.
+  chapter: classic-ml/knn-svm
