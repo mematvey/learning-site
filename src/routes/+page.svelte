@@ -180,7 +180,7 @@
 				active={current.id}
 				onSelect={(id) => (activeTopic = id)}
 			/>
-			<PrereqGraph graph={data.graph} topic={current.id} done={doneIds} />
+			<PrereqGraph graph={data.graph} topic={current.id} focus={cont?.chapter.id} done={doneIds} />
 		</section>
 	{/if}
 </main>
