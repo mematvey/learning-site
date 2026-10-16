@@ -27,6 +27,7 @@
 
 <style>
 	.figure {
+		scroll-margin-top: 80px;
 		margin: var(--space-12) 0;
 		padding: var(--space-6);
 		background: var(--surface);
