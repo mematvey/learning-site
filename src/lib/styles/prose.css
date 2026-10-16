@@ -93,3 +93,29 @@
 		font-size: 26px;
 	}
 }
+
+/* Code blocks and tables scroll inside their own box; the page never scrolls sideways. */
+:where(.prose) pre:not(figure *) {
+	max-width: 100%;
+	box-sizing: border-box;
+	overflow-x: auto;
+	margin: 0 0 var(--space-6);
+	padding: var(--space-3) var(--space-4);
+	background: var(--surface-2);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	scrollbar-width: thin;
+}
+:where(.prose) pre:not(figure *) code {
+	background: none;
+	padding: 0;
+	font-size: 0.88em;
+	white-space: pre;
+}
+:where(.prose) table:not(figure *) {
+	display: block;
+	max-width: 100%;
+	overflow-x: auto;
+	border-collapse: collapse;
+	margin: 0 0 var(--space-6);
+}

@@ -87,6 +87,9 @@
 		color: var(--text);
 		text-decoration: none;
 		white-space: nowrap;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.nav-link {
@@ -174,6 +177,11 @@
 	}
 
 	@media (max-width: 640px) {
+		.topbar-inner {
+			padding: 0 12px;
+			gap: var(--space-2);
+		}
+
 		/* Search collapses to an icon button (see SearchDialog); slot keeps it on the right. */
 		.search-slot {
 			justify-content: flex-end;
