@@ -1,0 +1,25 @@
+- id: triton-program
+  term: программа Triton
+  term_en: Triton program
+  definition: Экземпляр ядра Triton, который обрабатывает один блок данных; её номер возвращает tl.program_id.
+  chapter: compute/triton-intro
+- id: triton-grid
+  term: сетка программ
+  term_en: launch grid
+  definition: Набор программ, которые запускаются одним вызовом ядра; для одномерного вектора их число равно числу блоков, то есть triton.cdiv(n, B).
+  chapter: compute/triton-intro
+- id: triton-block-size
+  term: размер блока
+  term_en: BLOCK_SIZE
+  definition: Число элементов, которые одна программа обрабатывает за раз; объявляется как tl.constexpr, потому что служит формой для tl.arange.
+  chapter: compute/triton-intro
+- id: triton-mask
+  term: маска
+  term_en: mask
+  definition: Булев массив той же формы, что блок; операции с памятью защищены от обращений за границу там, где маска ложна.
+  chapter: compute/triton-intro
+- id: triton-jit
+  term: декоратор triton.jit
+  term_en: triton.jit
+  definition: Декоратор, который превращает Python-функцию в ядро Triton; ядро компилируется и запускается на GPU через индексирование сеткой.
+  chapter: compute/triton-intro
