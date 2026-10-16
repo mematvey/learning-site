@@ -1,4 +1,4 @@
-"""Visible tests. `attention` and `report_array` are provided by the runner.
+"""Visible tests. `attention`, `report_array` and `assert_close` are provided by the runner.
 
 The runner executes starter.py (or solution.py) in the same namespace first.
 """
@@ -24,12 +24,8 @@ def test_small_hand_case():
     out, weights = attention(Q, K, V)
     expected_w = np.array([[0.669782, 0.330218]])
     expected_out = np.array([[1.660436, 2.660436]])
-    assert np.allclose(weights, expected_w, rtol=1e-4, atol=1e-4), (
-        f"weights mismatch: expected {expected_w.tolist()}, got {weights.tolist()}"
-    )
-    assert np.allclose(out, expected_out, rtol=1e-4, atol=1e-4), (
-        f"output mismatch: expected {expected_out.tolist()}, got {out.tolist()}"
-    )
+    assert_close(weights, expected_w, atol=1e-4, rtol=1e-4, message="attention weights")
+    assert_close(out, expected_out, atol=1e-4, rtol=1e-4, message="attention output")
 
 
 def test_weights_rows_sum_to_one_visible():
@@ -38,8 +34,7 @@ def test_weights_rows_sum_to_one_visible():
     K = rng.normal(size=(5, 4))
     V = rng.normal(size=(5, 2))
     _, weights = attention(Q, K, V)
-    sums = weights.sum(axis=-1)
-    assert np.allclose(sums, 1.0, atol=1e-6), f"row sums must be 1, got {sums.tolist()}"
+    assert_close(weights.sum(axis=-1), np.ones(3), atol=1e-6, message="row sums must be 1")
 
 
 def test_causal_mask_blocks_future():
@@ -53,10 +48,8 @@ def test_causal_mask_blocks_future():
     assert np.all(weights[~mask] == 0.0), (
         f"future positions must get zero weight, got {weights.tolist()}"
     )
-    assert np.allclose(weights[0], [1.0, 0.0, 0.0], atol=1e-9), (
-        f"first query sees only the first key, got {weights[0].tolist()}"
-    )
-    assert np.allclose(weights.sum(axis=-1), 1.0, atol=1e-6), "row sums must be 1 with mask"
+    assert_close(weights[0], [1.0, 0.0, 0.0], atol=1e-9, message="first query sees only key 0")
+    assert_close(weights.sum(axis=-1), np.ones(3), atol=1e-6, message="row sums must be 1")
 
 
 def test_report_weights_for_heatmap():
