@@ -1,5 +1,5 @@
 id: classic-ml-knn-svm
-title: Метод ближайших соседей и SVM
+title: kNN с весами по расстоянию на NumPy
 chapter: classic-ml/knn-svm
 runtime: pyodide
 starter: starter.py
