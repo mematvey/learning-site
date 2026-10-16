@@ -1,5 +1,5 @@
 id: dl-transformer-block
-title: Блок трансформера
+title: Блок трансформера на NumPy
 chapter: dl/transformer-block
 runtime: pyodide
 starter: starter.py
