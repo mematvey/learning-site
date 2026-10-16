@@ -1,0 +1,40 @@
+- id: pmf
+  term: функция вероятностей
+  term_en: probability mass function
+  definition: Для дискретной величины задаёт вероятность каждого значения P(X = k); значения неотрицательны и в сумме дают единицу.
+  chapter: stats/distributions
+- id: pdf
+  term: плотность вероятности
+  term_en: probability density function
+  definition: Для непрерывной величины функция f(x), у которой вероятность попасть в отрезок равна площади под ней на этом отрезке. Значение f(x) не является вероятностью и может быть больше единицы.
+  chapter: stats/distributions
+- id: cdf
+  term: функция распределения
+  term_en: cumulative distribution function
+  definition: F(x) = P(X ≤ x), вероятность того, что величина не превысит x. Определена для любой случайной величины.
+  chapter: stats/distributions
+- id: binomial-distribution
+  term: биномиальное распределение
+  term_en: binomial distribution
+  definition: Распределение числа успехов в n независимых опытах с одинаковой вероятностью успеха p; записывают Bin(n, p).
+  chapter: stats/distributions
+- id: poisson-distribution
+  term: распределение Пуассона
+  term_en: Poisson distribution
+  definition: Распределение числа редких независимых событий за фиксированный интервал при среднем λ; записывают Pois(λ). Среднее и дисперсия равны λ.
+  chapter: stats/distributions
+- id: normal-distribution
+  term: нормальное распределение
+  term_en: normal distribution
+  definition: Распределение с плотностью колокольной формы, задаваемое средним μ (центр) и дисперсией σ² (разброс); записывают N(μ, σ²).
+  chapter: stats/distributions
+- id: quantile
+  term: квантиль
+  term_en: quantile
+  definition: Для уровня u в интервале от 0 до 1 значение x, при котором F(x) = u. Обратная функция распределения возвращает квантиль.
+  chapter: stats/distributions
+- id: inverse-transform-sampling
+  term: выборка по обратной функции
+  term_en: inverse transform sampling
+  definition: 'Способ получить выборку из распределения F. Берут равномерное число U на отрезке от 0 до 1 и возвращают F⁻¹(U). Результат имеет распределение F.'
+  chapter: stats/distributions
