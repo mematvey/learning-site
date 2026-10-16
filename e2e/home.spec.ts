@@ -1,9 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { collectErrors, gotoReady } from './helpers';
 
-test('home page opens, shows six topic cards and switches the map with key 2', async ({
-	page,
-}) => {
+test('home page opens, shows six topic cards and switches the map with key 2', async ({ page }) => {
 	const errors = collectErrors(page);
 	await gotoReady(page, '/');
 
