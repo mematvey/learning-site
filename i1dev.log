@@ -1,0 +1,57 @@
+[2m02:36:03[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+
+  [32m[1mVITE[22m v8.3.4[39m  [2mready in [0m[1m1356[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5173[22m/[39m
+02:36:11 [vite-plugin-svelte] src/lib/components/demos/AttentionDemo.svelte:46:21 This [2m02:36:44[22m [36m[1m[vite][22m[39m [32msrc/lib/content/mdsvex/auto-import.ts changed, restarting server...[39m
+[2m02:36:44[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[2m02:36:44[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:36:45[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:36:45[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:36:45[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:37:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/index.html[22m
+[2m02:37:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/dl/attention/index.html[22m
+[2m02:40:04[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/app.html[22m
+[2m02:40:06[22m [36m[1m[vite][22m[39m [32msrc/lib/content/mdsvex/auto-import.ts changed, restarting server...[39m
+[2m02:40:06[22m [36m[1m[vite][22m[39m [32msrc/lib/content/mdsvex/math.ts changed, restarting server...[39m
+[2m02:40:06[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:40:06[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:40:06[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:40:06[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:40:07[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[2m02:40:07[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:40:07[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:40:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/dl/atte[2m02:40:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/dl/attention/index.html[22m
+[2m02:40[2m02:40:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/index.html[22m
+[2m02:40:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/dl/attention/index.html[22m
+m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/dl/attention/index.html[22m
+erver\renderer.js:411:8)
+    at Index_svx (content\dl\attention\index.svx:3:118)
+    at eval (src\lib\components\ChapterPage.svelte:179:43)
+    at eval (node_modules\svelte\src\internal\server\renderer.js:413:11)
+    at Renderer.child (node_modules\svelte\src\internal\server\renderer.js:302:18)
+    at Renderer.component (node_modules\svelte\src\internal\server\renderer.js:411:8)
+    at ChapterPage (src\lib\components\ChapterPage.svelte:28:2)
+500 GET /dl/attention/
+[2m02:36:44[22m [36m[1m[vite][22m[39m [32msrc/lib/content/mdsvex/auto-import.ts changed, restarting server...[39m
+[2m02:36:44[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[2m02:36:44[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:36:45[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:36:45[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:36:45[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:37:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/index.html[22m
+[2m02:37:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/dl/attention/index.html[22m
+[2m02:40:04[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/app.html[22m
+[2m02:40:06[22m [36m[1m[vite][22m[39m [32msrc/lib/content/mdsvex/auto-import.ts changed, restarting server...[39m
+[2m02:40:06[22m [36m[1m[vite][22m[39m [32msrc/lib/content/mdsvex/math.ts changed, restarting server...[39m
+[2m02:40:06[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:40:06[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:40:06[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:40:06[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:40:07[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[2m02:40:07[22m [36m[1m[vite][22m[39m [34m[2m(ssr)[22m[39m connected.
+[2m02:40:07[22m [36m[1m[vite][22m[39m server restarted.
+[2m02:40:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/dl/attention/index.html[22m
+[2m02:40:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/index.html[22m
+[2m02:40:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/index.html[22m
+[2m02:40:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2mbuild/dl/attention/index.html[22m

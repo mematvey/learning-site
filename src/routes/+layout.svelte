@@ -49,6 +49,8 @@
 	let helpOpen = $state(false);
 
 	onMount(() => {
+		// Marker for e2e tests: the app is hydrated and handlers are attached.
+		document.documentElement.dataset.hydrated = 'true';
 		theme = readStoredTheme();
 		const stopWatch = watchSystemDark((dark) => (systemDark = dark));
 		const stopShortcuts = installShortcuts({
