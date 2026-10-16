@@ -1,0 +1,35 @@
+- id: hash-function
+  term: хеш-функция
+  term_en: hash function
+  definition: Функция, которая превращает ключ в целое число; из него берут номер ячейки таблицы, например остаток от деления на число ячеек.
+  chapter: cs/hash-tables
+- id: hash-collision
+  term: коллизия
+  term_en: collision
+  definition: Ситуация, когда два разных ключа получили одну и ту же ячейку. Таблица должна хранить оба ключа и уметь их различать.
+  chapter: cs/hash-tables
+- id: hash-chaining
+  term: метод цепочек
+  term_en: chaining
+  definition: Способ разрешения коллизий, при котором каждая ячейка хранит список всех ключей, попавших в неё.
+  chapter: cs/hash-tables
+- id: open-addressing
+  term: открытая адресация
+  term_en: open addressing
+  definition: Способ разрешения коллизий, при котором все ключи лежат прямо в массиве; при занятой ячейке выбирается следующая по порядку проба.
+  chapter: cs/hash-tables
+- id: load-factor
+  term: коэффициент заполнения
+  term_en: load factor
+  definition: Отношение числа ключей к числу ячеек. Чем он больше, тем длиннее цепочки или дольше поиск свободной ячейки.
+  chapter: cs/hash-tables
+- id: rehashing
+  term: перехеширование
+  term_en: rehashing
+  definition: Создание новой таблицы большего размера и перенос всех ключей в неё с пересчётом номеров ячеек.
+  chapter: cs/hash-tables
+- id: universal-hashing
+  term: универсальное хеширование
+  term_en: universal hashing
+  definition: Выбор хеш-функции случайно из семейства, в котором два разных ключа совпадают с вероятностью не больше одной m-й, где m число ячеек.
+  chapter: cs/hash-tables
