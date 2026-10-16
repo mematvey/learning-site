@@ -70,7 +70,7 @@
 
 	{#if total > 0}
 		<section class="map" aria-labelledby="map-title">
-			<h2 id="map-title">Карта раздела</h2>
+			<h2 id="map-title">Карта глав</h2>
 			<PrereqGraph graph={data.graph} topic={data.topic.id} done={doneIds} />
 		</section>
 	{/if}
