@@ -1,0 +1,30 @@
+- id: data-drift
+  term: дрейф данных
+  term_en: data drift
+  definition: 'Изменение распределения входов модели в продакшене по сравнению с данными обучения. Связь между входом и ответом при этом может не меняться.'
+  chapter: mlops/monitoring-drift
+- id: concept-drift
+  term: дрейф концепта
+  term_en: concept drift
+  definition: 'Изменение связи между входами и целевой переменной со временем: тот же вход теперь соответствует другому ответу. Для его обнаружения обычно нужны метки.'
+  chapter: mlops/monitoring-drift
+- id: reference-window
+  term: эталонное окно
+  term_en: reference window
+  definition: 'Выборка данных, с которой сравнивают текущие данные, обычно данные обучения или зафиксированный период, на котором модель была проверена.'
+  chapter: mlops/monitoring-drift
+- id: psi
+  term: индекс стабильности популяции
+  term_en: population stability index
+  definition: 'Мера расхождения двух распределений по бинам: сумма (a_i − e_i) ln(a_i / e_i), где e_i и a_i доли эталона и текущих данных в бине i. Равна нулю при совпадении долей.'
+  chapter: mlops/monitoring-drift
+- id: ks-statistic
+  term: статистика Колмогорова–Смирнова
+  term_en: Kolmogorov–Smirnov statistic
+  definition: 'Наибольшее расстояние по вертикали между эмпирическими функциями распределения двух выборок. Лежит от 0 до 1.'
+  chapter: mlops/monitoring-drift
+- id: alert-threshold
+  term: порог тревоги
+  term_en: alert threshold
+  definition: 'Значение статистики, при превышении которого система поднимает тревогу. Выбирается по историческим данным с учётом цены ложных тревог.'
+  chapter: mlops/monitoring-drift
