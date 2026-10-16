@@ -1,5 +1,5 @@
 id: classic-ml-regularization
-title: 'Регуляризация: L1 и L2'
+title: "Регуляризация: ridge и lasso на NumPy"
 chapter: classic-ml/regularization
 runtime: pyodide
 starter: starter.py
