@@ -3,7 +3,8 @@ id: dl/attention
 title: Scaled dot-product attention
 topic: dl
 summary: Как каждый токен решает, на какие другие токены смотреть, и зачем в формуле делитель √d.
-prereqs: []
+prereqs:
+  - dl/softmax
 concepts:
   - { id: attention, title: Внимание }
   - { id: softmax, title: Softmax }

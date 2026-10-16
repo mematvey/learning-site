@@ -3,16 +3,16 @@ id: classic-ml/logistic-regression
 title: Логистическая регрессия
 topic: classic-ml
 summary: Как линейная оценка превращается в вероятность класса, почему веса учат через log-loss и где проходит граница между классами.
-prereqs: []
+prereqs:
+  - classic-ml/linear-regression
+  - dl/softmax
 concepts:
   - { id: logistic-regression, title: Логистическая регрессия }
   - { id: sigmoid, title: Сигмоида }
-  - { id: logit, title: Логит }
   - { id: log-loss, title: Логарифмическая функция потерь }
   - { id: likelihood, title: Правдоподобие }
   - { id: decision-boundary, title: Разделяющая граница }
   - { id: threshold, title: Порог классификации }
-  - { id: regularization, title: Регуляризация }
   - { id: convexity, title: Выпуклость }
   - { id: softmax-regression, title: Softmax-регрессия }
 keywords:

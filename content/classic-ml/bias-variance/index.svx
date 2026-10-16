@@ -3,7 +3,8 @@ id: classic-ml/bias-variance
 title: Bias and variance
 topic: classic-ml
 summary: Ошибка модели складывается из смещения, разброса и шума; сложность модели двигает первые два в противоположные стороны.
-prereqs: []
+prereqs:
+  - classic-ml/linear-regression
 concepts:
   - { id: bias, title: Смещение }
   - { id: variance, title: Разброс }

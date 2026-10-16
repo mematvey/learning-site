@@ -4,7 +4,7 @@ title: Residual connections и LayerNorm
 topic: dl
 summary: Зачем блоку трансформера остаточная связь и почему нормализация считается по признакам одного токена, а не по батчу.
 prereqs:
-  - dl/attention
+  - dl/multi-head-attention
 concepts:
   - { id: residual-connection, title: Остаточная связь }
   - { id: layer-norm, title: LayerNorm }
