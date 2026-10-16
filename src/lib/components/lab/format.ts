@@ -70,3 +70,30 @@ export function extent(series: Series[]): { x0: number; x1: number; y0: number; 
 export function hasRunError(result: LabResult): boolean {
 	return result.error !== undefined;
 }
+
+/** One compared number: its multi-dimensional index and both values. */
+export interface ComparedValue {
+	index: number[];
+	expected: number;
+	actual: number;
+}
+
+/**
+ * Pairs `expected` and `actual` element by element when both are numeric arrays of the same
+ * shape (nested arrays are walked, the index is the path). Returns null otherwise, so the panel
+ * falls back to the plain value table.
+ */
+export function comparePairs(expected: unknown, actual: unknown): ComparedValue[] | null {
+	if (!Array.isArray(expected) || !Array.isArray(actual)) return null;
+	const out: ComparedValue[] = [];
+	const walk = (e: unknown, a: unknown, index: number[]): boolean => {
+		if (Array.isArray(e) || Array.isArray(a)) {
+			if (!Array.isArray(e) || !Array.isArray(a) || e.length !== a.length) return false;
+			return e.every((item, i) => walk(item, a[i], [...index, i]));
+		}
+		if (typeof e !== 'number' || typeof a !== 'number') return false;
+		out.push({ index, expected: e, actual: a });
+		return true;
+	};
+	return walk(expected, actual, []) ? out : null;
+}

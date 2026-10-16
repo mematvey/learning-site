@@ -2,6 +2,8 @@
 	import type { LabResultPanelProps } from '$lib/contracts/component-props';
 	import type { Series, TestResult } from '$lib/contracts';
 	import {
+		type ComparedValue,
+		comparePairs,
 		countTests,
 		firstFailedIndex,
 		formatNumber,
@@ -32,8 +34,18 @@
 		return out;
 	});
 
+	/** Rows shown in the comparison table; longer arrays are cut with a note. */
+	const PAIR_ROWS = 64;
+	/** Values closer than this are not marked as mismatching. */
+	const EPS = 1e-9;
+
 	function testCellsRows(t: TestResult) {
 		return t.diff?.cells ?? [];
+	}
+
+	/** Element-wise pairs when the test reports matching numeric arrays, else an empty list. */
+	function pairsOf(t: TestResult): ComparedValue[] {
+		return comparePairs(t.expected, t.actual) ?? [];
 	}
 </script>
 
@@ -72,31 +84,58 @@
 							<div class="detail">
 								{#if t.message}<p class="msg">{t.message}</p>{/if}
 								{#if t.location}<p class="loc">{t.location.file}:{t.location.line}</p>{/if}
-								{#if t.diff?.kind === 'array' && testCellsRows(t).length > 0}
-									<table class="cmp">
-										<thead>
-											<tr><th>позиция</th><th>ожидалось</th><th>получено</th><th>разница</th></tr>
-										</thead>
-										<tbody>
-											{#each testCellsRows(t) as c, ci (ci)}
-												<tr>
-													<td>[{c.index.join(', ')}]</td>
-													<td>{formatNumber(c.expected)}</td>
-													<td class="bad">{formatNumber(c.actual)}</td>
-													<td class="bad">{Math.abs(c.expected - c.actual).toFixed(3)}</td>
-												</tr>
-											{/each}
-										</tbody>
-									</table>
+								{#if pairsOf(t).length > 0}
+									{@const pairs = pairsOf(t)}
+									<div class="cmp-wrap">
+										<table class="cmp">
+											<thead>
+												<tr><th>позиция</th><th>ожидалось</th><th>получено</th><th>|Δ|</th></tr>
+											</thead>
+											<tbody>
+												{#each pairs.slice(0, PAIR_ROWS) as c, ci (ci)}
+													{@const delta = Math.abs(c.expected - c.actual)}
+													<tr>
+														<td>[{c.index.join(', ')}]</td>
+														<td>{formatNumber(c.expected)}</td>
+														<td class:bad={delta > EPS}>{formatNumber(c.actual)}</td>
+														<td class:bad={delta > EPS}>{delta.toFixed(3)}</td>
+													</tr>
+												{/each}
+											</tbody>
+										</table>
+									</div>
+									{#if pairs.length > PAIR_ROWS}
+										<p class="msg">Показаны первые {PAIR_ROWS} из {pairs.length} позиций.</p>
+									{/if}
+								{:else if testCellsRows(t).length > 0}
+									<div class="cmp-wrap">
+										<table class="cmp">
+											<thead>
+												<tr><th>позиция</th><th>ожидалось</th><th>получено</th><th>|Δ|</th></tr>
+											</thead>
+											<tbody>
+												{#each testCellsRows(t) as c, ci (ci)}
+													<tr>
+														<td>[{c.index.join(', ')}]</td>
+														<td>{formatNumber(c.expected)}</td>
+														<td class="bad">{formatNumber(c.actual)}</td>
+														<td class="bad">{Math.abs(c.expected - c.actual).toFixed(3)}</td>
+													</tr>
+												{/each}
+											</tbody>
+										</table>
+									</div>
 								{:else if t.expected !== undefined || t.actual !== undefined}
-									<table class="cmp">
-										<thead>
-											<tr><th>ожидалось</th><th>получено</th></tr>
-										</thead>
-										<tbody>
-											<tr><td>{json(t.expected)}</td><td class="bad">{json(t.actual)}</td></tr>
-										</tbody>
-									</table>
+									<div class="cmp-wrap">
+										<table class="cmp">
+											<thead>
+												<tr><th>ожидалось</th><th>получено</th></tr>
+											</thead>
+											<tbody>
+												<tr><td>{json(t.expected)}</td><td class="bad">{json(t.actual)}</td></tr>
+											</tbody>
+										</table>
+									</div>
 								{/if}
 								{#if t.diff?.summary}<p class="msg">{t.diff.summary}</p>{/if}
 							</div>
@@ -179,9 +218,11 @@
 		display: none;
 	}
 	code {
+		min-width: 0;
 		font: 13px var(--font-mono);
 		background: transparent;
 		padding: 0;
+		overflow-wrap: anywhere;
 	}
 	.mark {
 		flex: none;
@@ -214,6 +255,10 @@
 		margin: 0 0 10px;
 		font: 12.5px var(--font-mono);
 		color: var(--text-muted);
+	}
+	.cmp-wrap {
+		max-width: 100%;
+		overflow-x: auto;
 	}
 	.cmp {
 		border-collapse: collapse;

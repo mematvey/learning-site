@@ -384,13 +384,13 @@
 		cursor: progress;
 	}
 	.btn-primary {
-		background: var(--accent);
-		border-color: var(--accent);
+		background: var(--topic);
+		border-color: var(--topic);
 		color: var(--surface);
 		font-weight: 600;
 	}
 	.btn-primary:hover {
-		background: var(--accent);
+		background: var(--topic);
 		filter: brightness(1.07);
 	}
 	.btn-mini {
@@ -417,8 +417,11 @@
 		white-space: nowrap;
 	}
 	.editor {
+		/* Long lines scroll inside the CodeMirror scroller; the frame never stretches. */
+		min-width: 0;
+		max-width: 100%;
 		border-bottom: 1px solid var(--border);
-		overflow-x: auto;
+		overflow: hidden;
 	}
 	kbd {
 		font: 11px var(--font-mono);
