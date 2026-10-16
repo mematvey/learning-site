@@ -14,6 +14,7 @@
   chapter: dl/softmax
 - id: log-softmax
   term: log-softmax
+  term_en: log-softmax
   definition: Логарифм softmax, записанный как z_i − logsumexp(z); остаётся конечным даже для очень малых вероятностей.
   chapter: dl/softmax
 - id: cross-entropy
