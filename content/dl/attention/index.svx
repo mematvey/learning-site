@@ -41,6 +41,14 @@ sources:
     url: https://arxiv.org/abs/2205.14135
     accessed: 2026-10-16
     supports: [hw-flash, hw-scores]
+  - id: torchsdpa
+    kind: doc
+    title: 'torch.nn.functional.scaled_dot_product_attention'
+    authors: PyTorch contributors
+    venue: PyTorch documentation
+    url: https://pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html
+    accessed: 2026-10-16
+    supports: [impl-torch]
 aliases: []
 status: draft
 ---
@@ -136,6 +144,8 @@ $$
 ```python
 scores = Q @ K.T / np.sqrt(d)
 ```
+
+В PyTorch тот же расчёт есть в функции `torch.nn.functional.scaled_dot_product_attention`. Масштаб по умолчанию равен $1/\sqrt{d}$, а булева маска `attn_mask` работает так же, как в лабе: `True` означает, что запрос может смотреть на ключ. Библиотека может выбрать реализацию с тайлами (см. ниже, d=3), поэтому её результат совпадает с NumPy-версией с точностью до ошибок округления. <Cite id="torchsdpa" /> {#impl-torch}
 
 </Level>
 

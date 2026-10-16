@@ -1,6 +1,6 @@
 """Hidden tests: edge cases and numerical stability.
 
-Messages are not shown to the reader. The runner reports only names and statuses.
+Messages and values are not shown to the reader. The runner reports only names and statuses.
 """
 
 # ruff: noqa: F821
@@ -27,10 +27,6 @@ def _reference(Q, K, V, mask=None):
     return weights @ V, weights
 
 
-def _close(a, b):
-    return np.allclose(a, b, rtol=1e-6, atol=1e-8)
-
-
 def test_hidden_random_matches_reference():
     rng = np.random.default_rng(0)
     Q = rng.normal(size=(5, 16))
@@ -38,7 +34,8 @@ def test_hidden_random_matches_reference():
     V = rng.normal(size=(7, 4))
     out, weights = attention(Q, K, V)
     ref_out, ref_w = _reference(Q, K, V)
-    assert _close(weights, ref_w) and _close(out, ref_out), "mismatch on random input, seed 0"
+    assert_close(weights, ref_w, atol=1e-8, rtol=1e-6, message="mismatch on random input, seed 0")
+    assert_close(out, ref_out, atol=1e-8, rtol=1e-6, message="mismatch on random input, seed 0")
 
 
 def test_hidden_d1():
@@ -48,7 +45,8 @@ def test_hidden_d1():
     V = rng.normal(size=(4, 2))
     out, weights = attention(Q, K, V)
     ref_out, ref_w = _reference(Q, K, V)
-    assert _close(weights, ref_w) and _close(out, ref_out), "mismatch for d = 1"
+    assert_close(weights, ref_w, atol=1e-8, rtol=1e-6, message="mismatch for d = 1")
+    assert_close(out, ref_out, atol=1e-8, rtol=1e-6, message="mismatch for d = 1")
 
 
 def test_hidden_large_d_scaling():
@@ -58,7 +56,8 @@ def test_hidden_large_d_scaling():
     V = rng.normal(size=(6, 3))
     out, weights = attention(Q, K, V)
     ref_out, ref_w = _reference(Q, K, V)
-    assert _close(weights, ref_w) and _close(out, ref_out), "mismatch for large d"
+    assert_close(weights, ref_w, atol=1e-8, rtol=1e-6, message="mismatch for large d")
+    assert_close(out, ref_out, atol=1e-8, rtol=1e-6, message="mismatch for large d")
 
 
 def test_hidden_causal_mask():
@@ -71,7 +70,8 @@ def test_hidden_causal_mask():
     out, weights = attention(Q, K, V, mask=mask)
     ref_out, ref_w = _reference(Q, K, V, mask=mask)
     assert np.all(weights[~mask] == 0.0), "masked positions must have zero weight"
-    assert _close(weights, ref_w) and _close(out, ref_out), "mismatch with causal mask"
+    assert_close(weights, ref_w, atol=1e-8, rtol=1e-6, message="mismatch with causal mask")
+    assert_close(out, ref_out, atol=1e-8, rtol=1e-6, message="mismatch with causal mask")
 
 
 def test_hidden_fully_masked_row():
@@ -84,7 +84,7 @@ def test_hidden_fully_masked_row():
     out, weights = attention(Q, K, V, mask=mask)
     assert not np.any(np.isnan(out)) and not np.any(np.isnan(weights)), "NaN in output"
     assert np.all(weights[1] == 0.0) and np.all(out[1] == 0.0), "fully masked row must be zero"
-    assert np.allclose(weights[[0, 2]].sum(axis=-1), 1.0), "other rows must sum to 1"
+    assert_close(weights[[0, 2]].sum(axis=-1), np.ones(2), atol=1e-5, message="other rows must sum to 1")
 
 
 def test_hidden_none_mask_equals_all_true():
@@ -94,7 +94,8 @@ def test_hidden_none_mask_equals_all_true():
     V = rng.normal(size=(4, 3))
     out_a, w_a = attention(Q, K, V, mask=None)
     out_b, w_b = attention(Q, K, V, mask=np.ones((4, 4), dtype=bool))
-    assert _close(w_a, w_b) and _close(out_a, out_b), "mask=None must equal an all-True mask"
+    assert_close(w_a, w_b, atol=1e-8, rtol=1e-6, message="mask=None must equal an all-True mask")
+    assert_close(out_a, out_b, atol=1e-8, rtol=1e-6, message="mask=None must equal an all-True mask")
 
 
 def test_hidden_large_logits_stable():
@@ -104,7 +105,7 @@ def test_hidden_large_logits_stable():
     V = rng.normal(size=(5, 2))
     out, weights = attention(Q, K, V)
     assert np.all(np.isfinite(out)) and np.all(np.isfinite(weights)), "non-finite values"
-    assert np.allclose(weights.sum(axis=-1), 1.0, atol=1e-6), "rows must sum to 1"
+    assert_close(weights.sum(axis=-1), np.ones(3), atol=1e-6, message="rows must sum to 1")
 
 
 def test_hidden_inputs_not_mutated():
