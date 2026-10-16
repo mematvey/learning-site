@@ -1,0 +1,25 @@
+- id: dropout
+  term: дропаут
+  term_en: dropout
+  definition: Регуляризация, при которой на каждом шаге обучения часть нейронов случайно зануляется; сеть не может полагаться на отдельные нейроны.
+  chapter: dl/regularization-dl
+- id: inverted-dropout
+  term: инвертированный dropout
+  term_en: inverted dropout
+  definition: Вариант dropout, при котором активации делятся на 1 − p во время обучения, поэтому на инференсе маска и масштабирование не нужны.
+  chapter: dl/regularization-dl
+- id: dropout-mask
+  term: маска dropout
+  term_en: dropout mask
+  definition: Случайный бинарный тензор, который на одном шаге обучения выбирает, какие элементы активаций оставить.
+  chapter: dl/regularization-dl
+- id: weight-decay
+  term: затухание весов
+  term_en: weight decay
+  definition: Штраф λ/2·‖w‖², который тянет веса к нулю; для SGD эквивалентен L2-регуляризации, для Adam задаётся отдельно в AdamW.
+  chapter: dl/regularization-dl
+- id: early-stopping
+  term: ранняя остановка
+  term_en: early stopping
+  definition: Прекращение обучения, когда ошибка на валидационной выборке перестала улучшаться, с возвратом к весам лучшего шага.
+  chapter: dl/regularization-dl
