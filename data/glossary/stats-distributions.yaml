@@ -1,8 +1,3 @@
-- id: pmf
-  term: функция вероятностей
-  term_en: probability mass function
-  definition: Для дискретной величины задаёт вероятность каждого значения P(X = k); значения неотрицательны и в сумме дают единицу.
-  chapter: stats/distributions
 - id: pdf
   term: плотность вероятности
   term_en: probability density function
