@@ -1,0 +1,45 @@
+- id: inference
+  term: инференс
+  term_en: inference
+  definition: Вычисление предсказания обученной модели на новом входе. Веса при этом не меняются; обучение меняет веса, инференс только использует их.
+  chapter: mlops/serving
+- id: batch-inference
+  term: пакетный инференс
+  term_en: batch inference
+  definition: Предсказания для набора входов считаются одним запуском, обычно по расписанию, а результаты пишутся в хранилище для последующего чтения.
+  chapter: mlops/serving
+- id: online-inference
+  term: онлайн-инференс
+  term_en: online inference
+  definition: Предсказание считается на один запрос в момент его прихода, и ответ сразу возвращается вызывающему сервису, обычно по сети.
+  chapter: mlops/serving
+- id: model-version
+  term: версия модели
+  term_en: model version
+  definition: Зафиксированный набор артефактов модели (веса, код предобработки, описание входов) с собственным именем или номером.
+  chapter: mlops/serving
+- id: canary-release
+  term: канареечная выкладка
+  term_en: canary release
+  definition: Новая версия получает малую долю трафика на ограниченное время, её метрики сравниваются с остальным трафиком; при плохих результатах трафик возвращают старой версии.
+  chapter: mlops/serving
+- id: rollback
+  term: откат
+  term_en: rollback
+  definition: Возврат трафика на предыдущую версию, которая осталась развёрнутой или может быть развёрнута быстро.
+  chapter: mlops/serving
+- id: latency
+  term: задержка
+  term_en: latency
+  definition: Время от получения запроса до ответа на него. Для пакетной обработки задержку считают отдельно на один вход и на весь пакет.
+  chapter: mlops/serving
+- id: throughput
+  term: пропускная способность
+  term_en: throughput
+  definition: Число предсказаний, которые система выдаёт за единицу времени.
+  chapter: mlops/serving
+- id: ab-test
+  term: A/B-тест
+  term_en: A/B test
+  definition: Сравнение двух вариантов на случайно разделённых группах пользователей по выбранным метрикам.
+  chapter: mlops/serving
