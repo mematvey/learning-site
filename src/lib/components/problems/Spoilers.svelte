@@ -1,11 +1,11 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { ProblemDef, ProblemParams, Rational, SolutionStep } from '$lib/prob/types';
 	import { formatDecimal, formatFraction } from './format';
 	import { tex } from './tex';
 
 	/**
-	 * Hint, worked solution and answer as closed `<details>`. Depth 1: answer with the first formula.
-	 * Depth 2: full solution. Depth 3: plus the alternative method. Opening «Разбор» or «Ответ» reports a reveal.
+	 * Hint, worked solution, answer and visualization as closed `<details>`. Depth 1 and 2: full solution. Depth 3: plus the alternative method. Opening «Разбор» or «Ответ» reports a reveal.
 	 */
 	let {
 		problem,
@@ -14,6 +14,7 @@
 		valid,
 		depth,
 		onReveal,
+		extra,
 	}: {
 		problem: ProblemDef;
 		/** Last valid parameters (the card guarantees they pass `validate`). */
@@ -22,6 +23,8 @@
 		valid: boolean;
 		depth: number;
 		onReveal: (part: 'solution' | 'answer') => void;
+		/** Content of the «Визуализация» spoiler (picture and experiment); mounted on first open. */
+		extra?: Snippet;
 	} = $props();
 
 	const pid = $derived(problem.id);
@@ -35,6 +38,8 @@
 		return list?.find((s) => s.tex);
 	}
 
+	let extraOpened = $state(false);
+
 	function reveal(part: 'solution' | 'answer', e: Event): void {
 		if ((e.currentTarget as HTMLDetailsElement).open) onReveal(part);
 	}
@@ -46,57 +51,55 @@
 		<p class="sp-body">{problem.hint}</p>
 	</details>
 
-	{#if depth >= 2}
-		<details
-			class="sp-item"
-			id="{pid}-solution"
-			data-block
-			data-spoiler="solution"
-			ontoggle={(e) => reveal('solution', e)}
-		>
-			<summary>Разбор</summary>
-			{#if valid}
-				{#each questions as q (q.key)}
-					<div class="sp-q">
-						<h4 class="sp-q-title">{q.key}) {q.label}</h4>
-						<ol class="sp-steps">
-							{#each steps[q.key] ?? [] as step, i (i)}
-								<li>
-									<p>{step.text}</p>
-									{#if step.tex}
-										<div class="sp-tex" use:tex={step.tex}></div>
-									{/if}
-								</li>
-							{/each}
-						</ol>
-					</div>
-				{/each}
-
-				{#if depth >= 3 && altSteps}
-					<div class="sp-alt">
-						<h4 class="sp-alt-title">Другой способ</h4>
-						{#each questions as q (q.key)}
-							<div class="sp-q">
-								<h5 class="sp-q-title">{q.key}) {q.label}</h5>
-								<ol class="sp-steps">
-									{#each altSteps[q.key] ?? [] as step, i (i)}
-										<li>
-											<p>{step.text}</p>
-											{#if step.tex}
-												<div class="sp-tex" use:tex={step.tex}></div>
-											{/if}
-										</li>
-									{/each}
-								</ol>
-							</div>
+	<details
+		class="sp-item"
+		id="{pid}-solution"
+		data-block
+		data-spoiler="solution"
+		ontoggle={(e) => reveal('solution', e)}
+	>
+		<summary>Разбор</summary>
+		{#if valid}
+			{#each questions as q (q.key)}
+				<div class="sp-q">
+					<h4 class="sp-q-title">{q.key}) {q.label}</h4>
+					<ol class="sp-steps">
+						{#each steps[q.key] ?? [] as step, i (i)}
+							<li>
+								<p>{step.text}</p>
+								{#if step.tex}
+									<div class="sp-tex" use:tex={step.tex}></div>
+								{/if}
+							</li>
 						{/each}
-					</div>
-				{/if}
-			{:else}
-				<p class="sp-body">Исправьте параметры, чтобы увидеть разбор.</p>
+					</ol>
+				</div>
+			{/each}
+
+			{#if depth >= 3 && altSteps}
+				<div class="sp-alt">
+					<h4 class="sp-alt-title">Другой способ</h4>
+					{#each questions as q (q.key)}
+						<div class="sp-q">
+							<h5 class="sp-q-title">{q.key}) {q.label}</h5>
+							<ol class="sp-steps">
+								{#each altSteps[q.key] ?? [] as step, i (i)}
+									<li>
+										<p>{step.text}</p>
+										{#if step.tex}
+											<div class="sp-tex" use:tex={step.tex}></div>
+										{/if}
+									</li>
+								{/each}
+							</ol>
+						</div>
+					{/each}
+				</div>
 			{/if}
-		</details>
-	{/if}
+		{:else}
+			<p class="sp-body">Исправьте параметры, чтобы увидеть разбор.</p>
+		{/if}
+	</details>
 
 	<details
 		class="sp-item"
@@ -128,6 +131,22 @@
 			<p class="sp-body">Исправьте параметры, чтобы увидеть ответ.</p>
 		{/if}
 	</details>
+
+	{#if extra}
+		<details
+			class="sp-item"
+			id="{pid}-viz"
+			data-spoiler="viz"
+			ontoggle={(e) => {
+				if ((e.currentTarget as HTMLDetailsElement).open) extraOpened = true;
+			}}
+		>
+			<summary>Визуализация и эксперимент</summary>
+			{#if extraOpened}
+				<div class="sp-extra">{@render extra()}</div>
+			{/if}
+		</details>
+	{/if}
 </div>
 
 <style>
@@ -191,6 +210,12 @@
 		overflow-x: auto;
 		max-width: 100%;
 		padding-block: var(--space-1);
+	}
+	.sp-extra {
+		display: grid;
+		gap: var(--space-4);
+		min-width: 0;
+		margin-top: var(--space-3);
 	}
 	.sp-frac {
 		font-family: var(--font-mono);
