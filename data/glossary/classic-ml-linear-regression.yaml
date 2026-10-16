@@ -1,0 +1,52 @@
+- id: linear-regression
+  term: линейная регрессия
+  term_en: linear regression
+  definition: Модель, которая предсказывает число как взвешенную сумму признаков и смещения; веса подбираются по данным.
+  chapter: classic-ml/linear-regression
+- id: feature
+  term: признак
+  term_en: feature
+  definition: Измеримая величина, которая описывает объект и подаётся в модель, например площадь квартиры.
+  chapter: classic-ml/linear-regression
+- id: residual
+  term: остаток
+  term_en: residual
+  definition: Разность между правильным ответом и предсказанием модели для одного примера.
+  chapter: classic-ml/linear-regression
+- id: mse
+  term: средняя квадратичная ошибка
+  term_en: mean squared error
+  definition: Среднее квадратов остатков по выборке; функция потерь линейной регрессии.
+  chapter: classic-ml/linear-regression
+  layer: { c: 2, d: 1 }
+- id: normal-equation
+  term: нормальное уравнение
+  term_en: normal equation
+  definition: Формула, которая даёт веса линейной регрессии в явном виде через матрицы XᵀX и Xᵀy.
+  chapter: classic-ml/linear-regression
+  layer: { c: 2, d: 1 }
+- id: gradient-descent
+  term: градиентный спуск
+  term_en: gradient descent
+  definition: Итеративный поиск минимума, на каждом шаге веса смещаются против градиента ошибки.
+  chapter: classic-ml/linear-regression
+- id: learning-rate
+  term: шаг обучения
+  term_en: learning rate
+  definition: Коэффициент, на который умножается градиент на каждом шаге спуска; слишком большой шаг приводит к расходимости.
+  chapter: classic-ml/linear-regression
+- id: ridge
+  term: гребневая регрессия
+  term_en: ridge regression
+  definition: Линейная регрессия со штрафом за сумму квадратов весов (L2); веса уменьшаются, но обычно не становятся нулём.
+  chapter: classic-ml/linear-regression
+- id: lasso
+  term: лассо
+  term_en: lasso
+  definition: Линейная регрессия со штрафом за сумму модулей весов (L1); часть весов может стать ровно нулём.
+  chapter: classic-ml/linear-regression
+- id: r-squared
+  term: коэффициент детерминации
+  term_en: R-squared
+  definition: Доля разброса ответов, которую объясняет модель; 1 означает точное предсказание, 0 означает не лучше константы, равной среднему.
+  chapter: classic-ml/linear-regression
