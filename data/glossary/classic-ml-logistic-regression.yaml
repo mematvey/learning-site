@@ -1,0 +1,61 @@
+- id: logistic-regression
+  term: логистическая регрессия
+  term_en: logistic regression
+  definition: 'Линейная модель для классификации: взвешенная сумма признаков переводится сигмоидой в вероятность класса, веса подбираются по log-loss.'
+  chapter: classic-ml/logistic-regression
+- id: sigmoid
+  term: сигмоида
+  term_en: sigmoid
+  symbol: σ
+  definition: 'Функция, которая переводит любое действительное число в значение от 0 до 1; ноль переходит в 0.5.'
+  chapter: classic-ml/logistic-regression
+- id: logit
+  term: логит
+  term_en: logit
+  definition: 'Линейная оценка объекта до сигмоиды; это логарифм отношения вероятностей класса 1 и класса 0.'
+  chapter: classic-ml/logistic-regression
+- id: log-loss
+  term: логарифмическая функция потерь
+  term_en: log-loss
+  definition: 'Минус логарифм вероятности, которую модель дала правильному классу; для двух классов совпадает с бинарной кросс-энтропией.'
+  chapter: classic-ml/logistic-regression
+- id: cross-entropy
+  term: кросс-энтропия
+  term_en: cross-entropy
+  definition: 'Средний минус логарифм вероятности правильного класса по выборке; для двух классов совпадает с log-loss.'
+  chapter: classic-ml/logistic-regression
+- id: likelihood
+  term: правдоподобие
+  term_en: likelihood
+  definition: 'Вероятность наблюдаемой выборки как функция параметров модели. Максимум правдоподобия задаёт параметры, при которых данные наиболее вероятны.'
+  chapter: classic-ml/logistic-regression
+- id: decision-boundary
+  term: разделяющая граница
+  term_en: decision boundary
+  definition: 'Множество точек, в которых модель выдаёт вероятность 0.5 и классы равновероятны; для логистической регрессии это прямая или гиперплоскость.'
+  chapter: classic-ml/logistic-regression
+- id: threshold
+  term: порог классификации
+  term_en: classification threshold
+  definition: 'Значение вероятности, с которого объект относят к положительному классу. По умолчанию обычно берут 0.5, но под задачу его выбирают по данным проверки.'
+  chapter: classic-ml/logistic-regression
+- id: regularization
+  term: регуляризация
+  term_en: regularization
+  definition: 'Штраф за величину весов, добавляемый к функции потерь; ограничивает веса и делает решение конечным на разделимых данных.'
+  chapter: classic-ml/logistic-regression
+- id: convexity
+  term: выпуклость
+  term_en: convexity
+  definition: 'Свойство функции потерь, при котором любой локальный минимум является глобальным. Log-loss логистической регрессии выпукла.'
+  chapter: classic-ml/logistic-regression
+- id: softmax-regression
+  term: softmax-регрессия
+  term_en: softmax regression
+  definition: 'Обобщение логистической регрессии на K классов: логиты классов нормируются softmax. При двух классах сводится к логистической.'
+  chapter: classic-ml/logistic-regression
+- id: confusion-matrix
+  term: матрица ошибок
+  term_en: confusion matrix
+  definition: 'Таблица, в которой строки это истинные классы, а столбцы предсказанные; числа на пересечениях показывают, какие ошибки делает модель.'
+  chapter: classic-ml/logistic-regression
