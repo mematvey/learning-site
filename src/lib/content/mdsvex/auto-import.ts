@@ -1,4 +1,6 @@
-import { type MdNode, walk } from './tree';
+import { existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { type MdNode, walk } from './tree.ts';
 
 /** Component tag name → import path under `$lib/components/`. */
 export const COMPONENT_IMPORTS: Record<string, string> = {
@@ -14,8 +16,18 @@ export const COMPONENT_IMPORTS: Record<string, string> = {
 	Quiz: 'Quiz.svelte',
 	Cite: 'Cite.svelte',
 	CodeLab: 'CodeLab.svelte',
-	AttentionDemo: 'demos/AttentionDemo.svelte',
 };
+
+// Demos and charts are discovered from their folders, so a new demo needs no edit here.
+for (const dir of ['demos', 'charts']) {
+	const abs = join(process.cwd(), 'src', 'lib', 'components', dir);
+	if (!existsSync(abs)) continue;
+	for (const file of readdirSync(abs)) {
+		const match = /^([A-Z][A-Za-z0-9]*)\.svelte$/.exec(file);
+		const name = match?.[1];
+		if (name && name !== 'ChartFrame') COMPONENT_IMPORTS[name] = `${dir}/${file}`;
+	}
+}
 
 const SCRIPT_OPEN_RE = /<script(?:\s[^>]*)?>/;
 

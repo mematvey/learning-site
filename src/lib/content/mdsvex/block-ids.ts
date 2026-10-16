@@ -1,4 +1,4 @@
-import { location, type MdNode, type PluginFile, walk } from './tree';
+import { location, type MdNode, type PluginFile, walk } from './tree.ts';
 
 /** Block ids are kebab-case: lowercase latin letters, digits and single dashes. */
 export const BLOCK_ID_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

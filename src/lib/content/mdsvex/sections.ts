@@ -1,4 +1,4 @@
-import type { MdNode } from './tree';
+import type { MdNode } from './tree.ts';
 
 function headingId(node: MdNode): string | undefined {
 	const props = node.data?.hProperties as { id?: unknown } | undefined;

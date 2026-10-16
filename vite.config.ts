@@ -4,7 +4,7 @@ import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { mdsvex } from 'mdsvex';
-import { remarkPlugins, rehypePlugins } from './src/lib/content/mdsvex/index';
+import { remarkPlugins, rehypePlugins } from './src/lib/content/mdsvex/index.ts';
 import { defineConfig } from 'vite';
 
 // SvelteKit 3 reads its configuration from this file (svelte.config.js is no longer used).

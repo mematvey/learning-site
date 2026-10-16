@@ -1,6 +1,6 @@
 import katex from 'katex';
-import { checkBlockId } from './block-ids';
-import { type MdNode, type PluginFile, walk } from './tree';
+import { checkBlockId } from './block-ids.ts';
+import { type MdNode, type PluginFile, walk } from './tree.ts';
 
 /** Inline `$...$`: no leading `$` (so `$$` is left to the block rule), escapes allowed. */
 const INLINE_RE = /^\$((?:\\.|[^$\\\n])+)\$/;
