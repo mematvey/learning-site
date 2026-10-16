@@ -1,0 +1,15 @@
+- id: transformer-block
+  term: блок трансформера
+  term_en: transformer block
+  definition: Повторяемая единица трансформера из двух подслоёв, внимания и MLP, каждый с остаточной связью и нормализацией; вход и выход имеют одинаковую форму.
+  chapter: dl/transformer-block
+- id: sublayer
+  term: подслой
+  term_en: sublayer
+  definition: Одна из двух частей блока, внимание или MLP, вместе с обёрткой из остаточной связи и нормализации.
+  chapter: dl/transformer-block
+- id: mlp
+  term: MLP блока
+  term_en: position-wise feed-forward network
+  definition: Двухслойная полносвязная сеть с нелинейностью, которая применяется к каждому токену отдельно и одинаково; токены при этом не смешивает.
+  chapter: dl/transformer-block
