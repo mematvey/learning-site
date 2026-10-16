@@ -1,0 +1,15 @@
+---
+id: stats/distributions
+title: "Основные распределения"
+topic: stats
+summary: "Биномиальное, пуассоновское и нормальное распределения и как параметры меняют их форму."
+prereqs: [stats/random-variables]
+keywords: []
+minutes: 20
+labs: [stats-distributions]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

@@ -1,0 +1,15 @@
+---
+id: classic-ml/ensembles
+title: "Ансамбли: случайный лес и бустинг"
+topic: classic-ml
+summary: "Как много слабых моделей дают сильную: бэггинг, случайный лес и градиентный бустинг."
+prereqs: [classic-ml/decision-trees]
+keywords: []
+minutes: 20
+labs: [classic-ml-ensembles]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

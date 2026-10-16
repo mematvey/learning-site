@@ -1,0 +1,15 @@
+---
+id: stats/limit-theorems
+title: "Закон больших чисел и ЦПТ"
+topic: stats
+summary: "Почему средние сходятся к ожиданию и почему суммы выглядят как нормальное распределение."
+prereqs: [stats/distributions]
+keywords: []
+minutes: 20
+labs: [stats-limit-theorems]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

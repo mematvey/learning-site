@@ -1,0 +1,15 @@
+---
+id: cs/complexity
+title: "Оценка сложности алгоритмов"
+topic: cs
+summary: "O-нотация, рост функций и почему константы иногда важнее асимптотики."
+prereqs: []
+keywords: []
+minutes: 20
+labs: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

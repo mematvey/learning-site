@@ -1,0 +1,15 @@
+---
+id: cs/sorting-searching
+title: "Сортировки и поиск"
+topic: cs
+summary: "Сравнение сортировок и бинарный поиск: шаги, сложность и устойчивость."
+prereqs: [cs/complexity]
+keywords: []
+minutes: 20
+labs: [cs-sorting-searching]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

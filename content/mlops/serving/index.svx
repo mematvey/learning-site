@@ -1,0 +1,15 @@
+---
+id: mlops/serving
+title: "Выкладка модели"
+topic: mlops
+summary: "Пакетный и онлайн-инференс, версии моделей, канареечные выкладки и откат."
+prereqs: [mlops/pipelines-ci]
+keywords: []
+minutes: 20
+labs: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

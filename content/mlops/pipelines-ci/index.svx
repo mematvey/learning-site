@@ -1,0 +1,15 @@
+---
+id: mlops/pipelines-ci
+title: "Пайплайны и CI для моделей"
+topic: mlops
+summary: "Как автоматизировать обучение, тесты и проверку качества модели при каждом изменении."
+prereqs: [mlops/experiment-tracking]
+keywords: []
+minutes: 20
+labs: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

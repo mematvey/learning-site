@@ -1,0 +1,15 @@
+---
+id: dl/backprop
+title: "Обратное распространение"
+topic: dl
+summary: "Как градиент проходит по графу вычислений слой за слоем по цепному правилу."
+prereqs: [dl/softmax]
+keywords: []
+minutes: 20
+labs: [dl-backprop]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

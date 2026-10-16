@@ -1,0 +1,15 @@
+---
+id: mlops/monitoring-drift
+title: "Мониторинг и дрейф данных"
+topic: mlops
+summary: "Как заметить, что данные в продакшене ушли от обучающих, и какими метриками это измерять."
+prereqs: [mlops/serving]
+keywords: []
+minutes: 20
+labs: [mlops-monitoring-drift]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

@@ -1,0 +1,15 @@
+---
+id: compute/gpu-architecture
+title: "Архитектура GPU"
+topic: compute
+summary: "Потоки, варпы, блоки и иерархия памяти: чем GPU отличается от CPU."
+prereqs: []
+keywords: []
+minutes: 20
+labs: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

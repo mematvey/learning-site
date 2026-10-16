@@ -1,0 +1,15 @@
+---
+id: compute/matmul-optimization
+title: "Оптимизация умножения матриц"
+topic: compute
+summary: "Тайлинг, общая память и почему наивное умножение медленнее в десятки раз."
+prereqs: [compute/memory-coalescing, compute/triton-intro]
+keywords: []
+minutes: 20
+labs: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

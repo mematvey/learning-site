@@ -1,0 +1,15 @@
+---
+id: stats/classical-probability-2
+title: "Классическая теория вероятности 2: формула Байеса"
+topic: stats
+summary: "Как обновлять вероятность гипотезы по новым данным и решать задачи на полную вероятность."
+prereqs: [stats/classical-probability]
+keywords: []
+minutes: 20
+labs: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

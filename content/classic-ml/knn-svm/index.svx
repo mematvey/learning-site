@@ -1,0 +1,15 @@
+---
+id: classic-ml/knn-svm
+title: "Метод ближайших соседей и SVM"
+topic: classic-ml
+summary: "Классификация по соседям и по максимальному зазору, ядра и граница решения."
+prereqs: [classic-ml/logistic-regression]
+keywords: []
+minutes: 20
+labs: [classic-ml-knn-svm]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

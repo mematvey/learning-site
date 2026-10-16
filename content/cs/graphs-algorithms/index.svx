@@ -1,0 +1,15 @@
+---
+id: cs/graphs-algorithms
+title: "Графы: обход и кратчайшие пути"
+topic: cs
+summary: "BFS, DFS и алгоритм Дейкстры на пошаговой визуализации."
+prereqs: [cs/hash-tables]
+keywords: []
+minutes: 20
+labs: [cs-graphs-algorithms]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

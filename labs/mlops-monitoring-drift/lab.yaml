@@ -1,0 +1,9 @@
+id: mlops-monitoring-drift
+title: Мониторинг и дрейф данных
+chapter: mlops/monitoring-drift
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+timeout: 10
+packages: [numpy]

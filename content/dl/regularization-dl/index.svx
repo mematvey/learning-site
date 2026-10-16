@@ -1,0 +1,15 @@
+---
+id: dl/regularization-dl
+title: "Регуляризация в глубоком обучении"
+topic: dl
+summary: "Dropout, weight decay и ранняя остановка: как не дать сети запомнить обучающую выборку."
+prereqs: [dl/backprop]
+keywords: []
+minutes: 20
+labs: [dl-regularization-dl]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

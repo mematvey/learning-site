@@ -1,0 +1,15 @@
+---
+id: dl/transformer-block
+title: "Блок трансформера"
+topic: dl
+summary: "Как внимание, нормализация и MLP собираются в один блок с остаточными связями."
+prereqs: [dl/multi-head-attention, dl/layer-norm, dl/positional-encoding]
+keywords: []
+minutes: 20
+labs: [dl-transformer-block]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

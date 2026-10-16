@@ -1,0 +1,15 @@
+---
+id: dl/optimizers
+title: "Оптимизаторы: SGD, momentum, Adam"
+topic: dl
+summary: "Как разные правила обновления весов движутся по поверхности потерь."
+prereqs: [dl/backprop]
+keywords: []
+minutes: 20
+labs: [dl-optimizers]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

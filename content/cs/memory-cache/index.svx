@@ -1,0 +1,15 @@
+---
+id: cs/memory-cache
+title: "Иерархия памяти и кэш"
+topic: cs
+summary: "Почему порядок обхода массива меняет время работы в разы и как устроен кэш процессора."
+prereqs: [cs/complexity]
+keywords: []
+minutes: 20
+labs: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

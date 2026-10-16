@@ -1,0 +1,15 @@
+---
+id: stats/estimation-testing
+title: "Оценки и проверка гипотез"
+topic: stats
+summary: "Доверительные интервалы, p-значение и ошибки двух родов на симуляциях."
+prereqs: [stats/limit-theorems]
+keywords: []
+minutes: 20
+labs: [stats-estimation-testing]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

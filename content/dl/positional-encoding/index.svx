@@ -1,0 +1,15 @@
+---
+id: dl/positional-encoding
+title: "Позиционные кодирования"
+topic: dl
+summary: "Как дать вниманию информацию о порядке токенов: синусоиды и RoPE."
+prereqs: [dl/attention]
+keywords: []
+minutes: 20
+labs: [dl-positional-encoding]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

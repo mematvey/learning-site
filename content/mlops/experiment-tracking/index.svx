@@ -1,0 +1,15 @@
+---
+id: mlops/experiment-tracking
+title: "Учёт экспериментов"
+topic: mlops
+summary: "Как фиксировать параметры, метрики и артефакты, чтобы результаты можно было сравнить и повторить."
+prereqs: [mlops/data-versioning]
+keywords: []
+minutes: 20
+labs: [mlops-experiment-tracking]
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}
