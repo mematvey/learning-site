@@ -1,0 +1,55 @@
+- id: ensemble
+  term: ансамбль
+  term_en: ensemble
+  definition: 'Набор моделей, предсказания которых объединяются в одно. Выигрыш возможен, когда ошибки моделей не совпадают.'
+  chapter: classic-ml/ensembles
+- id: bagging
+  term: бэггинг
+  term_en: bagging
+  definition: 'Обучение моделей на бутстреп-выборках одного набора данных с последующим усреднением или голосованием. Название от bootstrap aggregating.'
+  chapter: classic-ml/ensembles
+- id: bootstrap
+  term: бутстреп
+  term_en: bootstrap
+  definition: 'Выборка того же размера, что исходная, сделанная с возвращением. Один пример может попасть в неё несколько раз, а часть примеров не попадает совсем.'
+  chapter: classic-ml/ensembles
+- id: out-of-bag
+  term: оценка out-of-bag
+  term_en: out-of-bag
+  definition: 'Оценка ошибки бэггинга по примерам, которые не вошли в бутстреп-выборку конкретного дерева. Отдельная валидационная выборка для этого не нужна.'
+  chapter: classic-ml/ensembles
+- id: random-forest
+  term: случайный лес
+  term_en: random forest
+  definition: 'Бэггинг деревьев, в котором каждое разбиение выбирает признак из случайного подмножества признаков.'
+  chapter: classic-ml/ensembles
+- id: feature-subsampling
+  term: случайное подмножество признаков
+  term_en: feature subsampling
+  definition: 'Выбор признака для разбиения не из всех признаков, а из случайно взятой части. Делает деревья в лесу менее похожими друг на друга.'
+  chapter: classic-ml/ensembles
+- id: decision-stump
+  term: дерево-пень
+  term_en: decision stump
+  definition: 'Дерево глубины один: одно разбиение по одному признаку и два листа. Самая простая слабая модель.'
+  chapter: classic-ml/ensembles
+- id: weak-learner
+  term: слабая модель
+  term_en: weak learner
+  definition: 'Модель, которая немного лучше случайного угадывания. Бустинг строит из таких моделей сильный ансамбль.'
+  chapter: classic-ml/ensembles
+- id: boosting
+  term: бустинг
+  term_en: boosting
+  definition: 'Последовательное обучение моделей, в котором каждая новая модель учитывает ошибки уже собранного ансамбля.'
+  chapter: classic-ml/ensembles
+- id: gradient-boosting
+  term: градиентный бустинг
+  term_en: gradient boosting
+  definition: 'Бустинг, в котором новое дерево приближает антиградиент функции потерь по предсказаниям ансамбля. Для квадратичной потери это остатки.'
+  chapter: classic-ml/ensembles
+- id: shrinkage
+  term: сжатие
+  term_en: shrinkage
+  definition: 'Множитель вклада каждого нового дерева в градиентном бустинге. Меньше сжатие, гладче траектория, но больше деревьев нужно.'
+  chapter: classic-ml/ensembles
