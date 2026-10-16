@@ -117,15 +117,18 @@ export function rowOrder(row: readonly number[]): number[] {
 	return row.map((_, j) => j).sort((a, b) => (row[b] ?? 0) - (row[a] ?? 0));
 }
 
-/** Horizontal centre of token i in the arcs viewBox. */
-export function tokenCenter(i: number): number {
-	return ((i + 0.5) * ARC_VB_W) / TOKEN_COUNT;
+/**
+ * Horizontal centre of token i. `width` is the real width of the arcs SVG in px:
+ * the geometry is drawn at 1:1 scale, so labels keep their size on any screen.
+ */
+export function tokenCenter(i: number, width: number = ARC_VB_W): number {
+	return ((i + 0.5) * width) / TOKEN_COUNT;
 }
 
 /** Arc from query i to key j; for i === j a small loop above the token. */
-export function arcPath(i: number, j: number): string {
-	const x1 = tokenCenter(i);
-	const x2 = tokenCenter(j);
+export function arcPath(i: number, j: number, width: number = ARC_VB_W): string {
+	const x1 = tokenCenter(i, width);
+	const x2 = tokenCenter(j, width);
 	const y = ARC_VB_H - 2;
 	if (i === j) {
 		return `M${x1 - 8} ${y} C${x1 - 40} ${y - 80} ${x1 + 40} ${y - 80} ${x1 + 8} ${y}`;
@@ -135,13 +138,18 @@ export function arcPath(i: number, j: number): string {
 }
 
 /** Position of the weight label for arc i -> j. */
-export function arcLabelPos(i: number, j: number): [number, number] {
-	const x1 = tokenCenter(i);
-	const x2 = tokenCenter(j);
+export function arcLabelPos(i: number, j: number, width: number = ARC_VB_W): [number, number] {
+	const x1 = tokenCenter(i, width);
+	const x2 = tokenCenter(j, width);
 	const y = ARC_VB_H - 2;
 	if (i === j) return [x1, y - 68];
 	const h = 14 + 0.12 * Math.abs(x2 - x1);
 	return [(x1 + x2) / 2, y - h - 6];
+}
+
+/** Three-letter form of a token, used as a heatmap column header on narrow screens. */
+export function shortToken(token: string): string {
+	return token.slice(0, 3);
 }
 
 /** Text of the «What to notice» line for the query row. */
