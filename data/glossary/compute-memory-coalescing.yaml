@@ -1,0 +1,25 @@
+- id: memory-coalescing
+  term: коалесцирование
+  term_en: memory coalescing
+  definition: Объединение обращений потоков одного варпа к глобальной памяти в минимальное число транзакций; зависит от того, какие адреса запрашивают потоки.
+  chapter: compute/memory-coalescing
+- id: memory-transaction
+  term: транзакция памяти
+  term_en: memory transaction
+  definition: Одна операция переноса блока памяти фиксированного размера; на устройствах с compute capability 6.0 и выше это 32-байтный сегмент.
+  chapter: compute/memory-coalescing
+- id: memory-stride
+  term: шаг доступа
+  term_en: stride
+  definition: Расстояние между адресами соседних потоков в элементах массива; при шаге 1 адреса идут подряд.
+  chapter: compute/memory-coalescing
+- id: memory-alignment
+  term: выравнивание
+  term_en: alignment
+  definition: Кратность начального адреса данных размеру сегмента; смещение, не кратное сегменту, добавляет лишнюю транзакцию.
+  chapter: compute/memory-coalescing
+- id: memory-access-efficiency
+  term: доля полезных байт
+  term_en: access efficiency
+  definition: Отношение байт, запрошенных потоками, к байтам, переданным транзакциями; 1 означает отсутствие лишних данных.
+  chapter: compute/memory-coalescing
