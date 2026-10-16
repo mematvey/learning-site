@@ -1,0 +1,50 @@
+- id: classical-probability
+  term: классическая вероятность
+  term_en: classical probability
+  definition: 'Вероятность события в опыте, где все исходы равновозможны: отношение числа исходов, благоприятных событию, к общему числу исходов.'
+  chapter: stats/classical-probability
+- id: sample-space
+  term: пространство элементарных исходов
+  term_en: sample space
+  definition: 'Набор всех возможных результатов опыта. Событие это часть этого набора: исходы, при которых оно наступает.'
+  chapter: stats/classical-probability
+- id: permutation
+  term: перестановка
+  term_en: permutation
+  definition: 'Расстановка всех объектов в ряд, где важен порядок. Для n различных объектов перестановок n факториал.'
+  chapter: stats/classical-probability
+- id: arrangement
+  term: размещение
+  term_en: arrangement
+  definition: 'Упорядоченный выбор части объектов без повторений: из n объектов выбирают k, и порядок важен.'
+  chapter: stats/classical-probability
+- id: combination
+  term: сочетание
+  term_en: combination
+  definition: 'Выбор части объектов без повторений, где важен только состав, а не порядок. Число сочетаний из n по k равно числу размещений, делённому на k факториал.'
+  chapter: stats/classical-probability
+- id: multinomial-coefficient
+  term: мультиномиальный коэффициент
+  term_en: multinomial coefficient
+  definition: 'Число перестановок с повторениями: факториал общего числа объектов делят на факториалы количеств каждого вида. Он же считает разбиение объектов на группы заданных размеров.'
+  chapter: stats/classical-probability
+- id: conditional-probability
+  term: условная вероятность
+  term_en: conditional probability
+  definition: 'Вероятность события, если известно, что произошло другое событие. Считается как доля совместных исходов внутри исходов, где условие выполнено.'
+  chapter: stats/classical-probability
+- id: independence
+  term: независимость событий
+  term_en: independence
+  definition: 'События независимы, если наступление одного не меняет вероятность другого. Тогда вероятность того, что наступят оба, равна произведению их вероятностей.'
+  chapter: stats/classical-probability
+- id: hypergeometric-distribution
+  term: гипергеометрическое распределение
+  term_en: hypergeometric distribution
+  definition: 'Распределение числа отмеченных объектов в выборке без возвращения из конечной совокупности, где часть объектов отмечена.'
+  chapter: stats/classical-probability
+- id: monte-carlo
+  term: метод Монте-Карло
+  term_en: Monte Carlo method
+  definition: 'Оценка вероятности по многим случайным испытаниям: доля испытаний, где событие произошло, приближает его вероятность.'
+  chapter: stats/classical-probability
