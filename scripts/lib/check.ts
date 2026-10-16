@@ -192,6 +192,7 @@ export function checkContent(loaded: LoadedContent): Diagnostic[] {
 		out.push(...checkBlocks(ch));
 		out.push(...checkSources(ch, lines));
 		out.push(...checkTextAttrs(ch));
+		out.push(...checkAbsoluteLinks(ch, lines));
 		out.push(...checkTerms(ch, glossary, prereqsOf, lines));
 	}
 
@@ -333,6 +334,22 @@ function checkTextAttrs(ch: LoadedChapter): Diagnostic[] {
 		line: bad.line,
 		message: `атрибут ${bad.attr} содержит TeX или фигурные скобки ("${bad.value}"): текст без формул, формулы пишите в тексте главы`,
 	}));
+}
+
+/** Markdown links must not start with `/`: the site can be served under a base path (GitHub Pages). */
+function checkAbsoluteLinks(ch: LoadedChapter, lines: string[]): Diagnostic[] {
+	const out: Diagnostic[] = [];
+	lines.forEach((text, i) => {
+		if (/\]\(\/(?!\/)/.test(text)) {
+			out.push({
+				file: ch.file,
+				line: i + 1,
+				message:
+					'ссылка начинается с "/": не работает под base-путём Pages, используйте относительную (../slug/)',
+			});
+		}
+	});
+	return out;
 }
 
 /** `<Term id>`: the term exists, and it is not used on a level where its definition is hidden. */

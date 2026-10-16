@@ -193,7 +193,7 @@ m_j = \max(m_{j-1},\, z_j), \qquad s_j = s_{j-1}\, e^{\,m_{j-1} - m_j} + e^{\,z_
 $$
 {#hw-online-formula}
 
-Здесь $m_0 = -\infty$ и $s_0 = 0$. После последнего шага $p_i = e^{z_i - m_n} / s_n$. Так вычисление softmax сливается с редукцией по строке, и промежуточный вектор экспонент не нужен. Тот же приём лежит в основе FlashAttention: там softmax по блокам строки накапливается онлайн (см. главу [Scaled dot-product attention](/dl/attention/)). <Cite id="milakov2018" /> <Cite id="flashattn2022" /> {#hw-online-note}
+Здесь $m_0 = -\infty$ и $s_0 = 0$. После последнего шага $p_i = e^{z_i - m_n} / s_n$. Так вычисление softmax сливается с редукцией по строке, и промежуточный вектор экспонент не нужен. Тот же приём лежит в основе FlashAttention: там softmax по блокам строки накапливается онлайн (см. главу [Scaled dot-product attention](../attention/)). <Cite id="milakov2018" /> <Cite id="flashattn2022" /> {#hw-online-note}
 
 </Level>
 
