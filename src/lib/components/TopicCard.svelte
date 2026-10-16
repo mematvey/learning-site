@@ -16,6 +16,14 @@
 	}: TopicCardProps = $props();
 
 	const percent = $derived(Math.round(Math.min(1, Math.max(0, progress)) * 100));
+
+	function plural(n: number): string {
+		const m10 = n % 10;
+		const m100 = n % 100;
+		if (m10 === 1 && m100 !== 11) return `${n} глава`;
+		if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return `${n} главы`;
+		return `${n} глав`;
+	}
 </script>
 
 <article class="topic-card" class:is-active={active} data-topic={topic}>
@@ -23,7 +31,7 @@
 		<span class="topic-icon" aria-hidden="true">
 			<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" /></svg>
 		</span>
-		<span class="badge">{chapterCount} глав</span>
+		<span class="badge">{plural(chapterCount)}</span>
 	</div>
 	<h3><a class="title-link" href={resolve('/[topic]', { topic })}>{title}</a></h3>
 	<p class="topic-desc">{description}</p>

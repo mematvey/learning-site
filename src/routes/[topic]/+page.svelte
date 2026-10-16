@@ -31,6 +31,14 @@
 
 	const total = $derived(data.chapters.length);
 	const doneCount = $derived(data.chapters.filter((c) => status[c.id] === 'done').length);
+
+	function plural(n: number): string {
+		const m10 = n % 10;
+		const m100 = n % 100;
+		if (m10 === 1 && m100 !== 11) return `${n} глава`;
+		if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return `${n} главы`;
+		return `${n} глав`;
+	}
 </script>
 
 <svelte:head>
@@ -47,7 +55,7 @@
 		<h1>{data.topic.title}</h1>
 		<p class="lead">{data.topic.description}</p>
 		<p class="summary">
-			{total} глав · пройдено {doneCount} из {total}
+			{plural(total)} · пройдено {doneCount} из {total}
 		</p>
 	</header>
 

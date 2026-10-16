@@ -15,6 +15,15 @@
 		status: Record<string, Status>;
 	} = $props();
 
+	function minutesLabel(m: ChapterEntry['minutes']): string {
+		if (typeof m === 'number') return `${m} мин`;
+		const v = Object.values(m).filter((x): x is number => typeof x === 'number');
+		if (v.length === 0) return '';
+		const lo = Math.min(...v);
+		const hi = Math.max(...v);
+		return lo === hi ? `${lo} мин` : `${lo}–${hi} мин`;
+	}
+
 	const LABELS: Record<Status, string> = { done: 'Прочитана', progress: 'В процессе', new: '' };
 </script>
 
@@ -30,7 +39,7 @@
 				</h3>
 				<p class="summary">{ch.summary}</p>
 				<div class="meta">
-					<span class="tag">{ch.minutes} мин</span>
+					<span class="tag">{minutesLabel(ch.minutes)}</span>
 					{#if ch.labs?.length}<span class="tag">Лаб</span>{/if}
 					{#if st !== 'new'}<span class="tag status">{LABELS[st]}</span>{/if}
 				</div>
