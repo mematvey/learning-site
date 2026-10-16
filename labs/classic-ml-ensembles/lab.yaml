@@ -1,5 +1,5 @@
 id: classic-ml-ensembles
-title: 'Ансамбли: случайный лес и бустинг'
+title: Бэггинг пней и градиентный бустинг на NumPy
 chapter: classic-ml/ensembles
 runtime: pyodide
 starter: starter.py
