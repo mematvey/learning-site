@@ -1,0 +1,229 @@
+---
+id: dl/softmax
+title: Softmax и температура
+topic: dl
+summary: Как превратить вектор оценок в распределение вероятностей, почему softmax считают с вычитанием максимума и как температура управляет резкостью.
+prereqs: []
+concepts:
+  - { id: logit, title: Логит }
+  - { id: temperature, title: Температура }
+  - { id: logsumexp, title: Logsumexp }
+  - { id: log-softmax, title: Log-softmax }
+  - { id: cross-entropy, title: Кросс-энтропия }
+  - { id: online-softmax, title: Онлайн-softmax }
+keywords:
+  - softmax
+  - температура
+  - численная устойчивость
+  - logsumexp
+  - log-softmax
+  - кросс-энтропия
+minutes: { c1: 6, c2: 10, c3: 15, c4: 20 }
+labs:
+  - dl-softmax
+sources:
+  - id: milakov2018
+    kind: paper
+    title: Online normalizer calculation for softmax
+    authors: Milakov M., Gimelshein N.
+    year: 2018
+    url: https://arxiv.org/abs/1805.02867
+    accessed: 2026-10-16
+    supports: [hw-online]
+  - id: flashattn2022
+    kind: paper
+    title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
+    authors: Dao T. et al.
+    venue: NeurIPS
+    year: 2022
+    url: https://arxiv.org/abs/2205.14135
+    accessed: 2026-10-16
+    supports: [hw-online]
+  - id: torchsoftmax
+    kind: doc
+    title: torch.nn.functional.softmax
+    venue: PyTorch stable documentation
+    url: https://pytorch.org/docs/stable/generated/torch.nn.functional.softmax.html
+    accessed: 2026-10-16
+    supports: [code-lib]
+  - id: torchlse
+    kind: doc
+    title: torch.logsumexp
+    venue: PyTorch stable documentation
+    url: https://pytorch.org/docs/stable/generated/torch.logsumexp.html
+    accessed: 2026-10-16
+    supports: [code-lib]
+  - id: torchce
+    kind: doc
+    title: torch.nn.CrossEntropyLoss
+    venue: PyTorch stable documentation
+    url: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
+    accessed: 2026-10-16
+    supports: [mistake-double]
+aliases: []
+status: draft
+---
+
+## Идея {#idea}
+
+Softmax превращает вектор произвольных чисел в распределение вероятностей: все значения становятся положительными, а их сумма равна единице. <Term id="temperature">Температура</Term> (temperature) задаёт, насколько резко распределение сосредотачивается на самом большом числе. {#idea-normalize}
+
+## Интуиция {#intuition}
+
+Представьте, что несколько кандидатов получили баллы, а вы делите между ними 100% голосов. Чем выше балл, тем больше доля, но даже слабый кандидат получает ненулевую часть. Softmax делает именно это. {#intuition-shares}
+
+<Variant c="1">
+
+Числа на входе, их называют <Term id="logit">логитами</Term> (logit), могут быть любыми: отрицательными, большими, без ограничений. Softmax переводит их в доли от единицы. Большое число получает большую долю, маленькое получает маленькую, но не нулевую. {#analogy-shares}
+
+</Variant>
+
+<Variant c="2-4">
+
+Для вектора логитов $z$ softmax даёт веса $p_i$, которые считаются через экспоненты. Отношение весов двух элементов зависит только от разности их логитов. Формула и вывод свойств ниже, в разделе «Математика». {#formal-shares}
+
+</Variant>
+
+Сдвигайте ползунки логитов и температуру: столбцы показывают вероятности, которые получаются после softmax. {#intuition-demo}
+
+<Figure id="fig-softmax-demo" alt="Пять столбцов вероятностей под пятью ползунками логитов. При температуре 1 самый большой логит даёт самый высокий столбец, остальные столбцы ненулевые. Сумма всех столбцов равна единице." caption="Вероятности softmax для пяти логитов" notice="сумма всех столбцов всегда равна единице, какие бы ни были логиты.">
+
+<SoftmaxDemo />
+
+</Figure>
+
+Что происходит при низкой температуре? Распределение почти вырождается в один максимум. При высокой температуре все классы получают почти одинаковые доли. Температура делит логиты перед softmax, поэтому меняет резкость, но не порядок значений: делитель положителен. {#intuition-temp}
+
+## Математика {#math}
+
+Пусть $z = (z_1, \dots, z_n)$ вектор логитов. Softmax даёт вектор $p$ той же длины: каждый элемент положителен, а все элементы в сумме дают единицу. Большее значение логита даёт большую долю, но доли зависят от всех элементов сразу, а не от одного. {#math-words}
+
+<Level c={2}>
+
+Softmax задаётся формулой:
+
+$$
+p_i = \mathrm{softmax}(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{n} e^{z_j}}
+$$
+{#math-def}
+
+Знаменатель гарантирует, что $\sum_i p_i = 1$. Экспонента делает все веса положительными. Из формулы видно, что $p_i / p_j = e^{z_i - z_j}$: отношение зависит только от разности логитов.
+
+С температурой $T > 0$ вместо $z$ подставляют $z / T$:
+
+$$
+p_i(T) = \frac{e^{z_i / T}}{\sum_{j=1}^{n} e^{z_j / T}}
+$$
+{#math-temp}
+
+При $T \to 0$ распределение стремится к one-hot на максимальном логите, при $T \to \infty$ к равномерному, где каждый $p_i = 1/n$. {#math-temp-limits}
+
+Логарифм softmax удобнее считать через logsumexp, а не брать от готовых вероятностей:
+
+$$
+\log p_i = z_i - \mathrm{logsumexp}(z), \qquad \mathrm{logsumexp}(z) = \log \sum_{j=1}^{n} e^{z_j}
+$$
+{#math-logsoftmax}
+
+Если взять $\log(\mathrm{softmax}(z))$ напрямую, очень маленькая вероятность может округлиться до нуля, и её логарифм станет $-\infty$. Формула выше остаётся конечной. {#math-logsoftmax-words}
+
+Для one-hot вектора $y$ с истинным классом $k$ кросс-энтропия <Term id="cross-entropy">кросс-энтропия</Term> равна $L = -z_k + \mathrm{logsumexp}(z)$. Потерю можно посчитать сразу из логитов, без отдельного softmax. {#math-ce-lse}
+
+</Level>
+
+<Level c={3}>
+
+Softmax не меняется, если ко всем логитам прибавить одно и то же число $\delta$. Пусть $z' = z + \delta$. Тогда $e^{z'_i} = e^{\delta} e^{z_i}$, и множитель $e^{\delta}$ сокращается в числителе и знаменателе. Значит, $\mathrm{softmax}(z + \delta) = \mathrm{softmax}(z)$. {#math-shift}
+
+Это свойство даёт устойчивую реализацию. Возьмём $\delta = -m$, где $m = \max_j z_j$. Тогда все $z_i - m \le 0$, экспоненты не превышают единицы, а знаменатель не меньше единицы, потому что слагаемое для максимума равно $e^0 = 1$. Без сдвига при больших логитах $e^{z_i}$ переполняется. Получается $\infty / \infty$, то есть NaN. {#math-stable}
+
+Устойчивый logsumexp выводится тем же сдвигом, применённым внутри логарифма:
+
+$$
+\mathrm{logsumexp}(z) = m + \log \sum_{j=1}^{n} e^{z_j - m}, \qquad m = \max_j z_j
+$$
+{#math-lse}
+
+Пусть $L = -\sum_i y_i \log p_i$ и $\sum_i y_i = 1$. Производная $\partial p_i / \partial z_j = p_i\,([i = j] - p_j)$, где $[i = j]$ равно единице при совпадении индексов и нулю иначе. Подставляем:
+
+$$
+\frac{\partial L}{\partial z_j} = -\sum_i y_i \frac{1}{p_i}\, p_i\,([i = j] - p_j) = p_j \sum_i y_i - y_j = p_j - y_j
+$$
+{#math-ce-grad}
+
+Градиент по логитам равен $p - y$: предсказанные вероятности минус истинное распределение. Поэтому при обучении softmax и кросс-энтропия обычно вычисляются вместе. {#math-ce-grad-words}
+
+</Level>
+
+## Код {#code}
+
+Реализуйте `softmax(x, axis=-1)` устойчивым способом и `log_softmax`. Тесты проверяют большие логиты, сумму, равную единице, совпадение с эталоном и инвариантность к сдвигу. {#code-lab}
+
+<CodeLab lab="dl-softmax" />
+
+Ожидаемое поведение: для логитов $(1000, 1001, 1002)$ наивная реализация выдаёт NaN. Устойчивая даёт примерно $(0.090,\ 0.245,\ 0.665)$. {#code-expect}
+
+<Level d={2}>
+
+Устойчивая версия умещается в несколько строк:
+
+```python
+def softmax(x, axis=-1):
+    x = x - np.max(x, axis=axis, keepdims=True)
+    e = np.exp(x)
+    return e / np.sum(e, axis=axis, keepdims=True)
+```
+
+Для вектора длины $n$ нужны один проход за максимумом, $n$ экспонент и сумма, то есть $O(n)$ по времени и памяти. Параметр `keepdims=True` нужен, чтобы максимум и сумма вычитались и делились по нужной оси матрицы, а не давали ошибку broadcasting. {#impl-cost}
+
+Библиотеки решают ту же задачу: <Cite id="torchsoftmax" /> для softmax и <Cite id="torchlse" /> для logsumexp. В лабе вы пишете то же вручную, чтобы увидеть, где возникает переполнение. {#code-lib}
+
+</Level>
+
+<Level d={3}>
+
+Экспонента вычисляется через специальные функции и заметно дороже сложения и умножения. Softmax по строке матрицы (например, матрицы оценок внимания) это редукция: сначала максимум, затем сумма. Если делать эти два прохода с записью промежуточных результатов в <Term id="hbm">HBM</Term>, память становится узким местом. {#hw-exp}
+
+Онлайн-softmax (<Term id="online-softmax">online softmax</Term>) находит максимум и сумму за один проход и обновляет их по мере чтения элементов: {#hw-online}
+
+$$
+m_j = \max(m_{j-1},\, z_j), \qquad s_j = s_{j-1}\, e^{\,m_{j-1} - m_j} + e^{\,z_j - m_j}
+$$
+{#hw-online-formula}
+
+Здесь $m_0 = -\infty$ и $s_0 = 0$. После последнего шага $p_i = e^{z_i - m_n} / s_n$. Так вычисление softmax сливается с редукцией по строке, и промежуточный вектор экспонент не нужен. Тот же приём лежит в основе FlashAttention: там softmax по блокам строки накапливается онлайн (см. главу «Scaled dot-product attention»). <Cite id="milakov2018" /> <Cite id="flashattn2022" /> {#hw-online-note}
+
+</Level>
+
+## Частые ошибки {#mistakes}
+
+<Callout kind="warn" title="Осторожно">
+
+Наивный softmax без вычитания максимума работает на маленьких тестах и даёт NaN на больших логитах. В обучении NaN попадает в потерю и веса, и причина выглядит загадочно. Вычитайте максимум по той оси, по которой считаете softmax. {#mistake-naive}
+
+</Callout>
+
+- Softmax берут по неверной оси. Тогда суммы по строкам не равны единице, и распределения считаются не по тем элементам. {#mistake-axis}
+- Считают $\log(\mathrm{softmax}(z))$ вместо log-softmax. Маленькие вероятности превращаются в $-\infty$, и потеря становится бесконечной. {#mistake-logsoftmax}
+- Температуру применяют к вероятностям после softmax вместо логитов. Правильно считать $\mathrm{softmax}(z / T)$. {#mistake-temp}
+- Ставят softmax перед функцией потерь, которая уже принимает логиты. Softmax применяется дважды, и градиенты искажаются. {#mistake-double}
+
+## Проверь себя {#check}
+
+<Quiz id="quiz-shift" q="Что изменится в softmax, если ко всем логитам прибавить одно и то же число?">
+
+Ничего. Множитель $e^{\delta}$ сокращается в дроби, поэтому softmax инвариантен к сдвигу. Именно это свойство позволяет вычесть максимум.
+
+</Quiz>
+
+<Quiz id="quiz-temp" q="Что произойдёт с распределением, если температура стремится к нулю, и что если она стремится к бесконечности?">
+
+При $T \to 0$ почти вся масса уходит в максимальный логит, и распределение становится one-hot. При $T \to \infty$ все доли стремятся к $1/n$, и распределение становится равномерным.
+
+</Quiz>
+
+<Quiz id="quiz-logsoftmax" q="Почему log-softmax считают как $z_i - \mathrm{logsumexp}(z)$, а не как логарифм готового softmax?">
+
+Готовые вероятности могут округлиться до нуля, и логарифм от нуля даёт $-\infty$. Формула через logsumexp остаётся конечной, потому что вычитание и логарифм суммы не теряют точность на малых значениях.
+
+</Quiz>
