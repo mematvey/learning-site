@@ -1,0 +1,245 @@
+---
+id: dl/layer-norm
+title: Residual connections и LayerNorm
+topic: dl
+summary: Зачем блоку трансформера остаточная связь и почему нормализация считается по признакам одного токена, а не по батчу.
+prereqs:
+  - dl/attention
+concepts:
+  - { id: residual-connection, title: Остаточная связь }
+  - { id: layer-norm, title: LayerNorm }
+  - { id: batch-norm, title: BatchNorm }
+  - { id: rms-norm, title: RMSNorm }
+  - { id: pre-ln, title: Pre-LN }
+  - { id: post-ln, title: Post-LN }
+keywords:
+  - residual
+  - LayerNorm
+  - RMSNorm
+  - Pre-LN
+  - Post-LN
+  - остаточная связь
+minutes: { c1: 8, c2: 15, c3: 25, c4: 35 }
+labs:
+  - dl-layer-norm
+sources:
+  - id: he2016
+    kind: paper
+    title: Deep Residual Learning for Image Recognition
+    authors: He K. et al.
+    venue: CVPR
+    year: 2016
+    url: https://arxiv.org/abs/1512.03385
+    accessed: 2026-10-16
+    supports: [intuition-residual]
+  - id: ba2016
+    kind: paper
+    title: Layer Normalization
+    authors: Ba J. L. et al.
+    venue: arXiv
+    year: 2016
+    url: https://arxiv.org/abs/1607.06450
+    accessed: 2026-10-16
+    supports: [math-ln-eq, math-bn-ln]
+  - id: ioffe2015
+    kind: paper
+    title: "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift"
+    authors: Ioffe S., Szegedy C.
+    venue: ICML
+    year: 2015
+    url: https://arxiv.org/abs/1502.03167
+    accessed: 2026-10-16
+    supports: [math-bn-ln]
+  - id: xiong2020
+    kind: paper
+    title: On Layer Normalization in the Transformer Architecture
+    authors: Xiong R. et al.
+    venue: ICML
+    year: 2020
+    url: https://arxiv.org/abs/2002.04745
+    accessed: 2026-10-16
+    supports: [math-prenorm, mistake-post-warmup]
+  - id: zhang2019
+    kind: paper
+    title: "Root Mean Square Layer Normalization"
+    authors: Zhang B., Sennrich R.
+    venue: NeurIPS
+    year: 2019
+    url: https://arxiv.org/abs/1910.07467
+    accessed: 2026-10-16
+    supports: [math-rms, math-rms-eq]
+  - id: vaswani2017
+    kind: paper
+    title: Attention Is All You Need
+    authors: Vaswani A. et al.
+    venue: NeurIPS
+    year: 2017
+    url: https://arxiv.org/abs/1706.03762
+    accessed: 2026-10-16
+    supports: [math-prenorm]
+  - id: flashattn2022
+    kind: paper
+    title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
+    authors: Dao T. et al.
+    venue: NeurIPS
+    year: 2022
+    url: https://arxiv.org/abs/2205.14135
+    accessed: 2026-10-16
+    supports: [hw-ln-fusion]
+  - id: pytorchln
+    kind: doc
+    title: torch.nn.LayerNorm (PyTorch documentation, stable)
+    authors: PyTorch
+    venue: PyTorch documentation
+    year: 2026
+    url: https://pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html
+    accessed: 2026-10-16
+    supports: [impl-numeric, impl-torch]
+aliases: []
+status: draft
+---
+
+## Идея {#idea}
+
+Остаточная связь (<Term id="residual-connection">residual connection</Term>) прибавляет вход блока к его выходу, а нормализация слоя (<Term id="layer-norm">LayerNorm</Term>) приводит признаки каждого токена к одной шкале. Вместе они позволяют складывать блоки трансформера в стопку и обучать её. {#idea-pair}
+
+## Интуиция {#intuition}
+
+Представьте, что каждый блок только вносит поправку к тому, что уже известно о токене. Если блоку нечего добавить, он может оставить вход почти без изменений. Остаточная связь делает такой вариант поведением по умолчанию: блок учится предсказывать поправку, а не весь результат с нуля. Этот приём пришёл из ResNet <Cite id="he2016" />. {#intuition-residual}
+
+Нормализация решает другую задачу. У каждого токена есть строка чисел-признаков, и после нескольких слоёв эти строки могут оказаться с разным сдвигом и разным масштабом. LayerNorm пересчитывает каждую строку отдельно, как перевод оценок разных экзаменов к одной шкале: среднее становится нулём, разброс единицей. Затем два обучаемых набора параметров возвращают сети нужный сдвиг и масштаб там, где они полезны. {#intuition-norm}
+
+<Figure id="fig-layer-norm" alt="Гистограмма значений признаков одного токена. До нормализации столбцы смещены от нуля и разбросаны; после LayerNorm центр близок к нулю, разброс близок к единице. Ползунки γ и β меняют масштаб и сдвиг результата." caption="Признаки одного токена до и после нормализации" notice="после LayerNorm среднее равно нулю, пока γ = 1 и β = 0; ненулевой β сдвигает все столбцы сразу.">
+
+<LayerNormDemo />
+
+</Figure>
+
+В демо можно переключить LayerNorm на RMSNorm и посмотреть, что меняется, когда среднее не вычитается. {#intuition-hint}
+
+## Математика {#math}
+
+Работаем с одним токеном. Пусть $x$ вектор из $d$ признаков, $F$ слой внутри блока (внимание или полносвязная часть) и $y$ выход блока. Остаточная связь складывает их: $y = x + F(x)$. {#math-residual}
+
+<Variant c="1">
+
+LayerNorm сдвигает и масштабирует числа одного токена: сначала среднее становится нулём, разброс единицей, а потом сеть получает два обучаемых набора параметров, чтобы вернуть нужный сдвиг и масштаб. {#math-ln-words}
+
+</Variant>
+
+<Variant c="2-4">
+
+LayerNorm (нормализация слоя) считает статистики по признакам одного токена и не трогает другие токены. Для вектора $x$ из $d$ признаков: {#math-ln-def}
+
+$$
+\mu = \frac{1}{d}\sum_{t=1}^{d} x_t, \qquad \sigma^2 = \frac{1}{d}\sum_{t=1}^{d} (x_t - \mu)^2
+$$
+{#math-ln-stats}
+
+$$
+y = \gamma \odot \frac{x - \mu}{\sqrt{\sigma^2 + \varepsilon}} + \beta
+$$
+{#math-ln-eq}
+
+Здесь $\mu$ среднее по признакам, $\sigma^2$ дисперсия, $t$ номер признака, $\varepsilon$ маленькая константа, которая защищает от деления на ноль, $\gamma$ и $\beta$ обучаемые векторы размера $d$, а $\odot$ поэлементное умножение. {#math-ln-terms}
+
+</Variant>
+
+<Level c={3}>
+
+Проверим, что нормализованный вектор $\hat{x} = (x - \mu) / \sqrt{\sigma^2 + \varepsilon}$ имеет нулевое среднее. Сумма отклонений $\sum_t (x_t - \mu)$ равна нулю по определению $\mu$, значит и среднее $\hat{x}$ равно нулю. {#math-ln-mean}
+
+Дисперсия $\hat{x}$ равна $\sigma^2 / (\sigma^2 + \varepsilon)$. Она близка к единице, когда $\varepsilon$ мала по сравнению с $\sigma^2$. Отсюда следует инвариантность: при $x \to a x + b\mathbf{1}$, где $a > 0$, и $\varepsilon \to 0$ вектор $\hat{x}$ не меняется. Масштаб и сдвиг входа нормализация «съедает», а γ и β возвращают их обратно при необходимости. {#math-ln-invariance}
+
+</Level>
+
+Нормализация по батчу (BatchNorm) и по признакам (LayerNorm) отличаются тем, по каким значениям берётся среднее и разброс. BatchNorm <Cite id="ioffe2015" /> считает их по батчу отдельно для каждого признака, LayerNorm <Cite id="ba2016" /> по признакам одного токена. {#math-bn-ln}
+
+| | BatchNorm | LayerNorm |
+|---|---|---|
+| По каким значениям считаем среднее и разброс | по батчу, для каждого признака отдельно | по признакам одного токена |
+| Зависит от размера батча | да, при малом батче статистика шумная | нет |
+| Что делаем на инференсе | используем статистики, накопленные при обучении | считаем так же, как при обучении |
+
+<Level c={2}>
+
+RMSNorm <Cite id="zhang2019" /> убирает вычитание среднего и делит только на корень из среднего квадратов признаков. Ниже вариант только с $\gamma$. {#math-rms-note}
+
+$$
+y = \frac{x}{\sqrt{\frac{1}{d}\sum_{t=1}^{d} x_t^2 + \varepsilon}} \odot \gamma
+$$
+{#math-rms-eq}
+
+</Level>
+
+Авторы RMSNorm предлагают его как более дешёвую замену LayerNorm. По их данным, качество сопоставимо, а вычислений меньше. {#math-rms}
+
+Вопрос, где стоит нормализация относительно остаточной связи. В исходном трансформере <Cite id="vaswani2017" /> она стоит после суммы: $y = \mathrm{LN}(x + F(x))$, где $\mathrm{LN}$ обозначает LayerNorm. Это схема <Term id="post-ln">Post-LN</Term>. В схеме <Term id="pre-ln">Pre-LN</Term> нормализацию переносят внутрь ветки: $y = x + F(\mathrm{LN}(x))$. Путь от входа к выходу тогда не проходит через нормализацию. Xiong и соавторы <Cite id="xiong2020" /> показывают, что при Post-LN градиенты в начале обучения могут быть велики у выходного слоя, поэтому нужен разогрев learning rate. При Pre-LN в их анализе такой разогрев не обязателен. {#math-prenorm}
+
+<Level c={3}>
+
+Найдём производную выхода по входу для блока $y = x + F(x)$: $\partial y / \partial x = I + \partial F / \partial x$, где $I$ единичная матрица. В цепочке блоков градиент складывается из путей, один из которых даёт единичную матрицу и не умножается на производные слоёв. Поэтому даже при малом $\partial F / \partial x$ сигнал градиента доходит до ранних слоёв. {#math-grad-residual}
+
+</Level>
+
+## Код {#code}
+
+В лабе реализуйте `layer_norm(x, gamma, beta, eps)` и `rms_norm`. Тесты проверяют среднее около нуля и разброс около единицы по последней оси, работу $\gamma$ и $\beta$, а также поведение при почти постоянном входе. {#code-lab}
+
+<CodeLab lab="dl-layer-norm" />
+
+<Level d={2}>
+
+Нормализуем по последней оси, `axis=-1`, и сохраняем размерность через `keepdims=True`. Тогда статистики имеют форму `(n, 1)` и разворачиваются на все признаки без reshape. {#impl-axis}
+
+Дисперсию считаем от центрированных значений, как в примере ниже. Формула $\mathbb{E}[x^2] - \mathbb{E}[x]^2$ вычитает близкие друг к другу числа и теряет точность, когда среднее велико по модулю. Константа `eps` задаётся явно; в PyTorch по умолчанию `eps=1e-5` <Cite id="pytorchln" />. {#impl-numeric}
+
+```python
+mu = x.mean(axis=-1, keepdims=True)
+var = ((x - mu) ** 2).mean(axis=-1, keepdims=True)  # centered, no cancellation
+x_hat = (x - mu) / np.sqrt(var + eps)
+y = gamma * x_hat + beta
+```
+
+В PyTorch тот же слой задаёт `torch.nn.LayerNorm(d, eps=1e-5)`. Он нормализует по последним измерениям, указанным в аргументе формы <Cite id="pytorchln" />. {#impl-torch}
+
+</Level>
+
+<Level d={3}>
+
+LayerNorm читает строку токена целиком, чтобы найти среднее и разброс, и только потом пишет результат. Поэтому его удобно сливать в одно ядро с остаточным сложением и следующим умножением: промежуточные значения остаются в регистрах или SRAM и не записываются в HBM. Здесь та же логика, что у FlashAttention: обмен с HBM дорогой, и лишние проходы по памяти стоят времени <Cite id="flashattn2022" />. {#hw-ln-fusion}
+
+</Level>
+
+## Частые ошибки {#mistakes}
+
+<Callout kind="warn" title="Осторожно">
+
+Среднее и разброс считают по оси батча, а не по признакам токена. Тогда токены разных примеров влияют друг на друга через батч, паддинг меняет результат, а при батче из одного примера статистика становится нестабильной. Для трансформера нормализуют по признакам каждого токена. {#mistake-batch-axis}
+
+</Callout>
+
+- Делят на корень из разброса без `eps`. Если признаки почти одинаковы, знаменатель стремится к нулю. {#mistake-eps}
+- Пишут `y = LN(F(x))` вместо `y = x + F(x)`. Остаточная связь пропадает, и градиент на каждом слое проходит через нормализацию. {#mistake-no-skip}
+- Ставят Post-LN в глубокую модель и не делают разогрева learning rate. Обучение может разойтись в начале. {#mistake-post-warmup}
+- Путают RMSNorm и LayerNorm: в RMSNorm нет вычитания среднего. Веса, обученные под один вариант, дают другой результат с другим. {#mistake-rms-confusion}
+
+## Проверь себя {#check}
+
+<Quiz id="quiz-residual" q="Почему остаточная связь помогает градиенту пройти через много блоков?">
+
+Производная выхода по входу равна $I + \partial F / \partial x$. Единичная матрица даёт путь, на котором градиент не умножается на производные слоя, поэтому сигнал не затухает, даже если $\partial F / \partial x$ мала.
+
+</Quiz>
+
+<Quiz id="quiz-batch" q="Почему LayerNorm подходит для последовательностей с паддингом лучше, чем BatchNorm?">
+
+LayerNorm считает статистику внутри одного токена и не зависит от других примеров в батче. BatchNorm усредняет по батчу, поэтому паддинг и размер батча влияют на результат.
+
+</Quiz>
+
+<Quiz id="quiz-prenorm" q="Что меняется на пути от входа к выходу при переходе от Post-LN к Pre-LN?">
+
+В Pre-LN путь от входа к выходу $y = x + F(\mathrm{LN}(x))$ не проходит через нормализацию, а в Post-LN $y = \mathrm{LN}(x + F(x))$ проходит через неё в каждом блоке.
+
+</Quiz>

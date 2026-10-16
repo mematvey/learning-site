@@ -1,0 +1,28 @@
+- id: residual-connection
+  term: остаточная связь
+  term_en: residual connection
+  definition: Связь, которая прибавляет вход слоя к его выходу, y = x + F(x); при F(x) ≈ 0 вход проходит без изменений.
+  chapter: dl/layer-norm
+- id: layer-norm
+  term: LayerNorm
+  term_en: layer normalization
+  definition: Нормализация вектора одного токена по его признакам; среднее и дисперсия считаются по признакам, а не по батчу; затем есть обучаемые γ и β.
+  chapter: dl/layer-norm
+- id: batch-norm
+  term: BatchNorm
+  term_en: batch normalization
+  definition: Нормализация, которая считает среднее и дисперсию по батчу отдельно для каждого признака; зависит от размера батча.
+  chapter: dl/layer-norm
+- id: rms-norm
+  term: RMSNorm
+  term_en: root mean square normalization
+  definition: Упрощённый LayerNorm без вычитания среднего; вектор делится на корень из среднего квадратов признаков и умножается на γ.
+  chapter: dl/layer-norm
+- id: pre-ln
+  term: Pre-LN
+  definition: Расположение нормализации перед слоем внутри остаточного блока, y = x + F(LN(x)); путь от входа к выходу проходит без нормализации.
+  chapter: dl/layer-norm
+- id: post-ln
+  term: Post-LN
+  definition: Расположение нормализации после суммы, y = LN(x + F(x)), как в исходном трансформере.
+  chapter: dl/layer-norm
