@@ -1,0 +1,25 @@
+- id: pipeline
+  term: пайплайн
+  term_en: pipeline
+  definition: Цепочка автоматических шагов, которая превращает данные и код в модель и результаты проверок; шаги запускаются по графу зависимостей.
+  chapter: mlops/pipelines-ci
+- id: dag
+  term: ациклический граф шагов
+  term_en: DAG (directed acyclic graph)
+  definition: Граф шагов пайплайна с направленными рёбрами без циклов; ребро показывает, что один шаг использует результат другого.
+  chapter: mlops/pipelines-ci
+- id: ci
+  term: непрерывная интеграция
+  term_en: continuous integration (CI)
+  definition: Практика, при которой каждое изменение кода или данных автоматически проходит сборку и проверки.
+  chapter: mlops/pipelines-ci
+- id: quality-gate
+  term: контроль качества
+  term_en: quality gate
+  definition: Шаг пайплайна, который пропускает результат дальше только при выполнении заданных условий по метрикам и проверкам.
+  chapter: mlops/pipelines-ci
+- id: step-cache
+  term: кеш шагов
+  term_en: step cache
+  definition: Сохранённый результат шага, который берётся вместо пересчёта, если ключ из кода, параметров и входов совпал.
+  chapter: mlops/pipelines-ci
