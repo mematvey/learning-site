@@ -2,7 +2,6 @@
 	import { getContext, onMount, setContext, type Component } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { SvelteMap } from 'svelte/reactivity';
-	import { siteBase } from '../../routes/[topic]/[slug]/chapter-data';
 	import '$lib/styles/prose.css';
 	import { provideLevels } from '$lib/levels';
 	import {
@@ -135,7 +134,7 @@
 
 	// The site header lives in the root layout: this page only supplies breadcrumbs and levels.
 	const crumbs = $derived([
-		...(topic ? [{ label: topic.title, href: `${siteBase}/` }] : []),
+		...(topic ? [{ label: topic.title, href: resolve(`/${topic.id}/` as '/') }] : []),
 		{ label: chapter.title },
 	]);
 	$effect(() => {
@@ -364,11 +363,12 @@
 		grid-template-columns: minmax(0, 1fr) minmax(0, var(--text-width)) minmax(0, 1fr);
 		align-items: start;
 	}
+	/* The TOC sits in the viewport margin, clear of the 1100px wide blocks (22px gap). */
 	.toc-col {
 		grid-column: 1;
 		justify-self: end;
 		width: 160px;
-		margin-right: 40px;
+		margin-right: calc((var(--wide-width) - var(--text-width)) / 2 + 24px);
 		position: sticky;
 		top: 88px;
 	}
@@ -512,13 +512,15 @@
 		font-size: 18px;
 	}
 
+	@media (max-width: 1499px) {
+		.toc-col {
+			display: none;
+		}
+	}
 	@media (max-width: 1180px) {
 		.page {
 			grid-template-columns: minmax(0, var(--text-width));
 			justify-content: center;
-		}
-		.toc-col {
-			display: none;
 		}
 		.text {
 			grid-column: 1;
