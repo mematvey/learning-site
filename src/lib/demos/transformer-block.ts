@@ -1,6 +1,6 @@
 /**
  * Math of the transformer block demo. The block is pre-LN:
- *   h = x + MHA(LN(x)),   y = h + MLP(LN(h)).
+ *   y = x + MHA(LN(x)),   z = y + MLP(LN(y)).
  * Tensors are shown without the batch axis: a token matrix is [n, d] (n tokens, d model width).
  * All shapes and parameter counts are computed here, not typed by hand.
  * Pure functions only: no DOM, no Svelte.
@@ -195,7 +195,7 @@ export function nodeInfo(id: NodeId, tokens: number, dim: number): NodeInfo {
 				id,
 				kind: 'sum',
 				title: 'Сумма 1 (остаток)',
-				op: 'Поэлементное сложение входа блока и выхода внимания: h = x + MHA(LN(x)). Формы совпадают, поэтому сложение возможно без проекций.',
+				op: 'Поэлементное сложение входа блока и выхода внимания: y = x + MHA(LN(x)). Формы совпадают, поэтому сложение возможно без проекций.',
 				input: td,
 				output: td,
 				detail: [],
@@ -217,7 +217,7 @@ export function nodeInfo(id: NodeId, tokens: number, dim: number): NodeInfo {
 				id,
 				kind: 'sum',
 				title: 'Сумма 2 (остаток)',
-				op: 'y = h + MLP(LN(h)). Выход имеет ту же форму, что вход, и подаётся в следующий блок.',
+				op: 'z = y + MLP(LN(y)). Выход имеет ту же форму, что вход, и подаётся в следующий блок.',
 				input: td,
 				output: td,
 				detail: [],

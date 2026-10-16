@@ -162,8 +162,8 @@ describe('snapping', () => {
 	});
 
 	it('non-finite input gives the default', () => {
-		expect(snapLr(Number.NaN)).toBe(0.1);
-		expect(snapKappa(Number.POSITIVE_INFINITY)).toBe(10);
+		expect(snapLr(Number.NaN)).toBe(0.07);
+		expect(snapKappa(Number.POSITIVE_INFINITY)).toBe(20);
 		expect(snapStep(Number.NaN)).toBe(30);
 	});
 });
