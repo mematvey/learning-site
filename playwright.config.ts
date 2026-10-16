@@ -5,6 +5,8 @@ const host = '127.0.0.1';
 
 export default defineConfig({
 	testDir: 'e2e',
+	// Python's static server on Windows drops connections under parallel browsers.
+	workers: 1,
 	use: { baseURL: `http://${host}:${port}` },
 	webServer: {
 		// Serve the static build (with the Pagefind index) exactly as GitHub Pages would.
