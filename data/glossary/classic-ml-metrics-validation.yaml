@@ -1,0 +1,55 @@
+- id: metric
+  term: метрика
+  term_en: metric
+  definition: 'Число, которое переводит ответы модели на выборке в одну оценку качества. Метрики можно сравнивать между моделями, только если они посчитаны на одних и тех же данных.'
+  chapter: classic-ml/metrics-validation
+- id: accuracy
+  term: доля верных ответов
+  term_en: accuracy
+  definition: 'Доля объектов, для которых модель угадала класс: (TP + TN) / n. При дисбалансе классов может быть высокой у модели, которая ничего не находит.'
+  chapter: classic-ml/metrics-validation
+- id: precision
+  term: точность
+  term_en: precision
+  definition: 'Доля верных срабатываний среди всех объектов, которые модель назвала положительными: TP / (TP + FP).'
+  chapter: classic-ml/metrics-validation
+- id: recall
+  term: полнота
+  term_en: recall
+  definition: 'Доля найденных положительных объектов среди всех настоящих положительных: TP / (TP + FN). Совпадает с true positive rate.'
+  chapter: classic-ml/metrics-validation
+- id: f1-score
+  term: F1-мера
+  term_en: F1 score
+  definition: 'Гармоническое среднее точности и полноты. Близка к нулю, если одна из этих величин близка к нулю.'
+  chapter: classic-ml/metrics-validation
+- id: class-imbalance
+  term: дисбаланс классов
+  term_en: class imbalance
+  definition: 'Ситуация, когда объектов одного класса заметно меньше, чем другого. При дисбалансе доля верных ответов перестаёт отражать качество на редком классе.'
+  chapter: classic-ml/metrics-validation
+- id: test-set
+  term: тестовая выборка
+  term_en: test set
+  definition: 'Данные, которые модель не видела при обучении и выборе параметров. Используют для итоговой оценки; для выбора модели её не применяют.'
+  chapter: classic-ml/metrics-validation
+- id: roc-curve
+  term: ROC-кривая
+  term_en: ROC curve
+  definition: 'Кривая в координатах полнота (TPR) и доля ложных тревог (FPR), построенная по всем порогам. Чем ближе к левому верхнему углу, тем лучше модель разделяет классы.'
+  chapter: classic-ml/metrics-validation
+- id: roc-auc
+  term: ROC AUC
+  term_en: ROC AUC
+  definition: 'Площадь под ROC-кривой. Равна вероятности, что случайный положительный объект получит оценку выше случайного отрицательного.'
+  chapter: classic-ml/metrics-validation
+- id: pr-curve
+  term: PR-кривая
+  term_en: precision-recall curve
+  definition: 'Кривая точности от полноты, построенная по всем порогам. Для случайного угадывателя точность равна доле положительных объектов.'
+  chapter: classic-ml/metrics-validation
+- id: data-leakage
+  term: утечка данных
+  term_en: data leakage
+  definition: 'Ситуация, когда при обучении или подготовке данных используется информация из тестовой или валидационной выборки. Оценка получается завышенной.'
+  chapter: classic-ml/metrics-validation
