@@ -23,11 +23,6 @@
   term_en: artifact
   definition: 'Файл, созданный запуском и сохранённый вместе с ним: веса модели, графики, предсказания.'
   chapter: mlops/experiment-tracking
-- id: reproducibility
-  term: воспроизводимость
-  term_en: reproducibility
-  definition: Свойство результата, при котором повторный запуск с теми же кодом, данными, параметрами и сидом даёт тот же результат.
-  chapter: mlops/experiment-tracking
 - id: random-seed
   term: сид генератора
   term_en: random seed

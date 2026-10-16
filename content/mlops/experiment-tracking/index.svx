@@ -10,7 +10,6 @@ concepts:
   - { id: hyperparameter, title: Гиперпараметр }
   - { id: run-metric, title: Метрика }
   - { id: artifact, title: Артефакт }
-  - { id: reproducibility, title: Воспроизводимость }
   - { id: random-seed, title: Сид генератора }
   - { id: grid-search, title: Перебор по сетке }
   - { id: random-search, title: Случайный поиск }
