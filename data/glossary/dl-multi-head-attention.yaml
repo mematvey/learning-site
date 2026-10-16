@@ -15,12 +15,12 @@
   chapter: dl/multi-head-attention
   layer: { c: 1, d: 3 }
 - id: multi-query-attention
-  term: multi-query attention
+  term: многозапросное внимание
   definition: Вариант, в котором все головы запросов используют одну общую пару ключ–значение; кэш уменьшается во столько раз, сколько было голов.
   chapter: dl/multi-head-attention
   layer: { c: 1, d: 3 }
 - id: grouped-query-attention
-  term: grouped-query attention
+  term: групповое внимание
   definition: Промежуточный вариант между многоголовым и multi-query. Головы запросов делятся на группы, и каждая группа использует свою пару ключ–значение.
   chapter: dl/multi-head-attention
   layer: { c: 1, d: 3 }
