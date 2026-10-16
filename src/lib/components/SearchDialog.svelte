@@ -109,6 +109,10 @@
 </script>
 
 <button type="button" class="search-field" data-search onclick={open} aria-haspopup="dialog">
+	<svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+		<circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2" />
+		<path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+	</svg>
 	<span class="search-label">Поиск</span>
 	<KbdHint keys="mod+k" />
 </button>
@@ -206,7 +210,8 @@
 		box-shadow: var(--shadow);
 	}
 	.search-dialog::backdrop {
-		background: color-mix(in srgb, var(--text) 35%, transparent);
+		background: color-mix(in srgb, var(--bg) 70%, transparent);
+		backdrop-filter: blur(4px);
 	}
 
 	.search-panel {
@@ -284,6 +289,34 @@
 		background: color-mix(in srgb, var(--topic) 16%, transparent);
 		color: var(--text);
 		border-radius: 2px;
+	}
+
+	.search-icon {
+		display: none;
+		flex: none;
+	}
+
+	@media (max-width: 640px) {
+		/* Icon-only trigger on narrow screens; the label stays in the DOM for the accessible name. */
+		.search-field {
+			width: 34px;
+			justify-content: center;
+			padding: 0;
+		}
+		.search-field :global(kbd) {
+			display: none;
+		}
+		.search-icon {
+			display: block;
+		}
+		.search-label {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
 	}
 
 	.sr-only {
