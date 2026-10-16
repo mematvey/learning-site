@@ -41,7 +41,13 @@ export function buildRegistries(loaded: LoadedContent): Registries {
 			.filter((ch) => ch.topicDir === topic.data.id)
 			.map((ch) => ch.data.id);
 		const explicit = topic.data.chapters?.map((slug) => `${topic.data.id}/${slug}`);
-		const ordered = explicit ?? topoOrder(members, prereqsOf);
+		// Chapters missing from an explicit `chapters:` list still belong to the topic: append them.
+		const listed = new Set(explicit ?? []);
+		const rest = topoOrder(
+			members.filter((id) => !listed.has(id)),
+			prereqsOf,
+		);
+		const ordered = [...(explicit ?? []), ...rest];
 		orderByTopic.set(topic.data.id, ordered);
 		topics.push({ ...topic.data, chapterIds: ordered });
 	}

@@ -6,5 +6,5 @@ icon: network
 accent:
   topic: { light: '#4f46e5', dark: '#818cf8' }
   soft: { light: '#eef2ff', dark: '#1e1b4b' }
-chapters: [attention]
+chapters: [softmax, attention, multi-head-attention, layer-norm]
 featured: [dl/attention]

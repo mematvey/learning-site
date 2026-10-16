@@ -16,6 +16,14 @@
 	}: TopicCardProps = $props();
 
 	const percent = $derived(Math.round(Math.min(1, Math.max(0, progress)) * 100));
+
+	function plural(n: number): string {
+		const m10 = n % 10;
+		const m100 = n % 100;
+		if (m10 === 1 && m100 !== 11) return `${n} глава`;
+		if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return `${n} главы`;
+		return `${n} глав`;
+	}
 </script>
 
 <article class="topic-card" class:is-active={active} data-topic={topic}>
@@ -23,9 +31,9 @@
 		<span class="topic-icon" aria-hidden="true">
 			<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" /></svg>
 		</span>
-		<span class="badge">{chapterCount} глав</span>
+		<span class="badge">{plural(chapterCount)}</span>
 	</div>
-	<h3>{title}</h3>
+	<h3><a class="title-link" href={resolve('/[topic]', { topic })}>{title}</a></h3>
 	<p class="topic-desc">{description}</p>
 	<ol class="chapter-list">
 		{#each chapters as ch, i (ch.id)}
@@ -41,6 +49,9 @@
 			<span class="bar"><i style="width: {percent}%"></i></span>
 			<span class="progress-label">{percent}%</span>
 		</div>
+		<a class="card-all" href={resolve('/[topic]', { topic })}
+			>Все главы <span aria-hidden="true">→</span></a
+		>
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- in-page anchor (#map), not an app route -->
 		<a class="card-map" href={mapHref} onclick={() => onSelect?.(topic)}>
 			Карта <span aria-hidden="true">→</span>
@@ -79,6 +90,7 @@
 				border-color var(--dur) var(--ease);
 		}
 		.topic-card:hover {
+			border-color: var(--topic);
 			box-shadow: var(--shadow);
 			transform: translateY(-2px);
 		}
@@ -177,6 +189,22 @@
 	.progress-label {
 		white-space: nowrap;
 		font-variant-numeric: tabular-nums;
+	}
+	.title-link {
+		color: var(--text);
+	}
+	.title-link:hover {
+		color: var(--topic);
+		text-decoration: underline;
+	}
+	.card-all {
+		justify-self: start;
+		color: var(--topic);
+		font-size: var(--fs-sm);
+		font-weight: 600;
+	}
+	.card-all:hover {
+		text-decoration: underline;
 	}
 	.card-map {
 		justify-self: start;
