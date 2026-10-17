@@ -61,6 +61,30 @@ def bagging_fit(X, y, n_estimators, seed=0):
     return stumps
 
 
+def bagging_oob_predict(X, y, n_estimators, seed=0):
+    """Out-of-bag predictions: row i is predicted only by stumps that did not see row i.
+
+    Rows that are in every bootstrap sample get nan.
+    """
+    X = np.asarray(X, dtype=np.float64)
+    y = np.asarray(y, dtype=np.float64)
+    n = len(y)
+    rng = np.random.default_rng(seed)
+    total = np.zeros(n)
+    count = np.zeros(n)
+    for _ in range(n_estimators):
+        idx = rng.integers(0, n, size=n)
+        stump = fit_stump(X[idx], y[idx])
+        out = np.ones(n, dtype=bool)
+        out[idx] = False
+        total[out] += predict_stump(stump, X[out])
+        count[out] += 1
+    result = np.full(n, np.nan)
+    seen = count > 0
+    result[seen] = total[seen] / count[seen]
+    return result
+
+
 def bagging_predict(stumps, X):
     """Average of the predictions of all stumps, shape (n,)."""
     preds = np.stack([predict_stump(s, X) for s in stumps])

@@ -1,6 +1,6 @@
 /**
  * Math of the ensembles demo: one decision tree, a random forest (bagged trees with random
- * features) and AdaBoost with decision stumps, all on the same 2D data.
+ * features) and gradient boosting with regression stumps, all on the same 2D data.
  * Pure functions only: no DOM, no Svelte.
  *
  * Everything is deterministic: the data and every random draw come from a seed, so every page
@@ -30,6 +30,10 @@ export const TREES_DEFAULT = 25;
 export const ROUNDS_MIN = 1;
 export const ROUNDS_MAX = 100;
 export const ROUNDS_DEFAULT = 50;
+export const NU_MIN = 0.05;
+export const NU_MAX = 1;
+export const NU_STEP = 0.05;
+export const NU_DEFAULT = 0.3;
 
 /** Cells per side of the decision-region grid. */
 export const GRID_N = 28;
@@ -39,11 +43,14 @@ export interface EnsembleDemoState {
 	trees: number;
 	/** Number of boosting rounds (stumps). */
 	rounds: number;
+	/** Shrinkage nu of gradient boosting. */
+	nu: number;
 }
 
 export const DEFAULT_STATE: EnsembleDemoState = {
 	trees: TREES_DEFAULT,
 	rounds: ROUNDS_DEFAULT,
+	nu: NU_DEFAULT,
 };
 
 export interface Vec2 {
@@ -88,6 +95,13 @@ export function snapTrees(v: unknown): number {
 
 export function snapRounds(v: unknown): number {
 	return clampInt(v, ROUNDS_MIN, ROUNDS_MAX, ROUNDS_DEFAULT);
+}
+
+/** Shrinkage on the NU_STEP grid inside [NU_MIN, NU_MAX]. Non-numbers give the default. */
+export function snapNu(v: unknown): number {
+	if (typeof v !== 'number' || !Number.isFinite(v)) return NU_DEFAULT;
+	const steps = Math.round(Math.min(NU_MAX, Math.max(NU_MIN, v)) / NU_STEP);
+	return Math.round(steps * NU_STEP * 100) / 100;
 }
 
 /** Class of the noiseless region: inside the circle is 1. */
@@ -213,25 +227,77 @@ export function predictTree(node: TreeNode, v: Vec2): number {
 /**
  * Trees for a forest: each one on a bootstrap sample (n draws with replacement) and with one
  * random feature per split. The first k trees do not depend on maxTrees, so a prefix is a forest.
+ * `inBag[t][i]` tells whether training point i is in the bootstrap sample of tree t.
  */
+export function fitForestWithBags(
+	train: readonly Point[],
+	maxTrees: number,
+	seed: number = FOREST_SEED,
+): { trees: TreeNode[]; inBag: boolean[][] } {
+	const rand = mulberry32(seed);
+	const n = train.length;
+	const trees: TreeNode[] = [];
+	const inBag: boolean[][] = [];
+	for (let t = 0; t < maxTrees; t++) {
+		const boot: Point[] = [];
+		const used: boolean[] = train.map(() => false);
+		for (let i = 0; i < n; i++) {
+			const j = Math.floor(rand() * n);
+			const drawn = train[j];
+			if (drawn !== undefined) {
+				boot.push(drawn);
+				used[j] = true;
+			}
+		}
+		const pickFeatures = (): readonly (0 | 1)[] => [Math.floor(rand() * 2) as 0 | 1];
+		trees.push(fitTree(boot, { maxDepth: FOREST_DEPTH, minLeaf: 1, pickFeatures }));
+		inBag.push(used);
+	}
+	return { trees, inBag };
+}
+
 export function fitForest(
 	train: readonly Point[],
 	maxTrees: number,
 	seed: number = FOREST_SEED,
 ): TreeNode[] {
-	const rand = mulberry32(seed);
-	const n = train.length;
-	const trees: TreeNode[] = [];
-	for (let t = 0; t < maxTrees; t++) {
-		const boot: Point[] = [];
-		for (let i = 0; i < n; i++) {
-			const drawn = train[Math.floor(rand() * n)];
-			if (drawn !== undefined) boot.push(drawn);
+	return fitForestWithBags(train, maxTrees, seed).trees;
+}
+
+export interface OobScore {
+	/** Accuracy over the points that have at least one tree that did not see them. */
+	accuracy: number;
+	/** Number of such points. */
+	covered: number;
+}
+
+/**
+ * Out-of-bag accuracy of the first k trees: each training point is predicted only by the trees
+ * whose bootstrap sample did not contain it. No separate validation set is needed.
+ */
+export function oobAccuracy(
+	train: readonly Point[],
+	trees: readonly TreeNode[],
+	inBag: readonly (readonly boolean[])[],
+	k: number,
+): OobScore {
+	const m = Math.min(k, trees.length, inBag.length);
+	let covered = 0;
+	let ok = 0;
+	train.forEach((p, i) => {
+		let sum = 0;
+		let cnt = 0;
+		for (let t = 0; t < m; t++) {
+			const tree = trees[t];
+			if (tree === undefined || inBag[t]?.[i] === true) continue;
+			sum += predictTree(tree, p);
+			cnt += 1;
 		}
-		const pickFeatures = (): readonly (0 | 1)[] => [Math.floor(rand() * 2) as 0 | 1];
-		trees.push(fitTree(boot, { maxDepth: FOREST_DEPTH, minLeaf: 1, pickFeatures }));
-	}
-	return trees;
+		if (cnt === 0) return;
+		covered += 1;
+		if ((sum / cnt > 0.5 ? 1 : 0) === p.label) ok += 1;
+	});
+	return { accuracy: covered === 0 ? 0 : ok / covered, covered };
 }
 
 /** Average probability of the first k trees. */
@@ -243,119 +309,100 @@ export function forestProba(trees: readonly TreeNode[], k: number, v: Vec2): num
 	return sum / m;
 }
 
-/* ---------- AdaBoost with decision stumps ---------- */
+/* ---------- Gradient boosting with regression stumps ---------- */
 
-/** A stump: predicts polarity · (+1 if x_f > threshold, else −1). */
-export interface StumpRule {
+/** A regression stump: a sample goes left when x_f <= threshold. Leaf values are residual means. */
+export interface RegStump {
 	feature: 0 | 1;
 	threshold: number;
-	polarity: 1 | -1;
+	left: number;
+	right: number;
 }
 
-export interface Stump extends StumpRule {
-	alpha: number;
+export interface GbModel {
+	/** Start value: the share of class 1, F_0. */
+	base: number;
+	/** Shrinkage nu: every stump is multiplied by it. */
+	nu: number;
+	stumps: RegStump[];
 }
 
-function stumpOutput(rule: StumpRule, v: Vec2): number {
-	return rule.polarity * (coord(v, rule.feature) > rule.threshold ? 1 : -1);
+function stumpValue(s: RegStump, v: Vec2): number {
+	return coord(v, s.feature) <= s.threshold ? s.left : s.right;
 }
 
-interface StumpFit extends StumpRule {
-	/** Weighted error of the rule (weights sum to `total`). */
-	error: number;
-}
-
-function offerStump(
-	best: StumpFit | null,
-	feature: 0 | 1,
-	threshold: number,
-	errPlus: number,
-	total: number,
-): StumpFit {
-	const errMinus = total - errPlus;
-	const cand: StumpFit =
-		errPlus <= errMinus
-			? { feature, threshold, polarity: 1, error: errPlus }
-			: { feature, threshold, polarity: -1, error: errMinus };
-	return best === null || cand.error < best.error ? cand : best;
-}
-
-/** Stump with the smallest weighted error. Sweeps the sorted values of each feature once. */
-export function fitStump(samples: readonly Point[], w: readonly number[]): StumpFit {
-	const items = samples.map((point, i) => ({ point, w: w[i] ?? 0 }));
+/** Stump with the smallest squared error on the targets r (gain: sum_L²/n_L + sum_R²/n_R). */
+export function fitRegStump(samples: readonly Vec2[], r: readonly number[]): RegStump {
+	const n = samples.length;
 	let total = 0;
-	for (const it of items) total += it.w;
-	let best: StumpFit | null = null;
+	for (const t of r) total += t;
+	const mean = n === 0 ? 0 : total / n;
+	let best: RegStump = { feature: 0, threshold: Infinity, left: mean, right: mean };
+	let bestGain = -Infinity;
 	for (const f of [0, 1] as const) {
-		const sorted = [...items].sort((a, b) => coord(a.point, f) - coord(b.point, f));
-		// Threshold below every value: predicts +1 everywhere, so the error is the weight of label 0.
-		let errPlus = 0;
-		for (const it of items) if (it.point.label === 0) errPlus += it.w;
-		const first = sorted[0];
-		if (first !== undefined) {
-			best = offerStump(best, f, coord(first.point, f) - 1, errPlus, total);
-		}
-		for (let k = 0; k < sorted.length; k++) {
-			const cur = sorted[k];
-			if (cur === undefined) continue;
-			// Moving the threshold past this point: it is now predicted −1.
-			errPlus += cur.point.label === 1 ? cur.w : -cur.w;
-			const v = coord(cur.point, f);
-			const nxt = sorted[k + 1];
-			if (nxt === undefined) {
-				best = offerStump(best, f, v + 1, errPlus, total);
-			} else {
-				const next = coord(nxt.point, f);
-				if (v !== next) best = offerStump(best, f, (v + next) / 2, errPlus, total);
+		const order = samples
+			.map((_, i) => i)
+			.sort((i, j) => {
+				const a = samples[i];
+				const b = samples[j];
+				return a === undefined || b === undefined ? 0 : coord(a, f) - coord(b, f);
+			});
+		let sumL = 0;
+		for (let k = 0; k < n - 1; k++) {
+			const i = order[k];
+			const j = order[k + 1];
+			const a = i === undefined ? undefined : samples[i];
+			const b = j === undefined ? undefined : samples[j];
+			if (i === undefined || a === undefined || b === undefined) continue;
+			sumL += r[i] ?? 0;
+			const lo = coord(a, f);
+			const hi = coord(b, f);
+			if (lo === hi) continue;
+			const nl = k + 1;
+			const nr = n - nl;
+			const sumR = total - sumL;
+			const gain = (sumL * sumL) / nl + (sumR * sumR) / nr;
+			if (gain > bestGain + 1e-12) {
+				bestGain = gain;
+				best = { feature: f, threshold: (lo + hi) / 2, left: sumL / nl, right: sumR / nr };
 			}
 		}
 	}
-	return best ?? { feature: 0, threshold: 0, polarity: 1, error: total };
+	return best;
 }
 
 /**
- * Discrete AdaBoost on stumps. Each round fits the best stump to the current weights,
- * gives it weight alpha and moves weight to the points it got wrong. Stops early if no stump
- * beats chance (error ≥ 0.5).
+ * Gradient boosting with squared loss on 0/1 labels. Starts from the share of class 1; each round
+ * fits a stump to the residuals y − F and adds nu times it. The stumps depend on nu, so the
+ * model is refit when nu changes; the first k rounds do not depend on the total number of rounds.
  */
-export function fitAdaBoost(train: readonly Point[], maxRounds: number): Stump[] {
+export function fitGradientBoost(train: readonly Point[], maxRounds: number, nu: number): GbModel {
 	const n = train.length;
-	let w = train.map(() => 1 / n);
-	const stumps: Stump[] = [];
-	for (let r = 0; r < maxRounds && n > 0; r++) {
-		const fit = fitStump(train, w);
-		const eps = Math.min(1 - 1e-10, Math.max(1e-10, fit.error));
-		if (eps >= 0.5) break;
-		const alpha = 0.5 * Math.log((1 - eps) / eps);
-		const rule: StumpRule = {
-			feature: fit.feature,
-			threshold: fit.threshold,
-			polarity: fit.polarity,
-		};
-		stumps.push({ ...rule, alpha });
-		let z = 0;
-		const next = train.map((p, i) => {
-			const s = p.label === 1 ? 1 : -1;
-			const wi = (w[i] ?? 0) * Math.exp(-alpha * s * stumpOutput(rule, p));
-			z += wi;
-			return wi;
+	const base = n === 0 ? 0.5 : train.reduce((a, p) => a + p.label, 0) / n;
+	const f = train.map(() => base);
+	const stumps: RegStump[] = [];
+	for (let m = 0; m < maxRounds && n > 0; m++) {
+		const residual = train.map((p, i) => p.label - (f[i] ?? base));
+		const stump = fitRegStump(train, residual);
+		stumps.push(stump);
+		train.forEach((p, i) => {
+			f[i] = (f[i] ?? base) + nu * stumpValue(stump, p);
 		});
-		w = next.map((v) => v / z);
 	}
-	return stumps;
+	return { base, nu, stumps };
 }
 
-/** Weighted vote of the first k stumps: sum of alpha · h(x). Positive means class 1. */
-export function boostScore(stumps: readonly Stump[], k: number, v: Vec2): number {
-	const m = Math.min(k, stumps.length);
-	let f = 0;
-	for (const s of stumps.slice(0, m)) f += s.alpha * stumpOutput(s, v);
+/** Raw ensemble value F_k(x) after the first k rounds. */
+export function gbScore(model: GbModel, k: number, v: Vec2): number {
+	const m = Math.max(0, Math.min(k, model.stumps.length));
+	let f = model.base;
+	for (const s of model.stumps.slice(0, m)) f += model.nu * stumpValue(s, v);
 	return f;
 }
 
-/** Logistic squashing of the boosting score: 2F gives a probability-like value. */
-export function boostProba(stumps: readonly Stump[], k: number, v: Vec2): number {
-	return 1 / (1 + Math.exp(-2 * boostScore(stumps, k, v)));
+/** F_k clipped to [0, 1]: read as the probability of class 1. */
+export function gbProba(model: GbModel, k: number, v: Vec2): number {
+	return Math.min(1, Math.max(0, gbScore(model, k, v)));
 }
 
 /* ---------- Scoring and drawing ---------- */
@@ -402,10 +449,16 @@ export function describeEnsembles(
 	state: EnsembleDemoState,
 	boostApplied: number,
 	scores: { tree: Scores; forest: Scores; boost: Scores },
+	oob?: OobScore,
 ): string {
 	return [
 		describeModel('Одно дерево', scores.tree),
 		describeModel(`Лес из ${state.trees} деревьев`, scores.forest),
-		describeModel(`Бустинг из ${boostApplied} итераций`, scores.boost),
-	].join(' ');
+		oob && oob.covered > 0
+			? `Оценка out-of-bag для леса: ${percent(oob.accuracy)} на ${oob.covered} примерах.`
+			: '',
+		describeModel(`Бустинг из ${boostApplied} итераций со сжатием ${state.nu}`, scores.boost),
+	]
+		.filter((t) => t !== '')
+		.join(' ');
 }

@@ -30,6 +30,42 @@ def test_bagging_returns_requested_number_of_stumps():
     assert pred.shape == (30,), f"expected prediction shape (30,), got {pred.shape}"
 
 
+def test_oob_rows_are_predicted_by_stumps_that_did_not_see_them():
+    rng = np.random.default_rng(2)
+    X = rng.normal(size=(40, 2))
+    y = X[:, 0] + 0.1 * rng.normal(size=40)
+    oob = bagging_oob_predict(X, y, n_estimators=30, seed=4)
+    assert oob.shape == (40,), f"expected shape (40,), got {oob.shape}"
+    ok = ~np.isnan(oob)
+    # 30 bags: the chance that a row is in all of them is 0.632**30, so every row is covered.
+    assert ok.all(), "with 30 estimators every row must have at least one out-of-bag stump"
+    assert np.corrcoef(oob, y)[0, 1] > 0.5, "out-of-bag predictions must follow the target"
+
+
+def test_oob_uses_the_same_draws_as_bagging_fit():
+    X = np.array([[0.0], [1.0], [2.0], [3.0], [4.0], [5.0]])
+    y = np.array([0.0, 0.0, 0.0, 1.0, 1.0, 1.0])
+    n, k, seed = 6, 5, 7
+    rng = np.random.default_rng(seed)
+    stumps = bagging_fit(X, y, n_estimators=k, seed=seed)
+    rng = np.random.default_rng(seed)
+    expected = np.full(n, np.nan)
+    sums, counts = np.zeros(n), np.zeros(n)
+    for s in stumps:
+        idx = rng.integers(0, n, size=n)
+        out = np.setdiff1d(np.arange(n), idx)
+        sums[out] += predict_stump(s, X[out])
+        counts[out] += 1
+    expected[counts > 0] = sums[counts > 0] / counts[counts > 0]
+    got = bagging_oob_predict(X, y, n_estimators=k, seed=seed)
+    assert_close(
+        np.nan_to_num(got, nan=-99.0),
+        np.nan_to_num(expected, nan=-99.0),
+        atol=1e-9,
+        message=f"expected {expected.tolist()}, got {got.tolist()}",
+    )
+
+
 def test_bagging_predict_is_average_of_stumps():
     stumps = [(0, 1.5, -1.0, 1.0), (0, 0.5, 0.0, 2.0)]
     expected = [(-1.0 + 0.0) / 2, (-1.0 + 2.0) / 2, (1.0 + 2.0) / 2, (1.0 + 2.0) / 2]
