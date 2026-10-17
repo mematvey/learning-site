@@ -13,7 +13,13 @@ import {
 	THREADS_MAX,
 	THREADS_MIN,
 	WARP_SIZE,
+	RESIDENT_MAX,
 	describeLaunch,
+	divergenceStats,
+	hidingTimeline,
+	hidingUtilization,
+	snapBranch,
+	snapResident,
 	distributeBlocks,
 	isNodeId,
 	laneStats,
@@ -121,5 +127,28 @@ describe('launch description', () => {
 		expect(describeLaunch({ threads: 96, sms: 4, blocks: 4 })).toContain(
 			'Все варпы заполнены полностью',
 		);
+	});
+});
+
+describe('divergence and latency hiding', () => {
+	it('divergent warp needs two passes', () => {
+		expect(divergenceStats(0).passes).toBe(1);
+		expect(divergenceStats(32).passes).toBe(1);
+		expect(divergenceStats(16)).toEqual({ passes: 2, issuedSlots: 64, utilization: 0.5 });
+	});
+	it('more resident warps hide more waiting', () => {
+		const u1 = hidingUtilization(1);
+		const u4 = hidingUtilization(4);
+		expect(u4).toBeGreaterThan(u1);
+		expect(hidingUtilization(RESIDENT_MAX)).toBe(1);
+	});
+	it('a single warp idles while it waits', () => {
+		const tl = hidingTimeline(1);
+		expect(tl.slice(0, 4)).toEqual([0, 0, 0, 0]);
+		expect(tl[4]).toBe(-1);
+	});
+	it('snaps inputs', () => {
+		expect(snapBranch(99)).toBe(32);
+		expect(snapResident(0)).toBe(1);
 	});
 });

@@ -5,10 +5,6 @@ topic: compute
 summary: "Первое ядро: как сетка блоков и потоков делит элементы массива и как каждый поток находит свой элемент по собственным номерам."
 prereqs: [compute/gpu-architecture]
 concepts:
-  - { id: cuda-kernel, title: Ядро CUDA }
-  - { id: cuda-thread, title: Поток CUDA }
-  - { id: cuda-thread-block, title: Блок потоков }
-  - { id: cuda-grid, title: Сетка блоков }
   - { id: cuda-global-index, title: Глобальный индекс }
   - { id: cuda-bounds-check, title: Граничная проверка }
   - { id: cuda-host-device, title: Host и device }
@@ -26,14 +22,14 @@ sources:
   - id: cudaguide
     kind: doc
     title: CUDA C++ Programming Guide
-    venue: NVIDIA, документация CUDA Toolkit (онлайн-версия, без номера версии)
+    venue: NVIDIA, документация CUDA Toolkit (онлайн-версия, прочитана 2026-10-16, номер версии на странице не указан)
     url: https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
     accessed: 2026-10-16
     supports: [idea-kernel, code-launch]
   - id: cudahier
     kind: doc
     title: "CUDA Programming Guide: Programming Model"
-    venue: NVIDIA, документация CUDA Toolkit (онлайн-версия, без номера версии)
+    venue: NVIDIA, документация CUDA Toolkit (онлайн-версия, прочитана 2026-10-16, номер версии на странице не указан)
     url: https://docs.nvidia.com/cuda/cuda-programming-guide/01-introduction/programming-model.html
     accessed: 2026-10-16
     supports: [intuition-hierarchy, hw-blocks, mistake-global, mistake-order]
@@ -43,7 +39,7 @@ status: draft
 
 ## Идея {#idea}
 
-CUDA это платформа NVIDIA для вычислений на GPU. Её основная единица программы, <Term id="cuda-kernel">ядро</Term> (kernel), это функция, которую запускают сразу во многих потоках. Каждый поток выполняет один и тот же код, а свою часть данных выбирает по собственным номерам. <Cite id="cudaguide" /> {#idea-kernel}
+CUDA это платформа NVIDIA для вычислений на GPU. Её основная единица программы, <Term id="gpu-kernel">ядро</Term> (kernel), это функция, которую запускают сразу во многих потоках. Каждый поток выполняет один и тот же код, а свою часть данных выбирает по собственным номерам. <Cite id="cudaguide" /> {#idea-kernel}
 
 ## Интуиция {#intuition}
 
@@ -57,11 +53,11 @@ CUDA это платформа NVIDIA для вычислений на GPU. Её
 
 <Variant c="2-4">
 
-Все <Term id="cuda-thread">потоки</Term> (thread) выполняют одну и ту же функцию ядра. Различаются они только номерами, которые CUDA передаёт через встроенные переменные: номер блока в `blockIdx`, номер потока внутри блока в `threadIdx`, размер блока в `blockDim`. Это позволяет написать один код, который работает с разными частями массива. {#intuition-formal}
+Все <Term id="gpu-thread">потоки</Term> (thread) выполняют одну и ту же функцию ядра. Различаются они только номерами, которые CUDA передаёт через встроенные переменные: номер блока в `blockIdx`, номер потока внутри блока в `threadIdx`, размер блока в `blockDim`. Это позволяет написать один код, который работает с разными частями массива. {#intuition-formal}
 
 </Variant>
 
-Потоки собраны в <Term id="cuda-thread-block">блоки</Term> (thread block), а блоки собраны в <Term id="cuda-grid">сетку</Term> (grid). Сетка это все блоки, запущенные одним вызовом ядра. Потоки одного блока могут обмениваться данными и ждать друг друга, а блоки между собой независимы. {#intuition-hierarchy}
+Потоки собраны в <Term id="gpu-block">блоки</Term> (thread block), а блоки собраны в <Term id="gpu-grid">сетку</Term> (grid). Сетка это все блоки, запущенные одним вызовом ядра. Потоки одного блока могут обмениваться данными и ждать друг друга, а блоки между собой независимы. {#intuition-hierarchy}
 
 Сетка ниже задаёт число элементов и размер блока. Меняйте значения и смотрите, сколько блоков понадобится и какие потоки окажутся за пределами массива. {#intuition-demo}
 
@@ -132,6 +128,8 @@ add_one<<<blocks, 256>>>(d_x, 1000);
 
 Ключевое слово `__global__` помечает функцию, которую вызывает <Term id="cuda-host-device">host</Term> (CPU), а выполняет <Term id="cuda-host-device">device</Term> (GPU). Указатель `d_x` должен указывать на память GPU, поэтому данные перед запуском копируют отдельным вызовом, например `cudaMemcpy`. Запуск `add_one` задаёт сетку и размер блока в скобках конфигурации. <Cite id="cudaguide" /> {#code-launch}
 
+Чтобы запустить такой код самому, нужна машина с GPU NVIDIA и CUDA Toolkit: файл `.cu` собирается командой `nvcc add_one.cu -o add_one`. Без своей GPU подойдёт Google Colab со средой выполнения на GPU. {#code-run}
+
 </Level>
 
 <Level d={3}>
@@ -172,5 +170,3 @@ add_one<<<blocks, 256>>>(d_x, 1000);
 Потоков хватает на все элементы, но когда число элементов не кратно размеру блока, лишние потоки всё равно запускаются. Без проверки они обращаются к памяти за пределами массива.
 
 </Quiz>
-
-## Источники {#sources}
