@@ -10,6 +10,7 @@ import {
 	readsPerElementNaive,
 	readsPerElementTiled,
 	reduction,
+	sharedBytesPerBlock,
 	snapN,
 	snapTile,
 	totalReadsNaive,
@@ -120,5 +121,12 @@ describe('text', () => {
 		const text = describeState({ n: 64, tile: 8 });
 		expect(text).toContain('читается из глобальной памяти 8 раз вместо 64');
 		expect(text).toContain('в 8.0 раза');
+	});
+});
+
+describe('sharedBytesPerBlock', () => {
+	it('is two float32 tiles', () => {
+		expect(sharedBytesPerBlock(8)).toBe(512);
+		expect(sharedBytesPerBlock(32)).toBe(8192);
 	});
 });

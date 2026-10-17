@@ -87,6 +87,11 @@ export function reduction(n: number, tile: number): number {
 	return totalReadsNaive(n) / totalReadsTiled(n, tile);
 }
 
+/** Shared memory one block needs for the A-tile and the B-tile of float32: 2 * tile^2 * 4 bytes. */
+export function sharedBytesPerBlock(tile: number): number {
+	return 2 * tile * tile * 4;
+}
+
 /** Groups thousands with spaces, without locale data, so the text is the same on every machine. */
 export function formatCount(x: number): string {
 	return String(Math.round(x)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
@@ -101,6 +106,7 @@ export function describeState(state: MatmulTilingDemoState): string {
 	return (
 		`Матрицы ${n} × ${n}, тайл ${tile} × ${tile}: каждый элемент A и B читается из глобальной памяти ` +
 		`${per} раз вместо ${naive}. Всего обращений ${formatCount(totalReadsTiled(n, tile))} ` +
-		`вместо ${formatCount(totalReadsNaive(n))}, выигрыш в ${red.toFixed(1)} раза.`
+		`вместо ${formatCount(totalReadsNaive(n))}, выигрыш в ${red.toFixed(1)} раза. ` +
+		`Цена: блоку нужно ${formatCount(sharedBytesPerBlock(tile))} байт разделяемой памяти.`
 	);
 }

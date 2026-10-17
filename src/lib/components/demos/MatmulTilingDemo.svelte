@@ -18,6 +18,7 @@
 		readsPerElementNaive,
 		readsPerElementTiled,
 		reduction,
+		sharedBytesPerBlock,
 		totalReadsNaive,
 		totalReadsTiled,
 		type MatmulTilingDemoState,
@@ -160,6 +161,8 @@
 		<dd>{formatCount(totalNaive)}</dd>
 		<dt>Всего обращений, тайлами</dt>
 		<dd>{formatCount(totalTiled)}</dd>
+		<dt>Разделяемая память на блок (float32)</dt>
+		<dd>{formatCount(sharedBytesPerBlock(st.tile))} Б</dd>
 		<dt>Выигрыш</dt>
 		<dd>в {red.toFixed(1)} раза</dd>
 	</dl>
