@@ -16,14 +16,18 @@
 		DIM_MAX,
 		DIM_MIN,
 		DIM_STEP,
-		MAIN_CHAIN,
 		NODE_IDS,
 		NODE_LABEL,
-		RESIDUAL,
 		TOKENS_MAX,
 		TOKENS_MIN,
 		type NodeId,
 		type TransformerBlockDemoState,
+		type Variant,
+		cleanPath,
+		isVariant,
+		mainChain,
+		nodeOrder,
+		residual,
 		describeNode,
 		formatShape,
 		isNodeId,
@@ -43,6 +47,10 @@
 	/* svelte-ignore state_referenced_locally */
 	let node = $state<NodeId>(isNodeId(initial?.node) ? initial.node : DEFAULT_STATE.node);
 	/* svelte-ignore state_referenced_locally */
+	let variant = $state<Variant>(
+		isVariant(initial?.variant) ? initial.variant : DEFAULT_STATE.variant,
+	);
+	/* svelte-ignore state_referenced_locally */
 	let tokens = $state(snapTokens(initial?.tokens ?? DEFAULT_STATE.tokens));
 	/* svelte-ignore state_referenced_locally */
 	let dim = $state(snapDim(initial?.dim ?? DEFAULT_STATE.dim));
@@ -52,7 +60,11 @@
 	const hl = $derived(highlight?.hl ?? null);
 	const attnEntity = $derived(hl === 'q' || hl === 'k' || hl === 'v');
 
-	const info = $derived(nodeInfo(node, tokens, dim));
+	const info = $derived(nodeInfo(node, tokens, dim, variant));
+	const order = $derived(nodeOrder(variant));
+	const chain = $derived(mainChain(variant));
+	const skips = $derived(residual(variant));
+	const clean = $derived(cleanPath(variant));
 	const total = $derived(totalParams(dim));
 
 	/** Layout of the diagram in SVG units (viewBox 340 wide). */
@@ -61,22 +73,19 @@
 	const BOX_H = 40;
 	const CX = BOX_X + BOX_W / 2;
 	const SKIP_X = 300;
-	const ROW: Record<NodeId, number> = {
-		x: 10,
-		ln1: 72,
-		attn: 134,
-		add1: 196,
-		ln2: 258,
-		mlp: 320,
-		add2: 382,
-	};
+	const ROW_STEP = 62;
+	const ROW = $derived(
+		Object.fromEntries(order.map((id, i) => [id, 10 + i * ROW_STEP])) as Record<NodeId, number>,
+	);
 	const RIGHT = BOX_X + BOX_W;
 
-	/** Residual arcs drawn on the right side: from the block input and from the first sum. */
-	const SKIP_PATHS = [
-		`M${RIGHT} ${ROW.x + 20} H${SKIP_X} V${ROW.add1 + 16} H${RIGHT}`,
-		`M${RIGHT} ${ROW.add1 + 24} H${SKIP_X} V${ROW.add2 + 16} H${RIGHT}`,
-	];
+	/** Residual arcs on the right: each starts at the source node and ends at the sum node. */
+	const skipPaths = $derived(
+		skips.map(
+			([from, to], k) =>
+				`M${RIGHT} ${ROW[from] + (k === 0 ? 20 : 24)} H${SKIP_X} V${ROW[to] + 16} H${RIGHT}`,
+		),
+	);
 
 	/** Fill-stripe colour of each node kind: tokens of the palette only. */
 	const STRIPE: Record<string, string> = {
@@ -89,12 +98,14 @@
 
 	function apply(patch: Partial<TransformerBlockDemoState>): void {
 		if (isNodeId(patch.node)) node = patch.node;
+		if (isVariant(patch.variant)) variant = patch.variant;
 		if (typeof patch.tokens === 'number') tokens = snapTokens(patch.tokens);
 		if (typeof patch.dim === 'number') dim = snapDim(patch.dim);
 	}
 
 	function reset(): void {
 		node = DEFAULT_STATE.node;
+		variant = DEFAULT_STATE.variant;
 		tokens = DEFAULT_STATE.tokens;
 		dim = DEFAULT_STATE.dim;
 	}
@@ -120,6 +131,24 @@
 	class:hl-attn={attnEntity}
 >
 	<div class="tb-controls">
+		<div class="tb-ctl" role="group" aria-label="Вариант нормализации">
+			<span class="tb-label">Нормализация</span>
+			<div class="tb-seg">
+				<button
+					type="button"
+					class:is-on={variant === 'pre'}
+					aria-pressed={variant === 'pre'}
+					onclick={() => (variant = 'pre')}>Pre-LN</button
+				>
+				<button
+					type="button"
+					class:is-on={variant === 'post'}
+					aria-pressed={variant === 'post'}
+					onclick={() => (variant = 'post')}>Post-LN</button
+				>
+			</div>
+		</div>
+
 		<label class="tb-ctl">
 			<span class="tb-label">Токенов <i>n</i></span>
 			<input
@@ -174,7 +203,7 @@
 				</marker>
 			</defs>
 
-			{#each MAIN_CHAIN as [from, to] (from + to)}
+			{#each chain as [from, to] (from + to)}
 				<line
 					class="tb-edge"
 					x1={CX}
@@ -185,17 +214,27 @@
 				/>
 			{/each}
 
-			{#each RESIDUAL as [from, to], i (from + to)}
-				<path class="tb-skip" d={SKIP_PATHS[i]} marker-end="url(#{uid}-arrow)" />
+			{#each skips as [from, to], i (from + to)}
+				<path
+					class="tb-skip"
+					class:is-clean={variant === 'pre'}
+					d={skipPaths[i]}
+					marker-end="url(#{uid}-arrow)"
+				/>
+				<text
+					class="tb-skip-label"
+					x={SKIP_X - 4}
+					y={(ROW[from] + ROW[to]) / 2 + 20}
+					text-anchor="end">{variant === 'pre' ? 'без LN' : 'остаток'}</text
+				>
 			{/each}
-			<text class="tb-skip-label" x={SKIP_X - 4} y={ROW.attn + 4} text-anchor="end">остаток</text>
-			<text class="tb-skip-label" x={SKIP_X - 4} y={ROW.mlp + 4} text-anchor="end">остаток</text>
 
 			{#each NODE_IDS as id (id)}
 				{@const kind = nodeInfo(id, tokens, dim).kind}
 				<g
 					class="tb-node tb-{kind}"
 					class:is-on={node === id}
+					class:is-clean={clean.includes(id)}
 					role="button"
 					tabindex="0"
 					aria-pressed={node === id}
@@ -245,7 +284,14 @@
 	</div>
 
 	<p class="tb-notice">
-		<strong>Что заметить:</strong> форма тензора на входе и выходе блока одинакова, [{tokens},
+		<strong>Что заметить:</strong>
+		{#if variant === 'pre'}
+			в Pre-LN путь по остаточным связям от входа к выходу (подсвечен) не проходит ни одной
+			нормализации.
+		{:else}
+			в Post-LN на пути от входа к выходу стоят оба LayerNorm: чистого пути без нормализации нет.
+		{/if}
+		Форма тензора на входе и выходе блока одинакова, [{tokens},
 		{dim}]. Остаточная связь складывает вход с результатом подблока, поэтому блок можно ставить в
 		стек. Параметров больше всего в MHA и MLP, и при росте <i>d</i> они растут примерно как
 		<i>d</i>², а нормализация растёт только линейно.
@@ -362,6 +408,36 @@
 		stroke: var(--topic);
 		stroke-width: 1.5;
 		stroke-dasharray: 5 4;
+	}
+	.tb-skip.is-clean {
+		stroke-width: 2.5;
+	}
+	.tb-node.is-clean .tb-box {
+		stroke: var(--topic);
+	}
+	.tb-seg {
+		display: inline-flex;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		overflow: hidden;
+	}
+	.tb-seg button {
+		height: 32px;
+		padding: 0 var(--space-3);
+		border: 0;
+		background: var(--surface-2);
+		color: var(--text);
+		font-size: var(--fs-sm);
+		cursor: pointer;
+	}
+	.tb-seg button.is-on {
+		background: var(--topic-soft);
+		color: var(--text);
+		font-weight: 600;
+	}
+	.tb-seg button:focus-visible {
+		outline: 2px solid var(--topic);
+		outline-offset: -2px;
 	}
 	.tb-skip-label {
 		fill: var(--text-muted);
