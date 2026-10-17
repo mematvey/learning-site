@@ -222,7 +222,7 @@ export function describeModel(
 	test: number,
 ): string {
 	const nz = nonZeroCount(w);
-	const errors = `Ошибка на обучении ${train.toFixed(3)}, на новых точках ${test.toFixed(3)}.`;
+	const errors = `Ошибка на обучении ${train.toFixed(3)}, на контрольных точках ${test.toFixed(3)}.`;
 	if (penalty === 'l1') {
 		return (
 			`Lasso: ненулевых весов ${nz} из ${k}. ` +

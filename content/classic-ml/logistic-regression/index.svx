@@ -31,6 +31,7 @@ sources:
     authors: scikit-learn developers
     venue: scikit-learn, stable documentation
     url: https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+    accessed: 2026-10-17
     supports: [impl-sklearn]
   - id: numpylogaddexp
     kind: doc
@@ -38,6 +39,7 @@ sources:
     authors: NumPy developers
     venue: NumPy, stable documentation
     url: https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html
+    accessed: 2026-10-17
     supports: [impl-loss-form]
 aliases: []
 status: draft
@@ -73,7 +75,7 @@ status: draft
 
 <Variant c="2-4">
 
-Обозначения: $x \in \mathbb{R}^d$ признаки объекта, $w \in \mathbb{R}^d$ веса, $b$ смещение, $y \in \{0, 1\}$ метка класса. Линейная оценка (<Term id="logit">логит</Term>) равна $z = w \cdot x + b$, а вероятность класса 1 равна $p = \sigma(z)$, где сигмоида {#math-def}
+Обозначения: $x \in \mathbb{R}^d$ признаки объекта, $w \in \mathbb{R}^d$ веса, $b$ смещение, $y \in \{0, 1\}$ метка класса. Линейная оценка (<Term id="logit">логит</Term>) равна $z = w \cdot x + b$, а вероятность класса 1 равна $p = \sigma(z)$, где $\sigma$ это сигмоида: {#math-def}
 
 $$
 \sigma(z) = \frac{1}{1 + e^{-z}}
@@ -112,6 +114,10 @@ $$
 Итог одинаков на всех уровнях: каждый объект сдвигает веса в сторону своей ошибки. Если предсказание почти совпало с правдой, сдвиг мал, и обучение замедляется само собой. {#math-summary}
 
 <Level c={2}>
+
+Откуда берётся сигмоида. Шансы (odds) класса 1 это отношение $p / (1 - p)$: при $p = 0.8$ шансы равны 4 к 1. Вероятность ограничена отрезком $[0, 1]$, а логарифм шансов (log-odds) пробегает всю числовую прямую, поэтому его естественно приравнять линейной оценке: $\ln \dfrac{p}{1 - p} = z$. Отсюда $\dfrac{p}{1 - p} = e^{z}$, то есть $p = e^{z}(1 - p)$, и $p(1 + e^{z}) = e^{z}$. Значит $p = \dfrac{e^{z}}{1 + e^{z}} = \dfrac{1}{1 + e^{-z}} = \sigma(z)$. Сигмоида это обратная функция к логарифму шансов, а логит это и есть log-odds. {#math-sigmoid-origin}
+
+Числовой пример. Пусть $w = (2, -1)$, $b = 0.5$, объект $x = (1, 1)$. Тогда $z = 2 \cdot 1 - 1 \cdot 1 + 0.5 = 1.5$ и $p = \sigma(1.5) = 1 / (1 + e^{-1.5}) \approx 0.82$. Если настоящая метка $y = 1$, потеря равна $-\ln 0.82 \approx 0.20$. Если же $y = 0$, потеря равна $-\ln(1 - 0.82) \approx 1.7$: уверенная ошибка стоит почти в девять раз дороже. {#math-example}
 
 Регуляризация (<Term id="regularization">regularization</Term>) добавляет к потерям штраф за величину весов: $L_\lambda(w, b) = L(w, b) + \lambda \lVert w \rVert^2$. Чем больше $\lambda$, тем меньше веса и проще граница. Штраф нужен и тогда, когда классы разделимы: без него веса уходят в бесконечность, а с ним решение конечно. {#math-reg}
 
@@ -180,11 +186,21 @@ loss = np.logaddexp(0.0, -s * z).mean()
 
 </Quiz>
 
-<Quiz id="quiz-clip-linear" q="Почему нельзя просто обрезать линейную оценку в отрезок от 0 до 1?">
+<Level c={2}>
 
-На участках обрезки производная равна нулю, и объекты там перестают влиять на обучение. Сигмоида гладкая и всюду имеет ненулевую производную, поэтому градиентный спуск продолжает работать.
+<Quiz id="quiz-sigmoid-value" q="Линейная оценка объекта равна 2. Чему примерно равна вероятность класса 1?">
+
+$\sigma(2) = 1 / (1 + e^{-2}) \approx 1 / 1.135 \approx 0.88$.
 
 </Quiz>
+
+<Quiz id="quiz-loss-value" q="Модель дала верному классу вероятность 0.01. Чему примерно равна потеря log-loss?">
+
+Потеря равна $-\ln 0.01 \approx 4.6$. Для сравнения, при вероятности 0.5 она равна около 0.69.
+
+</Quiz>
+
+</Level>
 
 ## Вопросы собеседования {#interview}
 
