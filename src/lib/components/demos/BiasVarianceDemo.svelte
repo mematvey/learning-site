@@ -11,6 +11,7 @@
 		DEG_MAX,
 		DEG_MIN,
 		DEFAULT_DEGREE,
+		SIGMA,
 		allStats,
 		describeRegime,
 		fitsOnGrid,
@@ -42,10 +43,13 @@
 	let curveW = $state(0);
 
 	/** Entity colour for each series: bias -> Q, variance -> K, sum -> V (the same tokens as `Ref`). */
-	const SERIES: { key: 'bias2' | 'variance' | 'sum'; label: string; entity: EntityId }[] = [
-		{ key: 'bias2', label: 'смещение²', entity: 'q' },
-		{ key: 'variance', label: 'разброс', entity: 'k' },
-		{ key: 'sum', label: 'сумма', entity: 'v' },
+	type SeriesKey = 'bias2' | 'variance' | 'sum' | 'train' | 'test';
+	const SERIES: { key: SeriesKey; label: string; entity: EntityId | null; cat: number }[] = [
+		{ key: 'bias2', label: 'смещение²', entity: 'q', cat: 1 },
+		{ key: 'variance', label: 'разброс', entity: 'k', cat: 2 },
+		{ key: 'sum', label: 'смещение² + разброс (без σ²)', entity: 'v', cat: 3 },
+		{ key: 'train', label: 'ошибка на обучении', entity: null, cat: 4 },
+		{ key: 'test', label: 'ошибка на отложенной выборке (≈ сумма + σ²)', entity: null, cat: 5 },
 	];
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
@@ -97,15 +101,15 @@
 	const cy = (v: number) =>
 		M.top + (1 - Math.min(v, CURVE_Y_MAX) / CURVE_Y_MAX) * (CURVE_H - M.top - M.bottom);
 
-	const curvePath = (key: 'bias2' | 'variance' | 'sum') =>
+	const curvePath = (key: SeriesKey) =>
 		polyline(STATS.map((s) => [cx(s.degree), cy(s[key])] as [number, number]));
 
 	const clipped = $derived(STATS.some((s) => s.sum > CURVE_Y_MAX));
 	const fitBottom = $derived(FIT_H - M.bottom);
 	const curveBottom = $derived(CURVE_H - M.bottom);
 
-	function dim(entity: EntityId): boolean {
-		return hl !== null && hl !== entity;
+	function dim(entity: EntityId | null): boolean {
+		return entity !== null && hl !== null && hl !== entity;
 	}
 </script>
 
@@ -187,8 +191,8 @@
 		<div class="bv-panel" bind:clientWidth={curveW}>
 			<p class="bv-title">Ошибка по степени</p>
 			<ul class="bv-legend" aria-hidden="true">
-				{#each SERIES as s, i (s.key)}
-					<li class="bv-key" class:is-dim={dim(s.entity)} style:--c={`var(--cat-${i + 1})`}>
+				{#each SERIES as s (s.key)}
+					<li class="bv-key" class:is-dim={dim(s.entity)} style:--c={`var(--cat-${s.cat})`}>
 						<span class="bv-sw"></span>{s.label}
 					</li>
 				{/each}
@@ -200,10 +204,15 @@
 				role="img"
 				aria-labelledby="bv-curve-title bv-curve-desc"
 			>
-				<title id="bv-curve-title">Смещение², разброс и их сумма по степени полинома</title>
+				<title id="bv-curve-title"
+					>Смещение², разброс, их сумма, ошибки на обучении и на отложенной выборке по степени
+					полинома</title
+				>
 				<desc id="bv-curve-desc"
 					>При росте степени смещение падает, разброс растёт. Текущая степень k = {degree}:
-					смещение² {current?.bias2.toFixed(3)}, разброс {current?.variance.toFixed(3)}.</desc
+					смещение² {current?.bias2.toFixed(3)}, разброс {current?.variance.toFixed(3)}, ошибка на
+					обучении {current?.train.toFixed(3)}, на отложенной выборке {current?.test.toFixed(3)}.
+					Пунктир на уровне σ² — шум.</desc
 				>
 				<defs>
 					<clipPath id="bv-clip-curve">
@@ -225,23 +234,33 @@
 					{/if}
 				{/each}
 				<line class="bv-axis" x1={M.left} x2={curveW - M.right} y1={curveBottom} y2={curveBottom} />
+				<line
+					class="bv-noise"
+					x1={M.left}
+					x2={curveW - M.right}
+					y1={cy(SIGMA * SIGMA)}
+					y2={cy(SIGMA * SIGMA)}
+				/>
+				<text class="bv-tick" x={curveW - M.right} y={cy(SIGMA * SIGMA) - 4} text-anchor="end"
+					>σ² = {(SIGMA * SIGMA).toFixed(2)}</text
+				>
 				<line class="bv-cur" x1={cx(degree)} x2={cx(degree)} y1={M.top} y2={curveBottom} />
 				<g clip-path="url(#bv-clip-curve)">
-					{#each SERIES as s, i (s.key)}
+					{#each SERIES as s (s.key)}
 						<path
 							class="bv-curve"
 							class:is-dim={dim(s.entity)}
-							style:--c={`var(--cat-${i + 1})`}
+							style:--c={`var(--cat-${s.cat})`}
 							d={curvePath(s.key)}
 						/>
 					{/each}
 				</g>
-				{#each SERIES as s, i (s.key)}
+				{#each SERIES as s (s.key)}
 					{@const v = current?.[s.key] ?? 0}
 					<circle
 						class="bv-dot"
 						class:is-dim={dim(s.entity)}
-						style:--c={`var(--cat-${i + 1})`}
+						style:--c={`var(--cat-${s.cat})`}
 						cx={cx(degree)}
 						cy={cy(v)}
 						r="4"
@@ -258,7 +277,9 @@
 		{#if current}
 			При k = {degree}: смещение² = {current.bias2.toFixed(3)}, разброс = {current.variance.toFixed(
 				3,
-			)}, сумма = {current.sum.toFixed(3)}. {regime}
+			)}, сумма = {current.sum.toFixed(3)} (без σ²), ошибка на обучении = {current.train.toFixed(
+				3,
+			)}, на отложенной выборке = {current.test.toFixed(3)}. {regime}
 		{/if}
 	</p>
 </figure>
@@ -383,6 +404,10 @@
 		stroke-width: 2;
 		stroke-linejoin: round;
 		transition: stroke-opacity var(--dur-fast) var(--ease);
+	}
+	.bv-noise {
+		stroke: var(--text-muted);
+		stroke-dasharray: 2 3;
 	}
 	.bv-dot {
 		fill: var(--c);

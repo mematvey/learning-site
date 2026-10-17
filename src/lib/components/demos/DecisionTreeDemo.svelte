@@ -7,6 +7,8 @@
 		DEFAULT_STATE,
 		DEPTH_MAX,
 		DEPTH_MIN,
+		TEST_DATASET,
+		accuracyByDepth,
 		type Criterion,
 		type DecisionTreeDemoState,
 		type SplitLine,
@@ -35,6 +37,7 @@
 	// The props only seed the initial state: the demo owns it afterwards.
 	let depth = $state(start.depth);
 	let criterion = $state<Criterion>(start.criterion);
+	let showTest = $state(true);
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
 
@@ -56,9 +59,23 @@
 	const cx = (p: number): string => (C_LEFT + p * (CW - C_LEFT - C_RIGHT)).toFixed(1);
 	const cy = (v: number): string => (C_TOP + (1 - v) * (CH - C_TOP - C_BOTTOM)).toFixed(1);
 
+	const byDepth = $derived(accuracyByDepth(criterion));
+	/* Accuracy-by-depth chart: y from 0.4 to 1. */
+	const A_MIN = 0.4;
+	const ax = (d: number): string => (C_LEFT + (d / DEPTH_MAX) * (CW - C_LEFT - C_RIGHT)).toFixed(1);
+	const ay = (v: number): string =>
+		(C_TOP + (1 - (v - A_MIN) / (1 - A_MIN)) * (CH - C_TOP - C_BOTTOM)).toFixed(1);
+	const trainPath = $derived(
+		byDepth.map((r, i) => `${i === 0 ? 'M' : 'L'}${ax(r.depth)} ${ay(r.train)}`).join(' '),
+	);
+	const testPath = $derived(
+		byDepth.map((r, i) => `${i === 0 ? 'M' : 'L'}${ax(r.depth)} ${ay(r.test)}`).join(' '),
+	);
+	const curAcc = $derived(byDepth[depth]);
+
 	const tree = $derived<TreeNode>(buildTree(DATASET, depth, criterion));
 	const parts = $derived(partition(tree));
-	const desc = $derived(describeTree(tree, DATASET, criterion));
+	const desc = $derived(describeTree(tree, DATASET, criterion, TEST_DATASET));
 	const critName = $derived(criterion === 'gini' ? 'Джини' : 'энтропия');
 
 	const cells = $derived(
@@ -169,6 +186,11 @@
 			{/each}
 		</div>
 
+		<label class="dt-check">
+			<input type="checkbox" bind:checked={showTest} />
+			<span>Отложенные точки</span>
+		</label>
+
 		<button type="button" class="dt-reset" onclick={reset}>Сбросить</button>
 	</div>
 
@@ -195,6 +217,15 @@
 						<title>x₁ = {p.x.toFixed(2)}, x₂ = {p.y.toFixed(2)}, класс {p.c}</title>
 					</circle>
 				{/each}
+				{#if showTest}
+					{#each TEST_DATASET as p, i (i)}
+						<circle class="dt-test-pt dt-c{p.c}" cx={px(p.x)} cy={py(p.y)} r="3">
+							<title
+								>отложенная точка: x₁ = {p.x.toFixed(2)}, x₂ = {p.y.toFixed(2)}, класс {p.c}</title
+							>
+						</circle>
+					{/each}
+				{/if}
 				<text class="dt-axis" x={PAD} y="11">x₂</text>
 				<text class="dt-axis" x={VB - PAD} y={H_VB - 4} text-anchor="end">x₁</text>
 			</svg>
@@ -239,6 +270,43 @@
 		</div>
 	</div>
 
+	<div class="dt-acc">
+		<p class="dt-panel-t">Точность по глубине: обучение и отложенные точки</p>
+		<svg
+			class="dt-svg"
+			viewBox="0 0 {CW} {CH}"
+			role="img"
+			aria-labelledby="dt-acc-title dt-acc-desc"
+		>
+			<title id="dt-acc-title">Точность на обучении и на отложенных точках по глубине</title>
+			<desc id="dt-acc-desc">
+				{#each byDepth as r (r.depth)}глубина {r.depth}: обучение {r.train.toFixed(2)}, отложенные {r.test.toFixed(
+						2,
+					)}.
+				{/each}
+			</desc>
+			<line class="dt-axis-line" x1={ax(0)} y1={ay(A_MIN)} x2={ax(DEPTH_MAX)} y2={ay(A_MIN)} />
+			<line class="dt-axis-line" x1={ax(0)} y1={ay(A_MIN)} x2={ax(0)} y2={ay(1)} />
+			{#each [0, 1, 2, 3, 4] as d (d)}
+				<text class="dt-tick" x={ax(d)} y={CH - 8} text-anchor="middle">{d}</text>
+			{/each}
+			{#each [0.5, 0.75, 1] as v (v)}
+				<text class="dt-tick" x={C_LEFT - 6} y={Number(ay(v)) + 4} text-anchor="end">{v}</text>
+			{/each}
+			<line class="dt-root" x1={ax(depth)} y1={ay(A_MIN)} x2={ax(depth)} y2={ay(1)} />
+			<path class="dt-curve is-active dt-acc-train" d={trainPath} />
+			<path class="dt-curve is-active dt-acc-test" d={testPath} />
+			{#if curAcc}
+				<circle class="dt-dot dt-acc-train-dot" cx={ax(depth)} cy={ay(curAcc.train)} r="4" />
+				<circle class="dt-dot dt-acc-test-dot" cx={ax(depth)} cy={ay(curAcc.test)} r="4" />
+			{/if}
+		</svg>
+		<p class="dt-legend">
+			<span class="dt-sw dt-sw-train"></span>обучение
+			<span class="dt-sw dt-sw-test"></span>отложенные точки ({TEST_DATASET.length} шт.), по оси x глубина
+		</p>
+	</div>
+
 	<div class="dt-tree-wrap">
 		<p class="dt-panel-t">Дерево</p>
 		<ul class="dt-tree dt-tree-root">
@@ -251,10 +319,12 @@
 	<div class="dt-watch">
 		<p class="dt-watch-t">Что заметить</p>
 		<p>
-			Каждый шаг добавляет уровень и режет плоскость ещё раз; взвешенная примесь листьев падает.
-			Джини и энтропия почти всегда выбирают одно и то же разбиение. На большой глубине листья
-			содержат по нескольку точек, и точность на обучении растёт: это уже запоминание данных, а не
-			закономерность.
+			Каждый уровень добавляет разбиений и не увеличивает взвешенную примесь листьев, но это не
+			значит, что картина улучшается: для Джини точность на обучении на глубинах 3 и 4 одна и та же,
+			около 97%, то есть четвёртый уровень ничего не даёт на обучении. Точность на отложенных точках
+			(контур, их можно скрыть) растёт до глубины 1–2 и затем падает: дерево глубины 4 запоминает
+			шум обучающих точек. Критерии Джини и энтропия на этих данных дают близкие разбиения, но не
+			всегда одинаковые.
 		</p>
 	</div>
 </figure>
@@ -414,6 +484,48 @@
 	}
 	.dt-pt.dt-c1 {
 		fill: var(--cat-2);
+	}
+	.dt-test-pt {
+		fill: none;
+		stroke-width: 1.5;
+	}
+	.dt-test-pt.dt-c0 {
+		stroke: var(--cat-1);
+	}
+	.dt-test-pt.dt-c1 {
+		stroke: var(--cat-2);
+	}
+	.dt-check {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		color: var(--text-muted);
+		cursor: pointer;
+	}
+	.dt-acc {
+		margin-top: var(--space-6);
+	}
+	.dt-acc-train,
+	.dt-sw-train,
+	.dt-acc-train-dot {
+		stroke: var(--cat-3);
+	}
+	.dt-acc-test,
+	.dt-sw-test,
+	.dt-acc-test-dot {
+		stroke: var(--cat-5);
+	}
+	.dt-sw-train {
+		background: var(--cat-3);
+	}
+	.dt-sw-test {
+		background: var(--cat-5);
+	}
+	.dt-dot.dt-acc-train-dot {
+		fill: var(--cat-3);
+	}
+	.dt-dot.dt-acc-test-dot {
+		fill: var(--cat-5);
 	}
 	.dt-axis,
 	.dt-tick {

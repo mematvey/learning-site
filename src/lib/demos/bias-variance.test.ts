@@ -132,3 +132,20 @@ describe('snapDegree and describeRegime', () => {
 		expect(describeRegime({ bias2: 1, variance: 0.8 })).toMatch(/сопоставим/);
 	});
 });
+
+describe('train and held-out error', () => {
+	const stats = allStats(makeDatasets());
+	it('train error falls with degree while held-out error stays above the noise floor', () => {
+		const first = stats[0];
+		const last = stats[stats.length - 1];
+		expect(last!.train).toBeLessThan(first!.train);
+		for (const s of stats) expect(s.test).toBeGreaterThan(s.noise * 0.9);
+	});
+	it('held-out error is close to bias2 + variance + sigma^2', () => {
+		for (const s of stats.slice(0, 8)) expect(s.test).toBeCloseTo(s.sum + s.noise, 1);
+	});
+	it('held-out error exceeds train error at high degree', () => {
+		const last = stats[stats.length - 1];
+		expect(last!.test).toBeGreaterThan(last!.train);
+	});
+});

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
 	DATASET,
+	TEST_DATASET,
+	accuracyByDepth,
 	MAX_DEPTH,
 	accuracy,
 	bestSplit,
@@ -164,5 +166,19 @@ describe('dataset and helpers', () => {
 		expect(snapDepth(-3)).toBe(0);
 		expect(snapDepth(99)).toBe(MAX_DEPTH);
 		expect(snapDepth(Number.NaN)).toBe(2);
+	});
+});
+
+describe('held-out points', () => {
+	it('are fixed and independent of the training set', () => {
+		expect(TEST_DATASET.length).toBe(100);
+		expect(TEST_DATASET.some((p) => p.c === 0) && TEST_DATASET.some((p) => p.c === 1)).toBe(true);
+	});
+
+	it('gini: train accuracy is 0.97 at depths 3 and 4, held-out accuracy at depth 4 is below depth 2', () => {
+		const rows = accuracyByDepth('gini');
+		expect(rows[3]?.train).toBeCloseTo(rows[4]?.train ?? 0, 10);
+		expect(rows[4]?.train).toBeGreaterThan(0.96);
+		expect(rows[4]?.test).toBeLessThan(rows[2]?.test ?? 0);
 	});
 });
