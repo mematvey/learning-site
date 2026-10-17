@@ -33,3 +33,8 @@
   term_en: row-major order
   definition: Способ хранения многомерного массива, при котором элементы одной строки лежат в памяти подряд, а строки идут одна за другой.
   chapter: cs/memory-cache
+- id: cache-lru
+  term: вытеснение LRU
+  term_en: least recently used (LRU)
+  definition: Правило кэша - когда место кончилось, выбросить линию, к которой дольше всего не обращались.
+  chapter: cs/memory-cache
