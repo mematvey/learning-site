@@ -43,3 +43,28 @@ def test_exact_match_decides_with_distance_weights():
     assert uniform.tolist() == [0], f"uniform: expected [0], got {uniform.tolist()}"
     pred = knn_predict(X_TRAIN, Y_TRAIN, np.array([[3.0]]), k=3, weights="distance")
     assert pred.tolist() == [1], f"distance: expected [1], got {pred.tolist()}"
+
+
+def test_svm_predict_signs_and_zero_is_positive():
+    X = np.array([[1.0, 0.0], [2.0, 0.0], [0.0, 5.0]])
+    # f = x1 - 1: f(1,0) = 0 -> +1, f(2,0) = 1 -> +1, f(0,5) = -1 -> -1
+    pred = svm_predict(X, np.array([1.0, 0.0]), -1.0)
+    assert pred.tolist() == [1, 1, -1], f"expected [1, 1, -1], got {pred.tolist()}"
+
+
+def test_svm_margin_width_is_two_over_norm():
+    # ||(3, 4)|| = 5, so the full margin width is 2 / 5 = 0.4
+    assert_close(
+        svm_margin_width(np.array([3.0, 4.0])), 0.4, atol=1e-12, message="width of w=(3,4)"
+    )
+
+
+def test_svm_feasible_checks_the_margin_edges():
+    X = np.array([[0.0], [2.0]])
+    y = np.array([-1, 1])
+    # f = x - 1 gives y*f = 1 and 1: both points sit exactly on the margin edges
+    assert svm_is_feasible(X, y, np.array([1.0]), -1.0), "points on the edges are feasible"
+    # f = 0.5 x - 1 gives y*f = 1 and 0: the second point is inside the margin
+    assert not svm_is_feasible(X, y, np.array([0.5]), -1.0), (
+        "a point inside the margin is not feasible"
+    )

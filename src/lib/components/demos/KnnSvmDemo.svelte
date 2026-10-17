@@ -14,10 +14,17 @@
 		K_MAX,
 		K_MIN,
 		applyPatch,
+		bestC,
+		bestK,
 		buildClassifier,
 		classifyGrid,
 		describeClassifier,
+		levelLine,
+		linearWeights,
 		makeDataset,
+		makeValidation,
+		marginBandGrid,
+		marginWidth,
 		planeToPx,
 		regionPath,
 		type KnnSvmDemoState,
@@ -38,19 +45,41 @@
 	/** Resolution of the decision-region grid. */
 	const GRID_N = 40;
 	const points = makeDataset();
+	const validation = makeValidation();
 	const C_INDEX_MAX = C_VALUES.length - 1;
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
 	const highlight = getContext<HighlightContext | undefined>(HIGHLIGHT_CONTEXT);
 	const hl = $derived(highlight?.hl ?? null);
 
-	const clf = $derived(buildClassifier(st, points));
+	const clf = $derived(buildClassifier(st, points, validation));
 	const grid = $derived(classifyGrid(clf.predict, GRID_N));
 	const regions0 = $derived(regionPath(grid, GRID_N, 0, SIZE));
 	const regions1 = $derived(regionPath(grid, GRID_N, 1, SIZE));
 	const supportSet = $derived(new Set(clf.support));
 	const isSvm = $derived(st.model === 'svm');
-	const desc = $derived(describeClassifier(st, clf, points.length));
+	const desc = $derived(describeClassifier(st, clf, points.length, validation.length));
+	/** Margin band |f| < 1 of an SVM: the strip between the lines f = ±1. */
+	const bandPath = $derived(
+		clf.svm ? regionPath(marginBandGrid(clf.svm, GRID_N), GRID_N, 1, SIZE) : '',
+	);
+	const lin = $derived(clf.svm ? linearWeights(clf.svm) : null);
+	const lines = $derived(
+		lin
+			? [-1, 0, 1].flatMap((level) => {
+					const seg = levelLine(lin, level);
+					if (!seg) return [];
+					const a = planeToPx(seg[0].x, seg[0].y, SIZE);
+					const b = planeToPx(seg[1].x, seg[1].y, SIZE);
+					return [{ level, x1: a.px, y1: a.py, x2: b.px, y2: b.py }];
+				})
+			: [],
+	);
+	const width = $derived(clf.svm ? marginWidth(clf.svm) : null);
+	/** Value of k (kNN) or C (SVM) with the fewest errors on the validation points. */
+	const choice = $derived(
+		isSvm ? bestC(points, validation, st.kernel, st.gamma) : bestK(points, validation),
+	);
 	const cIndex = $derived(C_VALUES.indexOf(st.C as (typeof C_VALUES)[number]));
 
 	function apply(patch: Partial<KnnSvmDemoState>): void {
@@ -59,6 +88,10 @@
 
 	function reset(): void {
 		st = { ...START };
+	}
+
+	function pickBest(): void {
+		apply(isSvm ? { C: choice.value } : { k: choice.value });
 	}
 
 	function onCIndex(e: Event): void {
@@ -162,6 +195,19 @@
 			<rect class="kn-frame" x="0" y="0" width={SIZE} height={SIZE} />
 			<path class="kn-region kn-region-0" d={regions0} />
 			<path class="kn-region kn-region-1" d={regions1} />
+			{#if isSvm}
+				<path class="kn-band" d={bandPath} />
+				{#each lines as l (l.level)}
+					<line
+						class="kn-line"
+						class:kn-line-0={l.level === 0}
+						x1={l.x1.toFixed(1)}
+						y1={l.y1.toFixed(1)}
+						x2={l.x2.toFixed(1)}
+						y2={l.y2.toFixed(1)}
+					/>
+				{/each}
+			{/if}
 			{#each points as p, i (i)}
 				{@const pos = planeToPx(p.x, p.y, SIZE)}
 				{@const isSv = supportSet.has(i)}
@@ -187,9 +233,25 @@
 		<dd>{isSvm ? 'SVM' : 'kNN'}</dd>
 		<dt>Ошибок на обучении</dt>
 		<dd>{clf.trainErrors} из {points.length}</dd>
+		<dt>Ошибок на контроле</dt>
+		<dd>{clf.valErrors} из {validation.length}</dd>
+		<dt>Лучшее {isSvm ? 'C' : 'k'} по контролю</dt>
+		<dd>
+			{choice.value} ({choice.valErrors} ош.)
+			<button
+				type="button"
+				class="kn-pick"
+				onclick={pickBest}
+				disabled={choice.value === (isSvm ? st.C : st.k)}>выбрать</button
+			>
+		</dd>
 		{#if isSvm}
 			<dt>Опорных векторов</dt>
 			<dd>{clf.support.length}</dd>
+			{#if width !== null}
+				<dt>Ширина зазора 2/‖w‖</dt>
+				<dd>{width.toFixed(2)}</dd>
+			{/if}
 		{/if}
 	</dl>
 
@@ -197,15 +259,19 @@
 		<p class="kn-note-t">Что заметить</p>
 		{#if isSvm}
 			<p>
-				Опорные векторы обведены кольцом: только они задают границу. Большое C жёстче наказывает
-				ошибки и подгоняет границу под обучающую выборку, малое C даёт более широкий зазор. RBF
-				изгибает границу и обходит островок, линейное ядро не может.
+				Опорные векторы обведены кольцом: только они задают границу. Серая полоса это зазор |f| &lt;
+				1, её края линии f = ±1 (для линейного ядра они нарисованы отрезками, для RBF видна только
+				полоса). Большое C жёстче наказывает ошибки, полоса сужается, и граница подгоняется под
+				обучающую выборку; малое C даёт более широкий зазор. RBF изгибает границу и обходит
+				островок, линейное ядро не может. Сравните ошибки на обучении и на контроле и нажмите
+				«выбрать», чтобы взять C с лучшим контролем.
 			</p>
 		{:else}
 			<p>
-				При k = 1 граница повторяет каждую точку. Чем больше k, тем она глаже, но мелкие детали
-				острова теряются. Ошибки на обучении здесь не говорят о качестве: точка сама входит в число
-				своих соседей.
+				При k = 1 граница повторяет каждую точку, и ошибок на обучении нет: точка сама входит в
+				число своих соседей. На контрольных точках ошибки есть при любом k. Чем больше k, тем
+				граница глаже, но мелкие детали острова теряются. Подбирайте k по контролю, а не по
+				обучению: кнопка «выбрать» берёт k с наименьшим числом ошибок на контроле.
 			</p>
 		{/if}
 	</div>
@@ -357,6 +423,38 @@
 	}
 	.kn-point-1 {
 		fill: var(--cat-2);
+	}
+	.kn-band {
+		fill: var(--text);
+		fill-opacity: 0.1;
+	}
+	.kn-line {
+		stroke: var(--text-muted);
+		stroke-width: 1.2;
+		stroke-dasharray: 5 4;
+	}
+	.kn-line-0 {
+		stroke: var(--text);
+		stroke-width: 1.6;
+		stroke-dasharray: none;
+	}
+	.kn-pick {
+		margin-left: var(--space-2);
+		padding: 0 var(--space-2);
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
+		background: var(--surface-2);
+		color: var(--text);
+		font-size: 12px;
+		cursor: pointer;
+	}
+	.kn-pick:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+	.kn-pick:focus-visible {
+		outline: 2px solid var(--topic);
+		outline-offset: 2px;
 	}
 	.kn-sv {
 		fill: none;

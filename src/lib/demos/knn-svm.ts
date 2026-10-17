@@ -31,6 +31,8 @@ export interface Point {
 /** The plane shown by the demo is [-DOMAIN, DOMAIN]². */
 export const DOMAIN = 1.6;
 export const DATA_SEED = 2026;
+/** Seed of the held-out validation points drawn from the same blobs. */
+export const VAL_SEED = 2027;
 export const K_MIN = 1;
 export const K_MAX = 15;
 /** Allowed values of C, shown as a discrete slider. */
@@ -143,6 +145,11 @@ export function makeDataset(seed: number = DATA_SEED): Point[] {
 		}
 	}
 	return points;
+}
+
+/** Held-out points from the same distribution as the training set: used to pick k and C. */
+export function makeValidation(): Point[] {
+	return makeDataset(VAL_SEED);
 }
 
 /** Majority vote of the k nearest points. A tie of votes goes to the nearest point's class. */
@@ -312,23 +319,134 @@ export interface Classifier {
 	support: number[];
 	/** Number of training points the classifier gets wrong. */
 	trainErrors: number;
+	/** Number of validation points the classifier gets wrong (0 when no validation set is given). */
+	valErrors: number;
+	/** The trained SVM, when the model is an SVM. */
+	svm?: SvmModel;
+}
+
+function countErrors(predict: (x: number, y: number) => 0 | 1, points: readonly Point[]): number {
+	let errors = 0;
+	for (const p of points) if (predict(p.x, p.y) !== p.label) errors++;
+	return errors;
 }
 
 /** Trains (SVM) or prepares (kNN) the classifier of the state, and counts training errors. */
-export function buildClassifier(state: KnnSvmDemoState, points: readonly Point[]): Classifier {
+export function buildClassifier(
+	state: KnnSvmDemoState,
+	points: readonly Point[],
+	validation: readonly Point[] = [],
+): Classifier {
 	let predict: (x: number, y: number) => 0 | 1;
 	let support: number[] = [];
+	let svm: SvmModel | undefined;
 	if (state.model === 'knn') {
 		const k = state.k;
 		predict = (x, y) => knnPredict(points, x, y, k);
 	} else {
 		const model = fitSvm(points, state.C, state.kernel, state.gamma);
 		support = model.support;
+		svm = model;
 		predict = (x, y) => (svmDecision(model, x, y) >= 0 ? 1 : 0);
 	}
-	let trainErrors = 0;
-	for (const p of points) if (predict(p.x, p.y) !== p.label) trainErrors++;
-	return { predict, support, trainErrors };
+	const trainErrors = countErrors(predict, points);
+	const valErrors = countErrors(predict, validation);
+	return svm
+		? { predict, support, trainErrors, valErrors, svm }
+		: { predict, support, trainErrors, valErrors };
+}
+
+export interface Choice {
+	/** The chosen value of k or C. */
+	value: number;
+	/** Validation errors of the chosen value. */
+	valErrors: number;
+}
+
+/** k in K_MIN..K_MAX with the fewest validation errors; a tie goes to the larger (smoother) k. */
+export function bestK(points: readonly Point[], validation: readonly Point[]): Choice {
+	let best: Choice = { value: K_MIN, valErrors: Infinity };
+	for (let k = K_MIN; k <= K_MAX; k++) {
+		const e = countErrors((x, y) => knnPredict(points, x, y, k), validation);
+		if (e <= best.valErrors) best = { value: k, valErrors: e };
+	}
+	return best;
+}
+
+/** C from C_VALUES with the fewest validation errors; a tie goes to the smaller C (wider margin). */
+export function bestC(
+	points: readonly Point[],
+	validation: readonly Point[],
+	kernel: KernelKind,
+	gamma: number,
+): Choice {
+	let best: Choice = { value: C_VALUES[0], valErrors: Infinity };
+	for (const C of C_VALUES) {
+		const model = fitSvm(points, C, kernel, gamma);
+		const e = countErrors((x, y) => (svmDecision(model, x, y) >= 0 ? 1 : 0), validation);
+		if (e < best.valErrors) best = { value: C, valErrors: e };
+	}
+	return best;
+}
+
+/** Weights of a linear SVM: f(x) = w·x + b with w = Σ α_i y_i x_i. Null for the RBF kernel. */
+export function linearWeights(model: SvmModel): { wx: number; wy: number; b: number } | null {
+	if (model.kernel !== 'linear') return null;
+	let wx = 0;
+	let wy = 0;
+	for (const i of model.support) {
+		const p = model.points[i];
+		if (!p) continue;
+		const c = (model.alpha[i] ?? 0) * (model.y[i] ?? 0);
+		wx += c * p.x;
+		wy += c * p.y;
+	}
+	return { wx, wy, b: model.b };
+}
+
+/** Full width of the margin band, 2/‖w‖, of a linear SVM. Null when w is zero or the kernel is RBF. */
+export function marginWidth(model: SvmModel): number | null {
+	const w = linearWeights(model);
+	if (!w) return null;
+	const norm = Math.hypot(w.wx, w.wy);
+	return norm > 1e-9 ? 2 / norm : null;
+}
+
+/**
+ * Endpoints (plane coordinates) of the line w·x + b = level clipped to the plane square,
+ * or null when the line does not cross it. level = 0 is the boundary, ±1 are the margin lines.
+ */
+export function levelLine(
+	w: { wx: number; wy: number; b: number },
+	level: number,
+): [{ x: number; y: number }, { x: number; y: number }] | null {
+	const pts: { x: number; y: number }[] = [];
+	const add = (x: number, y: number): void => {
+		if (Math.abs(x) <= DOMAIN + 1e-9 && Math.abs(y) <= DOMAIN + 1e-9) pts.push({ x, y });
+	};
+	if (Math.abs(w.wy) > 1e-9) {
+		for (const x of [-DOMAIN, DOMAIN]) add(x, (level - w.b - w.wx * x) / w.wy);
+	}
+	if (Math.abs(w.wx) > 1e-9) {
+		for (const y of [-DOMAIN, DOMAIN]) add((level - w.b - w.wy * y) / w.wx, y);
+	}
+	const a = pts[0];
+	const b = pts.find((q) => a !== undefined && Math.hypot(q.x - a.x, q.y - a.y) > 1e-6);
+	return a && b ? [a, b] : null;
+}
+
+/** Cells of an n×n grid (row 0 at the top) where the SVM is inside the margin band |f| < 1. */
+export function marginBandGrid(model: SvmModel, n: number): Uint8Array {
+	const cells = new Uint8Array(n * n);
+	const step = (2 * DOMAIN) / n;
+	for (let r = 0; r < n; r++) {
+		const y = DOMAIN - (r + 0.5) * step;
+		for (let c = 0; c < n; c++) {
+			const x = -DOMAIN + (c + 0.5) * step;
+			cells[r * n + c] = Math.abs(svmDecision(model, x, y)) < 1 ? 1 : 0;
+		}
+	}
+	return cells;
 }
 
 /**
@@ -382,8 +500,15 @@ export function regionPath(cells: Uint8Array, n: number, cls: 0 | 1, size: numbe
 }
 
 /** Text of the description line under the chart. Numbers are computed, not typed. */
-export function describeClassifier(state: KnnSvmDemoState, clf: Classifier, total: number): string {
-	const errors = `Ошибок на обучающей выборке: ${clf.trainErrors} из ${total}.`;
+export function describeClassifier(
+	state: KnnSvmDemoState,
+	clf: Classifier,
+	total: number,
+	validationTotal = 0,
+): string {
+	const errors =
+		`Ошибок на обучающей выборке: ${clf.trainErrors} из ${total}` +
+		(validationTotal > 0 ? `, на контрольной: ${clf.valErrors} из ${validationTotal}.` : '.');
 	if (state.model === 'knn') {
 		return `kNN, k = ${state.k}: класс точки определяется голосованием ${state.k} ближайших соседей. ${errors}`;
 	}
