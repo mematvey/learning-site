@@ -1,0 +1,9 @@
+id: stats-classical-probability-2
+title: Формула Байеса в коде
+chapter: stats/classical-probability-2
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+timeout: 10
+packages: []
