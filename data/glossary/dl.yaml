@@ -6,6 +6,16 @@
 - id: softmax
   term: softmax
   definition: Нормировка вектора оценок в вероятности; каждый элемент становится положительным, а сумма всех равна единице.
+  chapter: dl/softmax
+- id: attn-token
+  term: токен
+  term_en: token
+  definition: Единица входа модели (слово, часть слова или символ), которой соответствует один вектор и одна строка в матрицах внимания.
+  chapter: dl/attention
+- id: attn-mask
+  term: маска внимания
+  term_en: attention mask
+  definition: Булева или числовая таблица, которая запрещает некоторым парам запрос–ключ участвовать во внимании; запрещённые оценки заменяются на −∞ до softmax.
   chapter: dl/attention
 - id: query
   term: запрос
