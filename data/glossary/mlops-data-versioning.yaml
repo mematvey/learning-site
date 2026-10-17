@@ -28,3 +28,18 @@
   term_en: reproducibility
   definition: 'Свойство эксперимента: при одинаковых коде, данных, параметрах и seed повторный запуск даёт тот же результат.'
   chapter: mlops/data-versioning
+- id: dvc
+  term: DVC
+  term_en: Data Version Control
+  definition: Программа командной строки для версионирования данных; хранит в Git файлы-указатели, а сами данные в кеше и удалённом хранилище.
+  chapter: mlops/data-versioning
+- id: git-lfs
+  term: Git LFS
+  term_en: Git Large File Storage
+  definition: Расширение Git, которое хранит большие файлы на отдельном сервере, а в репозитории оставляет текстовый указатель.
+  chapter: mlops/data-versioning
+- id: manifest
+  term: манифест набора данных
+  term_en: dataset manifest
+  definition: Список пар «путь и хеш содержимого» для всех файлов набора, отсортированный по пути; хеш манифеста служит версией набора.
+  chapter: mlops/data-versioning
