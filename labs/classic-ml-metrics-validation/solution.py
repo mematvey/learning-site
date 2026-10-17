@@ -74,3 +74,16 @@ def roc_auc(y_true, scores):
     below_or_equal = np.searchsorted(neg, pos, side="right")
     wins = below.sum() + 0.5 * (below_or_equal - below).sum()
     return float(wins / (pos.size * neg.size))
+
+
+def standardize_with_train_stats(x_train, x_test):
+    """Standardize both parts with the mean and std of the training part only.
+
+    Returns (train_scaled, test_scaled). A column with zero std is only centered.
+    """
+    x_train = np.asarray(x_train, dtype=np.float64)
+    x_test = np.asarray(x_test, dtype=np.float64)
+    mean = x_train.mean(axis=0)
+    std = x_train.std(axis=0)
+    std = np.where(std > 0, std, 1.0)
+    return (x_train - mean) / std, (x_test - mean) / std

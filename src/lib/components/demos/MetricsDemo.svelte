@@ -4,7 +4,11 @@
 	import {
 		CHART_PAD,
 		CHART_SIZE,
+		DEFAULT_PREVALENCE,
 		DEFAULT_THRESHOLD,
+		PREVALENCE_MAX,
+		PREVALENCE_MIN,
+		PREVALENCE_STEP,
 		THRESHOLD_MAX,
 		THRESHOLD_MIN,
 		THRESHOLD_STEP,
@@ -18,44 +22,53 @@
 		prevalence,
 		rocAuc,
 		rocCurve,
+		snapPrevalence,
 		snapThreshold,
+		withPrevalence,
 		toPixel,
 	} from '$lib/demos/metrics-validation';
 
 	/** Threshold demo: confusion matrix, metrics, ROC and PR curves. Registers itself as demo `metrics-validation`. */
 	let { initial }: { initial?: Partial<MetricsDemoState> } = $props();
 
-	/** Fixed sample: the curves do not depend on the threshold, only the marker does. */
-	const samples = makeSamples();
-	const rocPts = rocCurve(samples);
-	const prPts = prCurve(samples);
-	const auc = rocAuc(samples);
-	const base = prevalence(samples);
+	/** Fixed pool; the prevalence slider keeps a part of its positives. The curves do not depend on the threshold. */
+	const pool = makeSamples();
 
 	// The props only seed the initial state: the demo owns it afterwards.
 	/* svelte-ignore state_referenced_locally */
 	let threshold = $state(snapThreshold(initial?.threshold ?? DEFAULT_THRESHOLD));
 
+	/* svelte-ignore state_referenced_locally */
+	let prev = $state(snapPrevalence(initial?.prevalence ?? DEFAULT_PREVALENCE));
+
+	const samples = $derived(withPrevalence(pool, prev));
+	const rocPts = $derived(rocCurve(samples));
+	const prPts = $derived(prCurve(samples));
+	const auc = $derived(rocAuc(samples));
+	const base = $derived(prevalence(samples));
+
 	const c = $derived(confusion(samples, threshold));
 	const m = $derived(metrics(c));
 	const description = $derived(describeState(c, m, threshold));
 
-	const rocD = curvePath(rocPts);
-	const prD = curvePath(prPts);
+	const rocD = $derived(curvePath(rocPts));
+	const prD = $derived(curvePath(prPts));
 	const rocMark = $derived(toPixel({ x: m.fpr, y: m.recall }));
 	const prMark = $derived(toPixel({ x: m.recall, y: m.precision }));
 	const axis0 = CHART_PAD;
 	const axis1 = CHART_SIZE - CHART_PAD;
 	const span = axis1 - axis0;
-	const baseY = toPixel({ x: 0, y: base }).py;
+	const baseY = $derived(toPixel({ x: 0, y: base }).py);
 	const fmt = (v: number): string => v.toFixed(2);
 
 	function apply(patch: Partial<MetricsDemoState>): void {
 		if (typeof patch.threshold === 'number') threshold = snapThreshold(patch.threshold);
+		if (typeof patch.prevalence === 'number') prev = snapPrevalence(patch.prevalence);
 	}
 
 	function reset(): void {
 		threshold = DEFAULT_THRESHOLD;
+		prev = DEFAULT_PREVALENCE;
 	}
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
@@ -81,6 +94,20 @@
 				oninput={(e) => (threshold = snapThreshold(Number(e.currentTarget.value)))}
 			/>
 			<output class="mv-val">{fmt(threshold)}</output>
+		</label>
+		<label class="mv-ctl">
+			<span class="mv-label">доля положительных</span>
+			<input
+				class="mv-range"
+				type="range"
+				min={PREVALENCE_MIN}
+				max={PREVALENCE_MAX}
+				step={PREVALENCE_STEP}
+				value={prev}
+				aria-describedby="mv-desc"
+				oninput={(e) => (prev = snapPrevalence(Number(e.currentTarget.value)))}
+			/>
+			<output class="mv-val">{Math.round(base * 100)}%</output>
 		</label>
 		<button type="button" class="mv-btn" onclick={reset}>Сброс</button>
 	</div>
@@ -214,8 +241,8 @@
 		<ul>
 			<li>
 				При низком пороге полнота почти 1, но ложных срабатываний много. При высоком порог почти
-				ничего не помечает: полнота падает, а доля верных ответов приближается к 0.8, то есть к доле
-				отрицательных.
+				ничего не помечает: полнота падает, а доля верных ответов приближается к доле отрицательных
+				({fmt(1 - base)} при текущей доле положительных).
 			</li>
 			<li>
 				Точность и полнота тянут порог в разные стороны. F1 показывает одно число, но скрывает,
@@ -226,8 +253,9 @@
 				Порог выбирают отдельно от качества ранжирования.
 			</li>
 			<li>
-				Базовая линия PR-кривой равна доле положительных. Кривая выше неё лучше случайного
-				угадывания, и при дисбалансе это различие видно лучше, чем на ROC-кривой.
+				Базовая линия PR-кривой равна доле положительных. Уменьшите долю положительных: ROC-кривая и
+				ROC AUC почти не меняются, а PR-кривая проседает вместе с базовой линией. Поэтому при
+				дисбалансе PR-кривая честнее показывает слабую модель.
 			</li>
 		</ul>
 	</div>

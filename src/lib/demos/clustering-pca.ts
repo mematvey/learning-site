@@ -204,6 +204,27 @@ export function runKmeans(
 	return cur;
 }
 
+export interface ElbowPoint {
+	k: number;
+	/** Smallest inertia over `starts` k-means++ starts. */
+	j: number;
+}
+
+/** Inertia J of the converged k-means for every k from K_MIN to K_MAX: the data of the elbow plot. */
+export function elbowCurve(points: readonly Point[], starts: number = 6): ElbowPoint[] {
+	const out: ElbowPoint[] = [];
+	for (let k = K_MIN; k <= K_MAX; k++) {
+		let best = Infinity;
+		for (let t = 0; t < starts; t++) {
+			const s = runKmeans(points, initState(points, k, START_SEED + t));
+			const labels = s.labels ?? assign(points, s.centers);
+			best = Math.min(best, inertia(points, s.centers, labels));
+		}
+		out.push({ k, j: best });
+	}
+	return out;
+}
+
 export interface Pca2 {
 	/** Mean of the cloud. */
 	mean: [number, number];

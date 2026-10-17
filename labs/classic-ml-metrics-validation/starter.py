@@ -47,3 +47,14 @@ def roc_auc(y_true, scores):
     # TODO: compare every positive score with every negative score
     # TODO: count ties as one half
     raise NotImplementedError
+
+
+def standardize_with_train_stats(x_train, x_test):
+    """Standardize both parts with the mean and std of the training part only.
+
+    Returns (train_scaled, test_scaled). A column with zero std is only centered.
+    Using the test part to compute the statistics would be data leakage.
+    """
+    # TODO: mean and std per column from x_train only
+    # TODO: apply the same shift and scale to both parts
+    raise NotImplementedError

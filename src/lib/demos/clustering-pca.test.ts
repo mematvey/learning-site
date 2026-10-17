@@ -163,3 +163,14 @@ describe('pca2', () => {
 		expect(p.axes[0].every(Number.isFinite)).toBe(true);
 	});
 });
+
+describe('elbow curve', () => {
+	it('has one point per k and falls as k grows', async () => {
+		const { elbowCurve, makeCloud, K_MIN, K_MAX } = await import('./clustering-pca');
+		const e = elbowCurve(makeCloud());
+		expect(e).toHaveLength(K_MAX - K_MIN + 1);
+		for (let i = 1; i < e.length; i++) expect(e[i]!.j).toBeLessThan(e[i - 1]!.j);
+		// The cloud has three groups: the drop up to k = 3 is much larger than after it.
+		expect(e[0]!.j - e[1]!.j).toBeGreaterThan(3 * (e[1]!.j - e[2]!.j));
+	});
+});

@@ -87,3 +87,22 @@ def test_roc_auc_tie_counts_as_half():
         rtol=1e-9,
         message="a tied pair must count as one half",
     )
+
+
+def test_standardize_uses_only_train_statistics():
+    # Train column [0, 2] has mean 1 and std 1; the test value 5 must be scaled with them.
+    train, test = standardize_with_train_stats([[0.0], [2.0]], [[5.0]])
+    assert_close(
+        train,
+        [[-1.0], [1.0]],
+        atol=1e-9,
+        rtol=1e-9,
+        message="train part must have zero mean and unit std",
+    )
+    assert_close(
+        test,
+        [[4.0]],
+        atol=1e-9,
+        rtol=1e-9,
+        message="test part must use the train mean and std, not its own",
+    )

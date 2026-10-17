@@ -18,6 +18,8 @@ export interface Sample {
 export interface MetricsDemoState {
 	/** Predict positive when score >= threshold. */
 	threshold: number;
+	/** Target share of positives, from PREVALENCE_MIN to PREVALENCE_MAX. */
+	prevalence: number;
 }
 
 export interface Confusion {
@@ -55,6 +57,12 @@ export const THRESHOLD_MAX = 0.95;
 export const THRESHOLD_STEP = 0.05;
 export const DEFAULT_THRESHOLD = 0.5;
 
+/** Share of positives the slider can set. The default sample has 20% (N_POS of N_POS + N_NEG). */
+export const PREVALENCE_MIN = 0.01;
+export const PREVALENCE_MAX = 0.2;
+export const PREVALENCE_STEP = 0.01;
+export const DEFAULT_PREVALENCE = 0.2;
+
 /** Square chart side and inner padding, in px (the SVG viewBox). */
 export const CHART_SIZE = 260;
 export const CHART_PAD = 34;
@@ -86,6 +94,26 @@ function ratio(num: number, den: number): number {
 export function snapThreshold(t: number): number {
 	if (!Number.isFinite(t)) return DEFAULT_THRESHOLD;
 	return Math.round(clamp(t, THRESHOLD_MIN, THRESHOLD_MAX) / THRESHOLD_STEP) * THRESHOLD_STEP;
+}
+
+/** Rounds to the prevalence slider step and clamps to its range. Non-finite input gives the default. */
+export function snapPrevalence(p: number): number {
+	if (!Number.isFinite(p)) return DEFAULT_PREVALENCE;
+	const snapped = Math.round(clamp(p, PREVALENCE_MIN, PREVALENCE_MAX) / PREVALENCE_STEP);
+	return Number((snapped * PREVALENCE_STEP).toFixed(2));
+}
+
+/**
+ * Keeps all negatives and the first k positives so that the share of positives is close to `target`.
+ * The score distributions do not change, so the ROC curve stays the same up to sampling noise,
+ * while the PR curve moves down as the positive class gets rarer.
+ */
+export function withPrevalence(samples: readonly Sample[], target: number): Sample[] {
+	const neg = samples.filter((s) => s.label === 0);
+	const pos = samples.filter((s) => s.label === 1);
+	const p = clamp(target, PREVALENCE_MIN, 0.99);
+	const k = clamp(Math.round((p * neg.length) / (1 - p)), 1, pos.length);
+	return [...pos.slice(0, k), ...neg];
 }
 
 /** Fixed sample of N_POS positives and N_NEG negatives with overlapping score distributions. */
