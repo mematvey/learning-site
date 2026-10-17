@@ -9,6 +9,7 @@
 	import {
 		DEFAULT_COUNT,
 		DEFAULT_HASH,
+		DEFAULT_PICK,
 		DEFAULT_STRATEGY,
 		N_MAX,
 		buildTable,
@@ -17,6 +18,8 @@
 		isHashKind,
 		isStrategy,
 		snapCount,
+		snapPick,
+		universalPair,
 		type HashKind,
 		type HashTableDemoState,
 		type Strategy,
@@ -30,25 +33,30 @@
 	const start: HashTableDemoState = {
 		strategy: isStrategy(initial?.strategy) ? initial.strategy : DEFAULT_STRATEGY,
 		hash: isHashKind(initial?.hash) ? initial.hash : DEFAULT_HASH,
+		pick: snapPick(initial?.pick ?? DEFAULT_PICK),
 		count: snapCount(initial?.count ?? DEFAULT_COUNT),
 	};
 
 	/* The props only seed the initial state: the demo owns it afterwards. */
 	let strategy = $state<Strategy>(start.strategy);
 	let hash = $state<HashKind>(start.hash);
+	let pick = $state(start.pick);
 	let count = $state(start.count);
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
 	const highlight = getContext<HighlightContext | undefined>(HIGHLIGHT_CONTEXT);
 	const hl = $derived(highlight?.hl ?? null);
 
-	const tableState: HashTableDemoState = $derived({ strategy, hash, count });
+	const tableState: HashTableDemoState = $derived({ strategy, hash, pick, count });
 	const table = $derived(buildTable(tableState));
 	const note = $derived(describeTable(tableState, table));
 	const isChain = $derived(strategy === 'chain');
-	const hashFormula = $derived(
-		hash === 'division' ? 'h(k) = k mod m' : 'h(k) = ⌊m · frac(k · A)⌋, A = (√5 − 1) / 2',
-	);
+	const hashFormula = $derived.by(() => {
+		if (hash === 'division') return 'h(k) = k mod m';
+		if (hash === 'multiplicative') return 'h(k) = ⌊m · frac(k · A)⌋, A = (√5 − 1) / 2';
+		const { a, b } = universalPair(pick);
+		return `h(k) = ((${a}·k + ${b}) mod 1009) mod m`;
+	});
 	const lastText = $derived(
 		table.lastKey === null
 			? 'нет'
@@ -58,6 +66,7 @@
 	function apply(patch: Partial<HashTableDemoState>): void {
 		if (isStrategy(patch.strategy)) strategy = patch.strategy;
 		if (isHashKind(patch.hash)) hash = patch.hash;
+		if (typeof patch.pick === 'number') pick = snapPick(patch.pick);
 		if (typeof patch.count === 'number') count = snapCount(patch.count);
 	}
 
@@ -68,6 +77,7 @@
 	function reset(): void {
 		strategy = start.strategy;
 		hash = start.hash;
+		pick = start.pick;
 		count = start.count;
 	}
 
@@ -108,6 +118,12 @@
 				aria-pressed={hash === 'multiplicative'}
 				onclick={() => (hash = 'multiplicative')}>Умножение</button
 			>
+			<button
+				type="button"
+				class="hs-seg"
+				aria-pressed={hash === 'universal'}
+				onclick={() => (hash = 'universal')}>Универсальная</button
+			>
 		</div>
 
 		<label class="hs-ctl">
@@ -128,6 +144,9 @@
 			<button type="button" class="hs-btn" onclick={addKey} disabled={count >= N_MAX}
 				>Добавить ключ</button
 			>
+			{#if hash === 'universal'}
+				<button type="button" class="hs-btn" onclick={() => (pick += 1)}>Другая функция</button>
+			{/if}
 			<button type="button" class="hs-btn" onclick={reset}>Сбросить</button>
 		</div>
 	</div>
@@ -210,6 +229,10 @@
 			<li>
 				Деление зависит от m: с простым m распределение обычно ровное. Умножение с числом Кнута
 				работает при любом m.
+			</li>
+			<li>
+				Универсальная функция выбирается случайно из семейства: «Другая функция» берёт новую пару
+				(a, b), и картина коллизий меняется, а в среднем остаётся такой же.
 			</li>
 		</ul>
 	</div>
