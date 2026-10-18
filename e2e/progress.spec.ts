@@ -3,7 +3,7 @@ import { PROGRESS_FLUSH_MS, gotoReady, reloadReady } from './helpers';
 
 test('marking a chapter as done is saved across reload', async ({ page }) => {
 	await gotoReady(page, '/dl/attention/');
-	const done = page.getByRole('button', { name: 'Отметить пройденным' });
+	const done = page.locator('[data-mark-done]');
 	await expect(done).toHaveAttribute('aria-pressed', 'false');
 
 	await done.click();
@@ -11,10 +11,7 @@ test('marking a chapter as done is saved across reload', async ({ page }) => {
 	await page.waitForTimeout(PROGRESS_FLUSH_MS);
 
 	await reloadReady(page);
-	await expect(page.getByRole('button', { name: 'Отметить пройденным' })).toHaveAttribute(
-		'aria-pressed',
-		'true',
-	);
+	await expect(page.locator('[data-mark-done]')).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('home shows «Продолжить» for a visited, unfinished chapter', async ({ page }) => {
