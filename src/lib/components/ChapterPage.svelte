@@ -42,6 +42,7 @@
 	import NotesLayer from './notes/NotesLayer.svelte';
 	import BookmarkLayer from './my/BookmarkLayer.svelte';
 	import Toc from './Toc.svelte';
+	import AddSituationButton from './my/AddSituationButton.svelte';
 
 	/** Chapter page: header, title block, prose, footer. The chapter body is the compiled `.svx`. */
 	interface Props {
@@ -487,6 +488,8 @@
 					</a>
 				{/if}
 			</nav>
+
+			<AddSituationButton chapterId={chapter.id} topic={chapter.topic} />
 		</main>
 
 		<aside class="notes-col" aria-label="Заметки">
