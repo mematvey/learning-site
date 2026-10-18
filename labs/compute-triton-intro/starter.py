@@ -2,7 +2,8 @@
 
 A Triton program handles one block of `block` consecutive positions. The grid has
 ceil(n / block) programs. The last block may be incomplete, so its lanes past the
-end of the vector are masked: they are not loaded and not stored.
+end of the vector are masked: their loads read index 0 as a stand-in
+(like tl.load(..., mask=mask, other=0)) and their results are never stored.
 
 Complete the five functions so that they match the chapter text. The names follow
 the chapter: `cdiv` mirrors triton.cdiv, `program_offsets` is `pid * BLOCK_SIZE + tl.arange`.
@@ -35,7 +36,7 @@ def program_mask(offsets, n):
 
 
 def add_kernel(x, y, block):
-    """Simulate out = x + y over blocks. Masked lanes are not loaded and not stored.
+    """Simulate out = x + y over blocks. Masked lanes read index 0 as a stand-in and are not stored.
 
     Returns a float array of length n.
     """
