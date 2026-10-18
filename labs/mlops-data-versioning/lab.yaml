@@ -1,0 +1,9 @@
+id: mlops-data-versioning
+title: Версия набора данных
+chapter: mlops/data-versioning
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+timeout: 10
+packages: []
