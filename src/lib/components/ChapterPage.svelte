@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getContext, onMount, setContext, type Component } from 'svelte';
+	import { getContext, mount, onMount, setContext, unmount, type Component } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { SvelteMap } from 'svelte/reactivity';
 	import '$lib/styles/prose.css';
@@ -18,8 +18,8 @@
 	} from '$lib/contracts/context';
 	import type { ChapterEntry, GlossaryRegistry } from '$lib/contracts/registry';
 	import type { Source } from '$lib/contracts/chapter';
-	import type { ChapterId, Note } from '$lib/contracts';
-	import type { AnchorResolution, NotesStore } from '$lib/contracts/interfaces';
+	import type { ChapterId, ChapterProgress, Note } from '$lib/contracts';
+	import type { AnchorResolution, NotesStore, ProgressStore } from '$lib/contracts/interfaces';
 	import type { LevelState } from '$lib/contracts/levels';
 	import { getPrereqGraph, resolveChapterId } from '$lib/content/registry';
 	import PrereqGraph from './PrereqGraph.svelte';
@@ -32,7 +32,9 @@
 		rangeInBlock,
 		resolveAnchor,
 	} from '$lib/notes';
-	import { trackChapter } from '$lib/progress';
+	import { countSectionsDone, trackChapter } from '$lib/progress';
+	import { scrollToHashTarget } from '$lib/nav';
+	import SectionCheck from './SectionCheck.svelte';
 	import { applyTopic } from '$lib/theme/theme';
 	import { ensureProgress, progressState, shell } from '$lib/shell.svelte';
 	import type { ChapterLink } from '../../routes/[topic]/[slug]/chapter-data';
@@ -163,34 +165,141 @@
 		};
 	});
 
-	// "Done" mark, restored from the progress store.
-	let done = $state(false);
+	// Progress key: the canonical id, so records under an old alias id are not split from the
+	// chapter. Notes resolve aliases the same way.
+	const progressKey = $derived(resolveChapterId(chapter.id) as ChapterId);
+	const sectionIds = $derived(chapter.sections.map((s) => s.id));
+
+	// Stored progress of this chapter. `sectionsDone` is the manual mark; `done` is the chapter flag.
+	let record = $state<ChapterProgress | undefined>();
+	let progressError = $state<string | null>(null);
+	const sectionsDone = $derived(record?.sectionsDone ?? []);
+	const done = $derived(record?.done ?? false);
+	const sectionCount = $derived(countSectionsDone(sectionIds, sectionsDone));
+	const readOnly = $derived(progressState.store?.readOnly ?? false);
+
+	function describe(e: unknown): string {
+		return e instanceof Error ? e.message : String(e);
+	}
+
+	async function reload(store: ProgressStore) {
+		try {
+			record = await store.getChapter(progressKey);
+			progressError = null;
+		} catch (e) {
+			progressError = `Не удалось прочитать прогресс: ${describe(e)}`;
+		}
+	}
+
+	// Load the record and follow changes (other tabs, resets from the topic page).
 	$effect(() => {
 		const store = progressState.store;
 		if (!store) return;
 		let alive = true;
-		store
-			.getChapter(chapter.id as ChapterId)
-			.then((record) => {
-				if (alive && record) done = record.done;
-			})
-			.catch(() => {});
-		return () => (alive = false);
+		void reload(store);
+		const unsubscribe = store.subscribe((change) => {
+			if (!alive) return;
+			if (change.kind === 'reset' || (change.kind === 'chapter' && change.id === progressKey)) {
+				void reload(store);
+			}
+		});
+		return () => {
+			alive = false;
+			unsubscribe();
+		};
 	});
-	function markDone() {
-		done = !done;
-		onMarkDone?.(done);
-		const store = progressState.store;
-		if (!store || store.readOnly) return;
-		store.update({ chapters: [{ id: chapter.id as ChapterId, done }] }).catch(() => {});
+
+	/** Runs one write; a failure is shown to the reader, never swallowed. */
+	async function writeProgress(action: (store: ProgressStore) => Promise<void>) {
+		progressError = null;
+		try {
+			const store = await ensureProgress();
+			if (store.readOnly) {
+				progressError =
+					'Прогресс доступен только для чтения: данные записаны более новой версией сайта.';
+				return;
+			}
+			await action(store);
+		} catch (e) {
+			progressError = `Не удалось сохранить прогресс: ${describe(e)}`;
+		}
 	}
 
-	// Reading progress: sections reached and position (after the content is mounted).
+	function setSection(sectionId: string, checked: boolean) {
+		void writeProgress((store) => store.setSectionDone(progressKey, sectionId, checked));
+	}
+
+	function markWholeChapter() {
+		const next = !done;
+		onMarkDone?.(next);
+		void writeProgress((store) =>
+			store.update({
+				chapters: [
+					next
+						? { id: progressKey, done: true, sectionsDone: sectionIds }
+						: { id: progressKey, done: false },
+				],
+			}),
+		);
+	}
+
+	function resetChapter() {
+		const ok = window.confirm(
+			'Сбросить прогресс этой главы? Галочки разделов, отметка пройденности и позиция чтения будут удалены. Заметки и лабы не затрагиваются.',
+		);
+		if (!ok) return;
+		onMarkDone?.(false);
+		void writeProgress((store) => store.resetChapter(progressKey));
+	}
+
+	// Manual section marks: a checkbox mounted at the end of every section heading. The mount
+	// reads state through getters, so a change of the marks needs no remount.
 	let textEl = $state<HTMLElement | undefined>();
+	$effect(() => {
+		const root = textEl;
+		if (!root) return;
+		const mounted = Array.from(root.querySelectorAll<HTMLElement>('section.sec > h2[id]')).map(
+			(heading) => {
+				const host = document.createElement('span');
+				host.className = 'section-check-host';
+				heading.appendChild(host);
+				const id = heading.id;
+				const component = mount(SectionCheck, {
+					target: host,
+					props: {
+						sectionId: id,
+						title: heading.textContent?.trim() || id,
+						get checked() {
+							return sectionsDone.includes(id);
+						},
+						get disabled() {
+							return readOnly;
+						},
+						onToggle: setSection,
+					},
+				});
+				return () => {
+					void unmount(component);
+					host.remove();
+				};
+			},
+		);
+		return () => {
+			for (const cleanup of mounted) cleanup();
+		};
+	});
+
+	// Reading progress: sections reached and position (after the content is mounted).
 	$effect(() => {
 		const store = progressState.store;
 		if (!store || !textEl) return;
-		return trackChapter(store, chapter.id as ChapterId, { root: textEl });
+		return trackChapter(store, progressKey, { root: textEl });
+	});
+
+	// `#block-id` and `~q=` links: scroll below the header, flash the block, highlight the quote.
+	$effect(() => {
+		if (!textEl) return;
+		return scrollToHashTarget(textEl);
 	});
 
 	// Notes: store, anchor resolution and highlighting of the quotes.
@@ -301,16 +410,41 @@
 						{/each}
 					{/if}
 				</div>
-				<button
-					class="btn-outline"
-					class:is-done={done}
-					type="button"
-					aria-pressed={done ? 'true' : 'false'}
-					data-mark-done
-					onclick={markDone}
-				>
-					Отметить пройденным
-				</button>
+				<div class="progress-bar-row">
+					{#if sectionCount.total > 0}
+						<p class="section-progress" aria-live="polite" data-section-progress>
+							Разделов пройдено: {sectionCount.done} из {sectionCount.total}
+						</p>
+					{/if}
+					<div class="progress-actions">
+						<button
+							class="btn-outline"
+							class:is-done={done}
+							type="button"
+							aria-pressed={done ? 'true' : 'false'}
+							data-mark-done
+							disabled={readOnly}
+							onclick={markWholeChapter}
+						>
+							{done ? 'Глава пройдена · снять отметку' : 'Отметить всю главу пройденной'}
+						</button>
+						<button
+							class="btn-quiet"
+							type="button"
+							data-reset-chapter
+							disabled={readOnly}
+							onclick={resetChapter}
+						>
+							Сбросить прогресс главы
+						</button>
+					</div>
+				</div>
+				{#if progressError}
+					<p class="progress-error" role="alert">{progressError}</p>
+				{/if}
+				{#if readOnly}
+					<p class="progress-note">Прогресс доступен только для чтения.</p>
+				{/if}
 			</header>
 
 			<Content />
@@ -481,6 +615,55 @@
 		background: var(--topic-soft);
 		color: var(--topic);
 		border-color: var(--topic);
+	}
+	.btn-outline:disabled,
+	.btn-quiet:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+	.progress-bar-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-3) var(--space-4);
+		margin-top: var(--space-2);
+	}
+	.section-progress {
+		font-size: var(--fs-sm);
+		font-weight: 600;
+		color: var(--topic);
+		margin: 0;
+	}
+	.progress-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2) var(--space-3);
+	}
+	.btn-quiet {
+		font: inherit;
+		font-size: var(--fs-sm);
+		cursor: pointer;
+		height: 36px;
+		padding: 0 var(--space-3);
+		border-radius: var(--radius);
+		background: transparent;
+		color: var(--text-muted);
+		border: 1px solid transparent;
+	}
+	.btn-quiet:hover {
+		color: var(--fail);
+		border-color: var(--border);
+	}
+	.progress-error {
+		margin-top: var(--space-3);
+		font-size: var(--fs-sm);
+		color: var(--fail);
+	}
+	.progress-note {
+		margin-top: var(--space-2);
+		font-size: var(--fs-sm);
+		color: var(--text-muted);
 	}
 	.sources {
 		margin-top: var(--space-16);

@@ -1,5 +1,5 @@
 {
-	"schemaVersion": 1,
+	"schemaVersion": 2,
 	"labId": "dl-attention-numpy",
 	"chapter": "dl/attention",
 	"updated": "2026-10-16T09:30:00Z",

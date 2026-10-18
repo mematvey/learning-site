@@ -4,6 +4,8 @@
 	import { ensureProgress } from '$lib/shell.svelte';
 	import PrereqGraph from '$lib/components/PrereqGraph.svelte';
 	import TopicChapterList from '$lib/components/TopicChapterList.svelte';
+	import { resolveChapterId } from '$lib/content/registry';
+	import { countSectionsDone, sumCounts } from '$lib/progress';
 	import type { ChapterId } from '$lib/contracts/ids';
 	import type { PageData } from './$types';
 
@@ -11,26 +13,67 @@
 
 	let status = $state<Record<string, 'done' | 'progress' | 'new'>>({});
 	let doneIds = $state<ChapterId[]>([]);
+	let marks = $state<Record<string, string[]>>({});
+	let progressError = $state<string | null>(null);
+
+	/** Reads all records and keys them by the canonical chapter id (old alias ids are followed). */
+	async function load() {
+		const store = await ensureProgress();
+		const { chapters } = await store.list();
+		const next: Record<string, 'done' | 'progress'> = {};
+		const byId: Record<string, string[]> = {};
+		for (const c of chapters) {
+			const key = resolveChapterId(c.id);
+			if (c.done) next[key] = 'done';
+			else if (c.visited !== null && next[key] === undefined) next[key] = 'progress';
+			byId[key] = [...(byId[key] ?? []), ...c.sectionsDone];
+		}
+		status = next;
+		marks = byId;
+		doneIds = Object.keys(next).filter((id) => next[id] === 'done') as ChapterId[];
+		progressError = null;
+	}
 
 	onMount(() => {
-		ensureProgress()
-			.then((store) => store.list())
-			.then(({ chapters }) => {
-				const next: Record<string, 'done' | 'progress'> = {};
-				for (const c of chapters) {
-					if (c.done) next[c.id] = 'done';
-					else if (c.visited !== null) next[c.id] = 'progress';
-				}
-				status = next;
-				doneIds = chapters.filter((c) => c.done).map((c) => c.id);
-			})
-			.catch(() => {
-				// No readable progress: statuses stay hidden.
-			});
+		let alive = true;
+		load().catch((e: unknown) => {
+			if (alive)
+				progressError = `Не удалось прочитать прогресс: ${e instanceof Error ? e.message : String(e)}`;
+		});
+		return () => (alive = false);
 	});
+
+	async function resetTopic() {
+		const ok = window.confirm(
+			`Сбросить прогресс темы «${data.topic.title}»? Галочки разделов, пройденность и позиция чтения всех глав темы будут удалены. Заметки, лабы и настройки не затрагиваются.`,
+		);
+		if (!ok) return;
+		try {
+			const store = await ensureProgress();
+			if (store.readOnly) {
+				progressError =
+					'Прогресс доступен только для чтения: данные записаны более новой версией сайта.';
+				return;
+			}
+			await store.resetTopic(data.topic.id);
+			await load();
+		} catch (e) {
+			progressError = `Не удалось сбросить прогресс: ${e instanceof Error ? e.message : String(e)}`;
+		}
+	}
 
 	const total = $derived(data.chapters.length);
 	const doneCount = $derived(data.chapters.filter((c) => status[c.id] === 'done').length);
+	const sectionTotals = $derived(
+		sumCounts(
+			data.chapters.map((c) =>
+				countSectionsDone(
+					c.sections.map((s) => s.id),
+					marks[c.id],
+				),
+			),
+		),
+	);
 
 	function plural(n: number): string {
 		const m10 = n % 10;
@@ -56,7 +99,20 @@
 		<p class="lead">{data.topic.description}</p>
 		<p class="summary">
 			{plural(total)} · пройдено {doneCount} из {total}
+			{#if sectionTotals.total > 0}
+				· разделов {sectionTotals.done} из {sectionTotals.total}
+			{/if}
 		</p>
+		{#if total > 0}
+			<div class="reset-row">
+				<button class="btn-quiet" type="button" data-reset-topic onclick={resetTopic}>
+					Сбросить прогресс темы
+				</button>
+			</div>
+		{/if}
+		{#if progressError}
+			<p class="progress-error" role="alert">{progressError}</p>
+		{/if}
 	</header>
 
 	<section aria-labelledby="chapters-title">
@@ -126,6 +182,28 @@
 	}
 	.map {
 		margin-top: var(--space-12);
+	}
+	.reset-row {
+		margin-top: var(--space-3);
+	}
+	.btn-quiet {
+		font: inherit;
+		font-size: var(--fs-sm);
+		cursor: pointer;
+		height: 36px;
+		padding: 0 var(--space-3);
+		border-radius: var(--radius);
+		background: transparent;
+		color: var(--text-muted);
+		border: 1px solid var(--border);
+	}
+	.btn-quiet:hover {
+		color: var(--fail);
+	}
+	.progress-error {
+		margin-top: var(--space-3);
+		font-size: var(--fs-sm);
+		color: var(--fail);
 	}
 	.empty {
 		padding: var(--space-8);

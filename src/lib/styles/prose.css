@@ -119,3 +119,30 @@
 	border-collapse: collapse;
 	margin: 0 0 var(--space-6);
 }
+
+/* Target of a `#block-id` link: a short flash that fades out (see scrollToHashTarget). */
+@keyframes block-flash {
+	from {
+		background-color: color-mix(in srgb, var(--topic) 22%, transparent);
+	}
+	to {
+		background-color: transparent;
+	}
+}
+.block-flash {
+	border-radius: var(--radius-sm);
+	animation: block-flash 1.6s var(--ease) 1 both;
+}
+/* Reduced motion: no animation; a static left bar marks the block for the same time. */
+@media (prefers-reduced-motion: reduce) {
+	.block-flash {
+		animation: none;
+		box-shadow: inset 3px 0 0 var(--topic);
+		background-color: color-mix(in srgb, var(--topic) 12%, transparent);
+	}
+}
+/* Quoted fragment inside a linked block. */
+::highlight(hash-quote) {
+	background-color: color-mix(in srgb, var(--topic) 28%, transparent);
+	color: inherit;
+}

@@ -19,7 +19,7 @@ import {
 	type ProgressStore,
 	type Unsubscribe,
 } from '$lib/contracts';
-import { decodeRecord } from './migrate';
+import { decodeRecord, PROGRESS_MIGRATIONS } from './migrate';
 
 export const PROGRESS_DB_NAME = 'learning-site-progress';
 
@@ -66,7 +66,7 @@ function errorMessage(e: unknown): string {
 export async function openProgressStore(
 	options: ProgressStoreOptions = {},
 ): Promise<OpenedProgressStore> {
-	const migrations = options.migrations ?? [];
+	const migrations = options.migrations ?? PROGRESS_MIGRATIONS;
 	const now = options.now ?? (() => new Date().toISOString());
 
 	const db: IDBPDatabase = await openDB(options.dbName ?? PROGRESS_DB_NAME, DB_VERSION, {
@@ -156,6 +156,7 @@ export async function openProgressStore(
 								updated: ts,
 								visited: null,
 								sectionsReached: [],
+								sectionsDone: [],
 								levels: { ...DEFAULT_LEVELS },
 								done: false,
 							}
@@ -216,6 +217,61 @@ export async function openProgressStore(
 		},
 
 		list,
+
+		async setSectionDone(chapter: ChapterId, sectionId: string, done: boolean) {
+			assertWritable();
+			const ts = now();
+			const tx = db.transaction([CHAPTERS, META], 'readwrite');
+			const raw = await tx.objectStore(CHAPTERS).get(chapter);
+			const base =
+				raw === undefined
+					? {
+							schemaVersion: PROGRESS_SCHEMA_VERSION,
+							id: chapter,
+							updated: ts,
+							visited: null,
+							sectionsReached: [],
+							sectionsDone: [],
+							levels: { ...DEFAULT_LEVELS },
+							done: false,
+						}
+					: decode(raw, ChapterProgress);
+			const marks = new Set(base.sectionsDone);
+			if (done) marks.add(sectionId);
+			else marks.delete(sectionId);
+			const next = ChapterProgress.parse({
+				...base,
+				sectionsDone: [...marks],
+				schemaVersion: PROGRESS_SCHEMA_VERSION,
+				updated: ts,
+			});
+			await tx.objectStore(CHAPTERS).put(next);
+			await tx.objectStore(META).put(PROGRESS_SCHEMA_VERSION, VERSION_KEY);
+			await tx.done;
+			emit([{ kind: 'chapter', id: chapter }]);
+		},
+
+		async resetChapter(chapter: ChapterId) {
+			assertWritable();
+			await db.delete(CHAPTERS, chapter);
+			emit([{ kind: 'chapter', id: chapter }]);
+		},
+
+		async resetTopic(topic: string) {
+			assertWritable();
+			const prefix = `${topic}/`;
+			const tx = db.transaction(CHAPTERS, 'readwrite');
+			const keys = (await tx.store.getAllKeys()).map(String).filter((k) => k.startsWith(prefix));
+			for (const key of keys) await tx.store.delete(key);
+			await tx.done;
+			emit(keys.map((id) => ({ kind: 'chapter' as const, id: id as ChapterId })));
+		},
+
+		async resetAll() {
+			assertWritable();
+			await db.clear(CHAPTERS);
+			emit([{ kind: 'reset' }]);
+		},
 
 		async export() {
 			const [settings, progress, notes] = await Promise.all([
