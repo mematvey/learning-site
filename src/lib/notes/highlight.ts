@@ -1,3 +1,5 @@
+import { isVisibleText } from './text';
+
 /** Class of the `<mark>` elements that wrap a note's quote. */
 export const NOTE_HL_CLASS = 'note-hl';
 
@@ -15,7 +17,7 @@ export function highlightRange(range: Range): HTMLElement[] {
 	const pieces: Array<{ node: Text; start: number; end: number }> = [];
 	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
 		const text = node as Text;
-		if (!range.intersectsNode(text) || text.length === 0) continue;
+		if (!isVisibleText(text) || !range.intersectsNode(text) || text.length === 0) continue;
 		const start = text === range.startContainer ? range.startOffset : 0;
 		const end = text === range.endContainer ? range.endOffset : text.length;
 		if (start < end) pieces.push({ node: text, start, end });
@@ -57,6 +59,8 @@ export function rangeInBlock(block: HTMLElement, start: number, end: number): Ra
 	let pos = 0;
 	let started = false;
 	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+		// Offsets count visible text only (see `text.ts`), so MathML copies of formulas are skipped.
+		if (!isVisibleText(node as Text)) continue;
 		const len = (node as Text).length;
 		if (!started && start < pos + len) {
 			range.setStart(node, start - pos);

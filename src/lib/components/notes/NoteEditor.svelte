@@ -7,19 +7,33 @@
 		/** Existing note; absent when creating a note for `anchor`. */
 		note?: Note;
 		anchor?: NoteAnchor;
+		/** Message about the last failed save. The editor stays open with the typed text. */
+		error?: string;
 		onSave: (patch: NotePatch) => void;
 		onCancel: () => void;
+		/** Asks the host to delete the note; the host confirms before deleting. */
 		onDelete?: () => void;
 	}
 
-	const { note, anchor, onSave, onCancel, onDelete }: Props = $props();
+	const { note, anchor, error, onSave, onCancel, onDelete }: Props = $props();
 
-	let text = $state(untrack(() => note?.text ?? ''));
-	let tags = $state(untrack(() => note?.tags?.join(', ') ?? ''));
-	let status = $state<NoteStatus>(untrack(() => note?.status ?? 'open'));
+	const initial = untrack(() => ({
+		text: note?.text ?? '',
+		tags: note?.tags?.join(', ') ?? '',
+		status: (note?.status ?? 'open') as NoteStatus,
+	}));
+
+	let text = $state(initial.text);
+	let tags = $state(initial.tags);
+	let status = $state<NoteStatus>(initial.status);
+	/** Shows the "discard changes?" question after Escape or «Отмена» with unsaved text. */
+	let confirmDiscard = $state(false);
 	let textarea: HTMLTextAreaElement | undefined = $state();
 
 	const canSave = $derived(text.trim().length > 0);
+	const dirty = $derived(
+		text !== initial.text || tags !== initial.tags || status !== initial.status,
+	);
 
 	$effect(() => {
 		textarea?.focus();
@@ -30,6 +44,11 @@
 		onSave({ text: text.trim(), tags: parseTags(tags), status });
 	}
 
+	function requestCancel() {
+		if (dirty) confirmDiscard = true;
+		else onCancel();
+	}
+
 	function onSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		save();
@@ -38,7 +57,8 @@
 	function onKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
 			e.preventDefault();
-			onCancel();
+			if (confirmDiscard) confirmDiscard = false;
+			else requestCancel();
 		} else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
 			e.preventDefault();
 			save();
@@ -60,19 +80,34 @@
 		<input type="text" bind:value={tags} onkeydown={onKeydown} />
 	</label>
 	<label class="field">
-		<span>Статус</span>
+		<span>Статус: отмечается вручную</span>
 		<select bind:value={status} onkeydown={onKeydown}>
-			<option value="open">open</option>
-			<option value="answered">answered</option>
+			<option value="open">open: вопрос открыт</option>
+			<option value="answered">answered: ответ получен</option>
 		</select>
 	</label>
-	<div class="actions">
-		<button type="submit" class="btn-primary" disabled={!canSave}>Сохранить</button>
-		<button type="button" class="btn-outline" onclick={onCancel}>Отмена</button>
-		{#if onDelete}
-			<button type="button" class="btn-link" onclick={onDelete}>Удалить</button>
-		{/if}
-	</div>
+	{#if error}
+		<p class="note-error" role="alert">{error}</p>
+	{/if}
+	{#if confirmDiscard}
+		<div class="note-confirm" role="group" aria-label="Отмена изменений">
+			<p>Отменить несохранённые изменения?</p>
+			<div class="actions">
+				<button type="button" class="btn-danger" onclick={onCancel}>Отменить изменения</button>
+				<button type="button" class="btn-outline" onclick={() => (confirmDiscard = false)}>
+					Продолжить редактирование
+				</button>
+			</div>
+		</div>
+	{:else}
+		<div class="actions">
+			<button type="submit" class="btn-primary" disabled={!canSave}>Сохранить</button>
+			<button type="button" class="btn-outline" onclick={requestCancel}>Отмена</button>
+			{#if onDelete}
+				<button type="button" class="btn-link" onclick={onDelete}>Удалить</button>
+			{/if}
+		</div>
+	{/if}
 </form>
 
 <style>
@@ -100,6 +135,17 @@
 		font-size: 12px;
 		color: var(--text-muted);
 	}
+	.note-error {
+		margin: 0;
+		color: var(--fail);
+	}
+	.note-confirm {
+		display: grid;
+		gap: var(--space-2);
+	}
+	.note-confirm p {
+		margin: 0;
+	}
 	textarea,
 	input,
 	select {
@@ -126,7 +172,8 @@
 	}
 	.btn-primary,
 	.btn-outline,
-	.btn-link {
+	.btn-link,
+	.btn-danger {
 		font: inherit;
 		font-size: var(--fs-sm);
 		border-radius: var(--radius-sm);
@@ -149,6 +196,11 @@
 	}
 	.btn-outline:hover {
 		border-color: var(--topic);
+	}
+	.btn-danger {
+		background: var(--fail);
+		color: var(--surface);
+		border: 1px solid var(--fail);
 	}
 	.btn-link {
 		background: none;

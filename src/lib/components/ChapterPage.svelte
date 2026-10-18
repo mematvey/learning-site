@@ -29,6 +29,7 @@
 		clearHighlights,
 		createNotesStore,
 		highlightRange,
+		persistReanchors,
 		rangeInBlock,
 		resolveAnchor,
 	} from '$lib/notes';
@@ -38,6 +39,7 @@
 	import type { ChapterLink } from '../../routes/[topic]/[slug]/chapter-data';
 	import { formatMinutes } from '../../routes/[topic]/[slug]/chapter-data';
 	import NotesLayer from './notes/NotesLayer.svelte';
+	import NotesNotice from './notes/NotesNotice.svelte';
 	import Toc from './Toc.svelte';
 
 	/** Chapter page: header, title block, prose, footer. The chapter body is the compiled `.svx`. */
@@ -196,6 +198,7 @@
 	// Notes: store, anchor resolution and highlighting of the quotes.
 	let notesStore = $state<NotesStore | undefined>();
 	let resolutions = $state<Record<string, AnchorResolution>>({});
+	let notesError = $state<string | undefined>();
 	onMount(() => {
 		let closed = false;
 		let close: (() => void) | undefined;
@@ -205,8 +208,10 @@
 				notesStore = opened;
 				close = () => opened.close();
 			})
-			.catch(() => {
-				/* IndexedDB unavailable: notes stay off, reading works */
+			.catch((e: unknown) => {
+				// Notes stay off, reading works; the reader is told why.
+				const reason = e instanceof Error ? e.message : String(e);
+				notesError = `Заметки недоступны: браузер не открыл хранилище (${reason}). Чтение работает без них.`;
 			});
 		return () => {
 			closed = true;
@@ -233,6 +238,7 @@
 		const root = textEl;
 		if (!root) return;
 		const notes = chapterNotes;
+		const store = notesStore;
 		clearHighlights(root);
 		const index = chapterTextIndex(root);
 		const next: Record<string, AnchorResolution> = {};
@@ -249,6 +255,8 @@
 			if (range) highlightRange(range);
 		}
 		resolutions = next;
+		// Confident re-anchors (same block) are saved, so the next visit finds them in place.
+		if (store) void persistReanchors(store, notes, next);
 		return () => clearHighlights(root);
 	});
 	function showLayer(noteId: string) {
@@ -365,6 +373,8 @@
 					{resolutions}
 					onShowLayer={showLayer}
 				/>
+			{:else if notesError}
+				<NotesNotice message={notesError} />
 			{/if}
 		</aside>
 	</div>
