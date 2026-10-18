@@ -1,0 +1,30 @@
+- id: eval-set
+  term: эталонный набор
+  term_en: evaluation set
+  definition: 'Фиксированная выборка примеров с известными правильными ответами, на которой измеряют качество модели. Результат зависит от того, насколько набор похож на реальные запросы.'
+  chapter: mlops/evaluation
+- id: paired-comparison
+  term: парное сравнение
+  term_en: paired comparison
+  definition: 'Сравнение двух моделей на одних и тех же примерах. Учитываются только примеры, где модели расходятся, поэтому шум меньше, чем у сравнения на двух независимых выборках.'
+  chapter: mlops/evaluation
+- id: llm-as-judge
+  term: судья-LLM
+  term_en: LLM-as-a-judge
+  definition: 'Языковая модель, которая оценивает ответы другой модели. Её оценки нужно сверять с людьми на своей задаче, так как у судей есть систематические смещения, например по порядку вариантов и длине ответа.'
+  chapter: mlops/evaluation
+- id: offline-evaluation
+  term: офлайн-оценка
+  term_en: offline evaluation
+  definition: 'Оценка модели на зафиксированном наборе данных до выкладки. Результат воспроизводим, но набор может не совпадать с живым трафиком.'
+  chapter: mlops/evaluation
+- id: online-evaluation
+  term: онлайн-оценка
+  term_en: online evaluation
+  definition: 'Измерение поведения модели на реальных пользователях, например через A/B-тест. Показывает пользу, но медленнее и дороже офлайн-оценки.'
+  chapter: mlops/evaluation
+- id: regression-suite
+  term: регрессионный набор
+  term_en: regression suite
+  definition: 'Небольшой фиксированный набор случаев, которые раньше работали. Запускается при каждом изменении, чтобы поймать поломки, но не измеряет общее качество.'
+  chapter: mlops/evaluation
