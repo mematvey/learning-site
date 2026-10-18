@@ -26,3 +26,8 @@
   term: Post-LN
   definition: Расположение нормализации после суммы входа и результата слоя, как в исходном трансформере.
   chapter: dl/layer-norm
+- id: batch
+  term: батч
+  term_en: batch
+  definition: Группа примеров, которую сеть обрабатывает за один шаг. BatchNorm считает статистику по батчу, а LayerNorm не зависит от него.
+  chapter: dl/layer-norm
