@@ -1,9 +1,30 @@
 id: transformers-from-scratch
 title: 'Трансформер с нуля'
-summary: 'От softmax до блока трансформера: шесть шагов, на каждом своя деталь и свой лаб на NumPy.'
-audience: 'Для тех, кто знает основы нейросетей и хочет понять, как устроен трансформер изнутри.'
+summary: 'От градиентного спуска до блока трансформера и токенизации: каждый шаг отвечает на один вопрос и часто идёт с лабом на NumPy.'
+audience: 'Для тех, кто знает, что такое нейросеть, и хочет понять, как устроен трансформер изнутри.'
 goal: 'Собрать блок трансформера из отдельных деталей и объяснить, зачем нужна каждая.'
 steps:
+  - title: 'Градиентный спуск'
+    description: 'Как модель учится: шаг против градиента и выбор размера шага.'
+    chapters: [dl/gradient-descent]
+    labs: [dl-gradient-descent]
+  - title: 'Обратное распространение'
+    description: 'Как градиент проходит через слои по цепному правилу. Без этого не понять обучение блока.'
+    chapters: [dl/backprop]
+    labs: [dl-backprop]
+  - title: 'Оптимизаторы'
+    description: 'Зачем нужен Adam и его варианты вместо голого градиентного спуска.'
+    chapters: [dl/optimizers]
+    labs: [dl-optimizers]
+  - title: 'Активации и инициализация'
+    description: 'Как нелинейность и начальные веса влияют на устойчивость глубокого стека.'
+    chapters: [dl/activations-init]
+    labs: [dl-activations-init]
+  - title: 'Регуляризация'
+    description: 'Как не переобучиться на больших моделях: дропаут, весовой спад и ранняя остановка.'
+    chapters: [dl/regularization-dl]
+    labs: [dl-regularization-dl]
+    optional: true
   - title: 'Softmax и температура'
     description: 'Превращение оценок в вероятности. Без этого непонятно, что делает внимание.'
     chapters: [dl/softmax]
@@ -28,3 +49,7 @@ steps:
     description: 'Сборка всего вместе с остаточными связями и MLP, итоговый лаб.'
     chapters: [dl/transformer-block]
     labs: [dl-transformer-block]
+  - title: 'Токенизация'
+    description: 'Как текст становится последовательностью токенов: вход трансформера и цена длины.'
+    chapters: [dl/tokenization]
+    labs: [dl-tokenization]

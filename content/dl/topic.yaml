@@ -1,10 +1,28 @@
 id: dl
 title: DL Theory
-description: 'Теория глубокого обучения: от градиентов до внимания.'
+description: 'Теория глубокого обучения: от градиентов и внимания до трансформера, токенизации, обучения и эффективного инференса LLM.'
 order: 1
 icon: network
 accent:
   topic: { light: '#4f46e5', dark: '#818cf8' }
   soft: { light: '#eef2ff', dark: '#1e1b4b' }
-chapters: [softmax, attention, multi-head-attention, layer-norm]
+chapters:
+  [
+    gradient-descent,
+    softmax,
+    backprop,
+    optimizers,
+    activations-init,
+    regularization-dl,
+    attention,
+    positional-encoding,
+    multi-head-attention,
+    layer-norm,
+    transformer-block,
+    cnn-rnn,
+    tokenization,
+    lm-training-scaling,
+    finetuning-alignment,
+    inference-efficiency,
+  ]
 featured: [dl/attention]

@@ -1,8 +1,22 @@
 id: mlops
 title: MLOps Practices
-description: 'Практики эксплуатации моделей: данные, эксперименты, выкладка и мониторинг.'
+description: 'Практики эксплуатации моделей и LLM: жизненный цикл, данные, эксперименты, оценка, сервинг, мониторинг, наблюдаемость и безопасность.'
 order: 3
 icon: pipeline
 accent:
   topic: { light: '#c2410c', dark: '#fb923c' }
   soft: { light: '#fff7ed', dark: '#2a1a10' }
+chapters:
+  [
+    lifecycle,
+    data-versioning,
+    experiment-tracking,
+    pipelines-ci,
+    serving,
+    evaluation,
+    monitoring-drift,
+    llm-serving,
+    llm-apps,
+    observability,
+    security-privacy,
+  ]

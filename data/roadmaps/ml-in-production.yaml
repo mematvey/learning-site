@@ -1,9 +1,12 @@
 id: ml-in-production
 title: 'ML в продакшене'
-summary: 'Пять глав MLOps: от версионирования данных до мониторинга дрейфа.'
-audience: 'Для тех, кто умеет обучать модели и хочет выводить их в эксплуатацию.'
-goal: 'Построить воспроизводимый цикл: данные, эксперименты, пайплайн, сервинг и мониторинг.'
+summary: 'Все главы MLOps по порядку: от жизненного цикла и данных до оценки, мониторинга, LLM-приложений и безопасности.'
+audience: 'Для тех, кто умеет обучать модели и хочет выводить их в эксплуатацию, в том числе LLM.'
+goal: 'Построить воспроизводимый цикл: данные, эксперименты, пайплайн, сервинг, оценку и мониторинг; для LLM-приложений добавить наблюдаемость и безопасность.'
 steps:
+  - title: 'Жизненный цикл'
+    description: 'Когда MLOps нужен и с чего начинать, чтобы не строить лишнего.'
+    chapters: [mlops/lifecycle]
   - title: 'Данные и эксперименты'
     description: 'Версионирование данных и учёт экспериментов, чтобы любой результат можно было повторить.'
     chapters: [mlops/data-versioning, mlops/experiment-tracking]
@@ -11,6 +14,7 @@ steps:
   - title: 'Пайплайны и CI'
     description: 'Автоматизация обучения и проверок, непрерывная интеграция для ML.'
     chapters: [mlops/pipelines-ci]
+    labs: [mlops-pipelines-ci]
   - title: 'Сервинг'
     description: 'Как отдавать предсказания: пакетный и онлайн-режимы, задержка и пропускная способность.'
     chapters: [mlops/serving]
@@ -18,3 +22,20 @@ steps:
     description: 'Слежение за качеством и распределением данных после выката.'
     chapters: [mlops/monitoring-drift]
     labs: [mlops-monitoring-drift]
+  - title: 'Оценка моделей'
+    description: 'Как понять, что новая версия лучше: эталонные наборы, доверительные интервалы и сравнение.'
+    chapters: [mlops/evaluation]
+    labs: [mlops-evaluation]
+  - title: 'LLM в эксплуатации'
+    description: 'SLO, цена за токен и выбор между своим хостингом и API.'
+    chapters: [mlops/llm-serving]
+  - title: 'LLM-приложения'
+    description: 'Промпты, RAG и агенты: какой уровень автономности оправдан задачей.'
+    chapters: [mlops/llm-apps]
+    labs: [mlops-llm-apps]
+  - title: 'Наблюдаемость'
+    description: 'Трассировка и метрики цепочек, чтобы найти, где именно всё сломалось.'
+    chapters: [mlops/observability]
+  - title: 'Безопасность и приватность'
+    description: 'Недоверенный ввод, полномочия инструментов и утечки данных.'
+    chapters: [mlops/security-privacy]
