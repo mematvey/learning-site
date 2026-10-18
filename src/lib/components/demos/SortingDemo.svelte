@@ -19,6 +19,7 @@
 		VALUE_MAX,
 		applyState,
 		clampStep,
+		countComparisons,
 		growthTable,
 		makeInput,
 		sortedArray,
@@ -81,6 +82,8 @@
 	const GT = 8;
 	const GR = 62;
 	const growth = $derived(growthTable(order, seed));
+	/* Same input, all four sorts: comparison counts side by side. */
+	const sameInput = $derived(SORT_ALGOS.map((a) => ({ a, count: countComparisons(a, input) })));
 	const LABELS: Record<SortAlgo, string> = {
 		bubble: 'пузырёк',
 		insertion: 'вставки',
@@ -394,6 +397,18 @@
 	</dl>
 
 	<p class="sd-note" aria-live="polite">{note}</p>
+
+	{#if !isSearch}
+		<div class="sd-same">
+			<p class="sd-h2">Тот же вход, все четыре сортировки (n = {n})</p>
+			<dl class="sd-stats">
+				{#each sameInput as s (s.a)}
+					<dt>{LABELS[s.a]}</dt>
+					<dd>{s.count} сравнений</dd>
+				{/each}
+			</dl>
+		</div>
+	{/if}
 
 	{#if !isSearch}
 		<div class="sd-growth">
