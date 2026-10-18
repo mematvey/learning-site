@@ -68,3 +68,18 @@
   term_en: confidence level
   definition: 'Доля повторений опыта, в которых процедура построения интервала накрывает истинное значение параметра. Равен 1 − α, например 95%.'
   chapter: stats/estimation-testing
+- id: unbiased-estimator
+  term: несмещённая оценка
+  term_en: unbiased estimator
+  definition: Оценка, ожидание которой равно оцениваемому параметру. Выборочное среднее несмещённо для μ; выборочная дисперсия несмещённа при делении на n − 1.
+  chapter: stats/estimation-testing
+- id: consistency
+  term: состоятельность оценки
+  term_en: consistency
+  definition: Свойство оценки сходиться к параметру при росте объёма выборки. Выборочное среднее состоятельно, потому что его дисперсия σ²/n стремится к нулю.
+  chapter: stats/estimation-testing
+- id: welch-test
+  term: t-критерий Уэлча
+  term_en: Welch's t-test
+  definition: Сравнение средних двух независимых групп, которое не требует равенства дисперсий. Степени свободы считают по формуле Уэлча-Саттертуэйта.
+  chapter: stats/estimation-testing
