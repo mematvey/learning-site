@@ -1,0 +1,30 @@
+- id: token
+  term: токен
+  term_en: token
+  definition: 'Единица, на которые модель разбивает текст. Это может быть целое слово, часть слова, знак препинания или байт; набор токенов фиксирован словарём токенизатора.'
+  chapter: dl/tokenization
+- id: tokenizer
+  term: токенизатор
+  term_en: tokenizer
+  definition: 'Правило, которое переводит текст в последовательность токенов и обратно. Для каждой модели свой токенизатор, и менять его у обученной модели нельзя.'
+  chapter: dl/tokenization
+- id: vocabulary
+  term: словарь
+  term_en: vocabulary
+  definition: 'Множество всех токенов, которые знает токенизатор, с номером (id) у каждого. Его размер $V$ задаёт размер таблицы эмбеддингов.'
+  chapter: dl/tokenization
+- id: subword
+  term: субслово
+  term_en: subword
+  definition: 'Токен, который меньше слова, но обычно больше одного символа, например часть слова или суффикс. Редкие слова собираются из субслов, которые модель видела часто.'
+  chapter: dl/tokenization
+- id: bpe
+  term: BPE
+  term_en: byte pair encoding
+  definition: 'Алгоритм, который строит словарь субслов: начинает с символов и на каждом шаге сливает самую частую пару соседних токенов в новый токен.'
+  chapter: dl/tokenization
+- id: byte-level-bpe
+  term: байтовый BPE
+  term_en: byte-level BPE
+  definition: 'Вариант BPE, где базовый алфавит состоит из 256 байтов. Любой текст кодируется без неизвестных символов.'
+  chapter: dl/tokenization
