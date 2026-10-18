@@ -50,6 +50,27 @@ sources:
     url: https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching
     accessed: 2026-10-17
     supports: [math-cache-gh]
+  - id: ghreleases
+    kind: doc
+    title: Releases of actions/upload-artifact and actions/download-artifact
+    venue: GitHub repositories (releases)
+    url: https://github.com/actions/download-artifact/releases
+    accessed: 2026-10-18
+    supports: [code-expect]
+  - id: ghbilling
+    kind: doc
+    title: About billing for GitHub Actions (минуты и тарифы раннеров)
+    venue: GitHub Docs
+    url: https://docs.github.com/en/billing/concepts/product-billing/github-actions
+    accessed: 2026-10-18
+    supports: [when-gpu]
+  - id: ghlarger
+    kind: doc
+    title: Larger runners for GitHub Actions (GPU-конфигурации)
+    venue: GitHub Docs
+    url: https://docs.github.com/en/actions/reference/runners/larger-runners
+    accessed: 2026-10-18
+    supports: [when-gpu]
 status: draft
 ---
 
@@ -141,7 +162,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python -m train --config configs/base.yaml --out artifacts/model.npz
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: model
           path: artifacts/model.npz
@@ -150,7 +171,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           name: model
           path: artifacts
@@ -160,14 +181,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v8
         with:
           name: model
           path: artifacts
       - run: python -m deploy --model artifacts/model.npz
 ```
 
-Ожидаемое поведение: `deploy` стартует только после успешных `evaluate` и `tests`. Если любая из этих задач завершилась с ошибкой, `deploy` пропускается, и модель не уходит в выкладку. Так работает параметр `needs` (см. <Cite id="ghneeds" />). Файл с весами задачи получают через артефакт: `train` загружает его, `evaluate` и `deploy` скачивают (см. <Cite id="ghartifacts" />). {#code-expect}
+Ожидаемое поведение: `deploy` стартует только после успешных `evaluate` и `tests`. Если любая из этих задач завершилась с ошибкой, `deploy` пропускается, и модель не уходит в выкладку. Так работает параметр `needs` (см. <Cite id="ghneeds" />). Файл с весами задачи получают через артефакт: `train` загружает его, `evaluate` и `deploy` скачивают (см. <Cite id="ghartifacts" />). Версии действий в примере (`upload-artifact@v7`, `download-artifact@v8`) последние на дату проверки, 18 октября 2026 (см. <Cite id="ghreleases" />). Сама документация в примере пока показывает `@v4` и `@v5`, поэтому при копировании сверяйте номер версии с релизами. {#code-expect}
 
 ## Частые ошибки {#mistakes}
 
@@ -182,9 +203,29 @@ jobs:
 
 </Callout>
 
+## Когда применять и когда нет {#when}
+
+- **Когда применять.** Модель переобучают чаще раза в месяц, над проектом работают несколько человек, а ошибка выкладки заметна пользователям. Ручной запуск в таких условиях быстро ломается: кто-то забывает прогнать тесты, а кто-то выкладывает старый файл. {#when-yes}
+- **Когда избыточно.** Одноразовый эксперимент, учебный проект или модель, которую переобучают раз в год и проверяют по чек-листу. Пайплайн здесь стоит времени на поддержку, а выгоды почти нет. {#when-no}
+- **Цена.** Конфигурацию пайплайна нужно поддерживать, а каждый push запускает задачи и занимает раннеры. Это дешевле, чем выкладка плохой модели, но не бесплатно. {#when-cost}
+- **Стоимость GPU-раннеров.** Стандартные раннеры GitHub оплачиваются поминутно: базовые тарифы начинаются от $0.002 за минуту одноядерного Linux и доходят до $0.010 за минуту Windows (см. <Cite id="ghbilling" />). GPU-конфигурации относятся к увеличенным раннерам (larger runners, см. <Cite id="ghlarger" />), их цена выше базовой и зависит от конфигурации. Точную цену берите из актуальной таблицы тарифов, здесь её не называю. Поэтому обучение на GPU обычно выносят на расписание или на свой сервер, а в push-пайплайне держат быстрые проверки. {#when-gpu}
+- **Альтернатива.** Вместо полного CI можно держать один скрипт, который обучает модель, считает метрики и пишет их в журнал, и запускать его вручную с зафиксированным конфигом. Переход к пайплайну оправдан, когда ручной запуск начинают пропускать. {#when-alt}
+
+<Level c={3}>
+
+**Что решать на практике.** Сначала разделите проверки на обязательные для каждого изменения (тесты кода и контроль качества с порогами) и запускаемые по расписанию (полное обучение, большие оценки). Для каждого порога запишите допуск по разбросу между повторными запусками (см. раздел «Математика»). Тогда решение о выкладке опирается на числа, а не на случайный шум. {#when-practice}
+
+</Level>
+
 ## Проверь себя {#check}
 
-<Quiz id="quiz-cache" q="Поменяли только шаг обучения (learning rate) в конфиге, код и данные прежние. Что будет с кешем шага обучения?">
+<Quiz id="quiz-when" q="Один человек переобучает модель раз в год вручную и смотрит метрики в ноутбуке. Нужен ли ему пайплайн с CI и контролем качества?">
+
+Не обязательно. Пайплайн окупается, когда изменения частые и их делают несколько человек. Для редкого ручного запуска хватает скрипта и журнала метрик. Порог качества всё же стоит зафиксировать в коде, чтобы не сравнивать результаты на глаз.
+
+</Quiz>
+
+<Quiz id="quiz-cache"q="Поменяли только шаг обучения (learning rate) в конфиге, код и данные прежние. Что будет с кешем шага обучения?">
 
 Ключ кеша составляется в том числе из параметров шага, поэтому ключ меняется, и шаг пересчитывается. Результат старой конфигурации не используется.
 

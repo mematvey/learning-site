@@ -43,3 +43,8 @@
   term_en: A/B test
   definition: Сравнение двух вариантов на случайно разделённых группах пользователей по выбранным метрикам.
   chapter: mlops/serving
+- id: streaming-inference
+  term: стриминговый инференс
+  term_en: streaming inference
+  definition: Предсказания считаются по мере поступления непрерывного потока событий; решение может зависеть от окна последних событий, а не от одного запроса.
+  chapter: mlops/serving
