@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { type Diagnostic, lineOf } from './diagnostics';
 import { findCycle, transitivePrereqs } from './graph';
@@ -243,6 +243,69 @@ export function checkContent(loaded: LoadedContent): Diagnostic[] {
 	out.push(...collectAliases(loaded).diagnostics);
 	out.push(...checkGraph(loaded, chapters, prereqsOf));
 	out.push(...checkUserDataNotTracked(loaded.root));
+	out.push(...checkControlChars(loaded));
+	return out;
+}
+
+/** Control characters: a `\t`, `\a`, `\b`, `\f`, `\v`, `\r` typed as a real character eats the backslash of a LaTeX command. */
+/** Control characters other than TAB and LF (CR included). */
+function isControlChar(char: string): boolean {
+	const code = char.charCodeAt(0);
+	return code < 0x20 && code !== 0x09 && code !== 0x0a;
+}
+
+/**
+ * Finds control characters (and CR) in a text file. With `fenced`, code blocks are skipped
+ * for control characters and TAB is allowed inside them; TAB outside them is an error.
+ */
+export function controlCharDiagnostics(file: string, text: string, fenced: boolean): Diagnostic[] {
+	const out: Diagnostic[] = [];
+	let inFence = false;
+	text.split('\n').forEach((line, i) => {
+		if (fenced && /^\s*```/.test(line)) {
+			inFence = !inFence;
+			return;
+		}
+		if (fenced && inFence) return;
+		line.split('').forEach((char, index) => {
+			if (!isControlChar(char)) return;
+			const hex = char.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0');
+			const snippet = line.slice(Math.max(0, index - 12), index + 12);
+			out.push({
+				file,
+				line: i + 1,
+				message: `управляющий символ U+${hex} в тексте (${JSON.stringify(snippet)}): обратная косая в LaTeX-команде потерялась, восстановите команду`,
+			});
+		});
+		if (fenced && line.includes('\t')) {
+			out.push({
+				file,
+				line: i + 1,
+				message: 'символ TAB вне блока кода: в тексте главы используйте пробелы',
+			});
+		}
+	});
+	return out;
+}
+
+/** Chapters and glossary files must not contain control characters (see `controlCharDiagnostics`). */
+function checkControlChars(loaded: LoadedContent): Diagnostic[] {
+	const out: Diagnostic[] = [];
+	for (const ch of loaded.chapters) {
+		const abs = join(loaded.root, ch.file);
+		if (!existsSync(abs)) continue;
+		out.push(...controlCharDiagnostics(ch.file, readFileSync(abs, 'utf8'), true));
+	}
+	const glossaryDir = join(loaded.root, 'data', 'glossary');
+	if (existsSync(glossaryDir)) {
+		for (const name of readdirSync(glossaryDir)) {
+			if (!/\.ya?ml$/.test(name)) continue;
+			const file = `data/glossary/${name}`;
+			out.push(
+				...controlCharDiagnostics(file, readFileSync(join(glossaryDir, name), 'utf8'), false),
+			);
+		}
+	}
 	return out;
 }
 
