@@ -132,7 +132,7 @@
 		color: var(--text);
 		cursor: pointer;
 		background: var(--surface);
-		border: 1px solid var(--border);
+		border: 1px solid var(--border-control);
 		border-radius: var(--radius);
 		transition: border-color var(--dur-fast) var(--ease);
 	}

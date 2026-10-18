@@ -370,7 +370,7 @@
 	.btn-outline {
 		background: none;
 		color: var(--text);
-		border: 1px solid var(--border);
+		border: 1px solid var(--border-control);
 	}
 	.btn-link {
 		background: none;

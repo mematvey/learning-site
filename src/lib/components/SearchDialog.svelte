@@ -180,7 +180,7 @@
 		max-width: 100%;
 		height: 34px;
 		padding: 0 var(--space-3);
-		border: 1px solid var(--border);
+		border: 1px solid var(--border-control);
 		border-radius: var(--radius);
 		background: var(--surface);
 		color: var(--text-muted);
@@ -222,7 +222,7 @@
 	.search-input {
 		margin: var(--space-4);
 		padding: var(--space-3) var(--space-4);
-		border: 1px solid var(--border);
+		border: 1px solid var(--border-control);
 		border-radius: var(--radius);
 		background: var(--bg);
 		color: var(--text);

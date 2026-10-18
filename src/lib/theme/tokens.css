@@ -4,6 +4,8 @@
 	--surface: #fffdf8;
 	--surface-2: #f3ede2;
 	--border: #e7dfd1;
+	/* Границы интерактивных контролов: контраст ≥ 3:1 к фону (design-system §10) */
+	--border-control: #8c8273;
 	--text: #211c16;
 	--text-muted: #6b6155;
 	--accent: #2563eb;
@@ -24,8 +26,8 @@
 	--seq-0: #f5eee2;
 	--seq-1: #27408b;
 
-	/* Закладки «Моё»: отдельный от заметок и темы цвет */
-	--bookmark: #b45309;
+	/* Закладки «Моё»: отдельный от --warn цвет (фуксия), контраст текста ≥ 4.5:1 */
+	--bookmark: #a21caf;
 
 	/* Акцент темы: тонкое отличие между топиками (полоса в шапке, бейдж, маркеры) */
 	--topic: #4f46e5;
@@ -96,6 +98,7 @@
 	--surface: #1d1a15;
 	--surface-2: #26221b;
 	--border: #383126;
+	--border-control: #7a7060;
 	--text: #eee7db;
 	--text-muted: #ab9f8e;
 	--accent: #7aa2ff;
@@ -114,7 +117,11 @@
 	--seq-0: #221f1a;
 	--seq-1: #9db7ff;
 
-	--bookmark: #f5b74a;
+	--bookmark: #e879f9;
+
+	/* Акцент по умолчанию в тёмной теме (страницы без data-topic: «Моё», настройки) */
+	--topic: #818cf8;
+	--topic-soft: #1e1b4b;
 
 	--shadow: 0 0 0 1px var(--border);
 }

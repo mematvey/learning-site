@@ -23,6 +23,7 @@
 	let pending = $state<{ name: string; backup: Backup } | null>(null);
 	let importMode = $state<ImportMode>('merge');
 	let importResult = $state('');
+	let fileInput: HTMLInputElement | undefined = $state();
 
 	async function refreshFolder(): Promise<void> {
 		folder = await folderSync.status();
@@ -284,10 +285,25 @@
 			Загрузите backup.json, скачанный с сайта. «Слить» добавит новые записи и оставит текущие;
 			«Заменить» удалит текущие записи и заметки.
 		</p>
-		<label class="field">
-			<span>Файл backup.json</span>
-			<input type="file" accept=".json,application/json" onchange={onFileChosen} />
-		</label>
+		<div class="actions">
+			<button
+				type="button"
+				class="btn-outline"
+				onclick={() => fileInput?.click()}
+				disabled={!!busy}
+			>
+				Выбрать файл backup.json
+			</button>
+		</div>
+		<input
+			bind:this={fileInput}
+			class="file-input"
+			type="file"
+			accept=".json,application/json"
+			tabindex="-1"
+			aria-hidden="true"
+			onchange={onFileChosen}
+		/>
 
 		{#if pending}
 			<fieldset class="modes">
@@ -336,9 +352,9 @@
 		</p>
 	</section>
 
-	<div class="feedback" aria-live="polite">
+	<div class="feedback">
 		{#if busy}<p class="muted">Идёт действие…</p>{/if}
-		{#if message}<p class="ok">{message}</p>{/if}
+		{#if message}<p class="ok" role="status">{message}</p>{/if}
 		{#if error}<p class="error" role="alert">{error}</p>{/if}
 	</div>
 </main>
@@ -413,13 +429,15 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-2);
+		margin: var(--space-3) 0;
+	}
+	/* Paragraph after a wrapped button row: keep a gap on narrow screens too. */
+	.actions + p,
+	.actions + .muted {
 		margin-top: var(--space-3);
 	}
-	.field {
-		display: grid;
-		gap: var(--space-1);
-		font-size: var(--fs-sm);
-		margin: var(--space-3) 0;
+	.file-input {
+		display: none;
 	}
 	.modes {
 		border: 0;
@@ -440,11 +458,6 @@
 		opacity: 0.5;
 		cursor: default;
 	}
-	button:focus-visible,
-	input:focus-visible {
-		outline: 2px solid var(--topic);
-		outline-offset: 2px;
-	}
 	.btn-primary {
 		background: var(--topic);
 		color: var(--surface);
@@ -453,7 +466,7 @@
 	.btn-outline {
 		background: none;
 		color: var(--text);
-		border: 1px solid var(--border);
+		border: 1px solid var(--border-control);
 	}
 	.btn-outline:hover:not(:disabled) {
 		border-color: var(--topic);
