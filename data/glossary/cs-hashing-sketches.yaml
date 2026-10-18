@@ -1,0 +1,35 @@
+- id: bloom-filter
+  term: Bloom-фильтр
+  term_en: Bloom filter
+  definition: Вероятностная структура из массива битов и набора хеш-функций. Отвечает «точно нет» или «возможно, есть»; ложных отрицаний не бывает, ложные срабатывания возможны.
+  chapter: cs/hashing-sketches
+- id: false-positive
+  term: ложное срабатывание
+  term_en: false positive
+  definition: Ответ «да» для элемента, которого нет в множестве. В Bloom-фильтре это единственный тип ошибки, а её доля задаётся числом битов и хеш-функций.
+  chapter: cs/hashing-sketches
+- id: sketch
+  term: сводка
+  term_en: sketch
+  definition: Компактная структура, которая хранит приближённый след большого набора данных и отвечает на запросы с ошибкой, заданной параметрами. Примеры в главе — Bloom-фильтр, MinHash, Count-Min.
+  chapter: cs/hashing-sketches
+- id: shingle
+  term: шингл
+  term_en: shingle
+  definition: Фрагмент текста фиксированной длины, обычно набор подряд идущих слов или символов. Документ превращают в множество шинглов, чтобы сравнивать тексты как множества.
+  chapter: cs/hashing-sketches
+- id: jaccard-index
+  term: индекс Жаккара
+  term_en: Jaccard index
+  definition: Мера сходства двух множеств, равная отношению размера пересечения к размеру объединения. Лежит от 0 до 1.
+  chapter: cs/hashing-sketches
+- id: minhash
+  term: MinHash
+  term_en: MinHash
+  definition: Метод оценки индекса Жаккара по короткой подписи. Для каждой случайной перестановки запоминают минимум; доля совпавших минимумов оценивает сходство.
+  chapter: cs/hashing-sketches
+- id: count-min-sketch
+  term: Count-Min sketch
+  term_en: Count-Min sketch
+  definition: Таблица счётчиков с независимыми хеш-функциями по строкам. Оценка частоты берётся как минимум по строкам и при неотрицательных обновлениях никогда не меньше истинной.
+  chapter: cs/hashing-sketches
