@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`markdown content > keeps the summary stable 1`] = `
+"# Сводка: личные данные
+
+Экспорт: 2026-10-18T12:00:00Z
+
+## DL Theory
+
+- Заметки: 1
+- Закладки: 2
+- Хочу разобрать: 1
+- Ситуации: 2 (открытых: 1)
+- Уточнения: 3
+
+**Открытые ситуации:**
+- Не сходится размерность
+
+Файлы: \`user-data/dl/notes.md\`, \`user-data/dl/bookmarks.md\`, \`user-data/dl/wishes.md\`, \`user-data/dl/situations.md\`
+"
+`;
