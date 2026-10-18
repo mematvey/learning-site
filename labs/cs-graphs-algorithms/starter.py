@@ -39,3 +39,16 @@ def dijkstra(graph, start):
     # TODO: keep a heap (heapq, from the standard library) of (distance, vertex) pairs and a dict of the best
     # known distances. Relax every edge of the vertex you pop. Skip stale heap entries.
     raise NotImplementedError
+
+
+def topo_sort(graph):
+    """Topological order of a directed graph given as an adjacency list.
+
+    Every vertex appears once, and for each edge u -> v the vertex u comes before v.
+    Vertices that only appear as neighbours are included too. If the graph has a cycle,
+    raise ValueError.
+    """
+    # TODO: Kahn's algorithm. Count incoming edges for each vertex, put the vertices with
+    # zero incoming edges in a deque, and pop them one by one; when a neighbour's count drops
+    # to zero, enqueue it. If fewer vertices come out than exist, there is a cycle.
+    raise NotImplementedError

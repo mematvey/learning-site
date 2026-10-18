@@ -115,3 +115,25 @@ def test_random_graphs_bfs_matches_unit_weight_reference():
         assert hops == expected, f"mismatch on random input, seed {seed}"
         order = bfs_order(_to_adjacency(n, edges, False), 0)
         assert sorted(order) == sorted(expected), f"order must cover reachable set, seed {seed}"
+
+
+def test_topo_sort_random_dags_and_self_loop():
+    rng = random.Random(7)
+    for _ in range(20):
+        n = 12
+        graph = {u: [] for u in range(n)}
+        for u in range(n):
+            for v in range(u + 1, n):
+                if rng.random() < 0.3:
+                    graph[u].append(v)
+        order = topo_sort(graph)
+        assert sorted(order) == list(range(n)), f"every vertex once, got {order}"
+        pos = {v: i for i, v in enumerate(order)}
+        for u, nbrs in graph.items():
+            for v in nbrs:
+                assert pos[u] < pos[v], f"edge {u}->{v} violated in {order}"
+    try:
+        topo_sort({"x": ["x"]})
+    except ValueError:
+        return
+    raise AssertionError("a self-loop is a cycle and must raise ValueError")

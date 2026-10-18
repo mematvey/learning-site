@@ -60,3 +60,36 @@ def dijkstra(graph, start):
                 dist[v] = candidate
                 heapq.heappush(heap, (candidate, v))
     return dist
+
+
+def topo_sort(graph):
+    """Topological order of a directed graph given as an adjacency list.
+
+    Every vertex appears once, and for each edge u -> v the vertex u comes before v.
+    Vertices that only appear as neighbours are included too. If the graph has a cycle,
+    raise ValueError.
+    """
+    vertices = []
+    known = set()
+    for u, neighbours in graph.items():
+        for v in [u, *neighbours]:
+            if v not in known:
+                known.add(v)
+                vertices.append(v)
+    indegree = {v: 0 for v in vertices}
+    for u in graph:
+        for v in graph[u]:
+            indegree[v] += 1
+    queue = deque(v for v in vertices if indegree[v] == 0)
+    order = []
+    while queue:
+        u = queue.popleft()
+        order.append(u)
+        for v in graph.get(u, []):
+            indegree[v] -= 1
+            if indegree[v] == 0:
+                queue.append(v)
+    if len(order) != len(vertices):
+        # Vertices on or behind a cycle never reach zero incoming edges.
+        raise ValueError("graph has a cycle")
+    return order

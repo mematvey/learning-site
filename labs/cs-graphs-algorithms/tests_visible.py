@@ -39,3 +39,34 @@ def test_dijkstra_hand_case_with_longer_route():
     dist = dijkstra(graph, "S")
     expected = {"S": 0, "A": 2, "B": 4, "C": 5}
     assert dist == expected, f"expected {expected}, got {dist}"
+
+
+def test_topo_sort_pipeline_respects_edges():
+    # A small DAG pipeline: fetch -> clean -> (train, report); train -> deploy.
+    graph = {
+        "fetch": ["clean"],
+        "clean": ["train", "report"],
+        "train": ["deploy"],
+        "report": [],
+        "deploy": [],
+    }
+    order = topo_sort(graph)
+    assert sorted(order) == sorted(graph), f"every vertex once, got {order}"
+    pos = {v: i for i, v in enumerate(order)}
+    for u, nbrs in graph.items():
+        for v in nbrs:
+            assert pos[u] < pos[v], f"{u} must come before {v} in {order}"
+
+
+def test_topo_sort_adds_vertices_seen_only_as_neighbours():
+    order = topo_sort({"a": ["b"]})
+    assert order == ["a", "b"], f"expected ['a', 'b'], got {order}"
+
+
+def test_topo_sort_cycle_raises_value_error():
+    graph = {1: [2], 2: [3], 3: [1], 4: []}
+    try:
+        topo_sort(graph)
+    except ValueError:
+        return
+    raise AssertionError("a cycle must raise ValueError")

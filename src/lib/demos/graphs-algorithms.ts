@@ -1,16 +1,23 @@
 /**
- * Math of the graph demo: a fixed weighted undirected graph on seven vertices and three
- * traversals (BFS, DFS, Dijkstra). Each traversal is recorded as a list of steps, so the
- * view can move forward and back through it. Pure functions only: no DOM, no Svelte.
+ * Math of the graph demo: a fixed graph on seven vertices and four traversals (BFS, DFS,
+ * Dijkstra, Bellman-Ford). The `plain` preset is undirected with positive weights; the
+ * `negative` preset is directed and has one negative edge. Each traversal is recorded as a
+ * list of steps, so the view can move forward and back through it. Pure functions only:
+ * no DOM, no Svelte.
  */
 
-export type AlgoKind = 'bfs' | 'dfs' | 'dijkstra';
+export type AlgoKind = 'bfs' | 'dfs' | 'dijkstra' | 'bellman';
+
+/** `plain`: undirected, weights 1..9. `negative`: directed, weights -9..9, one negative edge. */
+export type Preset = 'plain' | 'negative';
 
 export interface GraphDemoState {
 	/** Which traversal is shown. */
 	algo: AlgoKind;
 	/** Index of the start vertex. */
 	start: number;
+	/** Which graph is shown. */
+	preset: Preset;
 }
 
 /** A vertex with its position on the drawing, both coordinates in [0, 1]. */
@@ -20,7 +27,7 @@ export interface Vertex {
 	y: number;
 }
 
-/** An undirected edge between vertex indices `a` and `b` with weight `w`. */
+/** An edge between vertex indices `a` and `b` with weight `w`. In a directed graph it goes a -> b. */
 export interface Edge {
 	a: number;
 	b: number;
@@ -30,6 +37,8 @@ export interface Edge {
 export interface Graph {
 	vertices: Vertex[];
 	edges: Edge[];
+	/** When false, each edge can be walked from either end. */
+	directed: boolean;
 }
 
 /** One recorded moment of a traversal. */
@@ -52,20 +61,27 @@ export interface AlgoStep {
 
 export const WEIGHT_MIN = 1;
 export const WEIGHT_MAX = 9;
+/** Lower bound of the weight range in the `negative` preset. */
+export const NEG_WEIGHT_MIN = -9;
 export const DEFAULT_ALGO: AlgoKind = 'bfs';
 export const DEFAULT_START = 0;
+export const DEFAULT_PRESET: Preset = 'plain';
 
-/** The fixed demo graph. Vertex positions are for drawing only. */
+/** Vertex positions are for drawing only. */
+const VERTICES: Vertex[] = [
+	{ id: 'A', x: 0.08, y: 0.5 },
+	{ id: 'B', x: 0.3, y: 0.12 },
+	{ id: 'C', x: 0.3, y: 0.88 },
+	{ id: 'D', x: 0.55, y: 0.3 },
+	{ id: 'E', x: 0.55, y: 0.72 },
+	{ id: 'F', x: 0.82, y: 0.15 },
+	{ id: 'G', x: 0.84, y: 0.85 },
+];
+
+/** The `plain` preset: undirected, positive weights. */
 export const DEMO_GRAPH: Graph = {
-	vertices: [
-		{ id: 'A', x: 0.08, y: 0.5 },
-		{ id: 'B', x: 0.3, y: 0.12 },
-		{ id: 'C', x: 0.3, y: 0.88 },
-		{ id: 'D', x: 0.55, y: 0.3 },
-		{ id: 'E', x: 0.55, y: 0.72 },
-		{ id: 'F', x: 0.82, y: 0.15 },
-		{ id: 'G', x: 0.84, y: 0.85 },
-	],
+	vertices: VERTICES,
+	directed: false,
 	edges: [
 		{ a: 0, b: 1, w: 4 },
 		{ a: 0, b: 2, w: 2 },
@@ -79,14 +95,48 @@ export const DEMO_GRAPH: Graph = {
 	],
 };
 
-export function isAlgoKind(v: unknown): v is AlgoKind {
-	return v === 'bfs' || v === 'dfs' || v === 'dijkstra';
+/**
+ * The `negative` preset: the directed example from the chapter (A -> B 1, A -> C 2, C -> B -2)
+ * on the same vertices. Dijkstra closes B at distance 1 and misses the path through C (0).
+ */
+export const DEMO_NEG_GRAPH: Graph = {
+	vertices: VERTICES,
+	directed: true,
+	edges: [
+		{ a: 0, b: 1, w: 1 },
+		{ a: 0, b: 2, w: 2 },
+		{ a: 2, b: 1, w: -2 },
+		{ a: 1, b: 3, w: 5 },
+		{ a: 2, b: 3, w: 8 },
+		{ a: 2, b: 4, w: 1 },
+		{ a: 3, b: 4, w: 3 },
+		{ a: 3, b: 5, w: 2 },
+		{ a: 4, b: 6, w: 4 },
+		{ a: 5, b: 6, w: 6 },
+	],
+};
+
+export function presetGraph(preset: Preset): Graph {
+	return preset === 'negative' ? DEMO_NEG_GRAPH : DEMO_GRAPH;
 }
 
-/** Rounds to an integer edge weight inside [WEIGHT_MIN, WEIGHT_MAX]. Non-finite input gives WEIGHT_MIN. */
-export function clampWeight(w: number): number {
+export function isAlgoKind(v: unknown): v is AlgoKind {
+	return v === 'bfs' || v === 'dfs' || v === 'dijkstra' || v === 'bellman';
+}
+
+export function isPreset(v: unknown): v is Preset {
+	return v === 'plain' || v === 'negative';
+}
+
+/** True when some edge has a negative weight. */
+export function hasNegative(graph: Graph): boolean {
+	return graph.edges.some((e) => e.w < 0);
+}
+
+/** Rounds to an integer weight inside [lo, hi]. Non-finite input gives WEIGHT_MIN. */
+export function clampWeight(w: number, lo: number = WEIGHT_MIN, hi: number = WEIGHT_MAX): number {
 	if (!Number.isFinite(w)) return WEIGHT_MIN;
-	return Math.min(WEIGHT_MAX, Math.max(WEIGHT_MIN, Math.round(w)));
+	return Math.min(hi, Math.max(lo, Math.round(w)));
 }
 
 /** Rounds to a valid vertex index. Non-finite input gives DEFAULT_START. */
@@ -104,14 +154,20 @@ export function applyPatch(
 	return {
 		algo: isAlgoKind(patch.algo) ? patch.algo : state.algo,
 		start: typeof patch.start === 'number' ? snapStart(patch.start, vertexCount) : state.start,
+		preset: isPreset(patch.preset) ? patch.preset : state.preset,
 	};
 }
 
-/** Returns a new graph where edge `index` has weight `w` (clamped). The input graph is not changed. */
+/**
+ * Returns a new graph where edge `index` has weight `w`, clamped to the range of the graph's preset.
+ * The input graph is not changed.
+ */
 export function setEdgeWeight(graph: Graph, index: number, w: number): Graph {
+	const lo = graph.directed ? NEG_WEIGHT_MIN : WEIGHT_MIN;
 	return {
 		vertices: graph.vertices,
-		edges: graph.edges.map((e, i) => (i === index ? { ...e, w: clampWeight(w) } : e)),
+		directed: graph.directed,
+		edges: graph.edges.map((e, i) => (i === index ? { ...e, w: clampWeight(w, lo) } : e)),
 	};
 }
 
@@ -120,7 +176,7 @@ export function neighbours(graph: Graph): { to: number; w: number }[][] {
 	const adj: { to: number; w: number }[][] = graph.vertices.map(() => []);
 	for (const e of graph.edges) {
 		adj[e.a]?.push({ to: e.b, w: e.w });
-		adj[e.b]?.push({ to: e.a, w: e.w });
+		if (!graph.directed) adj[e.b]?.push({ to: e.a, w: e.w });
 	}
 	for (const list of adj) list.sort((p, q) => p.to - q.to);
 	return adj;
@@ -130,6 +186,7 @@ export function neighbours(graph: Graph): { to: number; w: number }[][] {
 export function traverse(graph: Graph, start: number, algo: AlgoKind): AlgoStep[] {
 	if (algo === 'bfs') return bfsSteps(graph, start);
 	if (algo === 'dfs') return dfsSteps(graph, start);
+	if (algo === 'bellman') return bellmanFordSteps(graph, start);
 	return dijkstraSteps(graph, start);
 }
 
@@ -350,5 +407,77 @@ export function dijkstraSteps(graph: Graph, start: number): AlgoStep[] {
 	steps.push(
 		snapshot(graph, null, [], finishText(graph, order, done), order, frontier(), dist, parent),
 	);
+	return steps;
+}
+
+/**
+ * Bellman-Ford: relax every arc in passes, at most n - 1 of them, and stop early when a pass
+ * changes nothing. Works with negative weights. If an arc can still be relaxed after n - 1 passes,
+ * a negative cycle is reachable and no shortest path exists. An undirected edge gives two arcs,
+ * so a negative undirected edge is already a negative cycle. Only changing relaxations are steps.
+ */
+export function bellmanFordSteps(graph: Graph, start: number): AlgoStep[] {
+	const n = graph.vertices.length;
+	const arcs: { u: number; v: number; w: number }[] = [];
+	for (const e of graph.edges) {
+		arcs.push({ u: e.a, v: e.b, w: e.w });
+		if (!graph.directed) arcs.push({ u: e.b, v: e.a, w: e.w });
+	}
+	const dist = emptyArray(n);
+	const parent = emptyArray(n);
+	const steps: AlgoStep[] = [];
+	dist[start] = 0;
+
+	steps.push(
+		snapshot(
+			graph,
+			null,
+			[],
+			`Старт: расстояние до {${start}} равно 0, остальные ∞. Проходим все рёбра, пока оценки меняются.`,
+			[],
+			[],
+			dist,
+			parent,
+		),
+	);
+
+	let changed = true;
+	let pass = 0;
+	while (changed && pass < n - 1) {
+		changed = false;
+		pass++;
+		for (const { u, v, w } of arcs) {
+			const du = dist[u];
+			if (du === null || du === undefined) continue;
+			const nd = du + w;
+			const cur = dist[v];
+			if (cur === null || cur === undefined || nd < cur) {
+				const was = cur === null || cur === undefined ? '∞' : String(cur);
+				dist[v] = nd;
+				parent[v] = u;
+				changed = true;
+				const text = `Проход ${pass}: ребро {${u}} → {${v}} с весом ${w}. Оценка {${v}}: ${was} → ${nd}.`;
+				steps.push(snapshot(graph, u, [v], text, [], [], dist, parent));
+			}
+		}
+	}
+
+	const negCycle = arcs.some(({ u, v, w }) => {
+		const du = dist[u];
+		if (du === null || du === undefined) return false;
+		const cur = dist[v];
+		return cur === null || cur === undefined || du + w < cur;
+	});
+	const reachedIdx = graph.vertices.map((_, i) => i).filter((i) => dist[i] !== null);
+	const sorted = [...reachedIdx].sort((p, q) => (dist[p] as number) - (dist[q] as number) || p - q);
+	const unreached = graph.vertices
+		.map((_, i) => i)
+		.filter((i) => dist[i] === null)
+		.map((i) => name(graph, i));
+	const base = negCycle
+		? 'Достижим отрицательный цикл: кратчайшего пути нет, оценки продолжают уменьшаться.'
+		: `Оценки больше не меняются после ${pass} проход(ов). Расстояния окончательны.`;
+	const tail = unreached.length ? ` Недостижимы: ${unreached.join(', ')}.` : '';
+	steps.push(snapshot(graph, null, [], base + tail, sorted, [], dist, parent));
 	return steps;
 }
