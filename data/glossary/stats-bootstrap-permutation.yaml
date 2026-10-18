@@ -1,0 +1,20 @@
+- id: bootstrap-distribution
+  term: бутстрэп-распределение
+  term_en: bootstrap distribution
+  definition: 'Распределение статистики, посчитанной по многим выборкам, которые вытянуты с возвращением из исходной выборки. Его разброс оценивает неопределённость самой статистики.'
+  chapter: stats/bootstrap-permutation
+- id: percentile-interval
+  term: процентильный интервал
+  term_en: percentile interval
+  definition: 'Доверительный интервал, границы которого — квантили бутстрэп-распределения статистики. Прост в расчёте, но при малой выборке часто занижает охват.'
+  chapter: stats/bootstrap-permutation
+- id: permutation-test
+  term: перестановочный тест
+  term_en: permutation test
+  definition: 'Проверка гипотезы, в которой распределение статистики при нулевой гипотезе получают перебором или случайным перемешиванием меток групп. p-значение считают как долю перестановок, где статистика не меньше наблюдаемой.'
+  chapter: stats/bootstrap-permutation
+- id: exchangeability
+  term: обмениваемость
+  term_en: exchangeability
+  definition: 'Свойство набора величин, при котором их совместное распределение не меняется от перестановки. Перестановочный тест верен, когда при нулевой гипотезе метки групп обмениваемы.'
+  chapter: stats/bootstrap-permutation
