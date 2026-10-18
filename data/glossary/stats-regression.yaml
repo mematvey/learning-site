@@ -1,0 +1,30 @@
+- id: ols
+  term: метод наименьших квадратов
+  term_en: ordinary least squares
+  definition: Способ выбрать прямую (или плоскость) так, чтобы сумма квадратов остатков была наименьшей.
+  chapter: stats/regression
+- id: gauss-markov
+  term: теорема Гаусса–Маркова
+  term_en: Gauss–Markov theorem
+  definition: При линейности, полном ранге, нулевом среднем ошибки при любых признаках, одинаковой дисперсии и отсутствии корреляции ошибок МНК-оценки несмещённые и имеют наименьшую дисперсию среди линейных несмещённых оценок.
+  chapter: stats/regression
+- id: homoscedasticity
+  term: гомоскедастичность
+  term_en: homoscedasticity
+  definition: Одинаковая дисперсия ошибок при всех значениях признаков.
+  chapter: stats/regression
+- id: heteroscedasticity
+  term: гетероскедастичность
+  term_en: heteroscedasticity
+  definition: Дисперсия ошибок меняется при разных значениях признаков. Оценки наклона остаются несмещёнными, но стандартные ошибки и интервалы становятся неверными.
+  chapter: stats/regression
+- id: multicollinearity
+  term: мультиколлинеарность
+  term_en: multicollinearity
+  definition: Сильная линейная связь между признаками модели. Оценки отдельных наклонов становятся неустойчивыми, их стандартные ошибки растут.
+  chapter: stats/regression
+- id: vif
+  term: фактор инфляции дисперсии
+  term_en: variance inflation factor
+  definition: Величина 1/(1 − R²_j), где R²_j получается при регрессии признака j на остальные признаки. Показывает, во сколько раз растёт дисперсия оценки наклона из-за связи с другими признаками.
+  chapter: stats/regression
