@@ -51,3 +51,8 @@
   term_en: pruning
   definition: Упрощение выросшего дерева, то есть удаление поддеревьев, которые мало улучшают качество и подстраиваются под шум.
   chapter: classic-ml/decision-trees
+- id: feature-importance
+  term: важность признаков
+  term_en: feature importance
+  definition: 'Мера вклада признака в качество модели, например сумма уменьшений неоднородности по разбиениям на этом признаке. Для одного дерева нестабильна.'
+  chapter: classic-ml/decision-trees
