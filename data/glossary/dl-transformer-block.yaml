@@ -13,8 +13,3 @@
   term_en: position-wise feed-forward network
   definition: Двухслойная полносвязная сеть с нелинейностью, которая применяется к каждому токену отдельно и одинаково; токены при этом не смешивает.
   chapter: dl/transformer-block
-- id: swiglu
-  term: SwiGLU
-  term_en: SwiGLU
-  definition: 'Вариант MLP с гейтом; одна линейная ветка умножается на активацию Swish (SiLU) от другой, и у блока три матрицы вместо двух. Используется во многих современных открытых моделях.'
-  chapter: dl/transformer-block
