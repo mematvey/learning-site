@@ -27,6 +27,7 @@
 	} from '$lib/theme/theme';
 	import { ensureProgress, shell } from '$lib/shell.svelte';
 	import { initMy } from '$lib/my/state.svelte';
+	import { bootAutosync } from '$lib/my/autosync-boot';
 
 	let { children } = $props();
 
@@ -54,8 +55,12 @@
 		document.documentElement.dataset.hydrated = 'true';
 		theme = readStoredTheme();
 		const stopWatch = watchSystemDark((dark) => (systemDark = dark));
+		let stopAutosync: (() => void) | undefined;
 		try {
 			void initMy();
+			void bootAutosync()
+				.then((stop) => (stopAutosync = stop))
+				.catch((error: unknown) => console.error('Failed to start autosave', error));
 		} catch (error) {
 			console.error('Failed to start "My" data', error);
 		}
@@ -67,6 +72,7 @@
 		return () => {
 			stopWatch();
 			stopShortcuts();
+			stopAutosync?.();
 		};
 	});
 
