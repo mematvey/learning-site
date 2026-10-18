@@ -28,21 +28,7 @@ sources:
     year: 1997
     url: https://math.dartmouth.edu/~prob/prob/prob.pdf
     accessed: 2026-10-16
-    supports: [math-expectation, math-variance, math-linearity]
-  - id: wikiexpect
-    kind: doc
-    title: Expected value
-    venue: Wikipedia (en), определение математического ожидания
-    url: https://en.wikipedia.org/wiki/Expected_value
-    accessed: 2026-10-16
-    supports: [math-expectation]
-  - id: wikivariance
-    kind: doc
-    title: Variance
-    venue: Wikipedia (en), определение дисперсии
-    url: https://en.wikipedia.org/wiki/Variance
-    accessed: 2026-10-16
-    supports: [math-variance, math-var-shortcut, mistake-variance-sum]
+    supports: [math-expectation, math-variance, math-var-shortcut, mistake-variance-sum, math-linearity]
 aliases: []
 status: draft
 ---
@@ -69,11 +55,13 @@ status: draft
 
 Меняйте высоту столбцов мышью. Каждый столбец показывает вероятность одного значения, а ожидание и дисперсия пересчитываются. {#intuition-demo}
 
-<Figure id="fig-rv-demo" alt="Столбцы вероятностей для значений величины, которую можно редактировать мышью. Под столбцами выведены ожидание и дисперсия величины. Для кубика ожидание равно 3.5, для суммы двух кубиков 7." caption="Распределение дискретной случайной величины: кубик и сумма двух кубиков">
+<Figure id="fig-rv-demo" alt="Столбцы вероятностей для значений величины, которую можно редактировать мышью. Под столбцами выведены ожидание и дисперсия величины. Для кубика ожидание равно 3.5, для суммы двух кубиков 7." caption="Распределение дискретной случайной величины: кубик и сумма двух кубиков" notice="сдвиг всех столбцов вправо двигает ожидание, но не меняет разброс; более узкая гора столбцов даёт меньшую дисперсию.">
 
 <RandomVariableDemo />
 
 </Figure>
+
+**Что заметить:** если перенести вероятность из середины к краям, дисперсия растёт, а ожидание у симметричного распределения остаётся на месте. {#intuition-notice}
 
 ## Математика {#math}
 
@@ -90,7 +78,7 @@ $$
 $$
 {#math-expectation}
 
-Каждое значение умножается на свою вероятность, и результаты складываются. Для кубика $\mathbb{E}[X] = (1 + 2 + \dots + 6)/6 = 3.5$. Определение и примеры см. в <Cite id="grinstead1997" /> и <Cite id="wikiexpect" />. {#math-expectation-example}
+Каждое значение умножается на свою вероятность, и результаты складываются. Для кубика $\mathbb{E}[X] = (1 + 2 + \dots + 6)/6 = 3.5$. Определение и примеры см. в <Cite id="grinstead1997" />. {#math-expectation-example}
 
 Дисперсия это среднее квадрата отклонения от ожидания:
 
@@ -99,7 +87,7 @@ $$
 $$
 {#math-variance}
 
-Для кубика $\mathrm{Var}(X) = 35/12 \approx 2.92$. Квадрат нужен, чтобы отклонения вверх и вниз не компенсировали друг друга. <Term id="standard-deviation">Стандартное отклонение</Term> (standard deviation) равно $\sqrt{\mathrm{Var}(X)}$ и измеряется в тех же единицах, что и сама величина. Формула дисперсии: <Cite id="wikivariance" />. {#math-variance-example}
+Для кубика $\mathrm{Var}(X) = 35/12 \approx 2.92$. Квадрат нужен, чтобы отклонения вверх и вниз не компенсировали друг друга. <Term id="standard-deviation">Стандартное отклонение</Term> (standard deviation) равно $\sqrt{\mathrm{Var}(X)}$ и измеряется в тех же единицах, что и сама величина. Формула дисперсии: <Cite id="grinstead1997" />. {#math-variance-example}
 
 </Level>
 
@@ -169,5 +157,11 @@ $35/6 \approx 5.83$. Для независимых величин дисперс
 <Quiz id="quiz-square" q="Чем отличаются E[X^2] и (E[X])^2 и какое из них входит в формулу дисперсии?">
 
 $\mathbb{E}[X^2]$ это ожидание квадрата величины, а $(\mathbb{E}[X])^2$ это квадрат ожидания. В формулу дисперсии $\mathrm{Var}(X) = \mathbb{E}[X^2] - (\mathbb{E}[X])^2$ входят оба. Они равны только для величины без разброса.
+
+</Quiz>
+
+<Quiz id="quiz-rv-shift-mean" q="К числу на каждой грани кубика прибавили единицу, грани стали 2, 3, 4, 5, 6, 7. Чему стали равны ожидание и дисперсия?">
+
+Ожидание стало $4{,}5$, то есть выросло на единицу: $\mathbb{E}[X + 1] = 3{,}5 + 1$. Дисперсия осталась $35/12$, потому что сдвиг не меняет расстояния от значений до среднего.
 
 </Quiz>
