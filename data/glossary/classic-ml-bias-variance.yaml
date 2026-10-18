@@ -37,12 +37,12 @@
   term: кросс-валидация
   term_en: cross-validation
   definition: 'Оценка модели, которая повторяет обучение и проверку на нескольких разбиениях данных и усредняет результаты.'
-  chapter: classic-ml/bias-variance
+  chapter: classic-ml/metrics-validation
 - id: regularization
   term: регуляризация
   term_en: regularization
   definition: 'Добавка к функции потерь, которая штрафует сложные решения, например большие веса. Уменьшает разброс ценой некоторого смещения.'
-  chapter: classic-ml/bias-variance
+  chapter: classic-ml/regularization
 - id: double-descent
   term: двойной спуск
   term_en: double descent
