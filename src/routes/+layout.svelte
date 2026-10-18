@@ -26,6 +26,7 @@
 		writeStoredTheme,
 	} from '$lib/theme/theme';
 	import { ensureProgress, shell } from '$lib/shell.svelte';
+	import { initMy } from '$lib/my/state.svelte';
 
 	let { children } = $props();
 
@@ -53,6 +54,11 @@
 		document.documentElement.dataset.hydrated = 'true';
 		theme = readStoredTheme();
 		const stopWatch = watchSystemDark((dark) => (systemDark = dark));
+		try {
+			void initMy();
+		} catch (error) {
+			console.error('Failed to start "My" data', error);
+		}
 		const stopShortcuts = installShortcuts({
 			// Deferred: the help window itself closes on `?`, and it would see the same keydown.
 			onHelp: () => setTimeout(() => (helpOpen = true), 0),

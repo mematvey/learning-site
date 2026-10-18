@@ -102,7 +102,7 @@
 		margin: 0;
 		font-size: 12px;
 		font-weight: 600;
-		color: var(--bookmark, var(--text-muted));
+		color: var(--bookmark);
 	}
 	.bm-quote {
 		margin: 0;
@@ -147,9 +147,9 @@
 		cursor: pointer;
 	}
 	.bm-primary {
-		background: var(--bookmark, var(--topic));
+		background: var(--bookmark);
 		color: var(--surface);
-		border: 1px solid var(--bookmark, var(--topic));
+		border: 1px solid var(--bookmark);
 	}
 	.bm-outline {
 		background: none;

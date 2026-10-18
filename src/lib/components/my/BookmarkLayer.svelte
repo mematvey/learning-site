@@ -279,8 +279,8 @@
 		border-radius: var(--radius);
 	}
 	.bm-fab.is-on {
-		color: var(--bookmark, var(--topic));
-		border-color: var(--bookmark, var(--topic));
+		color: var(--bookmark);
+		border-color: var(--bookmark);
 	}
 	.bm-fab:focus-visible,
 	.bm-sel:focus-visible {
@@ -309,6 +309,6 @@
 	}
 	/* Saved places: a thin accent bar at the start of the block or term. */
 	:global([data-bookmarked='true']) {
-		box-shadow: inset 3px 0 0 var(--bookmark, var(--topic));
+		box-shadow: inset 3px 0 0 var(--bookmark);
 	}
 </style>

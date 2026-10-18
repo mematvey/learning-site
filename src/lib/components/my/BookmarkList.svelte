@@ -142,7 +142,7 @@
 	.bml-card {
 		background: var(--surface);
 		border: 1px solid var(--border);
-		border-left: 3px solid var(--bookmark, var(--topic));
+		border-left: 3px solid var(--bookmark);
 		border-radius: var(--radius);
 		padding: var(--space-3) var(--space-4);
 		display: grid;
@@ -155,7 +155,7 @@
 		margin: 0;
 		font-size: 12px;
 		font-weight: 600;
-		color: var(--bookmark, var(--text-muted));
+		color: var(--bookmark);
 	}
 	.bml-quote {
 		margin: 0;

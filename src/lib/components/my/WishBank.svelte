@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Wish, WishStatus } from '$lib/contracts/my';
+	import { copyText, downloadText } from '$lib/export/download';
 	import { getMyStore } from '$lib/my/store';
 	import { my } from '$lib/my/state.svelte';
 	import {
@@ -82,25 +83,12 @@
 	}
 
 	async function copyTask(wish: Wish) {
-		const text = buildWishTask(wish);
-		try {
-			await navigator.clipboard.writeText(text);
-			notice = `Задание «${wish.title}» скопировано.`;
-		} catch {
-			notice = 'Браузер не разрешил копирование.';
-		}
+		const ok = await copyText(buildWishTask(wish));
+		notice = ok ? `Задание «${wish.title}» скопировано.` : 'Браузер не разрешил копирование.';
 	}
 
 	function downloadTask(wish: Wish) {
-		const blob = new Blob([buildWishTask(wish)], { type: 'text/markdown;charset=utf-8' });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = wishFileName(wish.title);
-		document.body.append(a);
-		a.click();
-		a.remove();
-		setTimeout(() => URL.revokeObjectURL(url), 0);
+		downloadText(wishFileName(wish.title), buildWishTask(wish));
 	}
 </script>
 
