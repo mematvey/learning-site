@@ -1,0 +1,35 @@
+- id: slo
+  term: цель уровня обслуживания
+  term_en: SLO
+  definition: 'Service level objective: числовая цель для измеримого показателя, например 95% запросов получают первый токен за 1 секунду или быстрее.'
+  chapter: mlops/llm-serving
+- id: ttft
+  term: время до первого токена
+  term_en: TTFT
+  definition: 'Time to first token: время от отправки запроса до первого непустого токена ответа. Включает очередь, обработку входа и сеть.'
+  chapter: mlops/llm-serving
+- id: tpot
+  term: время на выходной токен
+  term_en: TPOT
+  definition: 'Time per output token: среднее время между соседними выходными токенами. В терминологии NVIDIA то же самое называется ITL.'
+  chapter: mlops/llm-serving
+- id: continuous-batching
+  term: непрерывный батчинг
+  term_en: continuous batching
+  definition: 'Режим работы сервера, при котором запрос входит в батч и выходит из него на каждом шаге генерации, а не ждёт, пока весь батч завершится.'
+  chapter: mlops/llm-serving
+- id: cost-per-token
+  term: цена за токен
+  term_en: cost per token
+  definition: 'Стоимость одного обработанного токена: у API это тариф за миллион токенов, у своего хостинга стоимость GPU-часа, делённая на токены, выданные за этот час при реальной загрузке.'
+  chapter: mlops/llm-serving
+- id: gpu-utilization
+  term: загрузка GPU
+  term_en: GPU utilization
+  definition: 'Доля времени, в которую GPU занят полезной работой. Цена одного токена на своём железе обратно пропорциональна загрузке.'
+  chapter: mlops/llm-serving
+- id: self-hosting
+  term: свой хостинг
+  term_en: self-hosting
+  definition: 'Запуск модели на собственном или арендованном железе под собственное управление, в отличие от оплаты токенов поставщику API. Платите за GPU и людей, которые его эксплуатируют.'
+  chapter: mlops/llm-serving
