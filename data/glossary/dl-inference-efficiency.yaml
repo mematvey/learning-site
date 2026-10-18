@@ -1,0 +1,20 @@
+- id: speculative-decoding
+  term: спекулятивное декодирование
+  term_en: speculative decoding
+  definition: Метод ускорения генерации, при котором маленькая черновая модель предлагает несколько токенов, а большая проверяет их за один проход; выход распределён так же, как у большой модели.
+  chapter: dl/inference-efficiency
+- id: draft-model
+  term: черновая модель
+  term_en: draft model
+  definition: Маленькая модель, которая быстро предлагает кандидатов следующих токенов для спекулятивного декодирования.
+  chapter: dl/inference-efficiency
+- id: mixture-of-experts
+  term: смесь экспертов
+  term_en: mixture of experts
+  definition: Архитектура, в которой слой содержит много параллельных подсетей (экспертов), а для каждого токена работает лишь несколько из них; параметров много, вычислений на токен меньше.
+  chapter: dl/inference-efficiency
+- id: expert-router
+  term: маршрутизатор экспертов
+  term_en: expert router
+  definition: Сеть, которая для каждого токена выбирает активных экспертов и задаёт веса их ответов; в смеси экспертов обычно это линейный слой с softmax по выбранным экспертам.
+  chapter: dl/inference-efficiency
