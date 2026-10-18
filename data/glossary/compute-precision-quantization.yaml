@@ -1,0 +1,45 @@
+- id: quantization
+  term: квантизация
+  term_en: quantization
+  definition: Перевод чисел (весов, активаций) в формат с меньшим числом бит. Экономит память и трафик, но вносит ошибку округления.
+  chapter: compute/precision-quantization
+- id: exponent
+  term: порядок
+  term_en: exponent
+  definition: Часть числа с плавающей точкой, которая задаёт его масштаб (степень двойки). Больше бит порядка дают больший диапазон.
+  chapter: compute/precision-quantization
+- id: mantissa
+  term: мантисса
+  term_en: mantissa
+  definition: Часть числа с плавающей точкой, которая задаёт значащие цифры внутри масштаба. Больше бит мантиссы дают точность.
+  chapter: compute/precision-quantization
+- id: dynamic-range
+  term: динамический диапазон
+  term_en: dynamic range
+  definition: Отношение наибольшего и наименьшего представимых значений формата. Определяется битами порядка.
+  chapter: compute/precision-quantization
+- id: subnormal
+  term: денормализованное число
+  term_en: subnormal
+  definition: Число с нулевым старшим битом порядка. Позволяет записывать очень малые значения ценой точности, за пределом обычных чисел.
+  chapter: compute/precision-quantization
+- id: rounding
+  term: округление
+  term_en: rounding
+  definition: Замена точного значения ближайшим представимым. Ошибка округления для формата определяется числом бит мантиссы.
+  chapter: compute/precision-quantization
+- id: block-scale
+  term: масштаб блока
+  term_en: block scale
+  definition: Общий масштаб для группы значений, например для 32 элементов в формате MX. Позволяет малым элементам использовать узкий формат.
+  chapter: compute/precision-quantization
+- id: loss-scaling
+  term: масштабирование потерь
+  term_en: loss scaling
+  definition: Умножение функции потерь на константу перед обратным проходом, чтобы градиенты в fp16 не обнулялись. Перед шагом оптимизатора градиенты делятся обратно.
+  chapter: compute/precision-quantization
+- id: weight-only-quantization
+  term: квантизация только весов
+  term_en: weight-only quantization
+  definition: Сжатие весов модели в низкий формат при вычислениях в более широком формате. Снижает трафик весов при декодировании.
+  chapter: compute/precision-quantization
