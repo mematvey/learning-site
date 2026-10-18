@@ -1,5 +1,5 @@
 id: mlops-evaluation
-title: 'Оценка ML- и LLM-систем'
+title: "Бутстрэп-интервал и парное сравнение моделей"
 chapter: mlops/evaluation
 runtime: pyodide
 starter: starter.py
