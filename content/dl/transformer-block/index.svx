@@ -8,7 +8,6 @@ concepts:
   - { id: transformer-block, title: Блок трансформера }
   - { id: mlp, title: MLP блока }
   - { id: sublayer, title: Подслой }
-  - { id: swiglu, title: SwiGLU }
 keywords:
   - transformer block
   - остаточные связи
