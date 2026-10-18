@@ -1,0 +1,49 @@
+- id: fine-tuning
+  term: дообучение
+  term_en: fine-tuning
+  definition: Продолжение обучения предобученной модели на меньшем наборе данных, чтобы изменить её поведение под задачу.
+  chapter: dl/finetuning-alignment
+- id: sft
+  term: supervised fine-tuning
+  term_en: SFT
+  definition: Дообучение с учителем на парах «запрос и хороший ответ», написанных людьми; после него модель начинает вести себя как ассистент.
+  chapter: dl/finetuning-alignment
+- id: lora
+  term: LoRA
+  term_en: low-rank adaptation
+  definition: Метод дообучения, при котором исходные веса заморожены, а обучается низкоранговая поправка к ним.
+  chapter: dl/finetuning-alignment
+- id: low-rank
+  term: низкий ранг
+  term_en: low-rank
+  definition: Свойство матрицы, которую можно представить произведением двух узких матриц; ранг r задаёт размер этого представления.
+  chapter: dl/finetuning-alignment
+- id: qlora
+  term: QLoRA
+  definition: Вариант LoRA, в котором замороженная модель хранится в 4-битном формате, а поправки обучаются в более высокой точности.
+  chapter: dl/finetuning-alignment
+- id: reward-model
+  term: модель награды
+  term_en: reward model
+  definition: Модель, которая оценивает ответ так, чтобы оценка совпадала с человеческими предпочтениями; обычно обучается на парах «лучше — хуже».
+  chapter: dl/finetuning-alignment
+- id: rlhf
+  term: RLHF
+  term_en: reinforcement learning from human feedback
+  definition: Выравнивание модели через обучение с подкреплением, где наградой служит модель, обученная на человеческих предпочтениях.
+  chapter: dl/finetuning-alignment
+- id: dpo
+  term: DPO
+  term_en: direct preference optimization
+  definition: Метод выравнивания по парам предпочтений без отдельной модели награды и без цикла обучения с подкреплением.
+  chapter: dl/finetuning-alignment
+- id: reward-hacking
+  term: взлом награды
+  term_en: reward hacking
+  definition: Ситуация, когда модель получает высокую награду, не делая того, чего от неё хотели; возникает при чрезмерной оптимизации прокси-награды.
+  chapter: dl/finetuning-alignment
+- id: rag
+  term: RAG
+  term_en: retrieval-augmented generation
+  definition: Подход, при котором сначала ищутся релевантные документы, а их текст подставляется в промпт вместе с запросом.
+  chapter: dl/finetuning-alignment
