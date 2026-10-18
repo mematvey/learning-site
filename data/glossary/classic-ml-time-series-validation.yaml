@@ -1,0 +1,25 @@
+- id: time-series
+  term: временной ряд
+  term_en: time series
+  definition: 'Последовательность наблюдений, упорядоченных по времени. Соседние значения обычно связаны, поэтому случайно перемешивать ряд нельзя.'
+  chapter: classic-ml/time-series-validation
+- id: expanding-window
+  term: расширяющееся окно
+  term_en: expanding window
+  definition: 'Схема разбиения по времени, при которой обучающая часть начинается с самого начала ряда и растёт от разбиения к разбиению, а тестовая идёт сразу после неё.'
+  chapter: classic-ml/time-series-validation
+- id: sliding-window
+  term: скользящее окно
+  term_en: sliding window
+  definition: 'Схема разбиения по времени, при которой обучающая часть имеет фиксированную длину и сдвигается вперёд вместе с тестовой частью.'
+  chapter: classic-ml/time-series-validation
+- id: lag-feature
+  term: признак-лаг
+  term_en: lag feature
+  definition: 'Значение ряда, сдвинутое назад на заданное число шагов, например значение вчера для прогноза сегодня. Должен строиться только из прошлых значений, иначе возникает утечка.'
+  chapter: classic-ml/time-series-validation
+- id: time-gap
+  term: зазор между обучением и тестом
+  term_en: time gap
+  definition: 'Несколько точек между последним обучающим и первым тестовым наблюдением, которые не используются ни в обучении, ни в проверке. Нужен, когда цель или признаки зависят от соседних по времени точек.'
+  chapter: classic-ml/time-series-validation
