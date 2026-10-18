@@ -4,6 +4,7 @@ import {
 	DEFAULT_WD,
 	EPOCHS,
 	N_NEURONS,
+	averageOutput,
 	bestEpoch,
 	dropoutMask,
 	finalGap,
@@ -114,5 +115,14 @@ describe('bestEpoch', () => {
 	it('returns the index of the smallest value and the first one on ties', () => {
 		expect(bestEpoch([3, 1, 2, 1])).toBe(1);
 		expect(bestEpoch([0])).toBe(0);
+	});
+});
+
+describe('averageOutput', () => {
+	it('stays near 1 with inverted scaling and drops to about 1 - p without it', () => {
+		expect(averageOutput(0.5, true)).toBeGreaterThan(0.9);
+		expect(averageOutput(0.5, true)).toBeLessThan(1.1);
+		expect(averageOutput(0.5, false)).toBeGreaterThan(0.4);
+		expect(averageOutput(0.5, false)).toBeLessThan(0.6);
 	});
 });

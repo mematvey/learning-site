@@ -22,6 +22,9 @@ export const WD_STEP = 0.01;
 export const DEFAULT_P = 0.3;
 export const DEFAULT_WD = 0.03;
 export const DEFAULT_STEP = 0;
+export const DEFAULT_SCALED = true;
+/** Number of masks averaged to estimate the expected layer output. */
+export const AVG_MASKS = 400;
 
 const MASK_SEED = 20260;
 
@@ -32,6 +35,8 @@ export interface DropoutDemoState {
 	wd: number;
 	/** Index of the mask (training step). Each step draws a new mask. */
 	step: number;
+	/** Whether kept neurons are multiplied by 1/(1 - p) (inverted dropout). */
+	scaled: boolean;
 }
 
 function clamp(v: number, lo: number, hi: number): number {
@@ -82,6 +87,20 @@ export function dropoutMask(n: number, p: number, step: number, seed = MASK_SEED
 /** Factor applied to kept neurons during training: 1 / (1 - p). */
 export function keepScale(p: number): number {
 	return 1 / (1 - clamp(p, 0, 0.99));
+}
+
+/**
+ * Average output of a layer of ones over `AVG_MASKS` masks: a neuron gives 1/(1 - p) when kept
+ * and scaled, 1 when kept and unscaled, 0 when dropped. With scaling the mean is close to 1.
+ */
+export function averageOutput(p: number, scaled: boolean, n: number = N_NEURONS): number {
+	const f = scaled ? keepScale(p) : 1;
+	let total = 0;
+	for (let step = 0; step < AVG_MASKS; step++) {
+		const keep = dropoutMask(n, p, step);
+		total += keep.filter(Boolean).length * f;
+	}
+	return total / (AVG_MASKS * n);
 }
 
 /** Share of kept neurons in a mask. */
@@ -158,7 +177,9 @@ export function describeState(state: DropoutDemoState): string {
 	const best = bestEpoch(lossCurves(state.p, state.wd).val);
 	return (
 		`Шаг ${state.step + 1}: выключено ${dropped} из ${N_NEURONS} нейронов, ` +
-		`оставшиеся умножаются на ${keepScale(state.p).toFixed(2)}. ` +
+		(state.scaled
+			? `оставшиеся умножаются на ${keepScale(state.p).toFixed(2)}. `
+			: 'масштабирование выключено, оставшиеся не меняются. ') +
 		`Минимум ошибки на валидации на эпохе ${best}.`
 	);
 }

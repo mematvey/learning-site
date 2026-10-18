@@ -37,3 +37,13 @@
   term: fan-in
   definition: 'Число входов нейрона или слоя; в формулах инициализации обозначается n_in.'
   chapter: dl/activations-init
+- id: mean-square
+  term: средний квадрат активации
+  term_en: mean square (second moment)
+  definition: 'Среднее значений a², то есть E[a²]. Совпадает с дисперсией только при нулевом среднем; у ReLU больше дисперсии.'
+  chapter: dl/activations-init
+- id: gelu
+  term: GELU
+  term_en: Gaussian error linear unit
+  definition: 'Гладкая активация x·Φ(x), где Φ функция распределения стандартного нормального закона; сглаженный вариант ReLU, применяется в трансформерах.'
+  chapter: dl/activations-init

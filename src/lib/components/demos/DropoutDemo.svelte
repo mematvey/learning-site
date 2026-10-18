@@ -3,6 +3,9 @@
 	import { DEMOS_CONTEXT, type DemosContext } from '$lib/contracts/context';
 	import {
 		DEFAULT_P,
+		DEFAULT_SCALED,
+		AVG_MASKS,
+		averageOutput,
 		DEFAULT_STEP,
 		DEFAULT_WD,
 		EPOCHS,
@@ -37,6 +40,8 @@
 	/* svelte-ignore state_referenced_locally */
 	let step = $state(snapStep(initial?.step ?? DEFAULT_STEP));
 	/** Real widths of the two plots in px; the SVGs are drawn at this width (no viewBox scaling). */
+	/* svelte-ignore state_referenced_locally */
+	let scaled = $state(initial?.scaled ?? DEFAULT_SCALED);
 	let wNeurons = $state(0);
 	let wCurves = $state(0);
 
@@ -46,7 +51,8 @@
 	const scale = $derived(keepScale(p));
 	const curves = $derived(lossCurves(p, wd));
 	const best = $derived(bestEpoch(curves.val));
-	const note = $derived(describeState({ p, wd, step }));
+	const note = $derived(describeState({ p, wd, step, scaled }));
+	const avg = $derived(averageOutput(p, scaled));
 	const dropped = $derived(keep.filter((k) => !k).length);
 
 	/** Plot sizes in px; 480 until the first measurement. */
@@ -70,12 +76,14 @@
 		if (typeof patch.p === 'number') p = snapP(patch.p);
 		if (typeof patch.wd === 'number') wd = snapWd(patch.wd);
 		if (typeof patch.step === 'number') step = snapStep(patch.step);
+		if (typeof patch.scaled === 'boolean') scaled = patch.scaled;
 	}
 
 	function reset(): void {
 		p = DEFAULT_P;
 		wd = DEFAULT_WD;
 		step = DEFAULT_STEP;
+		scaled = DEFAULT_SCALED;
 	}
 
 	onMount(() => {
@@ -115,6 +123,11 @@
 			<output class="dd-val">{wd.toFixed(2)}</output>
 		</label>
 
+		<label class="dd-ctl">
+			<input type="checkbox" bind:checked={scaled} />
+			<span class="dd-label">масштабирование <span class="dd-sym">1/(1 − p)</span></span>
+		</label>
+
 		<div class="dd-buttons">
 			<button type="button" class="dd-btn" onclick={() => (step += 1)}>Следующая маска</button>
 			<button type="button" class="dd-btn dd-btn-ghost" onclick={reset}>Сбросить</button>
@@ -131,7 +144,9 @@
 		>
 			<title id="dd-neurons-title">Маска dropout на одном шаге</title>
 			<desc id="dd-neurons-desc">
-				Выключено {dropped} из {N_NEURONS} нейронов. Оставшиеся умножаются на {scale.toFixed(2)}.
+				Выключено {dropped} из {N_NEURONS} нейронов. {scaled
+					? `Оставшиеся умножаются на ${scale.toFixed(2)}.`
+					: 'Масштабирование выключено.'}
 			</desc>
 			{#each keep as k, i (i)}
 				{@const cx = ((i + 0.5) * plotWN) / N_NEURONS}
@@ -144,8 +159,17 @@
 			{/each}
 		</svg>
 		<p class="dd-caption">
-			Выключенные нейроны не участвуют в этом шаге. Оставшиеся умножаются на
-			<span class="dd-mono">1/(1 − p) = {scale.toFixed(2)}</span>.
+			Выключенные нейроны не участвуют в этом шаге.
+			{#if scaled}
+				Оставшиеся умножаются на <span class="dd-mono">1/(1 − p) = {scale.toFixed(2)}</span>.
+			{:else}
+				Оставшиеся не меняются.
+			{/if}
+			Средний выход слоя из единиц по {AVG_MASKS} маскам:
+			<span class="dd-mono">{avg.toFixed(2)}</span>
+			({scaled
+				? 'близко к 1, как на инференсе'
+				: 'меньше 1: при инференсе пришлось бы масштабировать'}).
 		</p>
 	</div>
 
