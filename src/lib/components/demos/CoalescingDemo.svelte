@@ -126,6 +126,26 @@
 		<button type="button" class="cl-reset" onclick={reset}>Сбросить</button>
 	</div>
 
+	<div class="cl-group cl-pattern" role="group" aria-label="Порядок обхода матрицы">
+		<button
+			type="button"
+			class="cl-seg"
+			aria-pressed={st.stride === 1}
+			onclick={() => apply({ stride: 1 })}>Обход по строкам (шаг 1)</button
+		>
+		<button
+			type="button"
+			class="cl-seg"
+			aria-pressed={st.stride === 32}
+			onclick={() => apply({ stride: 32 })}>Обход по столбцам, 32 в строке (шаг 32)</button
+		>
+	</div>
+	<p class="cl-hint">
+		Переключатель размера: 32 байта это единица передачи на устройствах с compute capability 6.0 и
+		выше, 128 байт это линия кэша L1 (для сравнения с более крупной единицей). При 128 байтах
+		наименьшая доля полезных байт ниже: 1/32, то есть около 3%.
+	</p>
+
 	<div class="cl-formula" aria-hidden="true">
 		адрес потока t = (сдвиг + t · шаг) · {ELEM_BYTES} байта
 	</div>
@@ -305,6 +325,14 @@
 		font-variant-numeric: tabular-nums;
 	}
 
+	.cl-pattern {
+		margin-top: var(--space-4);
+		flex-wrap: wrap;
+	}
+	.cl-hint {
+		margin-top: var(--space-3);
+		color: var(--text-muted);
+	}
 	.cl-formula {
 		margin-top: var(--space-4);
 		color: var(--text-muted);

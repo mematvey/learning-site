@@ -195,3 +195,78 @@ export function describeLaunch(state: GpuArchitectureDemoState): string {
 			: 'Все варпы заполнены полностью.';
 	return `Блок из ${lanes.active} потоков занимает ${lanes.warps} варп(ов). ${part} Блоков на самом загруженном SM: ${busiest}, волн: ${wavesFor(state.blocks, state.sms)}.`;
 }
+
+/* Warp divergence and latency hiding: illustrative models, not measurements of a GPU. */
+
+export const BRANCH_DEFAULT = 16;
+export const RESIDENT_MIN = 1;
+export const RESIDENT_MAX = 8;
+export const RESIDENT_DEFAULT = 2;
+/** Cycles of arithmetic a warp issues before it waits for memory (illustrative). */
+export const COMPUTE_CYCLES = 4;
+/** Cycles a warp waits for memory after its arithmetic (illustrative, not a real latency). */
+export const WAIT_CYCLES = 12;
+/** Length of the timeline in cycles. */
+export const TIMELINE_CYCLES = 32;
+
+export function snapBranch(v: unknown): number {
+	if (typeof v !== 'number' || !Number.isFinite(v)) return BRANCH_DEFAULT;
+	return Math.min(WARP_SIZE, Math.max(0, Math.round(v)));
+}
+
+export function snapResident(v: unknown): number {
+	if (typeof v !== 'number' || !Number.isFinite(v)) return RESIDENT_DEFAULT;
+	return Math.min(RESIDENT_MAX, Math.max(RESIDENT_MIN, Math.round(v)));
+}
+
+export interface DivergenceStats {
+	/** Passes the warp needs: 1 if all lanes agree, otherwise 2 (the branches run one after another). */
+	passes: number;
+	/** Lane slots issued: 32 per pass. */
+	issuedSlots: number;
+	/** Share of issued slots that do work. */
+	utilization: number;
+}
+
+/** `taken` lanes of a warp take the branch `if`, the rest take `else`. */
+export function divergenceStats(taken: number): DivergenceStats {
+	const k = snapBranch(taken);
+	const passes = k === 0 || k === WARP_SIZE ? 1 : 2;
+	return { passes, issuedSlots: passes * WARP_SIZE, utilization: 1 / passes };
+}
+
+/**
+ * One scheduler issues one instruction per cycle. Each warp runs COMPUTE_CYCLES cycles, then waits
+ * WAIT_CYCLES for memory, and repeats. Returns, for each cycle, the index of the warp that issued
+ * or -1 if the scheduler was idle. Ready warps are served in index order.
+ */
+export function hidingTimeline(warps: number, cycles = TIMELINE_CYCLES): number[] {
+	const n = snapResident(warps);
+	const left = new Array<number>(n).fill(COMPUTE_CYCLES);
+	const readyAt = new Array<number>(n).fill(0);
+	const out: number[] = [];
+	for (let t = 0; t < cycles; t++) {
+		let pick = -1;
+		for (let w = 0; w < n; w++) {
+			if ((readyAt[w] ?? 0) <= t) {
+				pick = w;
+				break;
+			}
+		}
+		out.push(pick);
+		if (pick >= 0) {
+			left[pick] = (left[pick] ?? 0) - 1;
+			if (left[pick] === 0) {
+				readyAt[pick] = t + 1 + WAIT_CYCLES;
+				left[pick] = COMPUTE_CYCLES;
+			}
+		}
+	}
+	return out;
+}
+
+/** Share of cycles in which the scheduler issued an instruction. */
+export function hidingUtilization(warps: number): number {
+	const tl = hidingTimeline(warps);
+	return tl.filter((w) => w >= 0).length / tl.length;
+}

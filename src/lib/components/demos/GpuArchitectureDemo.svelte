@@ -3,6 +3,18 @@
 	import { DEMOS_CONTEXT, type DemosContext } from '$lib/contracts/context';
 	import {
 		BLOCKS_DEFAULT,
+		BRANCH_DEFAULT,
+		RESIDENT_DEFAULT,
+		RESIDENT_MAX,
+		RESIDENT_MIN,
+		TIMELINE_CYCLES,
+		COMPUTE_CYCLES,
+		WAIT_CYCLES,
+		divergenceStats,
+		hidingTimeline,
+		hidingUtilization,
+		snapBranch,
+		snapResident,
 		BLOCKS_MAX,
 		BLOCKS_MIN,
 		NODE_INFO,
@@ -42,6 +54,10 @@
 	let blocks = $state(start.blocks);
 	/** Node chosen by click or keyboard; its card shows the numbers and the source. */
 	let node = $state<NodeId | null>(null);
+	/** Lanes of one warp that take the `if` branch (divergence panel). */
+	let branch = $state(BRANCH_DEFAULT);
+	/** Warps resident on one SM (latency-hiding panel). */
+	let resident = $state(RESIDENT_DEFAULT);
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
 
@@ -61,10 +77,21 @@
 			}),
 		),
 	);
+	const div = $derived(divergenceStats(branch));
+	const timeline = $derived(hidingTimeline(resident));
+	const busyShare = $derived(Math.round(hidingUtilization(resident) * 100));
 	const info = $derived(node ? NODE_INFO[node] : null);
 	const note = $derived(describeLaunch({ threads, sms, blocks }));
 
-	function apply(patch: Partial<GpuArchitectureDemoState> & { node?: unknown }): void {
+	function apply(
+		patch: Partial<GpuArchitectureDemoState> & {
+			node?: unknown;
+			branch?: unknown;
+			resident?: unknown;
+		},
+	): void {
+		if (typeof patch.branch === 'number') branch = snapBranch(patch.branch);
+		if (typeof patch.resident === 'number') resident = snapResident(patch.resident);
 		if (typeof patch.threads === 'number') threads = snapThreads(patch.threads);
 		if (typeof patch.sms === 'number') sms = snapSms(patch.sms);
 		if (typeof patch.blocks === 'number') blocks = snapBlocks(patch.blocks);
@@ -76,6 +103,8 @@
 		sms = start.sms;
 		blocks = start.blocks;
 		node = null;
+		branch = BRANCH_DEFAULT;
+		resident = RESIDENT_DEFAULT;
 	}
 
 	onMount(() =>
@@ -240,6 +269,75 @@
 		<p class="gp-legend">
 			<span class="gp-key gp-key-on"></span> поток блока
 			<span class="gp-key"></span> простаивающий слот последнего варпа
+		</p>
+	</section>
+
+	<section class="gp-warps" aria-label="Расхождение ветвлений в варпе">
+		<p class="gp-t">Расхождение ветвлений</p>
+		<label class="gp-ctl">
+			<span class="gp-label">Потоков варпа идут в ветку if</span>
+			<input
+				class="gp-range"
+				type="range"
+				min="0"
+				max="32"
+				step="1"
+				value={branch}
+				oninput={(e) => (branch = snapBranch(Number(e.currentTarget.value)))}
+			/>
+			<output class="gp-val">{branch} из 32</output>
+		</label>
+		<div class="gp-cells" role="img" aria-label="Проходы варпа: {div.passes}">
+			{#each Array.from({ length: div.passes }, (_, p) => p) as p (p)}
+				{#each Array.from({ length: 32 }, (_, l) => l) as l (l)}
+					<span
+						class="gp-cell"
+						class:gp-cell-on={div.passes === 1 || (p === 0 ? l < branch : l >= branch)}
+					></span>
+				{/each}
+			{/each}
+		</div>
+		<p class="gp-legend">
+			Проходов: {div.passes}, выдано слотов потоков: {div.issuedSlots}, работает {Math.round(
+				div.utilization * 100,
+			)}%. Каждый ряд из 32 клеток это один проход: закрашены потоки, которые в нём работают.
+		</p>
+	</section>
+
+	<section class="gp-warps" aria-label="Скрытие задержек">
+		<p class="gp-t">Скрытие задержек</p>
+		<label class="gp-ctl">
+			<span class="gp-label">Варпов на SM</span>
+			<input
+				class="gp-range"
+				type="range"
+				min={RESIDENT_MIN}
+				max={RESIDENT_MAX}
+				step="1"
+				value={resident}
+				oninput={(e) => (resident = snapResident(Number(e.currentTarget.value)))}
+			/>
+			<output class="gp-val">{resident}</output>
+		</label>
+		<div
+			class="gp-cells gp-timeline"
+			role="img"
+			aria-label="Занятость планировщика: {busyShare}% тактов"
+		>
+			{#each timeline as w, t (t)}
+				<span
+					class="gp-cell gp-tl"
+					class:gp-cell-on={w >= 0}
+					style={w >= 0 ? `background: var(--cat-${(w % 6) + 1})` : ''}
+					title="такт {t}: {w >= 0 ? `варп ${w}` : 'простой'}"
+				></span>
+			{/each}
+		</div>
+		<p class="gp-legend">
+			Условная модель: каждый варп выполняет {COMPUTE_CYCLES} такта арифметики и ждёт память {WAIT_CYCLES}
+			тактов; один планировщик выдаёт по инструкции за такт. Цвет клетки это варп, серая клетка это простой.
+			За {TIMELINE_CYCLES} тактов планировщик занят {busyShare}%. Числа условные, это не задержка
+			конкретной GPU.
 		</p>
 	</section>
 
@@ -499,6 +597,9 @@
 	.gp-cell-on {
 		border: 0;
 		background: var(--topic);
+	}
+	.gp-timeline {
+		grid-template-columns: repeat(32, minmax(0, 1fr));
 	}
 	.gp-legend {
 		margin-top: var(--space-2);
