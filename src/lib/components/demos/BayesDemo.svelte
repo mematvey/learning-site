@@ -280,6 +280,8 @@
 		<dd class="by-key">{formatPercent(r.posterior)}</dd>
 		<dt>P(H | −)</dt>
 		<dd>{formatPercent(r.posteriorNegative)}</dd>
+		<dt>P(H | + +), второй независимый тест</dt>
+		<dd>{formatPercent(r.posteriorTwoPositives)}</dd>
 	</dl>
 
 	<p class="by-note" aria-live="polite">{note}</p>

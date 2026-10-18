@@ -71,6 +71,11 @@ export interface BayesResult {
 	posterior: number;
 	/** Posterior P(H | -): probability of illness after a negative test. */
 	posteriorNegative: number;
+	/**
+	 * Posterior after a second independent positive test: the first posterior serves as the prior.
+	 * Assumes the two results are independent given the health status.
+	 */
+	posteriorTwoPositives: number;
 	/** Head counts (people out of POPULATION) of the four groups. */
 	people: {
 		sick: number;
@@ -101,10 +106,13 @@ export function computeBayes(state: BayesDemoState): BayesResult {
 	const pPositive = truePositive + falsePositive;
 	const pNegative = falseNegative + trueNegative;
 
+	const posterior = pPositive > 0 ? truePositive / pPositive : 0;
+	const secondEvidence = posterior * sens + (1 - posterior) * (1 - spec);
 	return {
 		prior,
 		pPositive,
-		posterior: pPositive > 0 ? truePositive / pPositive : 0,
+		posterior,
+		posteriorTwoPositives: secondEvidence > 0 ? (posterior * sens) / secondEvidence : 0,
 		posteriorNegative: pNegative > 0 ? falseNegative / pNegative : 0,
 		people: {
 			sick: prior * POPULATION,

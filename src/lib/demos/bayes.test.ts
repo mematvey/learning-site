@@ -103,3 +103,9 @@ describe('describeBayes', () => {
 		expect(text).toContain('8.3%');
 	});
 });
+
+describe('posteriorTwoPositives', () => {
+	it('uses the first posterior as the prior for a second positive test', () => {
+		expect(computeBayes(DEFAULT_STATE).posteriorTwoPositives).toBeCloseTo(0.45, 10);
+	});
+});
