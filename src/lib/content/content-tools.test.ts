@@ -254,6 +254,43 @@ describe('sources, citations and text attributes', () => {
 	});
 });
 
+describe('control characters', () => {
+	const ATTENTION = 'content/dl/attention/index.svx';
+	const FENCE = '```';
+
+	it('rejects a control character in formula text, with file and line', () => {
+		appendFileSync(join(root, ATTENTION), '\nПример: $a \x07pprox 1$.\n');
+		const d = check().filter((x) => x.file === ATTENTION);
+		expect(messages(d)).toContainEqual(expect.stringContaining('управляющий символ U+0007'));
+		expect(d.some((x) => x.line > 1)).toBe(true);
+	});
+
+	it('rejects CR and form feed in a chapter', () => {
+		appendFileSync(join(root, ATTENTION), '\nЧисло $\\frac12\x0c$ и $x\r$.\n');
+		const found = messages(check()).filter((m) => m.includes('управляющий символ'));
+		expect(found).toHaveLength(2);
+		expect(found.join('\n')).toContain('U+000C');
+		expect(found.join('\n')).toContain('U+000D');
+	});
+
+	it('rejects a TAB outside fenced code', () => {
+		appendFileSync(join(root, ATTENTION), '\n$Q K^\top$ в тексте.\n');
+		expect(messages(check())).toContain(
+			'символ TAB вне блока кода: в тексте главы используйте пробелы',
+		);
+	});
+
+	it('allows TAB and control characters inside fenced code', () => {
+		appendFileSync(join(root, ATTENTION), `\n${FENCE}\n\tx = 1\n${FENCE}\n`);
+		expect(check()).toEqual([]);
+	});
+
+	it('rejects a control character in a glossary file', () => {
+		appendFileSync(join(root, 'data/glossary/dl.yaml'), '# заметка \x08eta\n');
+		expect(messages(check())).toContainEqual(expect.stringContaining('управляющий символ U+0008'));
+	});
+});
+
 describe('level scanning', () => {
 	it('intersects Level and Variant layers and reports Term layers', () => {
 		const scan = scanSvx(
