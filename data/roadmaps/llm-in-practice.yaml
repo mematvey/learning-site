@@ -1,0 +1,46 @@
+id: llm-in-practice
+title: 'Как работают и как применять LLM'
+summary: 'От токенов и обучения до сервинга, оценки и безопасности: что делает LLM и какой подход выбрать в своей задаче.'
+audience: 'Для тех, кто знает основы нейросетей и хочет принимать решения о LLM: что применять, а что нет.'
+goal: 'Понимать, когда нужны дообучение, RAG или промпт, как считать стоимость и задержку и как проверять качество.'
+steps:
+  - title: 'Основа: трансформер'
+    description: 'Softmax, внимание, позиции и блок трансформера. Без этого не понять, что меняется при масштабе.'
+    chapters:
+      [
+        dl/softmax,
+        dl/attention,
+        dl/multi-head-attention,
+        dl/positional-encoding,
+        dl/layer-norm,
+        dl/transformer-block,
+      ]
+  - title: 'Токенизация'
+    description: 'Текст превращается в токены: от них зависят стоимость, длина контекста и качество на разных языках.'
+    chapters: [dl/tokenization]
+    labs: [dl-tokenization]
+  - title: 'Обучение и масштабирование'
+    description: 'Как обучают языковую модель и зачем данные и вычисления нужно брать в правильном соотношении.'
+    chapters: [dl/optimizers, dl/lm-training-scaling]
+  - title: 'Дообучение и выравнивание'
+    description: 'LoRA, RLHF и DPO: когда дообучать модель, а когда хватит промпта или RAG.'
+    chapters: [dl/finetuning-alignment]
+    labs: [dl-finetuning-alignment]
+  - title: 'Эффективный инференс'
+    description: 'KV-кэш, GQA и спекулятивное декодирование: как ускорить генерацию без потери качества.'
+    chapters: [dl/inference-efficiency]
+    labs: [dl-inference-efficiency]
+  - title: 'Сервинг LLM'
+    description: 'SLO, цена за токен и выбор между своим хостингом и API.'
+    chapters: [mlops/llm-serving]
+  - title: 'Оценка качества'
+    description: 'Эталонные наборы и LLM-as-judge: как понять, что модель действительно стала лучше.'
+    chapters: [mlops/evaluation]
+    labs: [mlops-evaluation]
+  - title: 'LLM-приложения'
+    description: 'Промпты, RAG и агенты: какой уровень автономности оправдан задачей.'
+    chapters: [mlops/llm-apps]
+    labs: [mlops-llm-apps]
+  - title: 'Безопасность и приватность'
+    description: 'Недоверенный ввод, полномочия инструментов и утечки данных.'
+    chapters: [mlops/security-privacy]

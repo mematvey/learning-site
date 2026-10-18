@@ -1,8 +1,22 @@
 id: compute
 title: Compute
-description: 'Вычисления на GPU: что делают CUDA и Triton и когда это нужно.'
+description: 'Вычисления на GPU: от архитектуры и CUDA до roofline, точности чисел, FlashAttention и инференса LLM.'
 order: 5
 icon: chip
 accent:
   topic: { light: '#15803d', dark: '#4ade80' }
   soft: { light: '#f0fdf4', dark: '#10261a' }
+chapters:
+  [
+    gpu-architecture,
+    cuda-basics,
+    memory-coalescing,
+    triton-intro,
+    matmul-optimization,
+    roofline,
+    profiling,
+    precision-quantization,
+    flash-attention,
+    llm-inference,
+    distributed-training,
+  ]

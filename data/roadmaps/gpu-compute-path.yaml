@@ -1,8 +1,8 @@
 id: gpu-compute-path
 title: 'Путь в GPU-вычисления'
-summary: 'От устройства GPU до оптимизации умножения матриц, с остановкой на иерархии памяти.'
+summary: 'От устройства GPU и CUDA до roofline, профилирования, точности чисел и FlashAttention, с выходом к инференсу LLM.'
 audience: 'Для тех, кто хочет понять, как код ложится на GPU, и писать ядра на CUDA и Triton.'
-goal: 'Объяснить, почему производительность упирается в память, и оптимизировать простое ядро.'
+goal: 'Объяснить, почему производительность упирается в память, оптимизировать простое ядро и понимать, что определяет скорость инференса и обучения больших моделей.'
 steps:
   - title: 'Иерархия памяти'
     description: 'Кэши и локальность данных на CPU: фундамент для разговора о памяти GPU.'
@@ -17,6 +17,7 @@ steps:
   - title: 'Доступ к памяти'
     description: 'Слияние обращений к глобальной памяти и его влияние на скорость.'
     chapters: [compute/memory-coalescing]
+    labs: [compute-memory-coalescing]
   - title: 'Введение в Triton'
     description: 'Блочный подход к ядрам на Python.'
     chapters: [compute/triton-intro]
@@ -24,3 +25,24 @@ steps:
   - title: 'Оптимизация умножения матриц'
     description: 'Тайлинг и повторное использование данных: куда уходит время в matmul.'
     chapters: [compute/matmul-optimization]
+  - title: 'Roofline'
+    description: 'Упирается ли ядро в память или в вычисления: первый вопрос любой оптимизации.'
+    chapters: [compute/roofline]
+    labs: [compute-roofline]
+  - title: 'Профилирование'
+    description: 'Где реально теряется время: измерять, а не угадывать.'
+    chapters: [compute/profiling]
+  - title: 'Точность чисел и квантизация'
+    description: 'fp32, bf16, fp8 и int4: что экономит память и трафик и где начинается потеря качества.'
+    chapters: [compute/precision-quantization]
+    labs: [compute-precision-quantization]
+  - title: 'FlashAttention'
+    description: 'Внимание без записи матрицы N×N в память: тайлы и онлайн-softmax.'
+    chapters: [compute/flash-attention]
+    labs: [compute-flash-attention]
+  - title: 'Инференс LLM на железе'
+    description: 'Prefill и decode, KV-кэш и пропускная способность памяти как предел скорости.'
+    chapters: [compute/llm-inference]
+  - title: 'Распределённое обучение'
+    description: 'Параллелизмы данных, тензора и конвейера, память на GPU и когда одного GPU достаточно.'
+    chapters: [compute/distributed-training]
