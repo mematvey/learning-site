@@ -1,0 +1,45 @@
+- id: vector-exact-search
+  term: точный поиск
+  term_en: exact search
+  definition: 'Поиск, который сравнивает запрос со всеми векторами набора и возвращает настоящих ближайших. Даёт эталонный ответ; стоимость растёт линейно с размером набора.'
+  chapter: cs/vector-search
+- id: vector-ann
+  term: приближённый поиск ближайших соседей
+  term_en: approximate nearest neighbor search (ANN)
+  definition: 'Поиск, который сравнивает запрос лишь с частью векторов и возвращает почти ближайших. Выигрыш в скорости платится пропусками части истинных соседей.'
+  chapter: cs/vector-search
+- id: vector-index
+  term: векторный индекс
+  term_en: vector index
+  definition: 'Структура данных, построенная по набору векторов заранее, которая быстро подсказывает кандидатов для запроса. Занимает дополнительную память сверх самих векторов.'
+  chapter: cs/vector-search
+- id: vector-hnsw
+  term: HNSW
+  term_en: hierarchical navigable small world
+  definition: 'Индекс из нескольких слоёв графа. В верхних слоях мало вершин и длинные связи, нижний слой содержит все векторы и связи между близкими. Поиск начинается сверху и спускается вниз.'
+  chapter: cs/vector-search
+- id: vector-ivf
+  term: инвертированный файл
+  term_en: inverted file index (IVF)
+  definition: 'Индекс, который делит векторы на списки по ближайшему центроиду. При запросе просматривается только несколько ближайших списков.'
+  chapter: cs/vector-search
+- id: vector-centroid
+  term: центроид
+  term_en: centroid
+  definition: 'Центр кластера, обычно среднее его векторов. В IVF центроиды получают кластеризацией k-means по набору.'
+  chapter: cs/vector-search
+- id: vector-nprobe
+  term: nprobe
+  term_en: nprobe
+  definition: 'Число списков IVF, которые просматриваются при одном запросе. Задаётся во время запроса и управляет компромиссом между скоростью и полнотой.'
+  chapter: cs/vector-search
+- id: vector-ef
+  term: ширина поиска ef
+  term_en: ef (search width)
+  definition: 'Размер списка кандидатов, который HNSW держит при поиске. Больше ef дает выше полноту и больше работы на запрос.'
+  chapter: cs/vector-search
+- id: vector-pq
+  term: квантование произведения
+  term_en: product quantization (PQ)
+  definition: 'Сжатие вектора: его делят на части, и каждую часть заменяют номером ближайшего кодового слова из небольшого словаря. Вектор хранится короткими кодами, расстояния оцениваются по кодам.'
+  chapter: cs/vector-search
