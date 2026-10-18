@@ -3,7 +3,7 @@ id: compute/gpu-architecture
 title: "Архитектура GPU"
 topic: compute
 summary: "Потоки, варпы, блоки и иерархия памяти: чем GPU отличается от CPU."
-prereqs: []
+prereqs: [cs/memory-cache]
 concepts:
   - { id: gpu-thread, title: Поток }
   - { id: gpu-warp, title: Варп }
@@ -17,6 +17,7 @@ concepts:
   - { id: gpu-global-memory, title: Глобальная память }
   - { id: gpu-occupancy, title: Занятость }
   - { id: gpu-latency-hiding, title: Скрытие задержек }
+  - { id: gpu-tensor-core, title: Тензорное ядро }
 keywords:
   - GPU
   - CUDA
@@ -49,6 +50,34 @@ sources:
     url: https://docs.nvidia.com/cuda/cuda-programming-guide/05-appendices/compute-capabilities.html
     accessed: 2026-10-16
     supports: [hw-threads, mistake-threads]
+  - id: hopperds
+    kind: doc
+    title: NVIDIA H100 Tensor Core GPU Datasheet
+    venue: NVIDIA, технический паспорт H100 (прочитан 2026-10-18, поколение Hopper, compute capability 9.0)
+    url: https://resources.nvidia.com/en-us-gpu-resources/h100-datasheet-24306
+    accessed: 2026-10-18
+    supports: [hw-hopper]
+  - id: hopperblog
+    kind: doc
+    title: NVIDIA Hopper Architecture In-Depth
+    venue: NVIDIA Technical Blog (прочитан 2026-10-18)
+    url: https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/
+    accessed: 2026-10-18
+    supports: [hw-hopper]
+  - id: blackwellarch
+    kind: doc
+    title: NVIDIA Blackwell Architecture
+    venue: NVIDIA, страница архитектуры (прочитана 2026-10-18)
+    url: https://www.nvidia.com/en-us/data-center/technologies/blackwell-architecture/
+    accessed: 2026-10-18
+    supports: [hw-blackwell]
+  - id: blackwelltuning
+    kind: doc
+    title: Blackwell Tuning Guide, CUDA Toolkit documentation (Release 13.3)
+    venue: NVIDIA, документация CUDA (прочитан 2026-10-18)
+    url: https://docs.nvidia.com/cuda/pdf/Blackwell_Tuning_Guide.pdf
+    accessed: 2026-10-18
+    supports: [hw-blackwell]
 aliases: []
 status: draft
 ---
@@ -108,6 +137,10 @@ GPU выполняет тысячи <Term id="gpu-thread">потоков</Term> 
 Задержка доступа самая большая у глобальной, локальной и текстурной памяти, затем у константной, разделяемой памяти и регистров. Разделяемая память находится на кристалле, поэтому при отсутствии конфликтов между потоками даёт большую пропускную способность и меньшую задержку, чем глобальная. <Cite id="bpguide" /> {#hw-latency}
 
 Арифметику выполняют мультипроцессоры, а данные и код поступают из DRAM через кэш L2. Пример: в ускорителе NVIDIA A100 есть 108 мультипроцессоров, кэш L2 40 МБ и до 2039 ГБ/с пропускной способности от 80 ГБ памяти <Term id="gpu-hbm">HBM</Term> (у модели A100 80 ГБ это HBM2e; число 2039 ГБ/с относится к варианту SXM, у PCIe-версии оно ниже). <Cite id="dlperf" /> {#hw-a100}
+
+Новее A100 поколение Hopper (compute capability 9.0). У SXM-версии H100 132 мультипроцессора, 80 ГБ памяти HBM3 с пропускной способностью 3,35 ТБ/с и кэш L2 около 50 МБ. В каждом мультипроцессоре есть <Term id="gpu-tensor-core">тензорные ядра</Term> (tensor core) четвёртого поколения: они выполняют матричное умножение маленьких блоков аппаратно, и именно на них держится скорость обучения и вывода нейросетей. <Cite id="hopperds" /><Cite id="hopperblog" /> {#hw-hopper}
+
+Поколение Blackwell (compute capability 10.0 для B200; в документации CUDA есть и семейство 12.x) строится из двух кристаллов, соединённых связью 10 ТБ/с, и содержит 208 миллиардов транзисторов. У B200 память HBM3e с пропускной способностью до 8 ТБ/с; точный объём памяти и число мультипроцессоров зависят от модели, поэтому сверяйтесь с паспортом конкретного ускорителя. <Cite id="blackwellarch" /><Cite id="blackwelltuning" /> {#hw-blackwell}
 
 Для сравнения: сервер с двумя 32-ядерными процессорами выполняет одновременно порядка 64 потоков (по одному на ядро, без учёта SMT), а мультипроцессор современного GPU поддерживает до 2048 активных потоков (на части архитектур предел ниже: в таблице compute capability встречаются значения 1024, 1536 и 2048). На GPU с 80 мультипроцессорами при пределе 2048 это больше 160 000 одновременно активных потоков. <Cite id="bpguide" /><Cite id="cudacc" /> {#hw-threads}
 
@@ -174,6 +207,18 @@ add_one<<<blocks, threads>>>(x, 1000);
 
 </Level>
 
+## Когда важна архитектура, а когда нет {#when}
+
+**Когда важна.** Когда вы пишете своё ядро или читаете профиль и хотите понять, что ограничивает скорость: арифметика, пропускная способность памяти или задержки. Тогда нужны число мультипроцессоров, размер памяти и пропускная способность конкретного ускорителя. {#when-yes}
+
+**Когда не нужна.** Если вы вызываете готовую библиотеку (cuBLAS, cuDNN) или обычные операции PyTorch, устройство и библиотека выбирают ядра сами. Знание варпов тогда помогает читать профиль, но для обычной работы не обязательно. {#when-no}
+
+<Level c={3}>
+
+Сначала определите, что ограничивает ядро: вычисления или память. Это разбирается в главе о модели roofline (см. compute/roofline). Числа мультипроцессоров и варпов нужны для выбора размера блока и для оценки занятости. При сравнении ускорителей смотрите пропускную способность памяти и поддерживаемые типы тензорных ядер в паспорте модели. Ошибка в выборе конфигурации обычно стоит часов поиска узкого места, а не неверного результата. {#when-practice}
+
+</Level>
+
 ## Частые ошибки {#mistakes}
 
 <Callout kind="warn" title="Осторожно">
@@ -204,5 +249,11 @@ add_one<<<blocks, threads>>>(x, 1000);
 <Quiz id="quiz-latency" q="Зачем мультипроцессору держать много варпов одновременно, если каждый варп может ждать память?">
 
 Пока один варп ждёт данные, мультипроцессор выполняет другие варпы, и задержка скрывается. Поэтому занятость важна, но сама по себе не гарантирует скорость. <Cite id="bpguide" />
+
+</Quiz>
+
+<Quiz id="quiz-bound" q="Поэлементная функция (например, ReLU) применяется к тензору в несколько гигабайт. Что чаще ограничивает скорость на GPU: число мультипроцессоров или пропускная способность памяти?">
+
+Пропускная способность памяти. Каждый элемент читается и записывается один раз, а арифметики на элемент почти нет. Поэтому скорость упирается в то, сколько байт память успевает передать. Больше мультипроцессоров здесь мало что даст.
 
 </Quiz>
