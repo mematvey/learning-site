@@ -4,6 +4,7 @@
 	import type { SiteHeaderProps } from '$lib/contracts/component-props';
 	import { resolveTheme, watchSystemDark } from '$lib/theme/theme';
 	import ThemeToggle from './ThemeToggle.svelte';
+	import SaveIndicator from './my/SaveIndicator.svelte';
 
 	/** Site header: breadcrumbs, search, levels slot, theme toggle, reading progress. */
 	let { crumbs = [], theme, onToggleTheme, levels, search }: SiteHeaderProps = $props();
@@ -11,6 +12,8 @@
 	let systemDark = $state(false);
 	$effect(() => watchSystemDark((dark) => (systemDark = dark)));
 	const onRoadmaps = $derived(page.url.pathname.includes('/roadmaps'));
+	const onMy = $derived(page.url.pathname.includes('/my'));
+	const onSettings = $derived(page.url.pathname.includes('/settings'));
 	const resolved = $derived(resolveTheme(theme, systemDark));
 
 	let progress = $state(0);
@@ -35,6 +38,8 @@
 		<a class="nav-link" href={resolve('/roadmaps')} aria-current={onRoadmaps ? 'page' : undefined}
 			>Маршруты</a
 		>
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- the "My" route is linked by its path -->
+		<a class="nav-link" href="/my/" aria-current={onMy ? 'page' : undefined}>Моё</a>
 		<nav class="crumbs" aria-label="Путь к главе">
 			{#each crumbs as crumb, i (i)}
 				{#if i > 0}<span class="sep" aria-hidden="true">›</span>{/if}
@@ -52,6 +57,16 @@
 		{#if levels}
 			<div class="levels-slot">{@render levels()}</div>
 		{/if}
+		<SaveIndicator />
+		<!-- eslint-disable svelte/no-navigation-without-resolve -- the settings route is linked by its path -->
+		<a
+			class="nav-link settings-link"
+			href="/settings/data/"
+			aria-current={onSettings ? 'page' : undefined}
+			aria-label="Настройки"
+			><span class="full">Настройки</span><span class="short" aria-hidden="true">⚙</span></a
+		>
+		<!-- eslint-enable svelte/no-navigation-without-resolve -->
 		<ThemeToggle theme={resolved} onToggle={() => onToggleTheme()} />
 	</div>
 	<div class="progress" aria-hidden="true">
@@ -103,6 +118,10 @@
 	.nav-link:hover,
 	.nav-link[aria-current] {
 		color: var(--text);
+	}
+
+	.nav-link .short {
+		display: none;
 	}
 
 	.crumbs {
@@ -180,6 +199,16 @@
 		.topbar-inner {
 			padding: 0 12px;
 			gap: var(--space-2);
+		}
+
+		/* Phones: the settings link keeps only its gear icon, the label stays in aria-label. */
+		.settings-link .full {
+			display: none;
+		}
+
+		.settings-link .short {
+			display: inline;
+			font-size: 16px;
 		}
 
 		/* Search collapses to an icon button (see SearchDialog); slot keeps it on the right. */
