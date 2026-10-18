@@ -8,11 +8,6 @@
   term_en: decode
   definition: 'Этап генерации, когда модель выдаёт по одному токену за шаг и на каждом шаге читает веса и KV-кэш из памяти. Обычно ограничен пропускной способностью памяти.'
   chapter: compute/llm-inference
-- id: memory-bandwidth
-  term: пропускная способность памяти
-  term_en: memory bandwidth
-  definition: 'Сколько байт в секунду ускоритель может прочитать из своей памяти, например HBM. Задаёт верхний предел скорости, когда задача читает больше данных, чем делает операций.'
-  chapter: compute/llm-inference
 - id: kv-cache-size
   term: размер KV-кэша
   term_en: KV cache size

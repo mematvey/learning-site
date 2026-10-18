@@ -9,7 +9,6 @@ prereqs:
 concepts:
   - { id: prefill, title: Prefill }
   - { id: decode, title: Decode }
-  - { id: memory-bandwidth, title: Пропускная способность памяти }
   - { id: kv-cache-size, title: Размер KV-кэша }
   - { id: paged-attention, title: PagedAttention }
 keywords:

@@ -13,11 +13,6 @@
   term_en: embedding
   definition: Вектор фиксированной длины, которым представлен текст или фрагмент. Близкие по смыслу тексты дают близкие векторы; поиск ищет ближайшие к запросу векторы.
   chapter: mlops/llm-apps
-- id: rag
-  term: RAG
-  term_en: retrieval-augmented generation
-  definition: Схема, в которой модель получает во входе фрагменты, найденные во внешнем индексе по запросу, и опирается на них при генерации ответа.
-  chapter: mlops/llm-apps
 - id: chunk
   term: фрагмент
   term_en: chunk

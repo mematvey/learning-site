@@ -8,7 +8,6 @@ concepts:
   - { id: prompt, title: Промпт }
   - { id: prompt-version, title: Версия промпта }
   - { id: embedding, title: Эмбеддинг }
-  - { id: rag, title: RAG }
   - { id: chunk, title: Фрагмент }
   - { id: recall-at-k, title: Recall@k }
   - { id: golden-set, title: Эталонный набор }
