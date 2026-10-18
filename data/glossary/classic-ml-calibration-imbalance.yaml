@@ -1,0 +1,35 @@
+- id: calibration
+  term: калибровка вероятностей
+  term_en: calibration
+  definition: 'Преобразование выходов классификатора в вероятности, которые совпадают с частотой положительного класса: из объектов с оценкой 0.8 примерно 80 процентов положительные.'
+  chapter: classic-ml/calibration-imbalance
+- id: reliability-diagram
+  term: диаграмма надёжности
+  term_en: reliability diagram
+  definition: 'График, где по горизонтали средняя выданная вероятность в группе, по вертикали доля положительных в ней. Откалиброванная модель лежит на диагонали.'
+  chapter: classic-ml/calibration-imbalance
+- id: expected-calibration-error
+  term: ожидаемая ошибка калибровки
+  term_en: expected calibration error (ECE)
+  definition: 'Средневзвешенный по группам модуль разницы между долей положительных и средней выданной вероятностью. Ноль у идеально откалиброванной модели.'
+  chapter: classic-ml/calibration-imbalance
+- id: platt-scaling
+  term: масштабирование по Платту
+  term_en: Platt scaling
+  definition: 'Калибровка сигмоидой поверх выхода модели: два параметра подбираются минимизацией log-loss на отдельной выборке.'
+  chapter: classic-ml/calibration-imbalance
+- id: isotonic-regression
+  term: изотоническая регрессия
+  term_en: isotonic regression
+  definition: 'Калибровка неубывающим кусочно-постоянным преобразованием. Гибче сигмоиды, но требует больше данных и склонна к переобучению на малых выборках.'
+  chapter: classic-ml/calibration-imbalance
+- id: class-weight
+  term: веса классов
+  term_en: class weight
+  definition: 'Коэффициенты, с которыми объекты каждого класса входят в функцию потерь. Меняют оптимальные вероятности, поэтому после них калибровку нужно повторить.'
+  chapter: classic-ml/calibration-imbalance
+- id: cost-matrix
+  term: матрица стоимостей
+  term_en: cost matrix
+  definition: 'Таблица цен каждого исхода классификации: ложной тревоги, пропуска, правильного ответа. Вместе с откалиброванными вероятностями задаёт порог, минимизирующий ожидаемую цену.'
+  chapter: classic-ml/calibration-imbalance
