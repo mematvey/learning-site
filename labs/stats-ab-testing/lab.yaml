@@ -1,5 +1,5 @@
 id: stats-ab-testing
-title: 'Размер выборки и подглядывание'
+title: Размер выборки, мощность и подглядывание
 chapter: stats/ab-testing
 runtime: pyodide
 starter: starter.py
