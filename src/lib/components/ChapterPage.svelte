@@ -38,6 +38,7 @@
 	import type { ChapterLink } from '../../routes/[topic]/[slug]/chapter-data';
 	import { formatMinutes } from '../../routes/[topic]/[slug]/chapter-data';
 	import NotesLayer from './notes/NotesLayer.svelte';
+	import BookmarkLayer from './my/BookmarkLayer.svelte';
 	import Toc from './Toc.svelte';
 
 	/** Chapter page: header, title block, prose, footer. The chapter body is the compiled `.svx`. */
@@ -367,6 +368,11 @@
 				/>
 			{/if}
 		</aside>
+		<BookmarkLayer
+			chapterId={chapter.id as ChapterId}
+			topic={chapter.id.split('/')[0] ?? ''}
+			root={textEl}
+		/>
 	</div>
 </div>
 
