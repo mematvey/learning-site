@@ -1,0 +1,35 @@
+- id: prompt-injection
+  term: промпт-инъекция
+  term_en: prompt injection
+  definition: 'Текст во входных данных, который выдаёт себя за инструкцию и меняет поведение модели или системы, построенной вокруг неё.'
+  chapter: mlops/security-privacy
+- id: indirect-prompt-injection
+  term: непрямая промпт-инъекция
+  term_en: indirect prompt injection
+  definition: 'Инструкция, спрятанная не во вводе пользователя, а в данных, которые система загружает сама: документе, веб-странице, письме или ответе инструмента.'
+  chapter: mlops/security-privacy
+- id: least-privilege
+  term: минимальные полномочия
+  term_en: least privilege
+  definition: 'Принцип выдавать системе только те права и инструменты, без которых задача не решается, и только на нужный срок.'
+  chapter: mlops/security-privacy
+- id: tool-permissions
+  term: право инструмента
+  term_en: tool permission
+  definition: 'Разрешение на конкретное действие (чтение, запись, отправка), которое проверяет код на стороне сервера, а не сама модель.'
+  chapter: mlops/security-privacy
+- id: pii
+  term: персональные данные
+  term_en: personally identifiable information (PII)
+  definition: 'Данные, по которым можно узнать человека: имя, телефон, адрес электронной почты, идентификаторы. Требуют особого обращения по закону и по политике организации.'
+  chapter: mlops/security-privacy
+- id: data-minimization
+  term: минимизация данных
+  term_en: data minimization
+  definition: 'Передача и хранение только тех данных, которые нужны для задачи, и только на нужный срок.'
+  chapter: mlops/security-privacy
+- id: unsafe-deserialization
+  term: небезопасная десериализация
+  term_en: unsafe deserialization
+  definition: 'Загрузка данных из формата, который при чтении может выполнить код. Для моделей типичный пример формат pickle.'
+  chapter: mlops/security-privacy
