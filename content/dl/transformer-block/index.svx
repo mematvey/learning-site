@@ -8,6 +8,7 @@ concepts:
   - { id: transformer-block, title: Блок трансформера }
   - { id: mlp, title: MLP блока }
   - { id: sublayer, title: Подслой }
+  - { id: swiglu, title: SwiGLU }
 keywords:
   - transformer block
   - остаточные связи
@@ -53,6 +54,42 @@ sources:
     url: https://arxiv.org/abs/2205.14135
     accessed: 2026-10-16
     supports: [hw-io]
+  - id: llama3
+    kind: paper
+    title: "The Llama 3 Herd of Models"
+    authors: Llama Team, Meta AI
+    venue: arXiv
+    year: 2024
+    url: https://arxiv.org/abs/2407.21783
+    accessed: 2026-10-18
+    supports: [math-2026-mlp, when]
+  - id: shazeer2020
+    kind: paper
+    title: "GLU Variants Improve Transformer"
+    authors: Shazeer N.
+    venue: arXiv
+    year: 2020
+    url: https://arxiv.org/abs/2002.05202
+    accessed: 2026-10-18
+    supports: [math-2026-mlp]
+  - id: gemma2
+    kind: paper
+    title: "Gemma 2: Improving Open Language Models at a Practical Size"
+    authors: Gemma Team
+    venue: arXiv
+    year: 2024
+    url: https://arxiv.org/abs/2408.00118
+    accessed: 2026-10-18
+    supports: [math-2026-mlp]
+  - id: deepseekv3
+    kind: paper
+    title: "DeepSeek-V3 Technical Report"
+    authors: DeepSeek-AI
+    venue: arXiv
+    year: 2024
+    url: https://arxiv.org/abs/2412.19437
+    accessed: 2026-10-18
+    supports: [math-2026-mlp]
 aliases: []
 status: draft
 ---
@@ -120,6 +157,8 @@ $$
 
 Здесь $\sigma$ нелинейность, а $d_{ff}$ ширина скрытого слоя. В базовой модели статьи <Cite id="vaswani2017" /> взяты $d = 512$ и $d_{ff} = 2048$, то есть скрытый слой в четыре раза шире входа (множитель 4 выбран авторами эмпирически, а не выведен). Нелинейность там ReLU; в демо стоит GELU, другая гладкая нелинейность, форма блока от этого не меняется. {#math-mlp}
 
+Состояние на 2026 год. Схема из статьи 2017 года остаётся справочной: она объясняет исходную идею, но не описывает современные открытые модели. В их отчётах блок обычно выглядит иначе. Нормализация RMSNorm, а вместо MLP с ReLU или GELU часто стоит gated-вариант <Term id="swiglu">SwiGLU</Term>, в котором сигнал умножается на гейт из второй линейной ветки <Cite id="shazeer2020" />. Llama 3 описывает SwiGLU как активацию своих FFN-слоёв <Cite id="llama3" />. DeepSeek-V3 использует RMSNorm <Cite id="deepseekv3" />, а Gemma 2 ставит RMSNorm на входе и выходе каждого подслоя <Cite id="gemma2" />. У SwiGLU три матрицы вместо двух, поэтому при том же бюджете параметров скрытую ширину берут меньше, около $8d/3$ вместо $4d$. {#math-2026-mlp}
+
 </Level>
 
 <Level c={3}>
@@ -172,7 +211,27 @@ Post-LN, взятый из исходной статьи, без прогрев�
 - MLP применяют так, будто он смешивает токены. Смешивает их только внимание, а MLP работает с каждым токеном отдельно. {#mistake-mlp}
 - Нормализуют по токенам, а не по признакам. Нормализация в блоке считается по признакам одного токена, см. главу [Residual connections и LayerNorm](../layer-norm/). {#mistake-ln-axis}
 
+## Когда применять и когда нет {#when}
+
+| Ситуация | Что выбрать | Почему |
+|---|---|---|
+| Воспроизводите исходную статью или учебный эксперимент | Post-LN, ReLU или GELU | схема проще, цель в понимании исходной работы; Post-LN требует разогрева |
+| Обучаете глубокий стек с нуля | Pre-LN, RMSNorm, MLP с гейтом (SwiGLU) | так описаны современные отчёты (см. выше); путь без нормализации устойчивее |
+| Бюджет параметров фиксирован | выбирайте ширину MLP по числу матриц | гейтовый MLP имеет три матрицы, поэтому ширину скрытого слоя подбирают заново |
+
+<Level c={3}>
+
+**Что решать на практике.** Перед заменой части блока проверьте три вещи. Совпадают ли формы входа и выхода. Сохраняется ли путь в обход. Сколько параметров получилось после замены MLP. Менять нормализацию или активацию в уже обученной модели нельзя без переобучения: веса выучены под конкретный блок. {#when-practice}
+
+</Level>
+
 ## Проверь себя {#check}
+
+<Quiz id="quiz-swiglu-width" q="Почему в гейтовом MLP (SwiGLU) скрытую ширину обычно берут около 8d/3, а не 4d?">
+
+У гейтового MLP три матрицы вместо двух. Чтобы число параметров осталось близким к классическому MLP с шириной 4d, скрытую ширину уменьшают примерно в 2/3 раза.
+
+</Quiz>
 
 <Quiz id="quiz-shape" q="Почему блоки трансформера можно ставить друг за другом без изменения формы данных между ними?">
 
