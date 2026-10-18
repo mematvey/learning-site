@@ -1,0 +1,40 @@
+- id: roofline
+  term: roofline
+  term_en: roofline model
+  definition: 'Модель, которая задаёт верхнюю границу производительности ядра по его арифметической интенсивности: минимум из пиковой производительности и произведения интенсивности на пропускную способность памяти.'
+  chapter: compute/roofline
+- id: arithmetic-intensity
+  term: арифметическая интенсивность
+  term_en: arithmetic intensity
+  definition: 'Число операций с плавающей точкой, приходящихся на один байт, переданный между памятью и вычислительными блоками. Измеряется в FLOP на байт.'
+  chapter: compute/roofline
+- id: ridge-point
+  term: точка перегиба
+  term_en: ridge point
+  definition: 'Значение арифметической интенсивности, при котором крыша roofline переходит из наклонной части в горизонтальную. Равна пиковой производительности, деленной на пропускную способность памяти.'
+  chapter: compute/roofline
+- id: memory-bound
+  term: ограничение памятью
+  term_en: memory-bound
+  definition: 'Состояние ядра, при котором производительность определяет пропускная способность памяти: интенсивность ниже точки перегиба. Ускорение вычислений в этом случае не поможет.'
+  chapter: compute/roofline
+- id: compute-bound
+  term: ограничение вычислениями
+  term_en: compute-bound
+  definition: 'Состояние ядра, при котором производительность определяет пиковая скорость вычислений: интенсивность выше точки перегиба.'
+  chapter: compute/roofline
+- id: peak-performance
+  term: пиковая производительность
+  term_en: peak performance
+  definition: 'Максимальная скорость вычислений ускорителя для данного типа операций, обычно в FLOP в секунду. У разных вычислительных блоков, например тензорных ядер и обычных ядер FP32, разные пики.'
+  chapter: compute/roofline
+- id: memory-bandwidth
+  term: пропускная способность памяти
+  term_en: memory bandwidth
+  definition: 'Максимальное число байт, которое память отдаёт вычислительным блокам в секунду. Задаётся производителем ускорителя и определяет наклон крыши roofline.'
+  chapter: compute/roofline
+- id: flop
+  term: FLOP
+  term_en: floating-point operation
+  definition: 'Одна операция с плавающей точкой, например сложение или умножение двух чисел. В спецификациях GPU принято считать FLOP в секунду.'
+  chapter: compute/roofline
