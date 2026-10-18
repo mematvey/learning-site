@@ -116,9 +116,10 @@ export async function openProgressStore(
 		label: string,
 		schema: ZodType<T>,
 		skipped: string[],
+		decoder: (raw: unknown, schema: ZodType<T>) => T = decode,
 	): T | undefined => {
 		try {
-			return decode(raw, schema);
+			return decoder(raw, schema);
 		} catch (e) {
 			skipped.push(`${label}: ${errorMessage(e)}`);
 			return undefined;
@@ -306,7 +307,12 @@ export async function openProgressStore(
 
 			const raw = data as Record<string, unknown>;
 			const skipped: string[] = [];
-			const collect = <T>(items: unknown, label: string, schema: ZodType<T>): T[] => {
+			const collect = <T>(
+				items: unknown,
+				label: string,
+				schema: ZodType<T>,
+				decoder?: (raw: unknown, schema: ZodType<T>) => T,
+			): T[] => {
 				if (items === undefined) return [];
 				if (!Array.isArray(items)) {
 					skipped.push(`${label}: expected an array`);
@@ -314,7 +320,7 @@ export async function openProgressStore(
 				}
 				const out: T[] = [];
 				items.forEach((item, i) => {
-					const value = decodeOrSkip(item, `${label}[${i}]`, schema, skipped);
+					const value = decodeOrSkip(item, `${label}[${i}]`, schema, skipped, decoder);
 					if (value !== undefined) out.push(value);
 				});
 				return out;
@@ -322,7 +328,8 @@ export async function openProgressStore(
 
 			const chapters = collect(raw.chapters, 'chapters', ChapterProgress);
 			const labs = collect(raw.labs, 'labs', LabProgress);
-			const notes = collect(raw.notes, 'notes', Note);
+			// Notes have their own schema version (no migrations yet): progress migrations must not touch them.
+			const notes = collect(raw.notes, 'notes', Note, (item, schema) => schema.parse(item));
 			const settings =
 				raw.settings === undefined
 					? undefined
