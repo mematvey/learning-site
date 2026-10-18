@@ -47,3 +47,8 @@
   term_en: Gaussian error linear unit
   definition: 'Гладкая активация x·Φ(x), где Φ функция распределения стандартного нормального закона; сглаженный вариант ReLU, применяется в трансформерах.'
   chapter: dl/activations-init
+- id: swiglu
+  term: SwiGLU
+  term_en: SwiGLU
+  definition: 'Гейтовая активация из двух линейных проекций: одна проходит через Swish (x·σ(x)), вторая умножается на неё поэлементно. Используется в FFN открытых LLM вместо ReLU и GELU.'
+  chapter: dl/activations-init

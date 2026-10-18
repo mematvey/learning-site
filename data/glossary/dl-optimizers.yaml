@@ -27,3 +27,7 @@
   term_en: second moment
   definition: 'Скользящее среднее квадратов градиента; в Adam это оценка масштаба каждой координаты.'
   chapter: dl/optimizers
+- id: muon
+  term: Muon
+  definition: 'Оптимизатор для матричных весов: обновление momentum-накопления ортогонализуется перед шагом. Применяется в ряде крупных моделей (например, Kimi K2 по отчёту авторов), но пока не заменил AdamW.'
+  chapter: dl/optimizers
