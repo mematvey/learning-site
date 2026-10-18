@@ -103,6 +103,9 @@
 				· разделов {sectionTotals.done} из {sectionTotals.total}
 			{/if}
 		</p>
+		<div class="reset-row">
+			<a class="my-link" href={resolve(`/${data.topic.id}/my/` as '/')}>Моё по теме</a>
+		</div>
 		{#if total > 0}
 			<div class="reset-row">
 				<button class="btn-quiet" type="button" data-reset-topic onclick={resetTopic}>
@@ -185,6 +188,10 @@
 	}
 	.reset-row {
 		margin-top: var(--space-3);
+	}
+	.my-link {
+		font-size: var(--fs-sm);
+		color: var(--accent);
 	}
 	.btn-quiet {
 		font: inherit;
