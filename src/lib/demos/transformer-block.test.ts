@@ -20,6 +20,10 @@ import {
 	snapDim,
 	snapTokens,
 	totalParams,
+	cleanPath,
+	mainChain,
+	nodeOrder,
+	residual,
 } from './transformer-block';
 
 describe('snapping of the sliders', () => {
@@ -112,5 +116,29 @@ describe('helpers', () => {
 		const text = describeNode(nodeInfo('ln1', 6, 64));
 		expect(text).toContain('[6, 64]');
 		expect(text).toContain('параметров 128');
+	});
+});
+
+describe('Post-LN variant', () => {
+	it('moves both norms after the sums and keeps seven nodes', () => {
+		expect(nodeOrder('post')).toEqual(['x', 'attn', 'add1', 'ln1', 'mlp', 'add2', 'ln2']);
+		expect([...nodeOrder('post')].sort()).toEqual([...NODE_IDS].sort());
+		expect(mainChain('post').at(-1)?.[1]).toBe('ln2');
+		expect(residual('post')).toEqual([
+			['x', 'add1'],
+			['ln1', 'add2'],
+		]);
+	});
+
+	it('has a norm-free path only in Pre-LN', () => {
+		expect(cleanPath('pre')).toEqual(['x', 'add1', 'add2']);
+		expect(cleanPath('post')).toEqual([]);
+	});
+
+	it('keeps shapes and parameters the same', () => {
+		for (const id of NODE_IDS) {
+			expect(nodeInfo(id, 5, 32, 'post').output).toEqual(nodeInfo(id, 5, 32, 'pre').output);
+			expect(nodeInfo(id, 5, 32, 'post').params).toBe(nodeInfo(id, 5, 32, 'pre').params);
+		}
 	});
 });

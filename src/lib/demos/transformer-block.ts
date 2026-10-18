@@ -1,6 +1,7 @@
 /**
- * Math of the transformer block demo. The block is pre-LN:
- *   y = x + MHA(LN(x)),   z = y + MLP(LN(y)).
+ * Math of the transformer block demo. Two variants:
+ *   pre-LN:  y = x + MHA(LN(x)),   z = y + MLP(LN(y));
+ *   post-LN: y = LN(x + MHA(x)),   z = LN(y + MLP(y)).
  * Tensors are shown without the batch axis: a token matrix is [n, d] (n tokens, d model width).
  * All shapes and parameter counts are computed here, not typed by hand.
  * Pure functions only: no DOM, no Svelte.
@@ -25,7 +26,16 @@ export type NodeId = (typeof NODE_IDS)[number];
 
 export type NodeKind = 'tensor' | 'norm' | 'attn' | 'mlp' | 'sum';
 
+export const VARIANTS = ['pre', 'post'] as const;
+export type Variant = (typeof VARIANTS)[number];
+
+export function isVariant(v: unknown): v is Variant {
+	return v === 'pre' || v === 'post';
+}
+
 export interface TransformerBlockDemoState {
+	/** Where LayerNorm stands: inside the branch (pre) or after the sum (post). */
+	variant: Variant;
 	/** Selected node of the diagram. */
 	node: NodeId;
 	/** Number of tokens n. */
@@ -35,6 +45,7 @@ export interface TransformerBlockDemoState {
 }
 
 export const DEFAULT_STATE: TransformerBlockDemoState = {
+	variant: 'pre',
 	node: 'attn',
 	tokens: TOKENS_DEFAULT,
 	dim: DIM_DEFAULT,
@@ -51,21 +62,40 @@ export const NODE_LABEL: Record<NodeId, string> = {
 	add2: 'Сумма 2',
 };
 
+/** Vertical order of the nodes in the diagram. In post-LN the norms follow the sums. */
+export function nodeOrder(variant: Variant): readonly NodeId[] {
+	return variant === 'pre'
+		? ['x', 'ln1', 'attn', 'add1', 'ln2', 'mlp', 'add2']
+		: ['x', 'attn', 'add1', 'ln1', 'mlp', 'add2', 'ln2'];
+}
+
 /** Main data path, in order. Each pair is [from, to]. */
-export const MAIN_CHAIN: ReadonlyArray<readonly [NodeId, NodeId]> = [
-	['x', 'ln1'],
-	['ln1', 'attn'],
-	['attn', 'add1'],
-	['add1', 'ln2'],
-	['ln2', 'mlp'],
-	['mlp', 'add2'],
-];
+export function mainChain(variant: Variant): ReadonlyArray<readonly [NodeId, NodeId]> {
+	const order = nodeOrder(variant);
+	return order.slice(1).map((id, i) => [order[i] as NodeId, id] as const);
+}
 
 /** Residual (skip) connections: the sum nodes take a second input from here. */
-export const RESIDUAL: ReadonlyArray<readonly [NodeId, NodeId]> = [
-	['x', 'add1'],
-	['add1', 'add2'],
-];
+export function residual(variant: Variant): ReadonlyArray<readonly [NodeId, NodeId]> {
+	return variant === 'pre'
+		? [
+				['x', 'add1'],
+				['add1', 'add2'],
+			]
+		: [
+				['x', 'add1'],
+				['ln1', 'add2'],
+			];
+}
+
+/** Nodes through which the signal goes from the block input to the output without any LayerNorm. */
+export function cleanPath(variant: Variant): readonly NodeId[] {
+	return variant === 'pre' ? ['x', 'add1', 'add2'] : [];
+}
+
+/** Pre-LN default chain, kept for the default view. */
+export const MAIN_CHAIN = mainChain('pre');
+export const RESIDUAL = residual('pre');
 
 export type Shape = readonly number[];
 
@@ -144,7 +174,13 @@ export interface NodeInfo {
 }
 
 /** Shapes, operation and parameter count of one node for the given n and d. */
-export function nodeInfo(id: NodeId, tokens: number, dim: number): NodeInfo {
+export function nodeInfo(
+	id: NodeId,
+	tokens: number,
+	dim: number,
+	variant: Variant = 'pre',
+): NodeInfo {
+	const pre = variant === 'pre';
 	const td: Shape = [tokens, dim];
 	const params = paramsOf(id, dim);
 	switch (id) {
@@ -165,10 +201,13 @@ export function nodeInfo(id: NodeId, tokens: number, dim: number): NodeInfo {
 				id,
 				kind: 'norm',
 				title: id === 'ln1' ? 'LayerNorm 1' : 'LayerNorm 2',
-				op:
-					id === 'ln1'
+				op: pre
+					? id === 'ln1'
 						? 'Нормализация признаков каждого токена отдельно: вычитается среднее, делится на σ, затем γ и β. Выход уходит во внимание, вход x идёт по остаточной связи.'
-						: 'Та же нормализация перед MLP, но уже от h. Своя пара γ и β.',
+						: 'Та же нормализация перед MLP, но уже от y. Своя пара γ и β.'
+					: id === 'ln1'
+						? 'Post-LN: нормализуется сумма x + MHA(x), то есть и обходной путь тоже. Результат y идёт дальше и в следующую остаточную связь.'
+						: 'Post-LN: нормализуется сумма y + MLP(y), результат z и есть выход блока. Своя пара γ и β.',
 				input: td,
 				output: td,
 				detail: [],
@@ -195,7 +234,7 @@ export function nodeInfo(id: NodeId, tokens: number, dim: number): NodeInfo {
 				id,
 				kind: 'sum',
 				title: 'Сумма 1 (остаток)',
-				op: 'Поэлементное сложение входа блока и выхода внимания: y = x + MHA(LN(x)). Формы совпадают, поэтому сложение возможно без проекций.',
+				op: `Поэлементное сложение входа блока и выхода внимания: ${pre ? 'y = x + MHA(LN(x))' : 'сумма x + MHA(x), затем LN'}. Формы совпадают, поэтому сложение возможно без проекций.`,
 				input: td,
 				output: td,
 				detail: [],
@@ -217,7 +256,7 @@ export function nodeInfo(id: NodeId, tokens: number, dim: number): NodeInfo {
 				id,
 				kind: 'sum',
 				title: 'Сумма 2 (остаток)',
-				op: 'z = y + MLP(LN(y)). Выход имеет ту же форму, что вход, и подаётся в следующий блок.',
+				op: `${pre ? 'z = y + MLP(LN(y)). Выход' : 'Сумма y + MLP(y), затем LN даёт z. Выход'} имеет ту же форму, что вход, и подаётся в следующий блок.`,
 				input: td,
 				output: td,
 				detail: [],
