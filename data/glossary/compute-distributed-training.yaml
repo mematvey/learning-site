@@ -1,0 +1,60 @@
+- id: data-parallel
+  term: параллелизм данных
+  term_en: data parallelism
+  definition: 'Каждая карта хранит полную копию модели и обрабатывает свою часть батча. После шага градиенты усредняются между копиями, поэтому память на карту не уменьшается.'
+  chapter: compute/distributed-training
+- id: tensor-parallel
+  term: тензорный параллелизм
+  term_en: tensor parallelism
+  definition: 'Отдельный слой делится между картами, и каждая считает свою часть одной матричной операции. Требует частых обменов внутри слоя, поэтому обычно держится внутри одного сервера.'
+  chapter: compute/distributed-training
+- id: pipeline-parallel
+  term: конвейерный параллелизм
+  term_en: pipeline parallelism
+  definition: 'Модель делится по слоям на стадии, каждая стадия живёт на своей карте. Между стадиями передаются только активации на границе, поэтому стадии можно разносить по узлам.'
+  chapter: compute/distributed-training
+- id: pipeline-bubble
+  term: пузырь конвейера
+  term_en: pipeline bubble
+  definition: 'Простой карт в начале и в конце конвейера, когда стадии ждут друг друга. Его доля падает с ростом числа микробатчей.'
+  chapter: compute/distributed-training
+- id: zero-sharding
+  term: шардирование состояний
+  term_en: ZeRO sharding
+  definition: 'Состояния модели (параметры, градиенты, состояния оптимизатора) разрезаются между картами данных, и каждая хранит только свою долю. Так делает ZeRO, на той же идее построен FSDP.'
+  chapter: compute/distributed-training
+- id: fsdp
+  term: FSDP
+  term_en: Fully Sharded Data Parallel
+  definition: 'Реализация шардирования параметров, градиентов и состояний оптимизатора в PyTorch. Перед использованием параметры собираются со всех карт и затем освобождаются.'
+  chapter: compute/distributed-training
+- id: model-states
+  term: состояния модели
+  term_en: model states
+  definition: 'Всё, что занимает память при обучении, кроме активаций: веса, градиенты и вспомогательные данные оптимизатора.'
+  chapter: compute/distributed-training
+- id: activations
+  term: активации
+  term_en: activations
+  definition: 'Промежуточные значения прямого прохода, которые нужны для обратного. Зависят от размера батча и длины последовательности, а не только от числа параметров.'
+  chapter: compute/distributed-training
+- id: mixed-precision
+  term: смешанная точность
+  term_en: mixed precision
+  definition: 'Вычисления в 16 битах, а копия весов и часть состояний оптимизатора в 32 битах, чтобы маленькие обновления не терялись.'
+  chapter: compute/distributed-training
+- id: all-reduce
+  term: all-reduce
+  term_en: all-reduce
+  definition: 'Коллективная операция: все карты получают сумму или среднее тензоров со всех карт. Используется для усреднения градиентов в параллелизме данных.'
+  chapter: compute/distributed-training
+- id: nvlink
+  term: NVLink
+  term_en: NVLink
+  definition: 'Прямая высокоскоростная связь между GPU внутри одного сервера. Быстрее сетевой связи между серверами.'
+  chapter: compute/distributed-training
+- id: micro-batch
+  term: микробатч
+  term_en: micro-batch
+  definition: 'Часть батча, которая проходит через конвейер отдельно. Чем больше микробатчей на один батч, тем меньше простой конвейера.'
+  chapter: compute/distributed-training
