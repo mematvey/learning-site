@@ -1,0 +1,17 @@
+---
+id: mlops/evaluation
+title: "Оценка ML- и LLM-систем"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: mlops
+prereqs: [mlops/experiment-tracking, mlops/serving]
+concepts: []
+keywords: []
+minutes: 20
+labs: [mlops-evaluation]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

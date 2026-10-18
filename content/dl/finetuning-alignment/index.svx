@@ -1,0 +1,17 @@
+---
+id: dl/finetuning-alignment
+title: "Дообучение, LoRA и выравнивание (RLHF, DPO)"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: dl
+prereqs: [dl/lm-training-scaling]
+concepts: []
+keywords: []
+minutes: 20
+labs: [dl-finetuning-alignment]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

@@ -1,0 +1,17 @@
+---
+id: mlops/llm-apps
+title: "Промпты, RAG и агенты в проде"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: mlops
+prereqs: [mlops/evaluation, mlops/llm-serving]
+concepts: []
+keywords: []
+minutes: 20
+labs: [mlops-llm-apps]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

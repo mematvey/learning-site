@@ -1,0 +1,17 @@
+---
+id: compute/flash-attention
+title: "FlashAttention: внимание за проход по памяти"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: compute
+prereqs: [compute/matmul-optimization, compute/precision-quantization, compute/roofline]
+concepts: []
+keywords: []
+minutes: 20
+labs: [compute-flash-attention]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

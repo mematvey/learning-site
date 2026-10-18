@@ -1,0 +1,9 @@
+id: dl-inference-efficiency
+title: 'Эффективный инференс: алгоритмы'
+chapter: dl/inference-efficiency
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+timeout: 10
+packages: [numpy]

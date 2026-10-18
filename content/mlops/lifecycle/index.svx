@@ -1,0 +1,17 @@
+---
+id: mlops/lifecycle
+title: "Когда MLOps вообще нужен"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: mlops
+prereqs: []
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

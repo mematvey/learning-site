@@ -1,0 +1,17 @@
+---
+id: mlops/observability
+title: "Наблюдаемость и отладка LLM-цепочек"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: mlops
+prereqs: [mlops/monitoring-drift, mlops/llm-serving]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

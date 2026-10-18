@@ -1,0 +1,17 @@
+---
+id: dl/inference-efficiency
+title: "Эффективный инференс: алгоритмы"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: dl
+prereqs: [dl/multi-head-attention, dl/transformer-block]
+concepts: []
+keywords: []
+minutes: 20
+labs: [dl-inference-efficiency]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

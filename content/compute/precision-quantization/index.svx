@@ -1,0 +1,17 @@
+---
+id: compute/precision-quantization
+title: "Форматы чисел и квантизация"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: compute
+prereqs: [compute/roofline, compute/gpu-architecture]
+concepts: []
+keywords: []
+minutes: 20
+labs: [compute-precision-quantization]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

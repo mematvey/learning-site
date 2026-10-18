@@ -1,0 +1,17 @@
+---
+id: mlops/llm-serving
+title: "LLM в эксплуатации: SLO, цена, свой хостинг или API"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: mlops
+prereqs: [mlops/serving, dl/inference-efficiency]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

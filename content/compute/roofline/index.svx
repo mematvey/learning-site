@@ -1,0 +1,17 @@
+---
+id: compute/roofline
+title: "Roofline: упирается ли задача в память или в вычисления"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: compute
+prereqs: [compute/matmul-optimization]
+concepts: []
+keywords: []
+minutes: 20
+labs: [compute-roofline]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

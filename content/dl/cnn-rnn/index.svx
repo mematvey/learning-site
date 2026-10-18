@@ -1,0 +1,17 @@
+---
+id: dl/cnn-rnn
+title: "Свёртки и рекуррентные сети: что дают и когда нужны"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: dl
+prereqs: [dl/transformer-block]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}
