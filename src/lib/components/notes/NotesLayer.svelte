@@ -11,7 +11,10 @@
 	} from '../../contracts';
 	import MarginNote from '../MarginNote.svelte';
 	import SelectionNoteButton from '../SelectionNoteButton.svelte';
+	import { currentBlockId, isMoved } from '$lib/notes/reanchor';
+	import { visibleText } from '$lib/notes/text';
 	import NoteEditor from './NoteEditor.svelte';
+	import NotesNotice from './NotesNotice.svelte';
 	import { stackTops, type NotePatch } from './notes-format';
 
 	type Status = AnchorResolution['status'];
@@ -44,11 +47,19 @@
 	let editing = $state<Editing>(null);
 	let selection = $state<{ top: number; left: number } | null>(null);
 	let heights = $state<Record<string, number>>({});
-	let placement = $state<Record<string, { top: number; status: Status; layerHidden: boolean }>>({});
+	let placement = $state<
+		Record<string, { top: number; status: Status; layerHidden: boolean; moved: boolean }>
+	>({});
 	let draftTop = $state(0);
 	let layerHeight = $state(0);
 	let canvas: HTMLElement | undefined = $state();
 	let loadSeq = 0;
+	/** Message about the last failed action (load, delete). */
+	let notice = $state<string | null>(null);
+	/** Message about the last failed save; shown in the open editor. */
+	let editorError = $state<string | null>(null);
+	/** Note waiting for the author to confirm deletion. */
+	let pendingDelete = $state<Ulid | null>(null);
 
 	const placedNotes = $derived(
 		notes.flatMap((n) => {
@@ -58,10 +69,28 @@
 	);
 	const detachedNotes = $derived(notes.filter((n) => !placement[n.id]));
 
+	function describe(e: unknown): string {
+		return e instanceof Error ? e.message : String(e);
+	}
+
+	function openEditor(next: Exclude<Editing, null>) {
+		editing = next;
+		editorError = null;
+	}
+
+	function closeEditor() {
+		editing = null;
+		editorError = null;
+	}
+
 	async function load(s: NotesStore, c: ChapterId) {
 		const seq = ++loadSeq;
-		const list = await s.listByChapter(c);
-		if (seq === loadSeq) notes = list;
+		try {
+			const list = await s.listByChapter(c);
+			if (seq === loadSeq) notes = list;
+		} catch (e) {
+			notice = `Не удалось загрузить заметки: ${describe(e)}`;
+		}
 	}
 
 	$effect(() => {
@@ -82,7 +111,12 @@
 	function statusOf(n: Note, el: HTMLElement | null): Status {
 		const known = resolutions?.[n.id];
 		if (known) return known.status;
-		return el?.textContent?.includes(n.anchor.exact) ? 'found' : 'orphaned';
+		return el && visibleText(el).includes(n.anchor.exact) ? 'found' : 'orphaned';
+	}
+
+	/** Block that holds the note now: the re-anchored block after a move, else the stored one. */
+	function targetOf(n: Note): HTMLElement | null {
+		return blockEl(currentBlockId(n, resolutions?.[n.id]));
 	}
 
 	/**
@@ -94,16 +128,16 @@
 		const base = canvas.getBoundingClientRect().top;
 		const topOf = (el: HTMLElement) => Math.max(0, el.getBoundingClientRect().top - base);
 
-		const raw: Record<string, { top: number; status: Status; layerHidden: boolean }> = {};
+		const raw: typeof placement = {};
 		const items: { key: string; top: number; height: number }[] = [];
 
 		for (const n of notes) {
-			const el = blockEl(n.anchor.blockId);
+			const el = targetOf(n);
 			const status = statusOf(n, el);
 			const layerHidden = !!el?.closest('[hidden]');
 			if (!el || layerHidden || status === 'orphaned') continue;
 			const top = topOf(el);
-			raw[n.id] = { top, status, layerHidden };
+			raw[n.id] = { top, status, layerHidden, moved: isMoved(n, resolutions?.[n.id]) };
 			items.push({ key: n.id, top, height: heights[n.id] ?? DEFAULT_HEIGHT });
 		}
 
@@ -178,28 +212,93 @@
 		if (!sel || !root) return;
 		const anchor = anchorFromSelection(sel, root);
 		if (!anchor) return;
-		editing = { mode: 'new', anchor };
+		openEditor({ mode: 'new', anchor });
 		selection = null;
 	}
 
 	async function save(patch: NotePatch) {
 		const ed = editing;
 		if (!ed) return;
-		if (ed.mode === 'new') {
-			await store.create({ chapter, anchor: ed.anchor, text: patch.text, tags: patch.tags, layer });
-		} else {
-			await store.update(ed.id, { text: patch.text, tags: patch.tags, status: patch.status });
+		try {
+			if (ed.mode === 'new') {
+				await store.create({
+					chapter,
+					anchor: ed.anchor,
+					text: patch.text,
+					tags: patch.tags,
+					layer,
+				});
+			} else {
+				await store.update(ed.id, { text: patch.text, tags: patch.tags, status: patch.status });
+			}
+			closeEditor();
+		} catch (e) {
+			editorError = `Не удалось сохранить заметку: ${describe(e)}. Текст остался в поле, попробуйте ещё раз.`;
 		}
-		editing = null;
+	}
+
+	/** Asks for confirmation first: the card shows the question in place of the note. */
+	function askDelete(id: Ulid) {
+		pendingDelete = id;
+		if (editing?.mode === 'edit' && editing.id === id) closeEditor();
 	}
 
 	async function remove(id: Ulid) {
-		await store.delete(id);
-		if (editing?.mode === 'edit' && editing.id === id) editing = null;
+		pendingDelete = null;
+		try {
+			await store.delete(id);
+		} catch (e) {
+			notice = `Не удалось удалить заметку: ${describe(e)}`;
+		}
+	}
+
+	/** Quote where a moved note now sits (the re-anchored text). */
+	function movedQuote(n: Note): string {
+		const res = resolutions?.[n.id];
+		return res?.status === 'shifted' ? res.anchor.exact : n.anchor.exact;
+	}
+
+	function showMoved(n: Note) {
+		targetOf(n)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 	}
 </script>
 
 <SelectionNoteButton rect={selection} onClick={startNote} />
+
+{#if notice}
+	<NotesNotice message={notice} onDismiss={() => (notice = null)} />
+{/if}
+
+{#snippet noteCard(n: Note, status: Status, layerHidden: boolean, moved: boolean)}
+	{#if pendingDelete === n.id}
+		<div class="note-confirm" role="group" aria-label="Подтверждение удаления">
+			<p>Удалить заметку? Это действие нельзя отменить.</p>
+			<div class="confirm-actions">
+				<button type="button" class="btn-danger" onclick={() => remove(n.id)}>Удалить</button>
+				<button type="button" class="btn-outline" onclick={() => (pendingDelete = null)}>
+					Оставить
+				</button>
+			</div>
+		</div>
+	{:else}
+		{#if moved}
+			<div class="note-moved">
+				<p>Перемещена: «{movedQuote(n)}»</p>
+				<button type="button" class="btn-outline" onclick={() => showMoved(n)}>
+					Показать место
+				</button>
+			</div>
+		{/if}
+		<MarginNote
+			note={n}
+			resolution={moved ? 'found' : status}
+			{layerHidden}
+			onSelect={(id) => openEditor({ mode: 'edit', id })}
+			{onShowLayer}
+			onDelete={askDelete}
+		/>
+	{/if}
+{/snippet}
 
 <div class="notes-layer">
 	<div class="notes-canvas" bind:this={canvas} style:height="{layerHeight}px">
@@ -208,26 +307,25 @@
 				{#if editing?.mode === 'edit' && editing.id === n.id}
 					<NoteEditor
 						note={n}
+						error={editorError ?? undefined}
 						onSave={save}
-						onCancel={() => (editing = null)}
-						onDelete={() => remove(n.id)}
+						onCancel={closeEditor}
+						onDelete={() => askDelete(n.id)}
 					/>
 				{:else}
-					<MarginNote
-						note={n}
-						resolution={p.status}
-						layerHidden={p.layerHidden}
-						onSelect={(id) => (editing = { mode: 'edit', id })}
-						{onShowLayer}
-						onDelete={remove}
-					/>
+					{@render noteCard(n, p.status, p.layerHidden, p.moved)}
 				{/if}
 			</div>
 		{/each}
 
 		{#if editing?.mode === 'new'}
 			<div class="note-slot" style:top="{draftTop}px" bind:offsetHeight={heights['new']}>
-				<NoteEditor anchor={editing.anchor} onSave={save} onCancel={() => (editing = null)} />
+				<NoteEditor
+					anchor={editing.anchor}
+					error={editorError ?? undefined}
+					onSave={save}
+					onCancel={closeEditor}
+				/>
 			</div>
 		{/if}
 	</div>
@@ -239,19 +337,18 @@
 				{#if editing?.mode === 'edit' && editing.id === n.id}
 					<NoteEditor
 						note={n}
+						error={editorError ?? undefined}
 						onSave={save}
-						onCancel={() => (editing = null)}
-						onDelete={() => remove(n.id)}
+						onCancel={closeEditor}
+						onDelete={() => askDelete(n.id)}
 					/>
 				{:else}
-					<MarginNote
-						note={n}
-						resolution={statusOf(n, blockEl(n.anchor.blockId))}
-						layerHidden={!!blockEl(n.anchor.blockId)?.closest('[hidden]')}
-						onSelect={(id) => (editing = { mode: 'edit', id })}
-						{onShowLayer}
-						onDelete={remove}
-					/>
+					{@render noteCard(
+						n,
+						statusOf(n, targetOf(n)),
+						!!targetOf(n)?.closest('[hidden]'),
+						isMoved(n, resolutions?.[n.id]),
+					)}
 				{/if}
 			{/each}
 		</section>
@@ -280,6 +377,50 @@
 		color: var(--text-muted);
 		margin: 0;
 		font-weight: 600;
+	}
+	.note-moved,
+	.note-confirm {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		padding: var(--space-3);
+		margin-bottom: var(--space-2);
+		font-size: var(--fs-sm);
+		color: var(--text-muted);
+		display: grid;
+		gap: var(--space-2);
+	}
+	.note-moved p,
+	.note-confirm p {
+		margin: 0;
+	}
+	.confirm-actions {
+		display: flex;
+		gap: var(--space-2);
+		flex-wrap: wrap;
+	}
+	.btn-outline,
+	.btn-danger {
+		font: inherit;
+		font-size: var(--fs-sm);
+		border-radius: var(--radius-sm);
+		padding: 6px 12px;
+		cursor: pointer;
+	}
+	.btn-outline {
+		background: none;
+		color: var(--text);
+		border: 1px solid var(--border);
+	}
+	.btn-danger {
+		background: var(--fail);
+		color: var(--surface);
+		border: 1px solid var(--fail);
+	}
+	.btn-outline:focus-visible,
+	.btn-danger:focus-visible {
+		outline: 2px solid var(--topic);
+		outline-offset: 2px;
 	}
 	/* Narrow screens: the notes flow into the page after the paragraphs. */
 	@media (max-width: 1180px) {

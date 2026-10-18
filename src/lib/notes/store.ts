@@ -3,6 +3,7 @@ import { monotonicFactory } from 'ulid';
 import {
 	Note,
 	type ChapterId,
+	type ImportMode,
 	type NoteDraft,
 	type NoteStatus,
 	type NotesStore,
@@ -24,6 +25,12 @@ export interface NotesStoreOptions {
 }
 
 export interface OpenNotesStore extends NotesStore {
+	/**
+	 * Writes notes from an export file, keeping their ids and timestamps. `merge` keeps a stored
+	 * note that is newer than the incoming one; `replace` clears the store first.
+	 * Returns the number of notes written.
+	 */
+	importNotes(notes: Note[], mode: ImportMode): Promise<number>;
 	close(): void;
 }
 
@@ -110,6 +117,31 @@ export async function createNotesStore(options: NotesStoreOptions = {}): Promise
 			const current = await get(id);
 			await db.delete(STORE, id);
 			if (current) emit(current.chapter);
+		},
+
+		async importNotes(incoming, mode) {
+			const valid = incoming.map((note) => Note.parse(note));
+			const tx = db.transaction(STORE, 'readwrite');
+			const os = tx.objectStore(STORE);
+			const touched = new Set<ChapterId>();
+			if (mode === 'replace') {
+				for (const row of await os.getAll()) touched.add(Note.parse(row).chapter);
+				await os.clear();
+			}
+			let written = 0;
+			for (const note of valid) {
+				const existing: unknown = mode === 'replace' ? undefined : await os.get(note.id);
+				if (existing !== undefined) {
+					const stored = Note.parse(existing);
+					if (Date.parse(stored.updated) > Date.parse(note.updated)) continue;
+				}
+				await os.put(note);
+				touched.add(note.chapter);
+				written++;
+			}
+			await tx.done;
+			for (const chapter of touched) emit(chapter);
+			return written;
 		},
 
 		subscribe(listener): Unsubscribe {
