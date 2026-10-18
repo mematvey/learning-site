@@ -59,7 +59,7 @@ describe('Binomial to Poisson', () => {
 
 	it('builds bars for k = 0..axis max', () => {
 		const bars = bpBars(3, 50);
-		expect(bars[0].k).toBe(0);
-		expect(bars[0].poisson).toBeCloseTo(Math.exp(-3), 12);
+		expect(bars[0]?.k).toBe(0);
+		expect(bars[0]?.poisson).toBeCloseTo(Math.exp(-3), 12);
 	});
 });

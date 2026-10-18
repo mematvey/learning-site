@@ -61,7 +61,7 @@
 		return segs;
 	});
 	const jumps = $derived(
-		steps.slice(0, -1).map((seg, i) => ({ x: seg.x2, y1: seg.y, y2: steps[i + 1].y })),
+		steps.slice(0, -1).map((seg, i) => ({ x: seg.x2, y1: seg.y, y2: (steps[i + 1] ?? seg).y })),
 	);
 	const tickStep = $derived(Math.ceil((s.n + 1) / 10));
 
@@ -169,7 +169,7 @@
 	<p class="cq-sum">
 		Голубые столбики показывают частоты выборки из {s.m} значений F⁻¹(U), где U равномерна на (0, 1).
 		Для значения {q} вероятность равна {formatNumber(binomPmf(s.n, s.p, q), 3)}, а доля выборки в
-		нём равна {formatNumber(counts[q] / s.m, 3)}.
+		нём равна {formatNumber((counts[q] ?? 0) / s.m, 3)}.
 	</p>
 
 	<div class="cq-foot">

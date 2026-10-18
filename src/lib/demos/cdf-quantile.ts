@@ -66,7 +66,10 @@ export function uniformSequence(count: number, seed: number = CQ_SEED): number[]
 /** Counts of each value 0..n among m draws X = F^-1(U) for the first m fixed uniforms. */
 export function sampleCounts(n: number, p: number, m: number): number[] {
 	const counts = new Array<number>(n + 1).fill(0);
-	for (const u of uniformSequence(m)) counts[binomQuantile(n, p, u)] += 1;
+	for (const u of uniformSequence(m)) {
+		const k = binomQuantile(n, p, u);
+		counts[k] = (counts[k] ?? 0) + 1;
+	}
 	return counts;
 }
 

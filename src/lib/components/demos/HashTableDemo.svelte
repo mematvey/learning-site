@@ -40,7 +40,7 @@
 	/* The props only seed the initial state: the demo owns it afterwards. */
 	let strategy = $state<Strategy>(start.strategy);
 	let hash = $state<HashKind>(start.hash);
-	let pick = $state(start.pick);
+	let pick = $state<number>(start.pick ?? 0);
 	let count = $state(start.count);
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
@@ -77,7 +77,7 @@
 	function reset(): void {
 		strategy = start.strategy;
 		hash = start.hash;
-		pick = start.pick;
+		pick = start.pick ?? 0;
 		count = start.count;
 	}
 
