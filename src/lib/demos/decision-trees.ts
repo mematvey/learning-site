@@ -4,6 +4,8 @@
  * The dataset is fixed, so every page load shows the same tree. Pure functions only: no DOM, no Svelte.
  */
 
+import { mulberry32 } from './attention';
+
 export const MAX_DEPTH = 4;
 export const DEPTH_MIN = 0;
 export const DEPTH_MAX = MAX_DEPTH;
@@ -74,6 +76,27 @@ export const DATASET: readonly Point[] = [
 	{ x: 0.03, y: 0.41, c: 0 },
 	{ x: 0.55, y: 0.91, c: 0 },
 ];
+
+/**
+ * Held-out points: fresh draws from the process behind the training points. Class 1 lies above a
+ * line (y > 0.5 for x <= 0.55, y > 0.3 for x > 0.55), and 12% of the labels are flipped.
+ * Never used to grow the tree, only to measure it.
+ */
+export const TEST_N = 100;
+export const TEST_SEED = 1;
+export function makeTestSet(seed: number = TEST_SEED, n: number = TEST_N): Point[] {
+	const rand = mulberry32(seed);
+	const out: Point[] = [];
+	for (let i = 0; i < n; i++) {
+		const x = rand();
+		const y = rand();
+		let c: ClassLabel = y > (x > 0.55 ? 0.3 : 0.5) ? 1 : 0;
+		if (rand() < 0.12) c = c === 1 ? 0 : 1;
+		out.push({ x, y, c });
+	}
+	return out;
+}
+export const TEST_DATASET: readonly Point[] = makeTestSet();
 
 export function isCriterion(v: unknown): v is Criterion {
 	return v === 'gini' || v === 'entropy';
@@ -236,6 +259,26 @@ export function accuracy(tree: TreeNode, points: readonly Point[]): number {
 	return correct / points.length;
 }
 
+export interface DepthAccuracy {
+	depth: number;
+	train: number;
+	test: number;
+}
+
+/** Accuracy on the training points and on the held-out points for every depth from 0 to MAX_DEPTH. */
+export function accuracyByDepth(
+	criterion: Criterion,
+	train: readonly Point[] = DATASET,
+	test: readonly Point[] = TEST_DATASET,
+): DepthAccuracy[] {
+	const out: DepthAccuracy[] = [];
+	for (let d = DEPTH_MIN; d <= DEPTH_MAX; d++) {
+		const tree = buildTree(train, d, criterion);
+		out.push({ depth: d, train: accuracy(tree, train), test: accuracy(tree, test) });
+	}
+	return out;
+}
+
 export interface Box {
 	x0: number;
 	x1: number;
@@ -314,14 +357,19 @@ export function describeTree(
 	tree: TreeNode,
 	points: readonly Point[],
 	criterion: Criterion,
+	testPoints: readonly Point[] = [],
 ): string {
 	const name = criterion === 'gini' ? 'Джини' : 'энтропия';
 	const leafCount = leaves(tree).length;
 	const pct = Math.round(accuracy(tree, points) * 100);
 	const root = tree.impurity.toFixed(2);
 	const weighted = weightedImpurity(tree).toFixed(2);
+	const heldOut =
+		testPoints.length > 0
+			? ` Точность на отложенных точках: ${Math.round(accuracy(tree, testPoints) * 100)}%.`
+			: '';
 	return (
-		`Листьев: ${leafCount}. Точность на обучении: ${pct}%. ` +
+		`Листьев: ${leafCount}. Точность на обучении: ${pct}%.${heldOut} ` +
 		`Корень: ${name} = ${root}; взвешенная ${name} по листьям = ${weighted}.`
 	);
 }

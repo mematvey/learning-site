@@ -21,6 +21,9 @@ export const SIGMA = 0.3;
 export const SEED = 20240915;
 /** Grid on [0, 1] where bias and variance are averaged. */
 export const GRID_N = 101;
+/** Size of the fixed held-out sample (fresh noisy points, never used for fitting). */
+export const TEST_N = 400;
+export const TEST_SEED = 777;
 
 export interface Dataset {
 	xs: number[];
@@ -33,8 +36,14 @@ export interface DegreeStats {
 	bias2: number;
 	/** Mean over the grid and trials of (fit - average fit)^2. */
 	variance: number;
-	/** bias2 + variance (noise excluded). */
+	/** bias2 + variance (noise sigma^2 excluded). */
 	sum: number;
+	/** Label noise variance sigma^2: the floor under the held-out error. */
+	noise: number;
+	/** Mean squared error on the training points of each trial, averaged over trials. */
+	train: number;
+	/** Mean squared error on a fixed held-out noisy sample, averaged over trials. */
+	test: number;
 }
 
 export interface BiasVarianceDemoState {
@@ -89,6 +98,33 @@ export function makeDatasets(
 		sets.push({ xs, ys });
 	}
 	return sets;
+}
+
+/** Held-out sample: x uniform on [0, 1], y = sin(2*pi*x) + N(0, sigma^2), independent of the training sets. */
+export function makeTestSet(
+	seed: number = TEST_SEED,
+	n: number = TEST_N,
+	sigma: number = SIGMA,
+): Dataset {
+	const rand = mulberry32(seed);
+	const xs: number[] = [];
+	const ys: number[] = [];
+	for (let i = 0; i < n; i++) {
+		const x = rand();
+		xs.push(x);
+		ys.push(trueFn(x) + sigma * gauss(rand));
+	}
+	return { xs, ys };
+}
+
+/** Mean squared error of polynomial coefficients w on a dataset. */
+function mseOn(w: readonly number[], set: Dataset): number {
+	let s = 0;
+	for (let i = 0; i < set.xs.length; i++) {
+		const d = evalPoly(w, set.xs[i] ?? 0) - (set.ys[i] ?? 0);
+		s += d * d;
+	}
+	return s / Math.max(1, set.xs.length);
 }
 
 /**
@@ -186,7 +222,17 @@ export function statsForDegree(
 	datasets: readonly Dataset[],
 	k: number,
 	grid: readonly number[] = gridXs(),
+	testSet: Dataset = makeTestSet(),
 ): DegreeStats {
+	let train = 0;
+	let test = 0;
+	for (const set of datasets) {
+		const w = fitPoly(set, k);
+		train += mseOn(w, set);
+		test += mseOn(w, testSet);
+	}
+	train /= Math.max(1, datasets.length);
+	test /= Math.max(1, datasets.length);
 	const fits = fitsOnGrid(datasets, k, grid);
 	const T = fits.length;
 	const G = grid.length;
@@ -205,14 +251,15 @@ export function statsForDegree(
 	}
 	bias2 /= G;
 	variance /= G * T;
-	return { degree: k, bias2, variance, sum: bias2 + variance };
+	return { degree: k, bias2, variance, sum: bias2 + variance, noise: SIGMA * SIGMA, train, test };
 }
 
 /** Stats for every degree from DEG_MIN to DEG_MAX on the same datasets. */
 export function allStats(datasets: readonly Dataset[]): DegreeStats[] {
 	const grid = gridXs();
+	const testSet = makeTestSet();
 	const out: DegreeStats[] = [];
-	for (let k = DEG_MIN; k <= DEG_MAX; k++) out.push(statsForDegree(datasets, k, grid));
+	for (let k = DEG_MIN; k <= DEG_MAX; k++) out.push(statsForDegree(datasets, k, grid, testSet));
 	return out;
 }
 
