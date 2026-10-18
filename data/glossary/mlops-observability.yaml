@@ -1,0 +1,20 @@
+- id: trace
+  term: трасса
+  term_en: trace
+  definition: Дерево спанов одного запроса, связанных общим идентификатором трассы и отношениями родитель и потомок.
+  chapter: mlops/observability
+- id: span
+  term: спан
+  term_en: span
+  definition: Одна операция внутри трассы с именем, временем начала и конца, ссылкой на родительский спан и атрибутами.
+  chapter: mlops/observability
+- id: span-context
+  term: контекст трассы
+  term_en: span context
+  definition: Неизменяемые данные спана (идентификатор трассы, идентификатор спана, флаги), которые передаются между сервисами, чтобы дочерние операции попали в ту же трассу.
+  chapter: mlops/observability
+- id: golden-signals
+  term: золотые сигналы
+  term_en: golden signals
+  definition: 'Четыре сигнала из книги SRE для мониторинга сервиса: задержка, трафик, ошибки и насыщение.'
+  chapter: mlops/observability
