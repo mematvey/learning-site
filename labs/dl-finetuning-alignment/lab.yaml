@@ -1,5 +1,5 @@
 id: dl-finetuning-alignment
-title: 'Дообучение, LoRA и выравнивание (RLHF, DPO)'
+title: 'LoRA-слой на NumPy: прямой проход и параметры'
 chapter: dl/finetuning-alignment
 runtime: pyodide
 starter: starter.py
