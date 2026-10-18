@@ -1,0 +1,40 @@
+- id: cs-dynamic-programming
+  term: динамическое программирование
+  term_en: dynamic programming
+  definition: Метод решения задачи через ответы на меньшие подзадачи, которые запоминаются и не пересчитываются. Применим, когда есть перекрывающиеся подзадачи и оптимальная подструктура.
+  chapter: cs/dp-greedy
+- id: cs-overlapping-subproblems
+  term: перекрывающиеся подзадачи
+  term_en: overlapping subproblems
+  definition: Свойство задачи, при котором одни и те же подзадачи (с одинаковыми аргументами) встречаются в процессе решения многократно.
+  chapter: cs/dp-greedy
+- id: cs-optimal-substructure
+  term: оптимальная подструктура
+  term_en: optimal substructure
+  definition: Свойство задачи, при котором оптимальный ответ на большую задачу строится из оптимальных ответов на её подзадачи.
+  chapter: cs/dp-greedy
+- id: cs-memoization
+  term: мемоизация
+  term_en: memoization
+  definition: Приём, при котором результат вызова функции сохраняется в кэше и возвращается при повторном вызове с теми же аргументами.
+  chapter: cs/dp-greedy
+- id: cs-tabulation
+  term: табличный подход
+  term_en: tabulation
+  definition: Вариант динамического программирования, при котором таблица подзадач заполняется снизу вверх в порядке зависимостей, без рекурсии.
+  chapter: cs/dp-greedy
+- id: cs-edit-distance
+  term: редакционное расстояние
+  term_en: edit distance
+  definition: Минимальное число операций вставки, удаления и замены символа, которые превращают одну строку в другую. Также называется расстоянием Левенштейна при единичных стоимостях.
+  chapter: cs/dp-greedy
+- id: cs-knapsack
+  term: задача о рюкзаке
+  term_en: knapsack problem
+  definition: Задача выбора предметов с весами и ценностями так, чтобы суммарная ценность была максимальной при ограничении на суммарный вес (ёмкость рюкзака).
+  chapter: cs/dp-greedy
+- id: cs-greedy
+  term: жадный алгоритм
+  term_en: greedy algorithm
+  definition: Алгоритм, который на каждом шаге выбирает вариант с наилучшей локальной оценкой и не пересматривает предыдущие решения. Даёт оптимум не для всех задач.
+  chapter: cs/dp-greedy
