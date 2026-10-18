@@ -25,7 +25,7 @@ sources:
   - id: sennrich2016
     kind: paper
     title: "Neural Machine Translation of Rare Words with Subword Units"
-    authors: Sennrich R., Haddow B., Birch A.
+    authors: Sennrich R., Haddow B., Birch A
     venue: ACL
     year: 2016
     url: https://arxiv.org/abs/1508.07909
@@ -41,7 +41,7 @@ sources:
   - id: petrov2023
     kind: paper
     title: "Language Model Tokenizers Introduce Unfairness Between Languages"
-    authors: Petrov A. et al.
+    authors: Petrov A. et al
     venue: NeurIPS
     year: 2023
     url: https://arxiv.org/abs/2305.15425

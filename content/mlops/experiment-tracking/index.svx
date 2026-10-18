@@ -32,7 +32,7 @@ sources:
   - id: pineau2020
     kind: paper
     title: "Improving Reproducibility in Machine Learning Research (A Report from the NeurIPS 2019 Reproducibility Program)"
-    authors: Pineau J. et al.
+    authors: Pineau J. et al
     venue: arXiv preprint
     year: 2020
     url: https://arxiv.org/abs/2003.12206
@@ -41,7 +41,7 @@ sources:
   - id: bergstra2012
     kind: paper
     title: Random Search for Hyper-Parameter Optimization
-    authors: Bergstra J., Bengio Y.
+    authors: Bergstra J., Bengio Y
     venue: Journal of Machine Learning Research
     year: 2012
     url: https://jmlr.org/papers/v13/bergstra12a.html

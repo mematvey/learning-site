@@ -24,7 +24,7 @@ sources:
   - id: dao2022
     kind: paper
     title: "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness"
-    authors: Dao T., Fu D. Y., Ermon S., Rudra A., Ré C.
+    authors: Dao T., Fu D. Y., Ermon S., Rudra A., Ré C
     venue: arXiv
     year: 2022
     url: https://arxiv.org/abs/2205.14135
@@ -33,7 +33,7 @@ sources:
   - id: dao2023
     kind: paper
     title: "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning"
-    authors: Dao T.
+    authors: Dao T
     venue: arXiv
     year: 2023
     url: https://arxiv.org/abs/2307.08691
@@ -42,7 +42,7 @@ sources:
   - id: shah2024
     kind: paper
     title: "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-precision"
-    authors: Shah J., Bikshandi G., Zhang Y., Thakkar V., Ramani P., Dao T.
+    authors: Shah J., Bikshandi G., Zhang Y., Thakkar V., Ramani P., Dao T
     venue: arXiv
     year: 2024
     url: https://arxiv.org/abs/2407.08608
@@ -51,7 +51,7 @@ sources:
   - id: milakov2018
     kind: paper
     title: Online normalizer calculation for softmax
-    authors: Milakov M., Gimelshein N.
+    authors: Milakov M., Gimelshein N
     venue: arXiv
     year: 2018
     url: https://arxiv.org/abs/1805.02867

@@ -24,7 +24,7 @@ sources:
   - id: gama2014
     kind: paper
     title: A survey on concept drift adaptation
-    authors: Gama J. et al.
+    authors: Gama J. et al
     venue: ACM Computing Surveys
     year: 2014
     url: https://dl.acm.org/doi/10.1145/2523813
@@ -47,7 +47,7 @@ sources:
   - id: marsaglia2003
     kind: paper
     title: Evaluating Kolmogorov's Distribution
-    authors: Marsaglia G., Tsang W. W., Wang J.
+    authors: Marsaglia G., Tsang W. W., Wang J
     venue: Journal of Statistical Software
     year: 2003
     url: https://www.jstatsoft.org/article/view/v008i18

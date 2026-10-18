@@ -32,7 +32,7 @@ sources:
   - id: dijkstra1959
     kind: paper
     title: A note on two problems in connexion with graphs
-    authors: Dijkstra E. W.
+    authors: Dijkstra E. W
     venue: Numerische Mathematik
     year: 1959
     url: https://doi.org/10.1007/BF01386390

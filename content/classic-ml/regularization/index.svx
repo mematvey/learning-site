@@ -28,7 +28,7 @@ sources:
   - id: esl2009
     kind: doc
     title: "The Elements of Statistical Learning: Data Mining, Inference, and Prediction"
-    authors: Hastie T., Tibshirani R., Friedman J.
+    authors: Hastie T., Tibshirani R., Friedman J
     venue: Springer, 2nd edition
     year: 2009
     note: разд. 3.4 (ridge, lasso, сжатие весов)

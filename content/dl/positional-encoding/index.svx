@@ -23,7 +23,7 @@ sources:
   - id: vaswani2017
     kind: paper
     title: Attention Is All You Need
-    authors: Vaswani A. et al.
+    authors: Vaswani A. et al
     venue: NeurIPS
     year: 2017
     url: https://arxiv.org/abs/1706.03762
@@ -32,7 +32,7 @@ sources:
   - id: su2021rope
     kind: paper
     title: "RoFormer: Enhanced Transformer with Rotary Position Embedding"
-    authors: Su J. et al.
+    authors: Su J. et al
     year: 2021
     url: https://arxiv.org/abs/2104.09864
     accessed: 2026-10-16
@@ -58,7 +58,7 @@ sources:
   - id: press2021
     kind: paper
     title: "Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation"
-    authors: Press O., Smith N. A., Lewis M.
+    authors: Press O., Smith N. A., Lewis M
     venue: arXiv
     year: 2021
     url: https://arxiv.org/abs/2108.12409
@@ -67,7 +67,7 @@ sources:
   - id: kazemnejad2023
     kind: paper
     title: "The Impact of Positional Encoding on Length Generalization in Transformers"
-    authors: Kazemnejad A. et al.
+    authors: Kazemnejad A. et al
     venue: NeurIPS
     year: 2023
     url: https://arxiv.org/abs/2305.19466
@@ -76,7 +76,7 @@ sources:
   - id: chen2023pi
     kind: paper
     title: "Extending Context Window of Large Language Models via Positional Interpolation"
-    authors: Chen S. et al.
+    authors: Chen S. et al
     venue: arXiv
     year: 2023
     url: https://arxiv.org/abs/2306.15595
@@ -85,7 +85,7 @@ sources:
   - id: peng2023yarn
     kind: paper
     title: "YaRN: Efficient Context Window Extension of Large Language Models"
-    authors: Peng B. et al.
+    authors: Peng B. et al
     venue: arXiv
     year: 2023
     url: https://arxiv.org/abs/2309.00071

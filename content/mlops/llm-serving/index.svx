@@ -26,7 +26,7 @@ sources:
   - id: orca2022
     kind: paper
     title: "Orca: A Distributed Serving System for Transformer-Based Generative Models"
-    authors: Yu G.-I. et al.
+    authors: Yu G.-I. et al
     venue: OSDI 2022
     year: 2022
     url: https://www.usenix.org/conference/osdi22/presentation/yu
@@ -35,7 +35,7 @@ sources:
   - id: srelslo
     kind: doc
     title: "Service Level Objectives"
-    authors: Beyer B. et al.
+    authors: Beyer B. et al
     venue: "Site Reliability Engineering, Google"
     url: https://sre.google/sre-book/service-level-objectives/
     accessed: 2026-10-18

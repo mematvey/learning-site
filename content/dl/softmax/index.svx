@@ -25,7 +25,7 @@ sources:
   - id: milakov2018
     kind: paper
     title: Online normalizer calculation for softmax
-    authors: Milakov M., Gimelshein N.
+    authors: Milakov M., Gimelshein N
     year: 2018
     url: https://arxiv.org/abs/1805.02867
     accessed: 2026-10-16
@@ -33,7 +33,7 @@ sources:
   - id: flashattn2022
     kind: paper
     title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
-    authors: Dao T. et al.
+    authors: Dao T. et al
     venue: NeurIPS
     year: 2022
     url: https://arxiv.org/abs/2205.14135
@@ -63,7 +63,7 @@ sources:
   - id: guo2017
     kind: paper
     title: On Calibration of Modern Neural Networks
-    authors: Guo C. et al.
+    authors: Guo C. et al
     venue: ICML
     year: 2017
     url: https://arxiv.org/abs/1706.04599

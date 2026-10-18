@@ -20,7 +20,7 @@ sources:
   - id: vaswani2017
     kind: paper
     title: Attention Is All You Need
-    authors: Vaswani A. et al.
+    authors: Vaswani A. et al
     venue: NeurIPS
     year: 2017
     url: https://arxiv.org/abs/1706.03762
@@ -29,7 +29,7 @@ sources:
   - id: xiong2020
     kind: paper
     title: On Layer Normalization in the Transformer Architecture
-    authors: Xiong R. et al.
+    authors: Xiong R. et al
     venue: ICML
     year: 2020
     url: https://arxiv.org/abs/2002.04745
@@ -38,7 +38,7 @@ sources:
   - id: he2016
     kind: paper
     title: Deep Residual Learning for Image Recognition
-    authors: He K. et al.
+    authors: He K. et al
     venue: CVPR
     year: 2016
     url: https://arxiv.org/abs/1512.03385
@@ -47,7 +47,7 @@ sources:
   - id: flashattn2022
     kind: paper
     title: "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness"
-    authors: Dao T. et al.
+    authors: Dao T. et al
     venue: NeurIPS
     year: 2022
     url: https://arxiv.org/abs/2205.14135
@@ -65,7 +65,7 @@ sources:
   - id: shazeer2020
     kind: paper
     title: "GLU Variants Improve Transformer"
-    authors: Shazeer N.
+    authors: Shazeer N
     venue: arXiv
     year: 2020
     url: https://arxiv.org/abs/2002.05202

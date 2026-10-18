@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Bookmark, BookmarkDraft } from '$lib/contracts/my';
-	import { chapterBlockHref } from '$lib/nav/links';
+	import { bookmarkHref } from '$lib/nav/links';
 	import { getMyStore } from '$lib/my/store';
 	import { KIND_LABEL, commitBookmark } from '$lib/my/bookmark-draft';
 	import BookmarkEditor from './BookmarkEditor.svelte';
@@ -101,12 +101,7 @@
 							<p class="bml-comment">{b.comment}</p>
 						{/if}
 						<div class="bml-actions">
-							<a
-								class="bml-link"
-								href={resolve(chapterBlockHref(b.chapter, b.blockId, b.quote) as '/')}
-							>
-								Открыть
-							</a>
+							<a class="bml-link" href={resolve(bookmarkHref(b) as '/')}> Открыть </a>
 							<button type="button" class="bml-btn" onclick={() => (editingId = b.id)}
 								>Изменить</button
 							>

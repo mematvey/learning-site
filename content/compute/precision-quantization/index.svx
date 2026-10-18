@@ -31,7 +31,7 @@ sources:
   - id: micikevicius2017
     kind: paper
     title: Mixed Precision Training
-    authors: Micikevicius P. et al.
+    authors: Micikevicius P. et al
     venue: ICLR
     year: 2018
     url: https://arxiv.org/abs/1710.03740
@@ -40,7 +40,7 @@ sources:
   - id: micikevicius2022
     kind: paper
     title: FP8 Formats for Deep Learning
-    authors: Micikevicius P. et al.
+    authors: Micikevicius P. et al
     venue: arXiv
     year: 2022
     url: https://arxiv.org/abs/2209.05433
@@ -49,7 +49,7 @@ sources:
   - id: rouhani2023
     kind: paper
     title: Microscaling Data Formats for Deep Learning
-    authors: Darvish Rouhani B. et al.
+    authors: Darvish Rouhani B. et al
     venue: arXiv
     year: 2023
     url: https://arxiv.org/abs/2310.10537
@@ -58,7 +58,7 @@ sources:
   - id: frantar2023
     kind: paper
     title: "GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers"
-    authors: Frantar E. et al.
+    authors: Frantar E. et al
     venue: ICLR
     year: 2023
     url: https://arxiv.org/abs/2210.17323
@@ -67,7 +67,7 @@ sources:
   - id: lin2023
     kind: paper
     title: "AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration"
-    authors: Lin J. et al.
+    authors: Lin J. et al
     venue: arXiv
     year: 2023
     url: https://arxiv.org/abs/2306.00978
@@ -76,7 +76,7 @@ sources:
   - id: dettmers2022
     kind: paper
     title: "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale"
-    authors: Dettmers T. et al.
+    authors: Dettmers T. et al
     venue: NeurIPS
     year: 2022
     url: https://arxiv.org/abs/2208.07339

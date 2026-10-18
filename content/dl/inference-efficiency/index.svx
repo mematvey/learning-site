@@ -23,7 +23,7 @@ sources:
   - id: shazeer2019
     kind: paper
     title: 'Fast Transformer Decoding: One Write-Head is All You Need'
-    authors: Shazeer N.
+    authors: Shazeer N
     venue: arXiv
     year: 2019
     url: https://arxiv.org/abs/1911.02150
@@ -32,7 +32,7 @@ sources:
   - id: ainslie2023
     kind: paper
     title: 'GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints'
-    authors: Ainslie J. et al.
+    authors: Ainslie J. et al
     venue: EMNLP
     year: 2023
     url: https://arxiv.org/abs/2305.13245
@@ -41,7 +41,7 @@ sources:
   - id: leviathan2023
     kind: paper
     title: Fast Inference from Transformers via Speculative Decoding
-    authors: Leviathan Y., Kalman M., Matias Y.
+    authors: Leviathan Y., Kalman M., Matias Y
     venue: ICML
     year: 2023
     url: https://arxiv.org/abs/2211.17192
@@ -50,7 +50,7 @@ sources:
   - id: chen2023
     kind: paper
     title: Accelerating Large Language Model Decoding with Speculative Sampling
-    authors: Chen C. et al.
+    authors: Chen C. et al
     year: 2023
     url: https://arxiv.org/abs/2302.01318
     accessed: 2026-10-18
@@ -58,7 +58,7 @@ sources:
   - id: shazeer2017
     kind: paper
     title: 'Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer'
-    authors: Shazeer N. et al.
+    authors: Shazeer N. et al
     venue: arXiv
     year: 2017
     url: https://arxiv.org/abs/1701.06538
@@ -67,7 +67,7 @@ sources:
   - id: fedus2021
     kind: paper
     title: 'Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity'
-    authors: Fedus W., Zoph B., Shazeer N.
+    authors: Fedus W., Zoph B., Shazeer N
     venue: arXiv
     year: 2021
     url: https://arxiv.org/abs/2101.03961
@@ -76,7 +76,7 @@ sources:
   - id: micikevicius2017
     kind: paper
     title: Mixed Precision Training
-    authors: Micikevicius P. et al.
+    authors: Micikevicius P. et al
     venue: ICLR
     year: 2018
     url: https://arxiv.org/abs/1710.03740

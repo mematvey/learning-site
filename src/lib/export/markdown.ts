@@ -1,4 +1,9 @@
 import { splitChapterId, type Note } from '$lib/contracts';
+import {
+	NOTE_STATUS_LABELS,
+	SITUATION_STATUS_LABELS,
+	WISH_STATUS_LABELS,
+} from '$lib/my/status-labels';
 import type {
 	Bookmark,
 	Clarification,
@@ -29,19 +34,6 @@ const KIND_LABEL: Record<Bookmark['kind'], string> = {
 	formula: 'формула',
 	term: 'термин',
 	figure: 'рисунок',
-};
-const WISH_STATUS_LABEL: Record<Wish['status'], string> = {
-	idea: 'идея',
-	drafting: 'в работе',
-	covered: 'разобрано',
-};
-const SITUATION_STATUS_LABEL: Record<Situation['status'], string> = {
-	open: 'открыта',
-	answered: 'отвечена',
-};
-const NOTE_STATUS_LABEL: Record<Note['status'], string> = {
-	open: 'открыта',
-	answered: 'есть ответ',
 };
 
 function cmp(a: string, b: string): number {
@@ -112,7 +104,7 @@ function notesFile(topic: string, notes: Note[], ctx: ExportContext): string | u
 		blocks.push(`## ${link(ctx.chapterTitle(chapter), ctx.chapterHref(chapter))}`);
 		for (const note of items) {
 			const orphan = note.anchor.position === 'orphaned' ? ', место не найдено' : '';
-			blocks.push(`### ${day(note.created)} · ${NOTE_STATUS_LABEL[note.status]}${orphan}`);
+			blocks.push(`### ${day(note.created)} · ${NOTE_STATUS_LABELS[note.status]}${orphan}`);
 			blocks.push(quoteBlock(note.anchor.exact));
 			blocks.push(link('Открыть место', ctx.chapterHref(chapter, note.anchor.blockId)));
 			if (note.text.trim()) blocks.push(note.text.trim());
@@ -157,7 +149,7 @@ function wishesFile(
 	];
 	for (const wish of [...wishes].sort(byCreated)) {
 		blocks.push(`## ${escapeInline(wish.title)}`);
-		blocks.push(`Статус: ${WISH_STATUS_LABEL[wish.status]}`);
+		blocks.push(`Статус: ${WISH_STATUS_LABELS[wish.status]}`);
 		if (wish.question.trim()) blocks.push(`**Вопрос:** ${wish.question.trim()}`);
 		if (wish.wantedSections.length > 0) {
 			blocks.push(`**Желаемые разделы:**\n${bullets(wish.wantedSections)}`);
@@ -203,7 +195,7 @@ function situationsFile(
 			.filter((c) => c.target.kind === 'situation' && c.target.situationId === s.id)
 			.sort(byCreated);
 		const out = [
-			`### ${escapeInline(s.title)} · ${SITUATION_STATUS_LABEL[s.status]}`,
+			`### ${escapeInline(s.title)} · ${SITUATION_STATUS_LABELS[s.status]}`,
 			`**Ситуация:** ${s.situation.trim()}`,
 			`**Цель:** ${s.goal.trim()}`,
 		];

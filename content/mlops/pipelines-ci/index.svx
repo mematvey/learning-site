@@ -23,7 +23,7 @@ sources:
   - id: fowlercd4ml
     kind: doc
     title: Continuous Delivery for Machine Learning (CD4ML)
-    authors: Sato D., Wider A., Windheuser C.
+    authors: Sato D., Wider A., Windheuser C
     venue: martinfowler.com
     year: 2019
     url: https://martinfowler.com/articles/cd4ml.html

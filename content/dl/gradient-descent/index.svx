@@ -25,7 +25,7 @@ sources:
   - id: rumelhart1986
     kind: paper
     title: Learning representations by back-propagating errors
-    authors: Rumelhart D. E., Hinton G. E., Williams R. J.
+    authors: Rumelhart D. E., Hinton G. E., Williams R. J
     venue: Nature
     year: 1986
     url: https://doi.org/10.1038/323533a0
@@ -34,7 +34,7 @@ sources:
   - id: goodfellow2016
     kind: book
     title: Deep Learning
-    authors: Goodfellow I., Bengio Y., Courville A.
+    authors: Goodfellow I., Bengio Y., Courville A
     venue: MIT Press
     year: 2016
     url: https://www.deeplearningbook.org/
@@ -50,7 +50,7 @@ sources:
   - id: ruder2016
     kind: paper
     title: An overview of gradient descent optimization algorithms
-    authors: Ruder S.
+    authors: Ruder S
     venue: arXiv
     year: 2016
     url: https://arxiv.org/abs/1609.04747
@@ -59,7 +59,7 @@ sources:
   - id: bottou2016
     kind: paper
     title: Optimization Methods for Large-Scale Machine Learning
-    authors: Bottou L., Curtis F. E., Nocedal J.
+    authors: Bottou L., Curtis F. E., Nocedal J
     venue: arXiv
     year: 2016
     url: https://arxiv.org/abs/1606.04838
@@ -68,7 +68,7 @@ sources:
   - id: dauphin2014
     kind: paper
     title: Identifying and attacking the saddle point problem in high-dimensional non-convex optimization
-    authors: Dauphin Y. et al.
+    authors: Dauphin Y. et al
     venue: arXiv
     year: 2014
     url: https://arxiv.org/abs/1406.2572

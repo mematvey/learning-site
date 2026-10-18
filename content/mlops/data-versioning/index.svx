@@ -27,7 +27,7 @@ sources:
   - id: sculley2015
     kind: paper
     title: Hidden Technical Debt in Machine Learning Systems
-    authors: Sculley D. et al.
+    authors: Sculley D. et al
     venue: NeurIPS
     year: 2015
     url: https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html

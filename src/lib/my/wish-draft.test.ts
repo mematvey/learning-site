@@ -82,7 +82,12 @@ describe('buildWishTask', () => {
 		expect(md).toContain('## Желаемые разделы\n\n- Мотивация\n- Сравнение');
 		expect(md).toContain('## Желаемые термины\n\n- batch-norm\n- layer-norm');
 		expect(md).toContain('## Заметки\n\nХочу с кодом');
-		expect(md).toContain('Статус: Черновик');
+		expect(md).toContain('Статус: в работе');
+	});
+
+	it('writes lowercase status captions', () => {
+		expect(buildWishTask({ ...wish, status: 'covered' })).toContain('Статус: покрыта');
+		expect(buildWishTask({ ...wish, status: 'idea' })).toContain('Статус: идея');
 	});
 
 	it('marks empty parts as not specified', () => {

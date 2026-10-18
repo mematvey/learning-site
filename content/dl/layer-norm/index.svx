@@ -26,7 +26,7 @@ sources:
   - id: he2016
     kind: paper
     title: Deep Residual Learning for Image Recognition
-    authors: He K. et al.
+    authors: He K. et al
     venue: CVPR
     year: 2016
     url: https://arxiv.org/abs/1512.03385
@@ -35,7 +35,7 @@ sources:
   - id: ba2016
     kind: paper
     title: Layer Normalization
-    authors: Ba J. L. et al.
+    authors: Ba J. L. et al
     venue: arXiv
     year: 2016
     url: https://arxiv.org/abs/1607.06450
@@ -44,7 +44,7 @@ sources:
   - id: ioffe2015
     kind: paper
     title: "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift"
-    authors: Ioffe S., Szegedy C.
+    authors: Ioffe S., Szegedy C
     venue: ICML
     year: 2015
     url: https://arxiv.org/abs/1502.03167
@@ -53,7 +53,7 @@ sources:
   - id: xiong2020
     kind: paper
     title: On Layer Normalization in the Transformer Architecture
-    authors: Xiong R. et al.
+    authors: Xiong R. et al
     venue: ICML
     year: 2020
     url: https://arxiv.org/abs/2002.04745
@@ -62,7 +62,7 @@ sources:
   - id: zhang2019
     kind: paper
     title: "Root Mean Square Layer Normalization"
-    authors: Zhang B., Sennrich R.
+    authors: Zhang B., Sennrich R
     venue: NeurIPS
     year: 2019
     url: https://arxiv.org/abs/1910.07467
@@ -71,7 +71,7 @@ sources:
   - id: vaswani2017
     kind: paper
     title: Attention Is All You Need
-    authors: Vaswani A. et al.
+    authors: Vaswani A. et al
     venue: NeurIPS
     year: 2017
     url: https://arxiv.org/abs/1706.03762

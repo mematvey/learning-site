@@ -26,7 +26,7 @@ sources:
   - id: zheng2023
     kind: paper
     title: "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"
-    authors: Zheng L. et al.
+    authors: Zheng L. et al
     venue: arXiv preprint (NeurIPS 2023 Datasets and Benchmarks Track)
     year: 2023
     url: https://arxiv.org/abs/2306.05685
@@ -35,7 +35,7 @@ sources:
   - id: efron1979
     kind: paper
     title: "Bootstrap Methods: Another Look at the Jackknife"
-    authors: Efron B.
+    authors: Efron B
     venue: The Annals of Statistics, 7(1)
     year: 1979
     url: https://projecteuclid.org/euclid.aos/1176344552
@@ -44,7 +44,7 @@ sources:
   - id: miller2024
     kind: paper
     title: "Adding Error Bars to Evals: A Statistical Approach to Language Model Evaluations"
-    authors: Miller E.
+    authors: Miller E
     venue: arXiv preprint
     year: 2024
     url: https://arxiv.org/abs/2411.00640

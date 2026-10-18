@@ -32,7 +32,7 @@ sources:
   - id: grinstead1997
     kind: book
     title: Introduction to Probability
-    authors: Grinstead C. M., Snell J. L.
+    authors: Grinstead C. M., Snell J. L
     venue: AMS
     year: 1997
     url: https://math.dartmouth.edu/~prob/prob/prob.pdf
@@ -41,7 +41,7 @@ sources:
   - id: openintro4
     kind: book
     title: OpenIntro Statistics (4th ed.)
-    authors: Diez D. M., Çetinkaya-Rundel M., Barr C. D.
+    authors: Diez D. M., Çetinkaya-Rundel M., Barr C. D
     venue: OpenIntro (свободное издание)
     year: 2019
     url: https://www.openintro.org/book/os/
@@ -50,7 +50,7 @@ sources:
   - id: wasserstein2016
     kind: paper
     title: "The ASA Statement on p-Values: Context, Process, and Purpose"
-    authors: Wasserstein R. L., Lazar N. A.
+    authors: Wasserstein R. L., Lazar N. A
     venue: The American Statistician
     year: 2016
     url: https://doi.org/10.1080/00031305.2016.1154108

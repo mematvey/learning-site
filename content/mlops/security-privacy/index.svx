@@ -32,7 +32,7 @@ sources:
   - id: greshake2023
     kind: paper
     title: "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection"
-    authors: Greshake K. et al.
+    authors: Greshake K. et al
     year: 2023
     url: https://arxiv.org/abs/2302.12173
     accessed: 2026-10-18
@@ -40,7 +40,7 @@ sources:
   - id: carlini2020
     kind: paper
     title: Extracting Training Data from Large Language Models
-    authors: Carlini N. et al.
+    authors: Carlini N. et al
     year: 2020
     url: https://arxiv.org/abs/2012.07805
     accessed: 2026-10-18
@@ -62,7 +62,7 @@ sources:
   - id: beurer2025
     kind: paper
     title: "Design Patterns for Securing LLM Agents against Prompt Injections"
-    authors: Beurer-Kellner L. et al.
+    authors: Beurer-Kellner L. et al
     year: 2025
     url: https://arxiv.org/abs/2506.08837
     accessed: 2026-10-18

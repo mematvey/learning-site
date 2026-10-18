@@ -22,7 +22,7 @@ sources:
   - id: zinkevich
     kind: doc
     title: "Rules of Machine Learning: Best Practices for ML Engineering"
-    authors: Zinkevich M.
+    authors: Zinkevich M
     venue: Google for Developers
     url: https://developers.google.com/machine-learning/guides/rules-of-ml
     accessed: 2026-10-18
@@ -30,7 +30,7 @@ sources:
   - id: sculley2015
     kind: paper
     title: "Hidden Technical Debt in Machine Learning Systems"
-    authors: Sculley D. et al.
+    authors: Sculley D. et al
     venue: NeurIPS (NIPS), 2015
     year: 2015
     url: https://papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems
@@ -39,7 +39,7 @@ sources:
   - id: kreuzberger2022
     kind: paper
     title: "Machine Learning Operations (MLOps): Overview, Definition, and Architecture"
-    authors: Kreuzberger D., Kühl N., Hirschl S.
+    authors: Kreuzberger D., Kühl N., Hirschl S
     venue: arXiv:2205.02302
     year: 2022
     url: https://arxiv.org/abs/2205.02302

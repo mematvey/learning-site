@@ -29,7 +29,7 @@ sources:
   - id: belkin2019
     kind: paper
     title: Reconciling modern machine-learning practice and the classical bias-variance trade-off
-    authors: Belkin M. et al.
+    authors: Belkin M. et al
     venue: PNAS
     year: 2019
     url: https://arxiv.org/abs/1812.11118

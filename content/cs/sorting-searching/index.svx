@@ -26,7 +26,7 @@ sources:
   - id: algs4merge
     kind: doc
     title: Mergesort
-    authors: Sedgewick R., Wayne K.
+    authors: Sedgewick R., Wayne K
     venue: Algorithms, 4th ed., раздел 2.2
     url: https://algs4.cs.princeton.edu/22mergesort/
     accessed: 2026-10-16
@@ -34,7 +34,7 @@ sources:
   - id: algs4quick
     kind: doc
     title: Quicksort
-    authors: Sedgewick R., Wayne K.
+    authors: Sedgewick R., Wayne K
     venue: Algorithms, 4th ed., раздел 2.3
     url: https://algs4.cs.princeton.edu/23quicksort/
     accessed: 2026-10-16
@@ -42,7 +42,7 @@ sources:
   - id: algs4search
     kind: doc
     title: Binary search
-    authors: Sedgewick R., Wayne K.
+    authors: Sedgewick R., Wayne K
     venue: Algorithms, 4th ed., раздел 1.1
     url: https://algs4.cs.princeton.edu/11model/
     accessed: 2026-10-16
@@ -71,8 +71,8 @@ sources:
   - id: clrs2022
     kind: doc
     title: "Introduction to Algorithms (раздел 8.1, Lower bounds for sorting)"
-    authors: Cormen T.H. et al.
-    venue: MIT Press, 4th ed.
+    authors: Cormen T.H. et al
+    venue: MIT Press, 4th ed
     year: 2022
     url: https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
     accessed: 2026-10-17

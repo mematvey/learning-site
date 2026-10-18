@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chapterBlockHref, parseBlockHash, QUOTE_MAX_CHARS } from './links';
+import { bookmarkHref, chapterBlockHref, parseBlockHash, QUOTE_MAX_CHARS } from './links';
 
 describe('chapterBlockHref', () => {
 	it('builds a chapter link without a block', () => {
@@ -62,5 +62,25 @@ describe('round trip', () => {
 		const parsed = parseBlockHash(hash);
 		expect(parsed?.blockId).toBe(block);
 		expect(parsed?.quote).toBe(quote);
+	});
+});
+
+describe('bookmarkHref', () => {
+	const base = { chapter: 'dl/attention', blockId: 'eq-scores' };
+
+	it('keeps the quote of a block bookmark', () => {
+		expect(bookmarkHref({ ...base, kind: 'block', quote: 'Оценки считаются' })).toBe(
+			'/dl/attention#eq-scores~q=' + encodeURIComponent('Оценки считаются'),
+		);
+	});
+
+	it('links a formula to the whole block without a quote (the quote is TeX)', () => {
+		const href = bookmarkHref({ ...base, kind: 'formula', quote: 'QK^T' });
+		expect(href).toBe('/dl/attention#eq-scores');
+		expect(href).not.toContain('~q=');
+	});
+
+	it('links a figure to the whole block without a quote', () => {
+		expect(bookmarkHref({ ...base, kind: 'figure' })).toBe('/dl/attention#eq-scores');
 	});
 });

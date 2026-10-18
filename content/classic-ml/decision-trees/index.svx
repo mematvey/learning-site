@@ -42,8 +42,8 @@ sources:
   - id: esl2009
     kind: doc
     title: "The Elements of Statistical Learning: Data Mining, Inference, and Prediction (раздел 9.2, Tree-based methods)"
-    authors: Hastie T., Tibshirani R., Friedman J.
-    venue: Springer, 2nd ed.
+    authors: Hastie T., Tibshirani R., Friedman J
+    venue: Springer, 2nd ed
     year: 2009
     url: https://hastie.su.domains/ElemStatLearn/
     supports: [math-gini-vs-entropy]
