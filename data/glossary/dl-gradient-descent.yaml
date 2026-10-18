@@ -1,0 +1,30 @@
+- id: neuron
+  term: нейрон
+  term_en: neuron
+  definition: 'Вычислительная единица: берёт взвешенную сумму входов со смещением и пропускает её через функцию активации.'
+  chapter: dl/gradient-descent
+- id: linear-layer
+  term: линейный слой
+  term_en: linear layer
+  definition: 'Набор нейронов с общими входами. Выход слоя это матрица весов, умноженная на вектор входа, плюс вектор смещений.'
+  chapter: dl/gradient-descent
+- id: loss-function
+  term: функция потерь
+  term_en: loss function
+  definition: 'Число, которое измеряет, насколько ответы модели далеки от правильных. Обучение означает уменьшить его, меняя веса.'
+  chapter: dl/gradient-descent
+- id: derivative
+  term: производная
+  term_en: derivative
+  definition: 'Скорость изменения функции: на сколько примерно меняется значение при малом изменении аргумента.'
+  chapter: dl/gradient-descent
+- id: antigradient
+  term: антиградиент
+  term_en: negative gradient
+  definition: 'Направление, противоположное градиенту. Вдоль него функция в ближайшей окрестности точки убывает быстрее всего.'
+  chapter: dl/gradient-descent
+- id: divergence
+  term: расходимость
+  term_en: divergence
+  definition: 'Ситуация, когда итерации спуска уходят всё дальше от минимума или растут по модулю. Обычно признак слишком большого шага обучения.'
+  chapter: dl/gradient-descent
