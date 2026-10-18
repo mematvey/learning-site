@@ -9,6 +9,9 @@
 	import {
 		DEFAULT_STATE,
 		GRID_N,
+		NU_MAX,
+		NU_MIN,
+		NU_STEP,
 		ROUNDS_MAX,
 		ROUNDS_MIN,
 		TREES_MAX,
@@ -17,18 +20,20 @@
 		type EnsembleDemoState,
 		type GridCell,
 		type Vec2,
-		boostProba,
 		describeEnsembles,
 		describeModel,
-		fitAdaBoost,
-		fitForest,
+		fitForestWithBags,
+		fitGradientBoost,
 		fitTree,
 		forestProba,
+		gbProba,
 		gridCells,
 		makeDataset,
+		oobAccuracy,
 		percent,
 		predictTree,
 		scoreModel,
+		snapNu,
 		snapRounds,
 		snapTrees,
 	} from '$lib/demos/ensembles';
@@ -42,14 +47,16 @@
 	// Everything below is computed once: the sliders only choose how many members are used.
 	const data = makeDataset();
 	const singleTree = fitTree(data.train, { maxDepth: TREE_DEPTH, minLeaf: 1 });
-	const forestTrees = fitForest(data.train, TREES_MAX);
-	const stumps = fitAdaBoost(data.train, ROUNDS_MAX);
+	const forest = fitForestWithBags(data.train, TREES_MAX);
+	const forestTrees = forest.trees;
 
 	// The props only seed the initial state: the demo owns it afterwards.
 	/* svelte-ignore state_referenced_locally */
 	let trees = $state(snapTrees(initial?.trees ?? DEFAULT_STATE.trees));
 	/* svelte-ignore state_referenced_locally */
 	let rounds = $state(snapRounds(initial?.rounds ?? DEFAULT_STATE.rounds));
+	/* svelte-ignore state_referenced_locally */
+	let nu = $state(snapNu(initial?.nu ?? DEFAULT_STATE.nu));
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
 	const highlight = getContext<HighlightContext | undefined>(HIGHLIGHT_CONTEXT);
@@ -57,7 +64,10 @@
 
 	const treeProba = (v: Vec2): number => predictTree(singleTree, v);
 	const forestProbaFn = $derived((v: Vec2): number => forestProba(forestTrees, trees, v));
-	const boostProbaFn = $derived((v: Vec2): number => boostProba(stumps, rounds, v));
+	// The stumps depend on the shrinkage, so the model is refit when nu changes.
+	const model = $derived(fitGradientBoost(data.train, ROUNDS_MAX, nu));
+	const boostProbaFn = $derived((v: Vec2): number => gbProba(model, rounds, v));
+	const oob = $derived(oobAccuracy(data.train, forestTrees, forest.inBag, trees));
 
 	const treeScores = scoreModel(treeProba, data);
 	const treeCells = gridCells(treeProba);
@@ -65,23 +75,26 @@
 	const forestCells = $derived(gridCells(forestProbaFn));
 	const boostScores = $derived(scoreModel(boostProbaFn, data));
 	const boostCells = $derived(gridCells(boostProbaFn));
-	const boostApplied = $derived(Math.min(rounds, stumps.length));
+	const boostApplied = $derived(Math.min(rounds, model.stumps.length));
 	const summary = $derived(
-		describeEnsembles({ trees, rounds }, boostApplied, {
-			tree: treeScores,
-			forest: forestScores,
-			boost: boostScores,
-		}),
+		describeEnsembles(
+			{ trees, rounds, nu },
+			boostApplied,
+			{ tree: treeScores, forest: forestScores, boost: boostScores },
+			oob,
+		),
 	);
 
 	function apply(patch: Partial<EnsembleDemoState>): void {
 		if (patch.trees !== undefined) trees = snapTrees(patch.trees);
 		if (patch.rounds !== undefined) rounds = snapRounds(patch.rounds);
+		if (patch.nu !== undefined) nu = snapNu(patch.nu);
 	}
 
 	function reset(): void {
 		trees = DEFAULT_STATE.trees;
 		rounds = DEFAULT_STATE.rounds;
+		nu = DEFAULT_STATE.nu;
 	}
 
 	function cellFill(c: GridCell): number {
@@ -165,6 +178,20 @@
 			<output class="en-val">{rounds}</output>
 		</label>
 
+		<label class="en-ctl">
+			<span class="en-label">Сжатие ν</span>
+			<input
+				class="en-range"
+				type="range"
+				min={NU_MIN}
+				max={NU_MAX}
+				step={NU_STEP}
+				value={nu}
+				oninput={(e) => (nu = snapNu(Number(e.currentTarget.value)))}
+			/>
+			<output class="en-val">{nu.toFixed(2)}</output>
+		</label>
+
 		<button type="button" class="en-reset" onclick={reset}>Сбросить</button>
 	</div>
 
@@ -183,7 +210,7 @@
 		)}
 		{@render board(
 			'en-boost',
-			`Бустинг: ${rounds} итераций`,
+			`Градиентный бустинг: ${rounds} итераций, ν = ${nu.toFixed(2)}`,
 			boostCells,
 			describeModel(`Бустинг из ${boostApplied} итераций`, boostScores),
 		)}
@@ -202,6 +229,7 @@
 				<th scope="col">Модель</th>
 				<th scope="col">Обучение</th>
 				<th scope="col">Контроль</th>
+				<th scope="col">Out-of-bag</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -209,16 +237,23 @@
 				<th scope="row">Одно дерево</th>
 				<td>{percent(treeScores.train)}</td>
 				<td>{percent(treeScores.test)}</td>
+				<td>—</td>
 			</tr>
 			<tr>
 				<th scope="row">Лес</th>
 				<td>{percent(forestScores.train)}</td>
 				<td>{percent(forestScores.test)}</td>
+				<td
+					>{oob.covered > 0
+						? `${percent(oob.accuracy)} (${oob.covered} из ${data.train.length})`
+						: '—'}</td
+				>
 			</tr>
 			<tr>
 				<th scope="row">Бустинг</th>
 				<td>{percent(boostScores.train)}</td>
 				<td>{percent(boostScores.test)}</td>
+				<td>—</td>
 			</tr>
 		</tbody>
 	</table>
@@ -237,8 +272,14 @@
 				на контроле растёт, пока деревьев мало.
 			</li>
 			<li>
-				Бустинг добавляет пни по ошибкам предыдущих. Большое число итераций на шумных данных может
-				подгонять шум: сравни контроль при 50 и при 100.
+				Градиентный бустинг добавляет пни, подогнанные под остатки, с множителем ν. Малое ν даёт
+				гладкую траекторию, но нужно больше итераций; большое ν и много итераций подгоняют шум.
+				Сравни контроль при разных ν и числе итераций.
+			</li>
+			<li>
+				Out-of-bag оценка леса считается по обучающим примерам, но каждый пример предсказывают
+				только деревья, которые его не видели: она близка к точности на контроле без отдельной
+				выборки. При малом числе деревьев часть примеров ещё не покрыта.
 			</li>
 		</ul>
 	</div>

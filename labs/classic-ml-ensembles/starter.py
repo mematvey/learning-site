@@ -1,4 +1,4 @@
-"""Bagging of decision stumps and gradient boosting for regression: starter code.
+"""Bagging of decision stumps (with out-of-bag predictions) and gradient boosting for regression: starter code.
 
 A stump is a depth-one regression tree stored as the tuple
 (feature, threshold, left_value, right_value). A sample goes left when
@@ -34,6 +34,17 @@ def bagging_fit(X, y, n_estimators, seed=0):
     created with `np.random.default_rng(seed)` for all draws. Returns a list of stumps.
     """
     # TODO: draw bootstrap indices, fit a stump on each sample
+    raise NotImplementedError
+
+
+def bagging_oob_predict(X, y, n_estimators, seed=0):
+    """Out-of-bag predictions of a bagging ensemble, shape (n,).
+
+    Draw the bootstrap samples exactly as `bagging_fit` does (same generator, same order),
+    fit a stump on each. The prediction for row i is the average over only those stumps
+    whose bootstrap sample does not contain row i. A row that is in every sample gets nan.
+    """
+    # TODO: for each stump remember which rows it did not see, accumulate their predictions
     raise NotImplementedError
 
 

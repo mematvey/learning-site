@@ -79,3 +79,32 @@ def test_hidden_inputs_not_mutated():
     assert np.array_equal(X_train, X_copy), "X_train must not be modified"
     assert np.array_equal(y_train, y_copy), "y_train must not be modified"
     assert np.array_equal(X_test, T_copy), "X_test must not be modified"
+
+
+def test_hidden_svm_width_scales_inversely_with_w():
+    rng = np.random.default_rng(3)
+    w = rng.normal(size=4)
+    assert_close(
+        svm_margin_width(2.0 * w),
+        svm_margin_width(w) / 2.0,
+        atol=1e-12,
+        message="width must scale as 1/||w||",
+    )
+
+
+def test_hidden_svm_predict_matches_formula():
+    rng = np.random.default_rng(4)
+    X = rng.normal(size=(25, 3))
+    w = rng.normal(size=3)
+    b = 0.3
+    expected = [1 if x @ w + b >= 0 else -1 for x in X]
+    assert svm_predict(X, w, b).tolist() == expected, "svm_predict disagrees with the sign of f(x)"
+
+
+def test_hidden_shrinking_w_breaks_the_margin():
+    X = np.array([[0.0, 0.0], [2.0, 0.0], [-2.0, 1.0]])
+    y = np.array([-1, 1, -1])
+    w = np.array([1.0, 0.0])
+    b = -1.0
+    assert svm_is_feasible(X, y, w, b), "this hyperplane separates the points with margin 1"
+    assert not svm_is_feasible(X, y, 0.9 * w, b), "shrinking w narrows the margin below 1"

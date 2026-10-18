@@ -54,6 +54,36 @@ def test_hidden_bagging_is_deterministic_for_seed():
     assert_close(a, b, atol=0.0, message="same seed must give the same predictions")
 
 
+def test_hidden_oob_single_estimator_leaves_nan_for_in_bag_rows():
+    rng = np.random.default_rng(15)
+    X = rng.normal(size=(30, 2))
+    y = X[:, 0]
+    oob = bagging_oob_predict(X, y, n_estimators=1, seed=1)
+    idx = np.random.default_rng(1).integers(0, 30, size=30)
+    in_bag = np.zeros(30, dtype=bool)
+    in_bag[idx] = True
+    assert np.array_equal(np.isnan(oob), in_bag), "rows in the only bag must be nan, others not"
+    stump = bagging_fit(X, y, n_estimators=1, seed=1)[0]
+    assert_close(
+        oob[~in_bag],
+        predict_stump(stump, X[~in_bag]),
+        atol=1e-9,
+        message="mismatch on out-of-bag rows",
+    )
+
+
+def test_hidden_oob_error_is_worse_than_training_error():
+    rng = np.random.default_rng(16)
+    X = rng.normal(size=(120, 3))
+    y = X[:, 0] + rng.normal(size=120)
+    stumps = bagging_fit(X, y, n_estimators=40, seed=2)
+    train_mse = float(np.mean((bagging_predict(stumps, X) - y) ** 2))
+    oob = bagging_oob_predict(X, y, n_estimators=40, seed=2)
+    ok = ~np.isnan(oob)
+    oob_mse = float(np.mean((oob[ok] - y[ok]) ** 2))
+    assert oob_mse > train_mse, "out-of-bag error must be above the training error"
+
+
 def test_hidden_gb_zero_steps_is_constant_mean():
     X = np.array([[0.0], [1.0], [2.0]])
     y = np.array([2.0, 4.0, 9.0])

@@ -1,4 +1,4 @@
-"""kNN classification with uniform or distance-weighted voting: starter code.
+"""kNN classification with uniform or distance-weighted voting, and linear SVM margin: starter code.
 
 Complete `knn_predict` so that it matches the chapter text (section "Код").
 Each test row is classified by voting among its k nearest training rows.
@@ -34,3 +34,27 @@ def knn_predict(X_train, y_train, X_test, k=3, weights="uniform"):
     # TODO: sum the weights per class and take the class with the largest sum
     #       (np.argmax over `classes` picks the smaller label on ties)
     raise NotImplementedError("knn_predict is not implemented yet")
+
+
+def svm_predict(X, w, b):
+    """Labels in {-1, +1} of a linear SVM with weights w and bias b, shape (m,).
+
+    f(x) = x . w + b. A row gets +1 when f(x) >= 0 (so f = 0 counts as +1), otherwise -1.
+    """
+    # TODO: compute f = X @ w + b, then map f >= 0 to +1 and f < 0 to -1
+    raise NotImplementedError("svm_predict is not implemented yet")
+
+
+def svm_margin_width(w):
+    """Full width of the margin of a linear SVM with weights w: 2 / ||w||."""
+    # TODO: return 2 divided by the Euclidean norm of w
+    raise NotImplementedError("svm_margin_width is not implemented yet")
+
+
+def svm_is_feasible(X, y, w, b):
+    """True if every row satisfies y_i * (x_i . w + b) >= 1, allowing a tolerance of 1e-9.
+
+    X: array (n, d); y: array (n,) with labels in {-1, +1}.
+    """
+    # TODO: compute y * (X @ w + b) and check that all values are >= 1 - 1e-9
+    raise NotImplementedError("svm_is_feasible is not implemented yet")
