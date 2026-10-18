@@ -1,0 +1,39 @@
+id: data-search-llm
+title: 'Данные и поиск для LLM-приложений'
+summary: 'От кодировок текста и токенов через хеш-таблицы, деревья и базы данных к векторному поиску и RAG-приложениям.'
+audience: 'Для разработчиков, которые строят поиск по документам и LLM-приложения и хотят понимать, что происходит под капотом.'
+goal: 'Понимать, как текст превращается в байты и токены, как устроены индексы и почему поиск по векторам работает приблизительно.'
+steps:
+  - title: 'Текст как байты'
+    description: 'UTF-8, графемы и длина строки: частые ошибки при обработке текста начинаются здесь.'
+    chapters: [cs/unicode-encoding]
+    labs: [cs-unicode-encoding]
+  - title: 'Токенизация'
+    description: 'Рекомендуемый шаг: как текст становится токенами и почему от них зависят стоимость и длина контекста.'
+    chapters: [dl/tokenization]
+    labs: [dl-tokenization]
+    optional: true
+  - title: 'Хеш-таблицы'
+    description: 'Быстрый поиск по ключу: основа словарей, индексов и кэшей.'
+    chapters: [cs/hash-tables]
+    labs: [cs-hash-tables]
+  - title: 'Деревья и кучи'
+    description: 'Упорядоченные данные и приоритетная очередь: как устроены индексы в базах.'
+    chapters: [cs/trees-heaps]
+    labs: [cs-trees-heaps]
+  - title: 'Базы данных и индексы'
+    description: 'Индекс, B-дерево и LSM: почему один запрос отвечает мгновенно, а другой нет.'
+    chapters: [cs/databases-indexes]
+  - title: 'Векторный поиск'
+    description: 'Ближайшие соседи по эмбеддингам: точный поиск, HNSW, IVF и PQ и цена приближения.'
+    chapters: [cs/vector-search]
+    labs: [cs-vector-search]
+  - title: 'Хеш-структуры для больших данных'
+    description: 'Bloom-фильтр, MinHash и Count-Min: дедупликация и подсчёт на больших объёмах.'
+    chapters: [cs/hashing-sketches]
+    labs: [cs-hashing-sketches]
+  - title: 'LLM-приложения'
+    description: 'Рекомендуемый шаг: RAG и агенты на готовом поиске, с выбором уровня автономности.'
+    chapters: [mlops/llm-apps]
+    labs: [mlops-llm-apps]
+    optional: true

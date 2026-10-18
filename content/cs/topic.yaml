@@ -1,8 +1,20 @@
 id: cs
 title: CompScience
-description: 'Алгоритмы и структуры данных, оценка сложности и связь с железом.'
+description: 'Алгоритмы и структуры данных, оценка сложности, связь с железом, кодировки текста и поиск по векторам.'
 order: 4
 icon: cpu
 accent:
   topic: { light: '#7c3aed', dark: '#a78bfa' }
   soft: { light: '#f5f3ff', dark: '#221a3a' }
+chapters:
+  - complexity
+  - memory-cache
+  - sorting-searching
+  - hash-tables
+  - trees-heaps
+  - dp-greedy
+  - graphs-algorithms
+  - hashing-sketches
+  - databases-indexes
+  - vector-search
+  - unicode-encoding
