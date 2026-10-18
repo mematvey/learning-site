@@ -163,3 +163,13 @@ def test_hidden_inputs_not_mutated():
     pca(X, 2)
     assert np.array_equal(X, X_copy), "input X must not be modified"
     assert np.array_equal(centers, centers_copy), "starting centers must not be modified"
+
+
+def test_kmeans_pp_init_rows_are_data_points_and_distinct():
+    rng = np.random.default_rng(11)
+    X = rng.normal(size=(30, 3))
+    centers = kmeans_pp_init(X, 4, np.random.default_rng(5))
+    assert centers.shape == (4, 3)
+    for c in centers:
+        assert np.any(np.all(np.isclose(X, c), axis=1))
+    assert len({tuple(np.round(c, 9)) for c in centers}) == 4

@@ -214,3 +214,16 @@ describe('geometry and text', () => {
 		expect(text).toContain(`из ${N_POS}`);
 	});
 });
+
+describe('prevalence slider', () => {
+	it('lowers the share of positives and keeps ROC AUC close while PR end point drops', async () => {
+		const { withPrevalence } = await import('./metrics-validation');
+		const low = withPrevalence(samples, 0.02);
+		expect(prevalence(low)).toBeLessThan(0.05);
+		expect(prevalence(low)).toBeGreaterThan(0);
+		expect(withPrevalence(samples, 0.2)).toHaveLength(samples.length);
+		const end = prCurve(low).at(-1)!;
+		expect(end.y).toBeCloseTo(prevalence(low), 12);
+		expect(Math.abs(rocAuc(low) - rocAuc(samples))).toBeLessThan(0.15);
+	});
+});

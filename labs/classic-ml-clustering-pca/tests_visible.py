@@ -61,3 +61,12 @@ def test_pca_hand_case():
     assert_close(
         np.abs(components[0]), [1.0, 0.0], atol=1e-6, message="first principal axis must be along x"
     )
+
+
+def test_kmeans_pp_init_takes_one_center_from_each_far_group():
+    # Two tight groups far apart: the D^2 rule almost surely picks one row from each.
+    X = np.array([[0.0, 0.0], [0.1, 0.0], [0.0, 0.1], [50.0, 50.0], [50.1, 50.0], [50.0, 50.1]])
+    for seed in range(5):
+        centers = kmeans_pp_init(X, 2, np.random.default_rng(seed))
+        assert centers.shape == (2, 2), f"expected shape (2, 2), got {centers.shape}"
+        assert (centers[:, 0] > 25).sum() == 1, f"seed {seed}: one center per group expected"

@@ -1,6 +1,6 @@
 """k-means and PCA via SVD: starter code.
 
-Complete the five functions so that they match the chapter text. X is an
+Complete the six functions so that they match the chapter text. X is an
 (n, d) float array, one row per object. Do not change the function names
 or signatures: the tests call them directly.
 """
@@ -54,4 +54,17 @@ def pca(X, n_components):
     """
     # TODO: center X by its column means, take the SVD, and compute the
     # singular values squared divided by their sum
+    raise NotImplementedError
+
+
+def kmeans_pp_init(X, k, rng):
+    """k-means++ starting centers: rows of X chosen one by one.
+
+    rng: numpy.random.Generator. The first center is a uniformly random row.
+    Every next center is a row drawn with probability proportional to its squared
+    distance to the nearest center already chosen. Returns an array of shape (k, d).
+    """
+    # TODO: pick the first row uniformly with rng.integers
+    # TODO: repeat: squared distance of each row to its nearest chosen center,
+    # then draw the next row with rng.choice and p = distances / their sum
     raise NotImplementedError

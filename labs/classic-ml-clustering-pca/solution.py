@@ -74,3 +74,23 @@ def pca(X, n_components):
     components = Vt[:n_components]
     Z = Xc @ components.T
     return Z, components, ratio
+
+
+def kmeans_pp_init(X, k, rng):
+    """k-means++ starting centers: rows of X chosen one by one.
+
+    rng: numpy.random.Generator. The first center is a uniformly random row.
+    Every next center is a row drawn with probability proportional to its squared
+    distance to the nearest center already chosen. Returns an array of shape (k, d).
+    """
+    X = np.asarray(X, dtype=np.float64)
+    n = X.shape[0]
+    if not 1 <= k <= n:
+        raise ValueError("k must be between 1 and the number of objects")
+    chosen = [int(rng.integers(n))]
+    for _ in range(k - 1):
+        d2 = np.min(np.sum((X[:, None, :] - X[chosen][None, :, :]) ** 2, axis=-1), axis=1)
+        total = d2.sum()
+        probs = d2 / total if total > 0 else np.full(n, 1.0 / n)
+        chosen.append(int(rng.choice(n, p=probs)))
+    return X[chosen].copy()

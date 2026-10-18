@@ -134,3 +134,17 @@ def test_hidden_shape_mismatch_raises():
     except ValueError:
         return
     raise AssertionError("confusion_counts must raise ValueError on different lengths")
+
+
+def test_standardize_constant_column_and_shapes():
+    rng = np.random.default_rng(3)
+    x_train = rng.normal(size=(20, 3))
+    x_train[:, 1] = 7.0
+    x_test = rng.normal(size=(5, 3))
+    x_test[:, 1] = 7.0
+    train, test = standardize_with_train_stats(x_train, x_test)
+    assert train.shape == x_train.shape and test.shape == x_test.shape
+    assert np.allclose(train.mean(axis=0), 0.0, atol=1e-9)
+    assert np.allclose(train[:, 1], 0.0)
+    assert np.allclose(test[:, 1], 0.0)
+    assert not np.allclose(test.mean(axis=0), 0.0, atol=1e-6)

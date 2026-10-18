@@ -19,6 +19,7 @@
 		assign,
 		describeKmeans,
 		describePca,
+		elbowCurve,
 		inertia,
 		initState,
 		kmeansStep,
@@ -36,6 +37,14 @@
 	/* Fixed data: computed once, identical on every page load. */
 	const points: Point[] = makeCloud();
 	const pca = pca2(points);
+	const elbow = elbowCurve(points);
+	const ELB_W = 320;
+	const ELB_H = 150;
+	const ELB_PAD = 28;
+	const elbMax = Math.max(...elbow.map((e) => e.j));
+	const elbX = (kk: number) => ELB_PAD + ((kk - K_MIN) / (K_MAX - K_MIN)) * (ELB_W - 2 * ELB_PAD);
+	const elbY = (j: number) => ELB_H - ELB_PAD - (j / elbMax) * (ELB_H - 2 * ELB_PAD);
+	const elbPath = elbow.map((e, i) => `${i === 0 ? 'M' : 'L'}${elbX(e.k)} ${elbY(e.j)}`).join(' ');
 	/* Props only seed the initial state: the demo owns it afterwards. */
 	/* svelte-ignore state_referenced_locally */
 	const K0 = snapK(initial?.k ?? DEFAULT_K);
@@ -278,6 +287,33 @@
 		</div>
 	</div>
 
+	<div class="cp-elbow">
+		<p class="cp-title">Метод локтя: J от k</p>
+		<svg
+			class="cp-svg"
+			viewBox="0 0 {ELB_W} {ELB_H}"
+			width={ELB_W}
+			role="img"
+			aria-labelledby="cp-elb-title cp-elb-desc"
+		>
+			<title id="cp-elb-title">Внутрикластерная сумма квадратов J в зависимости от k</title>
+			<desc id="cp-elb-desc"
+				>{elbow.map((e) => `k = ${e.k}: J = ${e.j.toFixed(0)}`).join('; ')}. Текущий k = {k}.</desc
+			>
+			<path class="cp-elb-line" d={elbPath} />
+			{#each elbow as e (e.k)}
+				<circle
+					class="cp-elb-dot"
+					class:is-cur={e.k === k}
+					cx={elbX(e.k)}
+					cy={elbY(e.j)}
+					r={e.k === k ? 6 : 4}
+				/>
+				<text class="cp-elb-tick" x={elbX(e.k)} y={ELB_H - 8} text-anchor="middle">{e.k}</text>
+			{/each}
+		</svg>
+	</div>
+
 	<div class="cp-actions" role="group" aria-label="Управление k-means">
 		<button type="button" class="cp-btn" onclick={step} disabled={km.converged}>Шаг</button>
 		<button type="button" class="cp-btn" onclick={runToEnd} disabled={km.converged}
@@ -295,6 +331,10 @@
 			<li>
 				Центры стартуют в случайных точках и за несколько шагов переезжают в середины своих групп.
 				Значение J не растёт. Другой старт может дать другое разбиение.
+			</li>
+			<li>
+				На графике локтя J падает резко до k = 3 и дальше медленно: изгиб совпадает с числом групп в
+				данных. Передвиньте k и посмотрите, где стоит отметка.
 			</li>
 			<li>
 				Облако вытянуто вдоль одной оси: PC1 несёт большую часть дисперсии. Одна компонента
@@ -430,6 +470,29 @@
 	}
 	.cp-mean {
 		fill: var(--text);
+	}
+
+	/* Elbow plot */
+	.cp-elbow {
+		margin-top: var(--space-6);
+	}
+	.cp-elb-line {
+		fill: none;
+		stroke: var(--topic);
+		stroke-width: 2;
+	}
+	.cp-elb-dot {
+		fill: var(--surface);
+		stroke: var(--topic);
+		stroke-width: 2;
+	}
+	.cp-elb-dot.is-cur {
+		fill: var(--cat-1);
+	}
+	.cp-elb-tick {
+		fill: var(--text-muted);
+		font-family: var(--font-mono);
+		font-size: 11px;
 	}
 
 	/* Actions */
