@@ -1,0 +1,25 @@
+- id: flash-tiling
+  term: тайловое внимание
+  term_en: tiled attention
+  definition: Вычисление внимания по блокам строк и столбцов матрицы оценок; в быстрой памяти держится только текущий блок, а матрица N×N целиком не хранится.
+  chapter: compute/flash-attention
+- id: running-max
+  term: текущий максимум
+  term_en: running maximum
+  definition: Максимум по уже обработанной части строки оценок; обновляется, когда появляется большее значение.
+  chapter: compute/flash-attention
+- id: rescaling
+  term: пересчёт накопленных сумм
+  term_en: rescaling
+  definition: Умножение уже накопленных сумм и выхода на e в степени (старый максимум минус новый) при смене максимума, чтобы все величины относились к одному максимуму.
+  chapter: compute/flash-attention
+- id: kernel-fusion
+  term: слияние ядер
+  term_en: kernel fusion
+  definition: Выполнение нескольких операций одним запуском ядра, чтобы промежуточные результаты не записывались в основную память между шагами.
+  chapter: compute/flash-attention
+- id: recomputation
+  term: пересчёт вместо хранения
+  term_en: recomputation
+  definition: Отказ от сохранения промежуточных величин для обратного прохода в пользу их повторного вычисления; дополнительные вычисления обменивают на меньший объём памяти и обращений к ней.
+  chapter: compute/flash-attention
