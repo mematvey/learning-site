@@ -1,0 +1,52 @@
+- id: profiler
+  term: профилировщик
+  term_en: profiler
+  definition: Инструмент, который записывает, какие операции выполнялись и сколько времени занял каждый участок; нужен, чтобы найти узкое место, а не угадывать его.
+  chapter: compute/profiling
+- id: timeline
+  term: таймлайн
+  term_en: timeline
+  definition: Шкала времени, на которой видно, что делают CPU и GPU в каждый момент и где GPU простаивает.
+  chapter: compute/profiling
+- id: async-execution
+  term: асинхронное выполнение
+  term_en: asynchronous execution
+  definition: Python ставит операцию в очередь GPU и сразу продолжает работу, не дожидаясь результата; поэтому замер на стороне Python может не совпасть с работой GPU.
+  chapter: compute/profiling
+- id: warmup
+  term: прогрев
+  term_en: warmup
+  definition: "Первые запуски, которые не учитывают в замере: в них входят инициализация, выделение памяти и выбор алгоритма."
+  chapter: compute/profiling
+- id: cuda-sync
+  term: синхронизация CUDA
+  term_en: CUDA synchronization
+  definition: Ожидание, пока завершатся все операции GPU; функция torch.cuda.synchronize блокирует Python до этого момента.
+  chapter: compute/profiling
+- id: kernel-launch-overhead
+  term: накладные расходы запуска ядра
+  term_en: kernel launch overhead
+  definition: Время, которое CPU тратит на подготовку и отправку каждого ядра; при очень многих мелких ядрах оно может стать заметным относительно их работы.
+  chapter: compute/profiling
+- id: cuda-graph
+  term: CUDA-граф
+  term_en: CUDA graph
+  definition: Последовательность операций, заданная заранее; её накладные расходы платятся при создании, а повторный запуск требует мало работы CPU.
+  chapter: compute/profiling
+- id: amdahl-law
+  term: закон Амдала
+  term_en: Amdahl's law
+  definition: Оценка ускорения всей программы, если ускорить только часть её времени; ускорение ограничено частью, которую не трогали.
+  chapter: compute/profiling
+- id: nsight-systems
+  term: Nsight Systems
+  definition: Профилировщик NVIDIA, который показывает на таймлайне работу потоков CPU и GPU всей программы.
+  chapter: compute/profiling
+- id: nsight-compute
+  term: Nsight Compute
+  definition: Интерактивный профилировщик отдельных ядер CUDA; показывает метрики одного ядра.
+  chapter: compute/profiling
+- id: torch-profiler
+  term: torch.profiler
+  definition: Профилировщик PyTorch; собирает время операторов на CPU и ядер на CUDA внутри Python-программы.
+  chapter: compute/profiling
