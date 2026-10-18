@@ -1,0 +1,45 @@
+- id: unicode
+  term: Юникод
+  term_en: Unicode
+  definition: 'Стандарт, который присваивает каждому символу письменностей мира номер (кодовую точку). Сам по себе не задаёт, как номера записываются байтами.'
+  chapter: cs/unicode-encoding
+- id: character-encoding
+  term: кодировка
+  term_en: character encoding
+  definition: 'Правило, которое переводит последовательность кодовых точек в байты и обратно. Один и тот же текст в разных кодировках даёт разные байты.'
+  chapter: cs/unicode-encoding
+- id: code-point
+  term: кодовая точка
+  term_en: code point
+  definition: 'Номер символа в Юникоде, от 0 до 10FFFF, обычно записывается как U+0041. Строка в Python состоит из кодовых точек, и len() считает их.'
+  chapter: cs/unicode-encoding
+- id: grapheme
+  term: графема
+  term_en: grapheme cluster
+  definition: 'То, что читатель воспринимает как один знак. Графема может состоять из нескольких кодовых точек, например буквы и знака ударения или эмодзи с символом-склейкой.'
+  chapter: cs/unicode-encoding
+- id: byte
+  term: байт
+  term_en: byte
+  definition: 'Единица хранения из восьми бит. Кодировка определяет, сколько байтов занимает каждая кодовая точка.'
+  chapter: cs/unicode-encoding
+- id: utf-8
+  term: UTF-8
+  term_en: UTF-8
+  definition: 'Кодировка Юникода переменной длины: кодовая точка занимает от одного до четырёх байтов. Латиница занимает один байт, кириллица два, большинство эмодзи четыре.'
+  chapter: cs/unicode-encoding
+- id: utf-16
+  term: UTF-16
+  term_en: UTF-16
+  definition: 'Кодировка Юникода, где кодовые точки занимают два или четыре байта. Используется, например, внутри строк JavaScript и Java.'
+  chapter: cs/unicode-encoding
+- id: surrogate-pair
+  term: суррогатная пара
+  term_en: surrogate pair
+  definition: 'Два 16-битных значения в UTF-16, которые вместе кодируют кодовую точку вне базового диапазона. Разрыв пары при обрезке даёт некорректный текст.'
+  chapter: cs/unicode-encoding
+- id: normalization
+  term: нормализация
+  term_en: normalization
+  definition: 'Приведение строк, которые выглядят одинаково, к одной записи в виде кодовых точек (например, NFC или NFD). Нужна перед сравнением строк.'
+  chapter: cs/unicode-encoding
