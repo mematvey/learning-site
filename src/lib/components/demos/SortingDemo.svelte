@@ -10,18 +10,25 @@
 		ALGO_INFO,
 		DEFAULT_STATE,
 		DEMO_ALGOS,
+		GROWTH_SIZES,
+		INPUT_ORDERS,
 		N_MAX,
+		ORDER_LABELS,
+		SORT_ALGOS,
 		N_MIN,
 		VALUE_MAX,
 		applyState,
 		clampStep,
-		makeArray,
+		growthTable,
+		makeInput,
 		sortedArray,
 		targetCount,
 		targetValue,
 		traceBinarySearch,
 		traceSort,
 		type DemoAlgo,
+		type InputOrder,
+		type SortAlgo,
 		type SortingDemoState,
 	} from '$lib/demos/sorting-searching';
 
@@ -35,6 +42,7 @@
 	/* The props only seed the initial state: the demo owns it afterwards. */
 	let algo = $state<DemoAlgo>(START.algo);
 	let n = $state(START.n);
+	let order = $state<InputOrder>(START.order);
 	let seed = $state(START.seed);
 	let step = $state(START.step);
 	let target = $state(START.target);
@@ -52,7 +60,7 @@
 	const hl = $derived(highlight?.hl ?? null);
 
 	const isSearch = $derived(algo === 'binary');
-	const input = $derived(makeArray(seed, n));
+	const input = $derived(makeInput(order, seed, n));
 	const sorted = $derived(sortedArray(seed, n));
 	const searchValue = $derived(targetValue(sorted, target));
 	const sortTrace = $derived(
@@ -64,6 +72,52 @@
 	const sortStep = $derived(sortTrace?.steps[cur] ?? null);
 	const searchStep = $derived(searchTrace?.steps[cur] ?? null);
 	const info = $derived(ALGO_INFO[algo]);
+
+	/* Growth chart: comparisons against n up to GROWTH_SIZES, both axes logarithmic. */
+	const GW = 360;
+	const GH = 190;
+	const GL = 44;
+	const GB = 24;
+	const GT = 8;
+	const GR = 62;
+	const growth = $derived(growthTable(order, seed));
+	const LABELS: Record<SortAlgo, string> = {
+		bubble: 'пузырёк',
+		insertion: 'вставки',
+		merge: 'слияние',
+		quick: 'быстрая',
+	};
+	const COLORS: Record<SortAlgo, string> = {
+		bubble: 'var(--cat-2)',
+		insertion: 'var(--cat-4)',
+		merge: 'var(--cat-3)',
+		quick: 'var(--cat-1)',
+	};
+	const xMin = Math.log10(GROWTH_SIZES[0] ?? 10);
+	const xMax = Math.log10(GROWTH_SIZES[GROWTH_SIZES.length - 1] ?? 1000);
+	const yMax = 6;
+	const SUPER = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶'];
+	function gx(size: number): number {
+		return GL + ((Math.log10(size) - xMin) / (xMax - xMin)) * (GW - GL - GR);
+	}
+	function gy(count: number): number {
+		const v = Math.log10(Math.max(count, 1));
+		return GH - GB - (v / yMax) * (GH - GB - GT);
+	}
+	const growthLines = $derived(
+		SORT_ALGOS.map((a) => ({
+			a,
+			points: growth[a]
+				.map((c, i) => `${gx(GROWTH_SIZES[i] ?? 10).toFixed(1)},${gy(c).toFixed(1)}`)
+				.join(' '),
+			end: growth[a][growth[a].length - 1] ?? 0,
+		})),
+	);
+	const growthDesc = $derived(
+		`Порядок входа: ${ORDER_LABELS[order]}. При n = 1000 сравнений: ` +
+			SORT_ALGOS.map((a) => `${LABELS[a]} ${growth[a][growth[a].length - 1] ?? 0}`).join(', ') +
+			'.',
+	);
 
 	/** Bars of the current frame: heights are proportional to the value, the scale is fixed at VALUE_MAX. */
 	const bars = $derived.by(() => {
@@ -122,9 +176,15 @@
 	}
 
 	function setN(v: number): void {
-		const s = applyState({ algo, n, seed, step, target }, { n: v });
+		const s = applyState({ algo, n, order, seed, step, target }, { n: v });
 		n = s.n;
 		target = s.target;
+		step = 0;
+		playing = false;
+	}
+
+	function setOrder(o: InputOrder): void {
+		order = o;
 		step = 0;
 		playing = false;
 	}
@@ -136,9 +196,10 @@
 	}
 
 	function apply(patch: Partial<SortingDemoState>): void {
-		const s = applyState({ algo, n, seed, step, target }, patch);
+		const s = applyState({ algo, n, order, seed, step, target }, patch);
 		algo = s.algo;
 		n = s.n;
+		order = s.order;
 		seed = s.seed;
 		target = s.target;
 		step = s.step;
@@ -148,6 +209,7 @@
 	function reset(): void {
 		algo = START.algo;
 		n = START.n;
+		order = START.order;
 		seed = START.seed;
 		target = START.target;
 		step = START.step;
@@ -216,6 +278,19 @@
 			/>
 			<output class="sd-val">{n}</output>
 		</label>
+
+		{#if !isSearch}
+			<div class="sd-group" role="group" aria-label="Порядок входа">
+				{#each INPUT_ORDERS as o (o)}
+					<button
+						type="button"
+						class="sd-seg"
+						aria-pressed={order === o}
+						onclick={() => setOrder(o)}>{ORDER_LABELS[o]}</button
+					>
+				{/each}
+			</div>
+		{/if}
 
 		{#if isSearch}
 			<label class="sd-ctl">
@@ -320,6 +395,38 @@
 
 	<p class="sd-note" aria-live="polite">{note}</p>
 
+	{#if !isSearch}
+		<div class="sd-growth">
+			<p class="sd-h2">Сравнения при росте n (до 1000)</p>
+			<svg class="sd-gsvg" viewBox="0 0 {GW} {GH}" role="img" aria-labelledby="sd-gt sd-gd">
+				<title id="sd-gt">Число сравнений четырёх сортировок при n от 10 до 1000</title>
+				<desc id="sd-gd">{growthDesc}</desc>
+				<line class="sd-base" x1={GL} x2={GW - GR} y1={GH - GB} y2={GH - GB} />
+				<line class="sd-base" x1={GL} x2={GL} y1={GT} y2={GH - GB} />
+				{#each [0, 1, 2, 3, 4, 5, 6] as e (e)}
+					<text class="sd-tick" x={GL - 4} y={gy(10 ** e) + 3} text-anchor="end">10{SUPER[e]}</text>
+				{/each}
+				{#each GROWTH_SIZES as g (g)}
+					<text class="sd-tick" x={gx(g)} y={GH - 8}>{g}</text>
+				{/each}
+				{#each growthLines as l (l.a)}
+					<polyline
+						class="sd-line"
+						points={l.points}
+						style="stroke: {COLORS[l.a]}"
+						stroke-dasharray={l.a === 'insertion' ? '5 3' : undefined}
+					/>
+					<text
+						class="sd-end"
+						x={GW - GR + 4}
+						y={gy(l.end) + (l.a === 'insertion' ? -3 : l.a === 'bubble' ? 8 : 3)}
+						style="fill: {COLORS[l.a]}">{LABELS[l.a]} {l.end}</text
+					>
+				{/each}
+			</svg>
+		</div>
+	{/if}
+
 	<div class="sd-notice">
 		<p class="sd-h2">Что заметить</p>
 		<ul>
@@ -332,6 +439,11 @@
 			<li>
 				Быстрая сортировка с опорным элементом на краю на отсортированном входе деградирует до n(n −
 				1)/2 сравнений.
+			</li>
+			<li>
+				Переключатель порядка входа меняет и пошаговую картину, и график справа от n = 10 до n =
+				1000: на отсортированном входе вставки и пузырёк делают n − 1 сравнение, а быстрая
+				сортировка с опорным на краю доходит до n(n − 1)/2.
 			</li>
 			<li>
 				Бинарный поиск делает не больше log₂ n + 1 сравнений, но работает только на отсортированном
@@ -593,6 +705,26 @@
 	.sd-note {
 		margin-top: var(--space-4);
 		color: var(--text-muted);
+	}
+
+	/* Growth chart */
+	.sd-growth {
+		margin-top: var(--space-6);
+	}
+	.sd-gsvg {
+		display: block;
+		width: 100%;
+		height: auto;
+		overflow: visible;
+	}
+	.sd-line {
+		fill: none;
+		stroke-width: 2;
+		stroke-linejoin: round;
+	}
+	.sd-end {
+		font-family: var(--font-mono);
+		font-size: 9px;
 	}
 
 	/* What to notice */

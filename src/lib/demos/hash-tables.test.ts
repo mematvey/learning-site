@@ -11,6 +11,7 @@ import {
 	nextPrime,
 	snapCount,
 	theoryProbes,
+	universalPair,
 	type HashTableDemoState,
 } from './hash-tables';
 
@@ -56,6 +57,26 @@ describe('hash functions and sizes', () => {
 				expect(u).toBeLessThan(m);
 			}
 		}
+	});
+
+	it('universal hash stays in [0, m), is deterministic and depends on the pick', () => {
+		const { a, b } = universalPair(2);
+		expect(universalPair(2)).toEqual({ a, b });
+		expect(a).toBeGreaterThanOrEqual(1);
+		expect(a).toBeLessThan(1009);
+		for (const k of KEYS) {
+			for (const m of [7, 17, 79]) {
+				const h = bucketOf(k, m, 'universal', 2);
+				expect(h).toBe(((a * k + b) % 1009) % m);
+				expect(h).toBeLessThan(m);
+			}
+		}
+		expect(universalPair(0)).not.toEqual(universalPair(1));
+	});
+
+	it('buildTable with the universal hash stores every key', () => {
+		const t = buildTable({ strategy: 'chain', hash: 'universal', pick: 3, count: 30 });
+		expect(t.cells.flat().length).toBe(30);
 	});
 
 	it('division hash is k mod m', () => {

@@ -24,6 +24,19 @@ export const VALUE_MAX = 99;
 export const SEED_BASE = 4242;
 
 export const DEFAULT_ALGO: DemoAlgo = 'bubble';
+
+/** Order of the input array: random, already sorted, or reversed. */
+export const INPUT_ORDERS = ['random', 'sorted', 'reversed'] as const;
+export type InputOrder = (typeof INPUT_ORDERS)[number];
+export const DEFAULT_ORDER: InputOrder = 'random';
+export const ORDER_LABELS: Record<InputOrder, string> = {
+	random: 'Случайный',
+	sorted: 'Отсортированный',
+	reversed: 'Обратный',
+};
+
+/** Input sizes of the comparison-count chart (the step trace itself stays at n <= N_MAX). */
+export const GROWTH_SIZES: readonly number[] = [10, 20, 50, 100, 200, 500, 1000];
 /** Target index: even values are present in the array, odd values are not (see `targetValue`). */
 export const DEFAULT_TARGET = 6;
 
@@ -32,6 +45,8 @@ export interface SortingDemoState {
 	algo: DemoAlgo;
 	/** Number of elements, integer in [N_MIN, N_MAX]. */
 	n: number;
+	/** Order of the input array. */
+	order: InputOrder;
 	/** Index of the generated array; the same index always gives the same array. */
 	seed: number;
 	/** Current step of the trace, integer >= 0 (clamped to the trace length by the UI). */
@@ -43,6 +58,7 @@ export interface SortingDemoState {
 export const DEFAULT_STATE: SortingDemoState = {
 	algo: DEFAULT_ALGO,
 	n: DEFAULT_N,
+	order: DEFAULT_ORDER,
 	seed: 0,
 	step: 0,
 	target: DEFAULT_TARGET,
@@ -147,6 +163,10 @@ function clamp(v: number, lo: number, hi: number): number {
 	return Math.min(hi, Math.max(lo, v));
 }
 
+export function isInputOrder(v: unknown): v is InputOrder {
+	return typeof v === 'string' && (INPUT_ORDERS as readonly string[]).includes(v);
+}
+
 export function isDemoAlgo(v: unknown): v is DemoAlgo {
 	return typeof v === 'string' && (DEMO_ALGOS as readonly string[]).includes(v);
 }
@@ -189,6 +209,7 @@ export function applyState(
 	return {
 		algo: isDemoAlgo(patch.algo) ? patch.algo : base.algo,
 		n,
+		order: isInputOrder(patch.order) ? patch.order : base.order,
 		seed: patch.seed !== undefined ? clampSeed(patch.seed) : base.seed,
 		step: patch.step !== undefined ? clampStep(patch.step, Number.MAX_SAFE_INTEGER) : base.step,
 		target: patch.target !== undefined ? clampTarget(patch.target, n) : clampTarget(base.target, n),
@@ -211,6 +232,35 @@ export function makeArray(seedIndex: number, n: number): number[] {
 		pool[j] = tmp;
 	}
 	return pool.slice(0, n);
+}
+
+/**
+ * Input array for a sort: the random array, its sorted copy, or the sorted copy reversed.
+ * Values are the same set for every order, so the three orders are directly comparable.
+ */
+export function makeInput(order: InputOrder, seedIndex: number, n: number): number[] {
+	const base = makeArray(seedIndex, n);
+	if (order === 'random') return base;
+	const asc = base.sort((x, y) => x - y);
+	return order === 'sorted' ? asc : asc.reverse();
+}
+
+/**
+ * Input of a given size for the growth chart: a random permutation of 1..n (seeded),
+ * the identity, or the reversed identity.
+ */
+export function makePermutation(order: InputOrder, seedIndex: number, n: number): number[] {
+	const a = Array.from({ length: n }, (_, i) => i + 1);
+	if (order === 'sorted') return a;
+	if (order === 'reversed') return a.reverse();
+	const rand = mulberry32(SEED_BASE + clampSeed(seedIndex));
+	for (let i = n - 1; i > 0; i--) {
+		const j = Math.floor(rand() * (i + 1));
+		const tmp = a[i] ?? 0;
+		a[i] = a[j] ?? 0;
+		a[j] = tmp;
+	}
+	return a;
 }
 
 /** Sorted copy of the generated array: the input of binary search. */
@@ -465,4 +515,92 @@ export function traceBinarySearch(sorted: readonly number[], target: number): Bi
 		text: `Диапазон пуст: ${target} в массиве нет`,
 	});
 	return { steps, index: -1, comparisons };
+}
+
+/**
+ * Number of comparisons a sort makes on the input, without recording a trace.
+ * Counts exactly what traceSort counts (same algorithms, same pivot rule), so it works for n ~ 1000.
+ */
+export function countComparisons(algo: SortAlgo, input: readonly number[]): number {
+	const a = [...input];
+	const n = a.length;
+	let count = 0;
+	if (algo === 'bubble') {
+		for (let pass = 0; pass < n - 1; pass++) {
+			let swapped = false;
+			for (let j = 0; j < n - 1 - pass; j++) {
+				count += 1;
+				if ((a[j] ?? 0) > (a[j + 1] ?? 0)) {
+					swapIn(a, j, j + 1);
+					swapped = true;
+				}
+			}
+			if (!swapped) break;
+		}
+	} else if (algo === 'insertion') {
+		for (let i = 1; i < n; i++) {
+			const key = a[i] ?? 0;
+			let j = i - 1;
+			while (j >= 0) {
+				count += 1;
+				const cur = a[j] ?? 0;
+				if (cur <= key) break;
+				a[j + 1] = cur;
+				j -= 1;
+			}
+			a[j + 1] = key;
+		}
+	} else if (algo === 'merge') {
+		const sortRange = (lo: number, hi: number): void => {
+			if (hi - lo <= 1) return;
+			const mid = Math.floor((lo + hi) / 2);
+			sortRange(lo, mid);
+			sortRange(mid, hi);
+			const left = a.slice(lo, mid);
+			const right = a.slice(mid, hi);
+			let i = 0;
+			let j = 0;
+			let k = lo;
+			while (i < left.length && j < right.length) {
+				count += 1;
+				if ((left[i] ?? 0) <= (right[j] ?? 0)) a[k++] = left[i++] ?? 0;
+				else a[k++] = right[j++] ?? 0;
+			}
+			while (i < left.length) a[k++] = left[i++] ?? 0;
+			while (j < right.length) a[k++] = right[j++] ?? 0;
+		};
+		sortRange(0, n);
+	} else {
+		const sortRange = (lo: number, hi: number): void => {
+			if (lo >= hi) return;
+			const pivotValue = a[hi] ?? 0;
+			let i = lo;
+			for (let j = lo; j < hi; j++) {
+				count += 1;
+				if ((a[j] ?? 0) <= pivotValue) {
+					swapIn(a, i, j);
+					i += 1;
+				}
+			}
+			swapIn(a, i, hi);
+			sortRange(lo, i - 1);
+			sortRange(i + 1, hi);
+		};
+		sortRange(0, n - 1);
+	}
+	return count;
+}
+
+/** Comparison counts of all four sorts on inputs of the given sizes (default GROWTH_SIZES). */
+export function growthTable(
+	order: InputOrder,
+	seedIndex: number,
+	sizes: readonly number[] = GROWTH_SIZES,
+): Record<SortAlgo, number[]> {
+	const out: Record<SortAlgo, number[]> = { bubble: [], insertion: [], merge: [], quick: [] };
+	for (const n of sizes) {
+		const input = makePermutation(order, seedIndex, n);
+		for (const algo of SORT_ALGOS) out[algo].push(countComparisons(algo, input));
+	}
+	return out;
 }

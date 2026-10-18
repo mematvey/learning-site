@@ -5,7 +5,9 @@
  * Keys: a fixed sequence of distinct integers drawn by a seed, so every page load shows the same table.
  * Growth: when the load factor n / m exceeds MAX_LOAD after an insertion, the table is rebuilt
  * (rehashing) with the smallest prime size >= 2m.
- * Hash functions: division h(k) = k mod m; multiplicative h(k) = floor(m * frac(k * A)), A = (sqrt5 - 1) / 2.
+ * Hash functions: division h(k) = k mod m; multiplicative h(k) = floor(m * frac(k * A)), A = (sqrt5 - 1) / 2;
+ * universal (Carter-Wegman) h(k) = ((a * k + b) mod P) mod m with a prime P > KEY_MAX and a pair (a, b)
+ * drawn from the seed by the `pick` index.
  * Theory (Knuth, TAOCP vol. 3, 6.4), successful search, load factor a:
  *   chaining: 1 + a / 2 comparisons; linear probing: (1 + 1 / (1 - a)) / 2 probes.
  */
@@ -24,7 +26,10 @@ export const DEFAULT_COUNT = 12;
 const KNUTH_A = (Math.sqrt(5) - 1) / 2;
 
 export type Strategy = 'chain' | 'probe';
-export type HashKind = 'division' | 'multiplicative';
+export type HashKind = 'division' | 'multiplicative' | 'universal';
+/** Prime larger than every key: the modulus of the universal family. */
+export const UNIVERSAL_P = 1009;
+export const DEFAULT_PICK = 0;
 export const DEFAULT_STRATEGY: Strategy = 'chain';
 export const DEFAULT_HASH: HashKind = 'division';
 
@@ -33,7 +38,7 @@ export function isStrategy(v: unknown): v is Strategy {
 }
 
 export function isHashKind(v: unknown): v is HashKind {
-	return v === 'division' || v === 'multiplicative';
+	return v === 'division' || v === 'multiplicative' || v === 'universal';
 }
 
 export interface HashTableDemoState {
@@ -41,6 +46,8 @@ export interface HashTableDemoState {
 	strategy: Strategy;
 	/** Hash function. */
 	hash: HashKind;
+	/** Index of the (a, b) pair of the universal family; used only when hash is 'universal'. */
+	pick?: number;
 	/** How many keys of the fixed sequence are inserted, integer in [0, N_MAX]. */
 	count: number;
 }
@@ -115,9 +122,28 @@ export function nextPrime(x: number): number {
 	return p;
 }
 
+/** Pair (a, b) of the universal family for a pick index: a in [1, P - 1], b in [0, P - 1]. Deterministic. */
+export function universalPair(pick: number): { a: number; b: number } {
+	const rnd = mulberry32(KEYS_SEED + 1 + Math.max(0, Math.floor(pick)));
+	return {
+		a: 1 + Math.floor(rnd() * (UNIVERSAL_P - 1)),
+		b: Math.floor(rnd() * UNIVERSAL_P),
+	};
+}
+
+/** Rounds and clamps the pick index to a non-negative integer. */
+export function snapPick(v: unknown): number {
+	if (typeof v !== 'number' || !Number.isFinite(v)) return DEFAULT_PICK;
+	return Math.max(0, Math.floor(v));
+}
+
 /** Bucket (or home slot) of a key in a table of size m. Result is in [0, m). */
-export function bucketOf(key: number, m: number, hash: HashKind): number {
+export function bucketOf(key: number, m: number, hash: HashKind, pick = DEFAULT_PICK): number {
 	if (hash === 'division') return key % m;
+	if (hash === 'universal') {
+		const { a, b } = universalPair(pick);
+		return ((a * key + b) % UNIVERSAL_P) % m;
+	}
 	const frac = (key * KNUTH_A) % 1;
 	return Math.min(m - 1, Math.floor(m * frac));
 }
@@ -132,9 +158,10 @@ function place(
 	key: number,
 	hash: HashKind,
 	strategy: Strategy,
+	pick: number,
 ): { index: number; collisions: number; cost: number } {
 	const m = cells.length;
-	const home = bucketOf(key, m, hash);
+	const home = bucketOf(key, m, hash, pick);
 	if (strategy === 'chain') {
 		const bucket = cells[home] ?? [];
 		const collisions = bucket.length;
@@ -161,9 +188,10 @@ export function lookup(
 	key: number,
 	hash: HashKind,
 	strategy: Strategy,
+	pick: number = DEFAULT_PICK,
 ): { index: number; cost: number } | null {
 	const m = cells.length;
-	const home = bucketOf(key, m, hash);
+	const home = bucketOf(key, m, hash, pick);
 	if (strategy === 'chain') {
 		const pos = (cells[home] ?? []).indexOf(key);
 		return pos < 0 ? null : { index: home, cost: pos + 1 };
@@ -206,19 +234,20 @@ export function theoryProbes(strategy: Strategy, load: number): number {
 export function buildTable(state: HashTableDemoState): TableSnapshot {
 	const keys = KEYS.slice(0, snapCount(state.count));
 	const { hash, strategy } = state;
+	const pick = snapPick(state.pick);
 	let m = INITIAL_SIZE;
 	let cells = emptyCells(m);
 	let collisions = 0;
 	let rehashes = 0;
 	let n = 0;
 	for (const key of keys) {
-		const r = place(cells, key, hash, strategy);
+		const r = place(cells, key, hash, strategy, pick);
 		collisions += r.collisions;
 		n++;
 		if (n / m > MAX_LOAD) {
 			m = nextPrime(2 * m);
 			cells = emptyCells(m);
-			for (const k of keys.slice(0, n)) place(cells, k, hash, strategy);
+			for (const k of keys.slice(0, n)) place(cells, k, hash, strategy, pick);
 			rehashes++;
 		}
 	}
@@ -226,10 +255,10 @@ export function buildTable(state: HashTableDemoState): TableSnapshot {
 	const load = n / m;
 	let totalCost = 0;
 	for (const k of keys) {
-		totalCost += lookup(cells, k, hash, strategy)?.cost ?? 0;
+		totalCost += lookup(cells, k, hash, strategy, pick)?.cost ?? 0;
 	}
 	const lastKey = n > 0 ? (keys[n - 1] ?? null) : null;
-	const last = lastKey === null ? null : lookup(cells, lastKey, hash, strategy);
+	const last = lastKey === null ? null : lookup(cells, lastKey, hash, strategy, pick);
 	return {
 		size: m,
 		count: n,

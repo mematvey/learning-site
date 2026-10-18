@@ -9,6 +9,10 @@ import {
 	clampN,
 	clampStep,
 	clampTarget,
+	countComparisons,
+	growthTable,
+	makeInput,
+	makePermutation,
 	makeArray,
 	sortedArray,
 	targetValue,
@@ -206,5 +210,47 @@ describe('state clamping', () => {
 		const s = applyState({ ...DEFAULT_STATE, target: 18 }, { n: 5 });
 		expect(s.n).toBe(5);
 		expect(s.target).toBe(9);
+	});
+});
+
+describe('countComparisons and growthTable', () => {
+	it('matches the step trace on random, sorted and reversed inputs', () => {
+		for (let seed = 1; seed <= 20; seed++) {
+			const input = lcgArray(seed, seed % 15, 9);
+			for (const algo of SORT_ALGOS) {
+				for (const arr of [
+					input,
+					[...input].sort((x, y) => x - y),
+					[...input].sort((x, y) => y - x),
+				]) {
+					expect(countComparisons(algo, arr)).toBe(traceSort(algo, arr).comparisons);
+				}
+			}
+		}
+	});
+
+	it('matches the chapter numbers for n = 16 and for merge sort on sorted input', () => {
+		expect(countComparisons('insertion', ascending(16))).toBe(15);
+		expect(countComparisons('insertion', descending(16))).toBe(120);
+		expect(countComparisons('merge', ascending(1000))).toBe(4932);
+	});
+
+	it('gives the textbook counts at n = 1000', () => {
+		const table = (o: 'sorted' | 'reversed') => growthTable(o, 0, [1000]);
+		expect(table('sorted').insertion).toEqual([999]);
+		expect(table('sorted').bubble).toEqual([999]);
+		expect(table('reversed').insertion).toEqual([499500]);
+		expect(table('sorted').quick).toEqual([499500]);
+		const merge = table('sorted').merge[0] ?? 0;
+		expect(merge).toBeGreaterThan(4000);
+		expect(merge).toBeLessThan(10000);
+	});
+
+	it('orders inputs: same values, ascending or descending', () => {
+		const asc = makeInput('sorted', 3, 9);
+		const desc = makeInput('reversed', 3, 9);
+		expect(desc).toEqual([...asc].reverse());
+		expect([...makeInput('random', 3, 9)].sort((x, y) => x - y)).toEqual(asc);
+		expect(makePermutation('random', 1, 50).sort((x, y) => x - y)).toEqual(ascending(50));
 	});
 });
