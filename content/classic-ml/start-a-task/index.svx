@@ -1,0 +1,17 @@
+---
+id: classic-ml/start-a-task
+title: "С чего начать ML-задачу: baseline, метрика, валидация"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: classic-ml
+prereqs: [classic-ml/data-preparation, classic-ml/tabular-vs-neural, classic-ml/time-series-validation]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

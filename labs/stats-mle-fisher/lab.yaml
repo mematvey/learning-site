@@ -1,0 +1,9 @@
+id: stats-mle-fisher
+title: 'Максимальное правдоподобие и информация Фишера'
+chapter: stats/mle-fisher
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+timeout: 10
+packages: [numpy]

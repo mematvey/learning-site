@@ -1,0 +1,17 @@
+---
+id: stats/bayesian-inference
+title: "Байесовский вывод: апостериор вместо p-value"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: stats
+prereqs: [stats/classical-probability-2, stats/estimation-testing]
+concepts: []
+keywords: []
+minutes: 20
+labs: [stats-bayesian-inference]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

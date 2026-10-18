@@ -1,0 +1,17 @@
+---
+id: stats/ab-testing
+title: "A/B-тесты: размер выборки, мощность, подглядывание"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: stats
+prereqs: [stats/estimation-testing, stats/regression]
+concepts: []
+keywords: []
+minutes: 20
+labs: [stats-ab-testing]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

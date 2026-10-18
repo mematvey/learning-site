@@ -1,0 +1,17 @@
+---
+id: cs/vector-search
+title: "Векторный поиск: точный, HNSW, IVF, PQ"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: cs
+prereqs: [cs/graphs-algorithms, cs/hash-tables]
+concepts: []
+keywords: []
+minutes: 20
+labs: [cs-vector-search]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

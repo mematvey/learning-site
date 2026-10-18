@@ -1,0 +1,9 @@
+id: classic-ml-data-preparation
+title: 'Подготовка данных без утечки'
+chapter: classic-ml/data-preparation
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+timeout: 10
+packages: [numpy]

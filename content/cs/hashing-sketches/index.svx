@@ -1,0 +1,17 @@
+---
+id: cs/hashing-sketches
+title: "Хеш-структуры для больших данных: Bloom-фильтр, MinHash, Count-Min"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: cs
+prereqs: [cs/hash-tables]
+concepts: []
+keywords: []
+minutes: 20
+labs: [cs-hashing-sketches]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

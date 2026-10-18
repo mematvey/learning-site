@@ -1,0 +1,17 @@
+---
+id: classic-ml/tabular-vs-neural
+title: "Табличные данные: бустинг или нейросеть (состояние на 2026)"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: classic-ml
+prereqs: [classic-ml/gradient-boosting]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

@@ -1,0 +1,9 @@
+id: cs-vector-search
+title: 'Brute force, IVF и recall@k'
+chapter: cs/vector-search
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+timeout: 10
+packages: [numpy]

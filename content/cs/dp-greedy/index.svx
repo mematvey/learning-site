@@ -1,0 +1,17 @@
+---
+id: cs/dp-greedy
+title: "Рекурсия, динамическое программирование и жадность"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: cs
+prereqs: [cs/complexity, cs/sorting-searching]
+concepts: []
+keywords: []
+minutes: 20
+labs: [cs-dp-greedy]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

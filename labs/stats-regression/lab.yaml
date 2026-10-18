@@ -1,0 +1,9 @@
+id: stats-regression
+title: 'МНК, остатки и интервал наклона'
+chapter: stats/regression
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+timeout: 10
+packages: [numpy]

@@ -1,0 +1,17 @@
+---
+id: cs/unicode-encoding
+title: "Кодировки и Unicode: байты, UTF-8, графемы"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: cs
+prereqs: []
+concepts: []
+keywords: []
+minutes: 20
+labs: [cs-unicode-encoding]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

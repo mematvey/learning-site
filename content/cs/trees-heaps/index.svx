@@ -1,0 +1,17 @@
+---
+id: cs/trees-heaps
+title: "Деревья и кучи: BST, B-дерево, приоритетная очередь"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: cs
+prereqs: [cs/sorting-searching]
+concepts: []
+keywords: []
+minutes: 20
+labs: [cs-trees-heaps]
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

@@ -1,0 +1,9 @@
+id: classic-ml-linear-algebra-essentials
+title: 'Собственные векторы, SVD и низкоранговое приближение'
+chapter: classic-ml/linear-algebra-essentials
+runtime: pyodide
+starter: starter.py
+solution: solution.py
+tests: { visible: tests_visible.py, hidden: tests_hidden.py }
+timeout: 10
+packages: [numpy]

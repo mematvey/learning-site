@@ -1,0 +1,17 @@
+---
+id: cs/databases-indexes
+title: "Базы данных: индекс, B-дерево, LSM, транзакции"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: cs
+prereqs: [cs/trees-heaps, cs/memory-cache]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}
