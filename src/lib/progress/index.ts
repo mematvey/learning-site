@@ -6,3 +6,5 @@ export {
 } from './store';
 export { decodeRecord, migrateRecord } from './migrate';
 export { trackChapter, type TrackOptions } from './track';
+export { countSectionsDone, sumCounts, type SectionCount } from './sections';
+export { PROGRESS_MIGRATIONS } from './migrate';

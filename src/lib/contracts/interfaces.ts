@@ -61,6 +61,14 @@ export interface ProgressStore {
 	/** Atomically applies the patch and sets `updated`. Throws if `readOnly`. */
 	update(patch: ProgressPatch): Promise<void>;
 	list(): Promise<{ chapters: ChapterProgress[]; labs: LabProgress[] }>;
+	/** Sets or clears one manual section mark (read-modify-write in one transaction). Throws if `readOnly`. */
+	setSectionDone(chapter: ChapterId, sectionId: string, done: boolean): Promise<void>;
+	/** Deletes the chapter's reading progress and marks. Lab records and settings are kept. */
+	resetChapter(chapter: ChapterId): Promise<void>;
+	/** Deletes chapter progress of every chapter whose id starts with `<topic>/`. Labs and settings are kept. */
+	resetTopic(topic: string): Promise<void>;
+	/** Deletes all chapter progress. Labs and settings are kept. */
+	resetAll(): Promise<void>;
 	/** Exports progress, settings and notes. Never includes the sync token. */
 	export(): Promise<ProgressExport>;
 	/** Validates with `ProgressExport` and migrates old versions. */

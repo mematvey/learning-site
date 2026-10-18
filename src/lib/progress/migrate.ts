@@ -1,6 +1,27 @@
 import type { ZodType } from 'zod';
 import { PROGRESS_SCHEMA_VERSION, type Migration } from '$lib/contracts';
 
+/**
+ * Steps from older stored and exported records to the current schema.
+ * v1 -> v2: chapter records get an empty `sectionsDone`; lab and settings records only get
+ * the new version number (their shape did not change).
+ */
+export const PROGRESS_MIGRATIONS: readonly Migration[] = [
+	{
+		from: 1,
+		to: 2,
+		migrate(record) {
+			const r = record as Record<string, unknown>;
+			const isChapter = 'sectionsReached' in r;
+			return {
+				...r,
+				schemaVersion: 2,
+				...(isChapter && r.sectionsDone === undefined ? { sectionsDone: [] } : {}),
+			};
+		},
+	},
+];
+
 function versionOf(record: unknown): number {
 	const v =
 		typeof record === 'object' && record !== null

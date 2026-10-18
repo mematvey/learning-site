@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { PROGRESS_SCHEMA_VERSION, type Migration, type ProgressChange } from '$lib/contracts';
 import chapterFixture from '$lib/contracts/fixtures/progress-chapter.json';
 import labFixture from '$lib/contracts/fixtures/progress-lab.json';
-import { migrateRecord } from './migrate';
+import { migrateRecord, PROGRESS_MIGRATIONS } from './migrate';
 import { openProgressStore, type OpenedProgressStore } from './store';
 
 const opened: OpenedProgressStore[] = [];
@@ -123,7 +123,11 @@ describe('migrations', () => {
 
 	it('migrates an old stored record on read', async () => {
 		const name = `test-progress-${counter++}`;
-		const store = await openProgressStore({ dbName: name, migrations: [v0ToV1], now: clockFrom() });
+		const store = await openProgressStore({
+			dbName: name,
+			migrations: [v0ToV1, ...PROGRESS_MIGRATIONS],
+			now: clockFrom(),
+		});
 		opened.push(store);
 		store.close();
 
@@ -138,11 +142,15 @@ describe('migrations', () => {
 		});
 		raw.close();
 
-		const reopened = await openProgressStore({ dbName: name, migrations: [v0ToV1] });
+		const reopened = await openProgressStore({
+			dbName: name,
+			migrations: [v0ToV1, ...PROGRESS_MIGRATIONS],
+		});
 		opened.push(reopened);
 		expect(await reopened.getChapter('dl/attention')).toMatchObject({
-			schemaVersion: 1,
+			schemaVersion: 2,
 			sectionsReached: ['idea'],
+			sectionsDone: [],
 			done: false,
 		});
 	});
@@ -181,7 +189,7 @@ describe('export and import', () => {
 			settings: { theme: 'dark' },
 		});
 		const exported = JSON.parse(JSON.stringify(await source.export()));
-		expect(exported).toMatchObject({ format: 'learning-site-export', schemaVersion: 1 });
+		expect(exported).toMatchObject({ format: 'learning-site-export', schemaVersion: 2 });
 		expect(exported).not.toHaveProperty('token');
 
 		const target = await open();
@@ -235,5 +243,116 @@ describe('export and import', () => {
 		await expect(store.import({ format: 'other', schemaVersion: 1 }, 'merge')).rejects.toThrow(
 			/Not a learning-site export/,
 		);
+	});
+});
+
+describe('section marks and resets', () => {
+	it('reads a v1 chapter record written before sectionsDone existed', async () => {
+		const name = `test-progress-${counter++}`;
+		const first = await openProgressStore({ dbName: name });
+		first.close();
+		const raw = await openDB(name);
+		await raw.put('chapters', {
+			schemaVersion: 1,
+			id: 'dl/attention',
+			updated: '2026-10-10T10:00:00Z',
+			visited: '2026-10-10T10:00:00Z',
+			sectionsReached: ['idea'],
+			levels: { c: 2, d: 1 },
+			done: false,
+		});
+		raw.close();
+
+		const store = await openProgressStore({ dbName: name });
+		opened.push(store);
+		expect(await store.getChapter('dl/attention')).toMatchObject({
+			schemaVersion: 2,
+			sectionsReached: ['idea'],
+			sectionsDone: [],
+		});
+	});
+
+	it('setSectionDone adds and removes one mark, keeping the others', async () => {
+		const store = await open();
+		await store.setSectionDone('dl/attention', 'idea', true);
+		await store.setSectionDone('dl/attention', 'math-scale', true);
+		await store.setSectionDone('dl/attention', 'idea', true);
+		expect((await store.getChapter('dl/attention'))?.sectionsDone).toEqual(['idea', 'math-scale']);
+
+		await store.setSectionDone('dl/attention', 'idea', false);
+		expect((await store.getChapter('dl/attention'))?.sectionsDone).toEqual(['math-scale']);
+	});
+
+	it('setSectionDone rejects a block id that is not kebab-case', async () => {
+		const store = await open();
+		await expect(store.setSectionDone('dl/attention', 'Bad Id', true)).rejects.toThrow();
+		expect(await store.getChapter('dl/attention')).toBeUndefined();
+	});
+
+	it('resetChapter deletes only that chapter and keeps labs and settings', async () => {
+		const store = await open();
+		await store.update({
+			chapters: [
+				{ id: 'dl/attention', sectionsReached: ['idea'] },
+				{ id: 'dl/cnn', sectionsReached: ['idea'] },
+			],
+			labs: [{ labId: 'dl-attention-numpy', chapter: 'dl/attention', passed: true }],
+			settings: { theme: 'dark' },
+		});
+		await store.resetChapter('dl/attention');
+
+		expect(await store.getChapter('dl/attention')).toBeUndefined();
+		expect(await store.getChapter('dl/cnn')).toBeDefined();
+		expect((await store.getLab('dl-attention-numpy'))?.passed).toBe(true);
+		expect((await store.getSettings())?.theme).toBe('dark');
+	});
+
+	it('resetTopic deletes chapters of that topic only', async () => {
+		const store = await open();
+		await store.update({
+			chapters: [
+				{ id: 'dl/attention', done: true },
+				{ id: 'dl/cnn', done: true },
+				{ id: 'classic-ml/trees', done: true },
+			],
+		});
+		const seen: ProgressChange[] = [];
+		store.subscribe((c) => seen.push(c));
+		await store.resetTopic('dl');
+
+		const { chapters } = await store.list();
+		expect(chapters.map((c) => c.id)).toEqual(['classic-ml/trees']);
+		expect(seen).toEqual([
+			{ kind: 'chapter', id: 'dl/attention' },
+			{ kind: 'chapter', id: 'dl/cnn' },
+		]);
+	});
+
+	it('resetAll clears chapters but keeps labs and settings', async () => {
+		const store = await open();
+		await store.update({
+			chapters: [{ id: 'dl/attention', done: true }],
+			labs: [{ labId: 'dl-attention-numpy', chapter: 'dl/attention', passed: true }],
+			settings: { theme: 'light' },
+		});
+		await store.resetAll();
+
+		expect((await store.list()).chapters).toHaveLength(0);
+		expect((await store.getLab('dl-attention-numpy'))?.passed).toBe(true);
+		expect((await store.getSettings())?.theme).toBe('light');
+	});
+
+	it('reset and mark methods are rejected in a read-only store', async () => {
+		const name = `test-progress-${counter++}`;
+		const first = await openProgressStore({ dbName: name });
+		first.close();
+		const raw = await openDB(name);
+		await raw.put('meta', PROGRESS_SCHEMA_VERSION + 1, 'schemaVersion');
+		raw.close();
+
+		const store = await openProgressStore({ dbName: name });
+		opened.push(store);
+		await expect(store.resetAll()).rejects.toThrow(/read-only/);
+		await expect(store.setSectionDone('dl/attention', 'idea', true)).rejects.toThrow(/read-only/);
 	});
 });

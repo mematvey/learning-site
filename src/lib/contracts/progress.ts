@@ -4,7 +4,8 @@ import { LabResultSummary } from './lab-result';
 import { LevelState } from './levels';
 import { Note } from './notes';
 
-export const PROGRESS_SCHEMA_VERSION = 1;
+/** Schema version 2 adds `ChapterProgress.sectionsDone` (manual per-section marks). */
+export const PROGRESS_SCHEMA_VERSION = 2;
 
 /** Per-problem state on problem pages (keyed by problem id, e.g. `p1`). */
 export const ProblemProgress = z.object({
@@ -26,8 +27,10 @@ export const ChapterProgress = z.object({
 	lastVisit: IsoDateTime.optional(),
 	/** Reading position by block, not pixels. `offset` is 0..1 inside the block. */
 	scroll: z.object({ blockId: BlockId, offset: z.number().min(0).max(1) }).optional(),
-	/** Ids of sections (`#idea`, `#math`, ...) reached. */
+	/** Ids of sections (`#idea`, `#math`, ...) reached while scrolling. Weak signal: "viewed". */
 	sectionsReached: z.array(z.string()),
+	/** Ids of sections the learner checked by hand. The only source of the "n of m" progress. */
+	sectionsDone: z.array(BlockId).default([]),
 	/** Last applied slider state. */
 	levels: LevelState,
 	/** Optional manual "done" mark. */

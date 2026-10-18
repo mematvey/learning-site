@@ -62,7 +62,7 @@ describe('fixtures pass their schemas', () => {
 	it('export format and summaries', () => {
 		const exported = {
 			format: 'learning-site-export',
-			schemaVersion: 1,
+			schemaVersion: 2,
 			exportedAt: '2026-10-16T10:00:00Z',
 			chapters: [progressChapter],
 			labs: [progressLab],
