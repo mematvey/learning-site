@@ -13,3 +13,18 @@
   term_en: rotary position embedding
   definition: Позиционное кодирование, которое поворачивает пары компонент запроса и ключа на угол, пропорциональный позиции; скалярное произведение после поворота зависит только от разности позиций.
   chapter: dl/positional-encoding
+- id: alibi
+  term: ALiBi
+  term_en: attention with linear biases
+  definition: 'Способ учесть порядок без позиционного вектора: к оценкам внимания добавляется штраф, растущий с расстоянием между токенами.'
+  chapter: dl/positional-encoding
+- id: nope
+  term: NoPE
+  term_en: no positional encoding
+  definition: 'Декодер без явного позиционного кодирования; порядок в нём неявно выводится из механики внимания и маски.'
+  chapter: dl/positional-encoding
+- id: position-interpolation
+  term: интерполяция позиций
+  term_en: position interpolation
+  definition: 'Способ расширить контекст RoPE-модели: индексы позиций сжимаются в диапазон, на котором модель обучалась, вместо экстраполяции за его пределы.'
+  chapter: dl/positional-encoding

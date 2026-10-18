@@ -8,6 +8,9 @@ concepts:
   - { id: positional-encoding, title: Позиционное кодирование }
   - { id: sinusoidal-encoding, title: Синусоидальное кодирование }
   - { id: rope, title: RoPE }
+  - { id: alibi, title: ALiBi }
+  - { id: nope, title: NoPE }
+  - { id: position-interpolation, title: Интерполяция позиций }
 keywords:
   - позиция
   - синусоиды
@@ -34,6 +37,60 @@ sources:
     url: https://arxiv.org/abs/2104.09864
     accessed: 2026-10-16
     supports: [math-rope-def, mistake-rope-v]
+  - id: llama3
+    kind: paper
+    title: "The Llama 3 Herd of Models"
+    authors: Llama Team, Meta AI
+    venue: arXiv
+    year: 2024
+    url: https://arxiv.org/abs/2407.21783
+    accessed: 2026-10-18
+    supports: [when, when]
+  - id: deepseekv3
+    kind: paper
+    title: "DeepSeek-V3 Technical Report"
+    authors: DeepSeek-AI
+    venue: arXiv
+    year: 2024
+    url: https://arxiv.org/abs/2412.19437
+    accessed: 2026-10-18
+    supports: [when]
+  - id: press2021
+    kind: paper
+    title: "Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation"
+    authors: Press O., Smith N. A., Lewis M.
+    venue: arXiv
+    year: 2021
+    url: https://arxiv.org/abs/2108.12409
+    accessed: 2026-10-18
+    supports: [when]
+  - id: kazemnejad2023
+    kind: paper
+    title: "The Impact of Positional Encoding on Length Generalization in Transformers"
+    authors: Kazemnejad A. et al.
+    venue: NeurIPS
+    year: 2023
+    url: https://arxiv.org/abs/2305.19466
+    accessed: 2026-10-18
+    supports: [when, when-practice]
+  - id: chen2023pi
+    kind: paper
+    title: "Extending Context Window of Large Language Models via Positional Interpolation"
+    authors: Chen S. et al.
+    venue: arXiv
+    year: 2023
+    url: https://arxiv.org/abs/2306.15595
+    accessed: 2026-10-18
+    supports: [when]
+  - id: peng2023yarn
+    kind: paper
+    title: "YaRN: Efficient Context Window Extension of Large Language Models"
+    authors: Peng B. et al.
+    venue: arXiv
+    year: 2023
+    url: https://arxiv.org/abs/2309.00071
+    accessed: 2026-10-18
+    supports: [when]
 status: draft
 ---
 
@@ -153,7 +210,33 @@ $$
 - Ждать от обучаемых позиционных эмбеддингов работы за пределами длины, на которой они обучались: у таблицы есть конечное число строк. {#mistake-learned}
 - Считать, что RoPE делает всю модель относительной. Относительность точна только для скалярного произведения запроса и ключа. {#mistake-rope-scope}
 
+## Когда применять и когда нет {#when}
+
+Выбор кодирования зависит от того, как долго модель работает по сравнению с длиной обучения, и от того, нужна ли ей абсолютная позиция.
+
+| Ситуация | Что выбрать | Почему |
+|---|---|---|
+| Длины входа заранее известны и не превышают обучающие | обучаемые эмбеддинги или синусоиды | оба работают на похожих результатах; обучаемая таблица ограничена заданной максимальной длиной |
+| Декодер-LLM с открытыми весами, длинный контекст | RoPE | его используют в открытых моделях, например Llama 3 <Cite id="llama3" /> и DeepSeek-V3 <Cite id="deepseekv3" />, где RoPE применяется к ключам |
+| Нужно выйти за обучающую длину без полного переобучения | RoPE с интерполяцией позиций или YaRN | интерполяция сжимает индексы в обученный диапазон <Cite id="chen2023pi" />; YaRN требует меньше обучения при сходном эффекте <Cite id="peng2023yarn" /> |
+| Нужно экстраполировать без масштабирования | ALiBi | штраф внимания растёт с расстоянием между токенами, таблицы позиций нет <Cite id="press2021" /> |
+| Исследуете, нужна ли вообще явная позиция | NoPE как контрольный вариант | в экспериментах <Cite id="kazemnejad2023" /> NoPE в декодере обобщался на длины лучше явных кодирований, но выводы относятся к конкретным задачам |
+
+Открытый вопрос: надёжная работа за пределами обучающей длины. Результаты зависят от модели, задачи и объёма дообучения, и общего правила здесь нет.
+
+<Level c={3}>
+
+**Что решать на практике.** Первый вопрос: какой длины будут входы на инференсе. Если она больше обучающей, выбор кодирования и способа расширения определяет, будет ли модель деградировать. Второй вопрос: нужна ли абсолютная позиция, например для задач с номерами строк или полей. Проверяйте расширение контекста на своей задаче с замером качества по длине, а не на средних показателях. {#when-practice}
+
+</Level>
+
 ## Проверь себя {#check}
+
+<Quiz id="quiz-extend" q="Что проверить перед тем, как выбрать способ расширения контекста для RoPE-модели?">
+
+Длину входов на инференсе относительно обучающей и качество на своей задаче при разных длинах. Разные методы расширения ведут себя по-разному, и общего правила, которое бы работало для всех задач, нет.
+
+</Quiz>
 
 <Quiz id="quiz-permute" q="Почему без позиционной информации перестановка входных токенов только переставляет выходы внимания?">
 
