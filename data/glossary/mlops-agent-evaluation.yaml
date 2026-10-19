@@ -1,0 +1,25 @@
+- id: trajectory
+  term: траектория
+  term_en: trajectory
+  definition: 'Полный путь выполнения одной задачи агентом: шаги в порядке выполнения, вызовы инструментов с аргументами, их результаты и итоговый ответ. Оценивают путь, а не только ответ.'
+  chapter: mlops/agent-evaluation
+- id: pass-at-k
+  term: pass@k
+  term_en: pass@k
+  definition: 'Вероятность, что хотя бы один из k запусков на задаче успешен. Растёт с ростом k и сама по себе не говорит о стабильности агента.'
+  chapter: mlops/agent-evaluation
+- id: pass-hat-k
+  term: pass^k
+  term_en: pass^k
+  definition: 'Вероятность, что все k запусков на задаче успешны. Показывает повторяемость: с ростом k не растёт.'
+  chapter: mlops/agent-evaluation
+- id: binary-criterion
+  term: бинарный критерий
+  term_en: binary criterion
+  definition: 'Проверка с ответом «да» или «нет» по одному свойству результата или пути, например «аргументы инструмента совпадают с запросом». Такие проверки проще согласовать с людьми, чем шкалу оценок.'
+  chapter: mlops/agent-evaluation
+- id: judge-agreement
+  term: согласие судьи с разметкой
+  term_en: judge agreement
+  definition: 'Мера того, насколько оценки судьи совпадают с оценками людей на размеченной выборке. Простой процент совпадений вводит в заблуждение, если один класс доминирует.'
+  chapter: mlops/agent-evaluation
