@@ -1,8 +1,8 @@
 id: ml-in-production
 title: 'ML в продакшене'
-summary: 'Все главы MLOps по порядку: от жизненного цикла и данных до оценки, мониторинга, LLM-приложений и безопасности.'
+summary: 'Все главы MLOps по порядку: от жизненного цикла и данных до оценки, мониторинга, LLM-приложений, агентов и безопасности.'
 audience: 'Для тех, кто умеет обучать модели и хочет выводить их в эксплуатацию, в том числе LLM.'
-goal: 'Построить воспроизводимый цикл: данные, эксперименты, пайплайн, сервинг, оценку и мониторинг; для LLM-приложений добавить наблюдаемость и безопасность.'
+goal: 'Построить воспроизводимый цикл: данные, эксперименты, сервинг, оценку, пайплайн и мониторинг; для LLM-приложений и агентов добавить наблюдаемость, стоимость и защиту.'
 steps:
   - title: 'Жизненный цикл'
     description: 'Когда MLOps нужен и с чего начинать, чтобы не строить лишнего.'
@@ -11,21 +11,21 @@ steps:
     description: 'Версионирование данных и учёт экспериментов, чтобы любой результат можно было повторить.'
     chapters: [mlops/data-versioning, mlops/experiment-tracking]
     labs: [mlops-experiment-tracking]
-  - title: 'Пайплайны и CI'
-    description: 'Автоматизация обучения и проверок, непрерывная интеграция для ML.'
-    chapters: [mlops/pipelines-ci]
-    labs: [mlops-pipelines-ci]
   - title: 'Сервинг'
     description: 'Как отдавать предсказания: пакетный и онлайн-режимы, задержка и пропускная способность.'
     chapters: [mlops/serving]
-  - title: 'Мониторинг и дрейф'
-    description: 'Слежение за качеством и распределением данных после выката.'
-    chapters: [mlops/monitoring-drift]
-    labs: [mlops-monitoring-drift]
   - title: 'Оценка моделей'
     description: 'Как понять, что новая версия лучше: эталонные наборы, доверительные интервалы и сравнение.'
     chapters: [mlops/evaluation]
     labs: [mlops-evaluation]
+  - title: 'Пайплайны и CI'
+    description: 'Автоматизация обучения и проверок, непрерывная интеграция для ML.'
+    chapters: [mlops/pipelines-ci]
+    labs: [mlops-pipelines-ci]
+  - title: 'Мониторинг и дрейф'
+    description: 'Слежение за качеством и распределением данных после выката.'
+    chapters: [mlops/monitoring-drift]
+    labs: [mlops-monitoring-drift]
   - title: 'LLM в эксплуатации'
     description: 'SLO, цена за токен и выбор между своим хостингом и API.'
     chapters: [mlops/llm-serving]
@@ -33,9 +33,18 @@ steps:
     description: 'Промпты, RAG и агенты: какой уровень автономности оправдан задачей.'
     chapters: [mlops/llm-apps]
     labs: [mlops-llm-apps]
+  - title: 'Агенты в проде'
+    description: 'Цикл агента, инструменты и состояние; оценка траекторий и повторяемости.'
+    chapters: [mlops/agents-runtime, mlops/agent-evaluation]
+  - title: 'Стоимость LLM'
+    description: 'Цена за успешную задачу, маршрутизация и кэш, а не цена одного токена.'
+    chapters: [mlops/llm-cost-finops]
   - title: 'Наблюдаемость'
     description: 'Трассировка и метрики цепочек, чтобы найти, где именно всё сломалось.'
     chapters: [mlops/observability]
-  - title: 'Безопасность и приватность'
-    description: 'Недоверенный ввод, полномочия инструментов и утечки данных.'
+  - title: 'Данные и приватность'
+    description: 'Персональные данные, минимизация, хранение логов и безопасная загрузка весов.'
     chapters: [mlops/security-privacy]
+  - title: 'Защита агентов'
+    description: 'Недоверенный ввод, полномочия инструментов и подтверждение человеком для необратимых действий.'
+    chapters: [mlops/agent-guardrails]

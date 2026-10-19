@@ -41,6 +41,9 @@ steps:
     description: 'Промпты, RAG и агенты: какой уровень автономности оправдан задачей.'
     chapters: [mlops/llm-apps]
     labs: [mlops-llm-apps]
+  - title: 'Агенты и стоимость'
+    description: 'Цикл агента и его оценка, затем цена за успешную задачу: когда агент оправдан и сколько он стоит.'
+    chapters: [mlops/agents-runtime, mlops/agent-evaluation, mlops/llm-cost-finops]
   - title: 'Безопасность и приватность'
     description: 'Недоверенный ввод, полномочия инструментов и утечки данных.'
     chapters: [mlops/security-privacy]

@@ -3,7 +3,7 @@ id: compute/profiling
 title: "Профилирование: где реально теряется время"
 topic: compute
 summary: Как найти, где программа на GPU теряет время, почему замер без синхронизации врёт и когда оптимизация не окупается.
-prereqs: [compute/roofline]
+prereqs: [compute/roofline, compute/cuda-basics]
 concepts:
   - { id: profiler, title: Профилировщик }
   - { id: timeline, title: Таймлайн }
