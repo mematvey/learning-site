@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		BLOOM_BITS,
+		BLOOM_HASHES,
 		BTREE_KEYS,
 		PRESET_KEYS,
 		bloomPositions,
@@ -242,7 +243,8 @@
 				{/each}
 			</ul>
 			<p class="db-note">
-				Полоска — фильтр Блума ({BLOOM_BITS} бит): тёмные биты установлены, обводкой отмечены биты ключа.
+				Полоска — учебный фильтр Блума ({BLOOM_BITS} бит, {BLOOM_HASHES} хеша; в реальных системах около
+				10 бит на ключ): тёмные биты установлены, обводкой отмечены биты ключа.
 			</p>
 
 			<p class="db-log-t">Журнал</p>

@@ -51,7 +51,7 @@
 		const ins = bst.inserted ?? 0;
 		const way = bst.path.slice(0, -1);
 		const route = way.length === 0 ? 'корень' : way.join(' → ');
-		let t = `Дерево: вставлен ключ ${ins}, путь ${route} → ${ins}. Уровней: ${bst.levels}.`;
+		let t = `Дерево: вставлен ключ ${ins}, путь ${route} → ${ins}. Высота (рёбра): ${bst.levels - 1}.`;
 		const st = topStep;
 		if (!st) return t;
 		if (st.action === 'fill') {
@@ -192,7 +192,7 @@
 				<desc id="td-tree-desc"
 					>{n === 0
 						? 'Дерево пусто.'
-						: `Уровней: ${bst.levels}. Ключи: ${keys.slice(0, s).join(', ') || 'нет'}.`}</desc
+						: `Высота (рёбра): ${bst.levels - 1}. Ключи: ${keys.slice(0, s).join(', ') || 'нет'}.`}</desc
 				>
 				{#each tree.edges as e, i (i)}
 					<line class="td-edge" x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} />
@@ -252,8 +252,8 @@
 
 	<p class="td-note">
 		<strong>Что заметить:</strong> ключи по возрастанию дают цепочку, а тот же набор в другом порядке
-		даёт три уровня. Куча держит только k кандидатов: новое значение попадает в top-k, только если больше
-		минимума кучи.
+		даёт высоту два (три уровня). Куча держит только k кандидатов: новое значение попадает в top-k, только
+		если больше минимума кучи.
 	</p>
 </figure>
 
