@@ -7,7 +7,6 @@ prereqs: [classic-ml/data-preparation, classic-ml/tabular-vs-neural, classic-ml/
 concepts:
   - { id: baseline, title: Baseline }
   - { id: constant-baseline, title: Константный прогноз }
-  - { id: cost-matrix, title: Матрица стоимостей }
   - { id: train-test-split, title: Разбиение на обучающую и тестовую части }
 keywords:
   - baseline

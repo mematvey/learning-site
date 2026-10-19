@@ -38,8 +38,3 @@
   term_en: coordinate descent
   definition: Метод минимизации, который на каждом шаге меняет одну координату, остальные фиксирует, и проходит координаты по очереди.
   chapter: classic-ml/regularization
-- id: multicollinearity
-  term: мультиколлинеарность
-  term_en: multicollinearity
-  definition: 'Сильная корреляция между признаками. Веса при коррелирующих признаках плохо определены: малые изменения данных перераспределяют вклад между ними.'
-  chapter: classic-ml/regularization

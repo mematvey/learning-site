@@ -5,7 +5,6 @@ topic: cs
 summary: "Как Bloom-фильтр отвечает «точно нет» или «возможно есть» на малой памяти, почему MinHash оценивает сходство множеств и когда Count-Min даёт верхнюю оценку частоты в потоке."
 prereqs: [cs/hash-tables]
 concepts:
-  - { id: bloom-filter, title: Bloom-фильтр }
   - { id: false-positive, title: Ложное срабатывание }
   - { id: sketch, title: Сводка }
   - { id: shingle, title: Шингл }

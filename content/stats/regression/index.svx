@@ -10,7 +10,6 @@ concepts:
   - { id: gauss-markov, title: Теорема Гаусса–Маркова }
   - { id: homoscedasticity, title: Гомоскедастичность }
   - { id: heteroscedasticity, title: Гетероскедастичность }
-  - { id: multicollinearity, title: Мультиколлинеарность }
   - { id: vif, title: Фактор инфляции дисперсии }
 keywords:
   - регрессия

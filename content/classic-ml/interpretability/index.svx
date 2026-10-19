@@ -5,7 +5,6 @@ summary: "Как понять, на что опирается модель: пе
 topic: classic-ml
 prereqs: [classic-ml/gradient-boosting]
 concepts:
-  - { id: feature-importance, title: Важность признака }
   - { id: permutation-importance, title: Перестановочная важность }
   - { id: partial-dependence, title: Частичная зависимость }
   - { id: ice-curve, title: ICE-кривая }

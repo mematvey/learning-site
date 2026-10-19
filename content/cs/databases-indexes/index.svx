@@ -18,7 +18,7 @@ concepts:
   - { id: transaction, title: Транзакция }
   - { id: isolation-level, title: Уровень изоляции }
   - { id: write-amplification, title: Усиление записи }
-  - { id: normalization, title: Нормализация }
+  - { id: db-normalization, title: Нормализация }
 keywords:
   - индекс базы данных
   - B-tree
