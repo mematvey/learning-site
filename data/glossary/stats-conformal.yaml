@@ -1,0 +1,48 @@
+- id: conformal-prediction
+  term: конформное предсказание
+  term_en: conformal prediction
+  definition: 'Способ построить предсказательный интервал вокруг предсказания любой модели с гарантией покрытия при обмениваемости данных. Не требует знать распределение ошибок.'
+  chapter: stats/conformal
+  layer:
+    c: 1
+    d: 1
+- id: prediction-interval
+  term: предсказательный интервал
+  term_en: prediction interval
+  definition: 'Интервал, в который с заданной вероятностью попадает будущее наблюдение. В отличие от доверительного интервала параметра, не сужается до точки при росте выборки, потому что содержит случайную ошибку.'
+  chapter: stats/conformal
+  layer:
+    c: 1
+    d: 1
+- id: coverage
+  term: покрытие
+  term_en: coverage
+  definition: 'Доля случаев, в которых истинное значение попадает в интервал. Конформный интервал гарантирует покрытие не меньше 1 − α в среднем по распределению входов, а не для каждого входа отдельно.'
+  chapter: stats/conformal
+  layer:
+    c: 1
+    d: 1
+- id: calibration-set
+  term: калибровочная выборка
+  term_en: calibration set
+  definition: 'Данные, которых не было в обучении модели. По их ошибкам выбирается ширина интервала. Должна быть отделена от обучения до конца работы.'
+  chapter: stats/conformal
+  layer:
+    c: 1
+    d: 1
+- id: split-conformal
+  term: конформное предсказание с разбиением
+  term_en: split conformal prediction
+  definition: 'Вариант конформного предсказания, в котором данные делятся на обучающую и калибровочную части. Модель обучается один раз, порог считается по калибровочной части.'
+  chapter: stats/conformal
+  layer:
+    c: 1
+    d: 1
+- id: nonconformity-score
+  term: оценка несоответствия
+  term_en: nonconformity score
+  definition: 'Число, которое показывает, насколько наблюдение не похоже на предсказание модели. Для регрессии обычно берут модуль ошибки.'
+  chapter: stats/conformal
+  layer:
+    c: 2
+    d: 1
