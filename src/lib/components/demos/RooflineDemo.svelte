@@ -76,6 +76,10 @@
 	const labelLeft = $derived(px > box.width * 0.55);
 	const labelY = $derived(py < 40 ? py + 26 : py - 12);
 	const labelX = $derived(labelLeft ? px - 10 : px + 10);
+	/** Narrow plots (phones): fewer ticks, and the two ridge labels go to opposite sides of their lines. */
+	const compact = $derived(box.width < 480);
+	const xTicks = $derived(compact ? X_TICKS.filter((_, i) => i % 2 === 0) : X_TICKS);
+	const yTicks = $derived(compact ? Y_TICKS.filter((_, i) => i % 2 === 0) : Y_TICKS);
 
 	function roofPath(u: Unit): string {
 		return roofPoints(u)
@@ -163,7 +167,7 @@
 			>
 			<desc id="rl-desc">{note}</desc>
 
-			{#each Y_TICKS as v (v)}
+			{#each yTicks as v (v)}
 				<line
 					class="rl-grid"
 					x1={box.left}
@@ -176,7 +180,7 @@
 				>
 			{/each}
 
-			{#each X_TICKS as v (v)}
+			{#each xTicks as v (v)}
 				<line
 					class="rl-grid"
 					x1={xToPx(v, box).toFixed(1)}
@@ -207,7 +211,7 @@
 				>TFLOPS</text
 			>
 
-			{#each UNIT_KEYS as u (u)}
+			{#each UNIT_KEYS as u, ui (u)}
 				{@const r = ridgePoint(u)}
 				<line
 					class="rl-ridge rl-ridge-{u}"
@@ -222,8 +226,8 @@
 					class:is-off={u !== unit}
 					x={xToPx(r, box).toFixed(1)}
 					y={box.height - box.bottom - 6}
-					text-anchor="start"
-					dx="4">перегиб {formatNumber(r)}</text
+					text-anchor={compact && ui === 0 ? 'end' : 'start'}
+					dx={compact && ui === 0 ? -4 : 4}>перегиб {formatNumber(r)}</text
 				>
 			{/each}
 
@@ -420,13 +424,14 @@
 		stroke: var(--border);
 		stroke-width: 1;
 	}
+	/* design-system §4/§9: tick and label text is at least 12px; narrow plots drop ticks instead. */
 	.rl-tick,
 	.rl-ridge-t,
 	.rl-peak,
 	.rl-kernel-t {
 		fill: var(--text-muted);
 		font-family: var(--font-mono);
-		font-size: 11px;
+		font-size: 12px;
 	}
 	.rl-axis {
 		fill: var(--text-muted);
