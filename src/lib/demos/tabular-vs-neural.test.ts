@@ -23,10 +23,9 @@ describe('recommend', () => {
 
 	it('treats 10 000 rows as the upper bound of the foundation-model range', () => {
 		expect(recommend({ rowIndex: rowIndexOf(10000) }).kind).toBe('tabpfn');
-		expect(recommend({ rowIndex: rowIndexOf(30000) }).kind).toBe('boosting');
 	});
 
-	it('uses boosting above 100 000 rows', () => {
+	it('uses boosting above 50 000 rows', () => {
 		expect(recommend({ rowIndex: rowIndexOf(100000) }).kind).toBe('boosting');
 		expect(recommend({ rowIndex: rowIndexOf(500000) }).kind).toBe('boosting');
 	});

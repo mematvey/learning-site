@@ -5,9 +5,9 @@
  */
 
 /** Group A of the chapter example: mean 14,75, sample SD about 2,82. */
-export const SAMPLE_A: readonly number[] = [12, 11, 19, 16, 15, 17, 12, 16];
+export const SAMPLE_A: readonly number[] = [13, 12, 18, 11, 16, 15, 14, 19];
 /** Group B of the chapter example: mean 20,875; the difference of means is 6,125. */
-export const SAMPLE_B: readonly number[] = [20, 21, 22, 20, 19, 26, 23, 16];
+export const SAMPLE_B: readonly number[] = [17, 26, 22, 24, 18, 21, 20, 19];
 
 /** Number of bootstrap resamples used by the chapter numbers. */
 export const BOOT_B = 20000;
