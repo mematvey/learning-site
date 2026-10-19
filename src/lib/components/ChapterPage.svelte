@@ -591,6 +591,10 @@
 		margin-bottom: var(--space-3);
 	}
 	h1 {
+		min-width: 0;
+		/* A long Russian word must wrap inside the column on phones instead of widening the page. */
+		overflow-wrap: anywhere;
+		hyphens: auto;
 		font-family: var(--font-serif);
 		font-size: 48px;
 		line-height: 1.1;
@@ -716,6 +720,8 @@
 	}
 	.sources li {
 		margin-bottom: var(--space-2);
+		min-width: 0;
+		overflow-wrap: anywhere;
 	}
 	/* Only the URL wraps anywhere; the rest of the entry keeps normal word wrapping. */
 	.sources .src-url {
