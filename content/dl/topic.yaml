@@ -26,7 +26,7 @@ chapters:
     diffusion,
     finetuning-alignment,
     rl-reasoning,
-    test-time-compute,
     inference-efficiency,
+    test-time-compute,
   ]
 featured: [dl/attention]

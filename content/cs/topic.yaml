@@ -9,6 +9,7 @@ accent:
 chapters:
   - complexity
   - memory-cache
+  - unicode-encoding
   - sorting-searching
   - hash-tables
   - trees-heaps
@@ -17,7 +18,6 @@ chapters:
   - hashing-sketches
   - databases-indexes
   - vector-search
-  - unicode-encoding
   - floating-point
   - serialization-formats
   - concurrency

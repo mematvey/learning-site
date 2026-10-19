@@ -3,7 +3,7 @@ id: compute/distributed-training
 title: "Распределённое обучение: параллелизмы и память"
 topic: compute
 summary: Почему обучение модели не помещается на одну GPU, сколько памяти занимает каждый параметр, как параллелизм данных, тензорный и конвейерный режут работу и что каждый из них передаёт по сети.
-prereqs: [compute/roofline, compute/precision-quantization]
+prereqs: [compute/roofline, compute/precision-quantization, compute/training-memory, compute/collectives]
 concepts:
   - { id: data-parallel, title: Параллелизм данных }
   - { id: tensor-parallel, title: Тензорный параллелизм }
