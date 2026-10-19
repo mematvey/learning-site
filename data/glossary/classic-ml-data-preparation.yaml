@@ -1,0 +1,60 @@
+- id: missing-values
+  term: пропуски
+  term_en: missing values
+  definition: 'Значения признака, которых нет в таблице: не измерили, не заполнили или не применимо. Большинство моделей scikit-learn не принимают их без предварительной обработки.'
+  chapter: classic-ml/data-preparation
+- id: imputation
+  term: импутация
+  term_en: imputation
+  definition: 'Заполнение пропусков расчётным значением, например средним или медианой по обучающей части. Значение учится на данных, поэтому его тоже подгоняют только на обучении.'
+  chapter: classic-ml/data-preparation
+- id: outlier
+  term: выброс
+  term_en: outlier
+  definition: 'Значение, которое заметно отличается от основной массы данных. Может быть ошибкой ввода или редким, но настоящим объектом; сначала выясняют, что это.'
+  chapter: classic-ml/data-preparation
+- id: categorical-feature
+  term: категориальный признак
+  term_en: categorical feature
+  definition: 'Признак, значения которого выбираются из конечного набора категорий, например город или тариф. Модели работают с числами, поэтому категории нужно закодировать.'
+  chapter: classic-ml/data-preparation
+- id: high-cardinality
+  term: высокая кардинальность
+  term_en: high cardinality
+  definition: 'Свойство категориального признака иметь очень много различных значений, например почтовые индексы. One-hot кодирование для него раздувает число столбцов.'
+  chapter: classic-ml/data-preparation
+- id: one-hot-encoding
+  term: one-hot кодирование
+  term_en: one-hot encoding
+  definition: 'Кодирование категории набором столбцов: для каждого значения свой столбец, в строке ровно одна единица. Просто и понятно, но число столбцов равно числу категорий.'
+  chapter: classic-ml/data-preparation
+- id: target-encoding
+  term: target encoding
+  term_en: target encoding
+  definition: 'Кодирование категории числом, посчитанным по целевой переменной, например долей положительных ответов в категории. Даёт один столбец, но без аккуратной подгонки переносит ответ в признаки.'
+  chapter: classic-ml/data-preparation
+- id: smoothing
+  term: сглаживание
+  term_en: smoothing
+  definition: 'Смешивание оценки для категории с общим средним, которое тянет редкие категории к среднему по выборке. Защищает от случайных крайних значений, посчитанных по нескольким объектам.'
+  chapter: classic-ml/data-preparation
+- id: out-of-fold
+  term: out-of-fold
+  term_en: out-of-fold
+  definition: 'Подход, при котором значение для строки вычисляется только по фолдам, в которые эта строка не входит. Так собственный ответ строки не попадает в её признаки.'
+  chapter: classic-ml/data-preparation
+- id: target-leakage
+  term: утечка через целевую переменную
+  term_en: target leakage
+  definition: 'Признак содержит информацию, которой не будет на момент предсказания, например результат события, о котором и идёт предсказание. Модель выглядит точной, но на практике бесполезна.'
+  chapter: classic-ml/data-preparation
+- id: train-test-contamination
+  term: загрязнение обучения тестом
+  term_en: train-test contamination
+  definition: 'Попадание информации из тестовой части в обучение: подгонка преобразований на всей выборке или один и тот же объект в обеих частях. Оценка при этом завышена.'
+  chapter: classic-ml/data-preparation
+- id: sklearn-pipeline
+  term: Pipeline
+  term_en: scikit-learn Pipeline
+  definition: 'Цепочка преобразований и модели в scikit-learn, которая подгоняется и применяется как одно целое. Помогает не забыть преобразование и не подогнать его на тестовых данных.'
+  chapter: classic-ml/data-preparation
