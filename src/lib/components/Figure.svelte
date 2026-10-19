@@ -58,7 +58,7 @@
 		margin-right: 4px;
 	}
 	.notice {
-		margin: var(--space-3) 0 0;
+		margin: var(--space-6) 0 0;
 		font-size: var(--fs-sm);
 		color: var(--text);
 	}
