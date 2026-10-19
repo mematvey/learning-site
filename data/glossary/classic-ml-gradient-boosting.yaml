@@ -1,0 +1,65 @@
+- id: xgboost
+  term: XGBoost
+  term_en: XGBoost
+  definition: 'Библиотека градиентного бустинга с регуляризацией дерева в целевой функции и поддержкой приближения второго порядка.'
+  chapter: classic-ml/gradient-boosting
+- id: lightgbm
+  term: LightGBM
+  term_en: LightGBM
+  definition: 'Библиотека градиентного бустинга, которая ускоряет обучение гистограммным разбиением признаков и ростом дерева по листьям.'
+  chapter: classic-ml/gradient-boosting
+- id: catboost
+  term: CatBoost
+  term_en: CatBoost
+  definition: 'Библиотека градиентного бустинга с встроенной обработкой категориальных признаков через упорядоченную целевую статистику и с упорядоченным бустингом.'
+  chapter: classic-ml/gradient-boosting
+- id: regularized-objective
+  term: регуляризованная целевая функция
+  term_en: regularized objective
+  definition: 'Сумма ошибки на обучении и штрафа за сложность модели. В бустинге штраф растёт с числом листьев дерева и с величиной их весов.'
+  chapter: classic-ml/gradient-boosting
+- id: second-order-approximation
+  term: приближение второго порядка
+  term_en: second-order approximation
+  definition: 'Разложение функции потерь в ряд Тейлора до второй производной. Позволяет описать шаг бустинга через первую и вторую производные ошибки по предсказанию.'
+  chapter: classic-ml/gradient-boosting
+- id: hessian
+  term: гессиан
+  term_en: hessian
+  definition: 'Вторая производная функции потерь по предсказанию. В бустинге это величина h_i для каждого примера; её сумма по листу задаёт кривизну и размер шага.'
+  chapter: classic-ml/gradient-boosting
+- id: leaf-weight
+  term: вес листа
+  term_en: leaf weight
+  definition: 'Число, которое дерево возвращает для всех примеров, попавших в лист. В XGBoost оптимальный вес равен минус сумме градиентов, делённой на сумму гессианов плюс штраф λ.'
+  chapter: classic-ml/gradient-boosting
+- id: histogram-binning
+  term: гистограммное разбиение признаков
+  term_en: histogram binning
+  definition: 'Приём, при котором значения признака заранее сводятся к ограниченному числу корзин. Пороги для разбиения перебираются по корзинам, а не по каждому значению.'
+  chapter: classic-ml/gradient-boosting
+- id: leaf-wise-growth
+  term: рост дерева по листьям
+  term_en: leaf-wise growth
+  definition: 'Стратегия, при которой на каждом шаге расщепляется лист с наибольшим выигрышем, независимо от уровня. Быстрее сходится, но легче переобучается.'
+  chapter: classic-ml/gradient-boosting
+- id: depth-wise-growth
+  term: рост дерева по уровням
+  term_en: depth-wise growth
+  definition: 'Стратегия, при которой все листья одного уровня расщепляются перед следующим уровнем. Дерево получается более сбалансированным.'
+  chapter: classic-ml/gradient-boosting
+- id: ordered-target-statistics
+  term: упорядоченная целевая статистика
+  term_en: ordered target statistics
+  definition: 'Кодировка категории средним значением метки по примерам, которые стоят раньше в случайной перестановке. Пример сам в статистику не входит, поэтому утечки ответа нет.'
+  chapter: classic-ml/gradient-boosting
+- id: ordered-boosting
+  term: упорядоченный бустинг
+  term_en: ordered boosting
+  definition: 'Вариант бустинга из CatBoost, в котором остатки примера считаются моделью, построенной только на предыдущих примерах случайной перестановки.'
+  chapter: classic-ml/gradient-boosting
+- id: prediction-shift
+  term: сдвиг предсказания
+  term_en: prediction shift
+  definition: 'Расхождение между распределением предсказаний на обучающих данных и на новых данных, возникающее из-за того, что модель видела ответы на обучении. Авторы CatBoost считают его источником переобучения в классическом бустинге.'
+  chapter: classic-ml/gradient-boosting
