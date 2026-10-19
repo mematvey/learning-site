@@ -53,7 +53,7 @@ aliases: []
 status: draft
 ---
 
-## Идея {#idea-mle}
+## Идея {#idea}
 
 Метод максимального правдоподобия (<Term id="maximum-likelihood">maximum likelihood</Term>) выбирает значение параметра, при котором наблюдённые данные наиболее вероятны. Информация Фишера (<Term id="fisher-information">Fisher information</Term>) показывает, насколько острым получается этот выбор, то есть насколько точно по данным можно оценить параметр. {#idea-what}
 

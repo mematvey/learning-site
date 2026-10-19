@@ -4,10 +4,14 @@ summary: 'Путь от линейных моделей и деревьев че
 audience: 'Для тех, кто работает с табличными данными и хочет довести модель до выката, а не остановиться на ноутбуке.'
 goal: 'Построить честный baseline, подготовить данные без утечек, выбрать между бустингом и нейросетью и объяснить результат.'
 steps:
-  - title: 'Основа: смещение и разброс'
-    description: 'Зачем сначала понять компромисс модели. Без него не выбрать сложность модели.'
-    chapters: [classic-ml/linear-regression, classic-ml/bias-variance]
-    labs: [classic-ml-linear-regression, classic-ml-bias-variance]
+  - title: 'Основа: линейная алгебра и смещение-разброс'
+    description: 'Язык векторов и матриц, линейная регрессия и компромисс модели. Без него не выбрать сложность модели.'
+    chapters: [classic-ml/linear-algebra-essentials, classic-ml/linear-regression, classic-ml/bias-variance]
+    labs: [classic-ml-linear-algebra-essentials, classic-ml-linear-regression, classic-ml-bias-variance]
+  - title: 'Регуляризация'
+    description: 'L1 и L2 против переобучения: штраф за сложность модели до перехода к классификации.'
+    chapters: [classic-ml/regularization]
+    labs: [classic-ml-regularization]
   - title: 'Классификация'
     description: 'Логистическая регрессия как первый классификатор и основа калибровки вероятностей.'
     chapters: [classic-ml/logistic-regression]
@@ -22,11 +26,11 @@ steps:
     labs: [classic-ml-decision-trees, classic-ml-ensembles]
   - title: 'Подготовка данных'
     description: 'Пропуски, выбросы, категории и утечки: нужны до любой серьёзной модели.'
-    chapters: [classic-ml/data-preparation]
+    chapters: [classic-ml/data-preparation, classic-ml/feature-selection]
     labs: [classic-ml-data-preparation]
   - title: 'Градиентный бустинг'
-    description: 'Основной рабочий инструмент для таблиц: XGBoost, LightGBM и CatBoost.'
-    chapters: [classic-ml/gradient-boosting]
+    description: 'Основной рабочий инструмент для таблиц: XGBoost, LightGBM и CatBoost, и подбор его гиперпараметров.'
+    chapters: [classic-ml/gradient-boosting, classic-ml/hyperparameter-search]
     labs: [classic-ml-gradient-boosting]
   - title: 'Бустинг или нейросеть'
     description: 'Когда таблице нужна нейросеть, а когда хватит бустинга: честное сравнение на 2026 год.'

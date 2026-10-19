@@ -3,7 +3,7 @@ id: classic-ml/knn-svm
 title: "Метод ближайших соседей и SVM"
 topic: classic-ml
 summary: "Классификация по соседям и по максимальному зазору: как работают kNN и SVM, зачем нужны ядра и почему перед обоими методами масштабируют признаки."
-prereqs: [classic-ml/logistic-regression]
+prereqs: [classic-ml/logistic-regression, classic-ml/regularization, classic-ml/data-preparation]
 concepts:
   - { id: k-nearest-neighbors, title: Метод ближайших соседей }
   - { id: svm, title: Метод опорных векторов }

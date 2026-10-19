@@ -3,7 +3,7 @@ id: classic-ml/metrics-validation
 title: "Метрики и валидация"
 topic: classic-ml
 summary: "Precision, recall, ROC и PR-кривые, кросс-валидация и выбор метрики под стоимость ошибок: как честно оценить модель."
-prereqs: []
+prereqs: [classic-ml/logistic-regression]
 concepts:
   - { id: metric, title: Метрика }
   - { id: accuracy, title: Доля верных ответов }

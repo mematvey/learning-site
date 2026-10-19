@@ -3,7 +3,7 @@ id: classic-ml/decision-trees
 title: "Деревья решений"
 topic: classic-ml
 summary: "Как дерево делит пространство признаков на области, по какому критерию выбирает вопросы и почему глубокое дерево переобучается."
-prereqs: [classic-ml/bias-variance]
+prereqs: [classic-ml/bias-variance, classic-ml/logistic-regression]
 concepts:
   - { id: decision-tree, title: Дерево решений }
   - { id: split, title: Разбиение }

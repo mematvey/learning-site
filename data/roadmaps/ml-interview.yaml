@@ -4,10 +4,10 @@ summary: 'Ключевые темы классического машинног�
 audience: 'Для готовящихся к интервью на позиции ML-инженера и дата-сайентиста.'
 goal: 'Уверенно объяснять базовые модели, компромисс смещения и разброса, регуляризацию, метрики, подготовку данных и бустинг.'
 steps:
-  - title: 'Линейная регрессия и смещение-разброс'
-    description: 'Простейшая модель, функция потерь, градиентный спуск и главный компромисс обучения.'
-    chapters: [classic-ml/linear-regression, classic-ml/bias-variance]
-    labs: [classic-ml-linear-regression, classic-ml-bias-variance]
+  - title: 'Линейная алгебра, регрессия и смещение-разброс'
+    description: 'Векторы и матрицы, простейшая модель, функция потерь, градиентный спуск и главный компромисс обучения.'
+    chapters: [classic-ml/linear-algebra-essentials, classic-ml/linear-regression, classic-ml/bias-variance]
+    labs: [classic-ml-linear-algebra-essentials, classic-ml-linear-regression, classic-ml-bias-variance]
   - title: 'Регуляризация и логистическая регрессия'
     description: 'L1 и L2 против переобучения, затем классификация: сигмоида, кросс-энтропия, вероятностный взгляд.'
     chapters: [classic-ml/regularization, classic-ml/logistic-regression]
@@ -17,21 +17,21 @@ steps:
     chapters: [classic-ml/metrics-validation, classic-ml/calibration-imbalance]
     labs: [classic-ml-metrics-validation, classic-ml-calibration-imbalance]
   - title: 'Подготовка данных'
-    description: 'Пропуски, выбросы, категориальные признаки и утечки: то, что ломает модель раньше самой модели.'
-    chapters: [classic-ml/data-preparation]
+    description: 'Пропуски, выбросы, категориальные признаки и утечки: то, что ломает модель раньше самой модели. Отбор признаков без утечки.'
+    chapters: [classic-ml/data-preparation, classic-ml/feature-selection]
     labs: [classic-ml-data-preparation]
-  - title: 'Деревья и ансамбли'
-    description: 'Решающие деревья, бэггинг и градиентный бустинг: почему ансамбли работают лучше одиночных моделей.'
-    chapters: [classic-ml/decision-trees, classic-ml/ensembles, classic-ml/gradient-boosting]
-    labs: [classic-ml-decision-trees, classic-ml-ensembles, classic-ml-gradient-boosting]
   - title: 'Метрические методы и SVM'
     description: 'Ближайшие соседи, опорные векторы и ядра.'
     chapters: [classic-ml/knn-svm]
     labs: [classic-ml-knn-svm]
+  - title: 'Деревья и ансамбли'
+    description: 'Решающие деревья, бэггинг и градиентный бустинг, подбор гиперпараметров: почему ансамбли работают лучше одиночных моделей.'
+    chapters: [classic-ml/decision-trees, classic-ml/ensembles, classic-ml/gradient-boosting, classic-ml/hyperparameter-search]
+    labs: [classic-ml-decision-trees, classic-ml-ensembles, classic-ml-gradient-boosting]
   - title: 'Кластеризация и снижение размерности'
     description: 'Обучение без учителя: k-means и метод главных компонент на основе линейной алгебры.'
-    chapters: [classic-ml/linear-algebra-essentials, classic-ml/clustering-pca]
-    labs: [classic-ml-linear-algebra-essentials, classic-ml-clustering-pca]
+    chapters: [classic-ml/clustering-pca]
+    labs: [classic-ml-clustering-pca]
   - title: 'С чего начать задачу'
     description: 'Baseline, метрика и валидация: как устроить первый эксперимент на табличных данных.'
     chapters: [classic-ml/start-a-task]

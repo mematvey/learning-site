@@ -15,8 +15,8 @@ steps:
     chapters: [stats/distributions]
     labs: [stats-distributions]
   - title: 'Предельные теоремы'
-    description: 'Закон больших чисел и центральная предельная теорема.'
-    chapters: [stats/limit-theorems]
+    description: 'Закон больших чисел, центральная предельная теорема и неравенства, которые оценивают хвосты при малой выборке.'
+    chapters: [stats/limit-theorems, stats/concentration]
     labs: [stats-limit-theorems]
   - title: 'Оценивание параметров'
     description: 'Точечные оценки, их свойства и доверительные интервалы.'
@@ -30,12 +30,12 @@ steps:
     chapters: [stats/mle-fisher, stats/bootstrap-permutation]
     labs: [stats-mle-fisher, stats-bootstrap-permutation]
   - title: 'Байесовский вывод'
-    description: 'Апостериорное распределение вместо p-value: как обновлять веру данными.'
-    chapters: [stats/bayesian-inference]
+    description: 'Апостериорное распределение вместо p-value: как обновлять веру данными. Цепи Маркова и MCMC для моделей без сопряжённости.'
+    chapters: [stats/bayesian-inference, stats/mcmc]
     labs: [stats-bayesian-inference]
   - title: 'Регрессия'
-    description: 'Регрессия как статистический метод: допущения, остатки и интервалы.'
-    chapters: [stats/regression]
+    description: 'Регрессия как статистический метод: допущения, остатки и интервалы. Обобщённые линейные модели и предсказательные интервалы без допущений.'
+    chapters: [stats/regression, stats/glm, stats/conformal]
     labs: [stats-regression]
   - title: 'A/B-тесты'
     description: 'Размер выборки, мощность и честная остановка эксперимента.'

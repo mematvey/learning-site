@@ -16,9 +16,9 @@ steps:
       ]
     labs: [stats-distributions, stats-limit-theorems]
   - title: 'Оценивание параметров'
-    description: 'Точечные оценки и доверительные интервалы.'
-    chapters: [stats/estimation-testing]
-    labs: [stats-estimation-testing]
+    description: 'Точечные оценки, метод максимального правдоподобия и доверительные интервалы.'
+    chapters: [stats/estimation-testing, stats/mle-fisher]
+    labs: [stats-estimation-testing, stats-mle-fisher]
   - title: 'Проверка гипотез'
     description: 'P-value, ошибки первого и второго рода и мощность критерия.'
     chapters: [stats/hypothesis-testing]
@@ -32,8 +32,8 @@ steps:
     labs: [stats-ab-testing]
   - title: 'Бутстрэп и перестановки'
     description: 'Интервалы и p-value без жёстких допущений о распределении: пересэмплирование данных.'
-    chapters: [stats/mle-fisher, stats/bootstrap-permutation]
-    labs: [stats-mle-fisher, stats-bootstrap-permutation]
+    chapters: [stats/bootstrap-permutation]
+    labs: [stats-bootstrap-permutation]
   - title: 'Причинный вывод'
     description: 'Конфаундеры, DAG и контроль переменных: когда эффект в данных не равен причине.'
     chapters: [stats/causal-inference]
