@@ -1,5 +1,5 @@
 id: classic-ml-gradient-boosting
-title: "Бустинг на пнях: сжатие и ранняя остановка на NumPy"
+title: 'Бустинг на пнях: сжатие и ранняя остановка на NumPy'
 chapter: classic-ml/gradient-boosting
 runtime: pyodide
 starter: starter.py

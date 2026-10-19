@@ -63,7 +63,7 @@
 		const out: number[] = [];
 		for (let r = 0; r < SIM_RUNS; r++) {
 			for (let j = 0; j < k; j++) {
-				if (Math.abs(sim.paths[r * k + j]) > zCrit) {
+				if (Math.abs(sim.paths[r * k + j] ?? 0) > zCrit) {
 					out.push(r);
 					break;
 				}
@@ -71,8 +71,10 @@
 		}
 		return out;
 	});
-	const runIdx = $derived(crossing.length ? crossing[pickPos % crossing.length] : 0);
-	const pathZ = $derived(Array.from({ length: looks }, (_, j) => sim.paths[runIdx * looks + j]));
+	const runIdx = $derived(crossing.length ? (crossing[pickPos % crossing.length] ?? 0) : 0);
+	const pathZ = $derived(
+		Array.from({ length: looks }, (_, j) => sim.paths[runIdx * looks + j] ?? 0),
+	);
 	const plotWPath = $derived(wPath >= 160 ? wPath : 360);
 	const zRange = 3.5;
 

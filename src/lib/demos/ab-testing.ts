@@ -181,7 +181,7 @@ export function falsePositiveRate(paths: Float64Array, looks: number, zCrit: num
 	let hits = 0;
 	for (let r = 0; r < runs; r++) {
 		for (let j = 0; j < k; j++) {
-			if (Math.abs(paths[r * k + j]) > zCrit) {
+			if (Math.abs(paths[r * k + j] ?? 0) > zCrit) {
 				hits++;
 				break;
 			}
@@ -216,7 +216,7 @@ export function simulatePeeking(
 	const zCrit = criticalZ(alpha);
 	const zBonferroni = normInv(1 - alpha / (2 * k));
 	const finalOnly = new Float64Array(runs);
-	for (let r = 0; r < runs; r++) finalOnly[r] = paths[r * k + k - 1];
+	for (let r = 0; r < runs; r++) finalOnly[r] = paths[r * k + k - 1] ?? 0;
 	return {
 		single: falsePositiveRate(finalOnly, 1, zCrit),
 		peeking: falsePositiveRate(paths, k, zCrit),

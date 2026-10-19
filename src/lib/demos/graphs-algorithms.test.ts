@@ -45,6 +45,7 @@ describe('bfsSteps', () => {
 				{ id: 'Y', x: 1, y: 0 },
 				{ id: 'Z', x: 0.5, y: 1 },
 			],
+			directed: false,
 			edges: [{ a: 0, b: 1, w: 1 }],
 		};
 		const steps = bfsSteps(g, 0);
@@ -121,10 +122,11 @@ describe('clampWeight and setEdgeWeight', () => {
 
 describe('applyPatch and snapStart', () => {
 	it('ignores invalid fields and snaps the start vertex', () => {
-		const base = { algo: 'bfs' as const, start: 0 };
+		const base = { algo: 'bfs' as const, start: 0, preset: 'plain' as const };
 		expect(applyPatch(base, { algo: 'nope' as never, start: 3 })).toEqual({
 			algo: 'bfs',
 			start: 3,
+			preset: 'plain',
 		});
 		expect(applyPatch(base, { start: 100 }, 7).start).toBe(6);
 		expect(snapStart(Number.NaN, 7)).toBe(0);

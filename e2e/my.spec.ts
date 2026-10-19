@@ -1,4 +1,4 @@
-import { expect, test, type Browser, type Download, type Page } from '@playwright/test';
+import { expect, test, type Browser, type Page } from '@playwright/test';
 import { PROGRESS_FLUSH_MS, gotoReady, reloadReady } from './helpers';
 
 const CHAPTER = '/dl/attention/';
@@ -135,7 +135,7 @@ test('data settings explain browser support and restore a backup after a fresh s
 	await addBookmark(page, comment);
 	await page.waitForTimeout(PROGRESS_FLUSH_MS);
 	await gotoReady(page, '/settings/data/');
-	const [backup] = await Promise.all<Download>([
+	const [backup] = await Promise.all([
 		page.waitForEvent('download', (d) => d.suggestedFilename() === 'backup.json'),
 		page.getByRole('button', { name: 'Скачать all.md и backup.json' }).click(),
 	]);

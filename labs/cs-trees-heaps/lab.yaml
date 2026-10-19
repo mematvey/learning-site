@@ -1,5 +1,5 @@
 id: cs-trees-heaps
-title: "BST и top-k на куче"
+title: 'BST и top-k на куче'
 chapter: cs/trees-heaps
 runtime: pyodide
 starter: starter.py
