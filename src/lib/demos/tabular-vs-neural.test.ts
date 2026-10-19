@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	DEFAULT_STATE,
 	ROW_STEPS,
+	SMALL_ROWS,
 	describeChoice,
 	formatRows,
 	normalizeState,
@@ -12,7 +13,7 @@ import {
 const rowIndexOf = (rows: number): number => ROW_STEPS.indexOf(rows as (typeof ROW_STEPS)[number]);
 
 describe('recommend', () => {
-	it('suggests a tabular foundation model for the default 2 000 rows', () => {
+	it('suggests a tabular foundation model for the default 1 000 rows', () => {
 		expect(recommend(DEFAULT_STATE).kind).toBe('tabpfn');
 	});
 
@@ -21,8 +22,9 @@ describe('recommend', () => {
 		expect(rec.kind).toBe('boosting');
 	});
 
-	it('treats 10 000 rows as the upper bound of the foundation-model range', () => {
-		expect(recommend({ rowIndex: rowIndexOf(10000) }).kind).toBe('tabpfn');
+	it('treats SMALL_ROWS as the upper bound of the foundation-model range', () => {
+		expect(recommend({ rowIndex: rowIndexOf(SMALL_ROWS) }).kind).toBe('tabpfn');
+		expect(recommend({ rowIndex: rowIndexOf(2000) }).kind).toBe('boosting');
 	});
 
 	it('uses boosting above 50 000 rows', () => {

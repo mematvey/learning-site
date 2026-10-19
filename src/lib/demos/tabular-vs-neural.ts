@@ -5,15 +5,18 @@
  * Pure functions only: no DOM, no Svelte.
  */
 
-/** Row counts the rows slider can take. 2 000 is the default, 200 000 switches the answer to boosting. */
+/** Row counts the rows slider can take. 1 000 is the default, 200 000 switches the answer to boosting. */
 export const ROW_STEPS = [
 	300, 1000, 2000, 5000, 10000, 30000, 100000, 200000, 500000, 1000000,
 ] as const;
-export const DEFAULT_ROW_INDEX = 2;
+export const DEFAULT_ROW_INDEX = 1;
 
-/** Upper bound of the row range from the Nature paper on TabPFN (about 10 thousand rows). */
-export const SMALL_ROWS = 10000;
-/** Upper bound of the row range claimed in the TabPFN-2.5 report. Above it, boosting is the default. */
+/**
+ * Orientation threshold for the foundation-model candidate. Not taken from the Nature paper:
+ * the exact evaluated range is an open question (see chapter sources). Change only with a source.
+ */
+export const SMALL_ROWS = 1000;
+/** Upper bound claimed by the authors of TabPFN-2.5 (a claim, not verified here). Above it, boosting is the default. */
 export const LARGE_ROWS = 50000;
 
 /** Share of uninformative features (percent) at which trees are preferred: "half of the columns mean nothing". */
@@ -98,8 +101,8 @@ export function normalizeState(input: Partial<ChooserState> = {}): ChooserState 
  * 2. the decisions must be explained: a linear model or a tree, boosting with explanations.
  * 3. many uninformative features: trees.
  * 4. more than 100 thousand rows: boosting, the report's range is exceeded.
- * 5. up to 10 thousand rows and no strict latency: a tabular foundation model as a candidate.
- * 6. otherwise (10 to 100 thousand rows, or strict latency): boosting.
+ * 5. up to SMALL_ROWS rows and no strict latency: a tabular foundation model as a candidate.
+ * 6. otherwise (between SMALL_ROWS and LARGE_ROWS, or strict latency): boosting.
  */
 export function recommend(input: Partial<ChooserState> = {}): Recommendation {
 	const s = normalizeState(input);
@@ -147,7 +150,7 @@ export function recommend(input: Partial<ChooserState> = {}): Recommendation {
 			kind: 'boosting',
 			title: 'Градиентный бустинг',
 			reasons: [
-				`Строк ${formatRows(rows)}: это выше границы в 50 тысяч из отчёта TabPFN-2.5.`,
+				`Строк ${formatRows(rows)}: это выше границы в 50 тысяч, которую заявляют авторы TabPFN-2.5 (заявление, не проверено).`,
 				'Для таких выборок бустинг остаётся надёжным выбором по умолчанию. Нейросеть можно проверить, если она даёт выигрыш на ваших данных.',
 			],
 		};
@@ -158,7 +161,7 @@ export function recommend(input: Partial<ChooserState> = {}): Recommendation {
 			kind: 'tabpfn',
 			title: 'Табличная foundation-модель как кандидат',
 			reasons: [
-				`Строк ${formatRows(rows)}: это в пределах около 10 тысяч строк, на которых оценивали TabPFN в статье Nature.`,
+				`Строк ${formatRows(rows)}: это в пределах ориентира для табличной foundation-модели (около 1 000 строк).`,
 				'Сравните её с настроенным бустингом на тех же фолдах: результаты на чужих данных не гарантированы.',
 				'Время и память предсказания растут с размером обучающей выборки: их нужно измерить на своём оборудовании.',
 			],
@@ -173,7 +176,7 @@ export function recommend(input: Partial<ChooserState> = {}): Recommendation {
 	}
 	if (rows > SMALL_ROWS) {
 		reasons.push(
-			`Строк ${formatRows(rows)}: больше 10 тысяч, на которых оценивали TabPFN в статье Nature.`,
+			`Строк ${formatRows(rows)}: больше ориентира для табличной foundation-модели (около 1 000 строк).`,
 		);
 	}
 	reasons.push('Бустинг надёжен на таких таблицах и быстр в обучении на одной машине.');
