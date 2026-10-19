@@ -1,0 +1,20 @@
+- id: baseline
+  term: baseline
+  term_en: baseline
+  definition: 'Простейший ориентир, с которым сравнивают модель: константа, правило или линейная модель. Если сложная модель не лучше baseline на той же тестовой части, её сложность не оправдана.'
+  chapter: classic-ml/start-a-task
+- id: constant-baseline
+  term: константный прогноз
+  term_en: constant baseline
+  definition: 'Baseline, который всегда выдаёт одно и то же значение: среднее или медиану для регрессии, самый частый класс для классификации.'
+  chapter: classic-ml/start-a-task
+- id: cost-matrix
+  term: матрица стоимостей
+  term_en: cost matrix
+  definition: 'Таблица стоимостей всех исходов решения: для каждой пары «истинный класс, предсказанный класс» указана цена. Решение выбирают по минимальной ожидаемой стоимости, а не по точности.'
+  chapter: classic-ml/start-a-task
+- id: train-test-split
+  term: разбиение на обучающую и тестовую части
+  term_en: train-test split
+  definition: 'Деление данных до обучения на части, по которым учат модель и проверяют её качество. Делается до любой обработки, которая оценивает статистики по данным.'
+  chapter: classic-ml/start-a-task
