@@ -1,0 +1,30 @@
+- id: oom
+  term: нехватка памяти
+  term_en: out of memory (OOM)
+  definition: Программа пытается выделить больше памяти, чем доступно на карте, и падает с ошибкой. При обучении причина обычно в состояниях оптимизатора и активациях, а не в весах.
+  chapter: compute/training-memory
+- id: optimizer-state
+  term: состояние оптимизатора
+  term_en: optimizer state
+  definition: Величины, которые оптимизатор хранит для каждого параметра между шагами. Для Adam это скользящие средние градиентов и их квадратов, обычно в fp32.
+  chapter: compute/training-memory
+- id: master-weights
+  term: мастер-веса
+  term_en: master weights
+  definition: Копия весов в fp32, с которой оптимизатор делает обновления при смешанной точности. Маленькие обновления не теряются, потому что fp32 точнее fp16.
+  chapter: compute/training-memory
+- id: activation-memory
+  term: память активаций
+  term_en: activation memory
+  definition: Память под промежуточные значения прямого прохода, которые нужны обратному. Растёт с размером батча и длиной последовательности, а не с числом параметров.
+  chapter: compute/training-memory
+- id: gradient-checkpointing
+  term: пересчёт активаций
+  term_en: gradient checkpointing
+  definition: Приём, при котором часть активаций не хранится, а пересчитывается в обратном проходе. Экономит память ценой дополнительного прямого прохода.
+  chapter: compute/training-memory
+- id: memory-budget
+  term: бюджет памяти
+  term_en: memory budget
+  definition: Сумма памяти, которую займут все части обучения на одной карте. Сравнивается с объёмом карты до запуска.
+  chapter: compute/training-memory
