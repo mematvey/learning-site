@@ -66,7 +66,7 @@ def test_relative_error_zero_for_exact_values():
 def test_group_scale_reduces_error_on_outliers():
     # Every 256th value is 20 times larger. Int4 with one scale for the whole vector
     # loses most of the normal values; a group of 32 keeps them.
-    x = make_outlier_vector(4096, seed=0)
+    x = make_outlier_vector(4096)
     q1, s1 = quantize_int(x, 4)
     e_whole = relative_error(x, dequantize_int(q1, s1))
     q32, s32 = quantize_int(x, 4, group_size=32)
@@ -77,7 +77,7 @@ def test_group_scale_reduces_error_on_outliers():
 
 
 def test_int8_group_error_is_small():
-    x = make_outlier_vector(4096, seed=0)
+    x = make_outlier_vector(4096)
     q, s = quantize_int(x, 8, group_size=32)
     err = relative_error(x, dequantize_int(q, s))
     assert err < 0.02, f"int8 with group 32: expected error below 0.02, got {err:.4f}"

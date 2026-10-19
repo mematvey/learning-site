@@ -4,14 +4,40 @@ Rounding to fp16 and bf16, maximum values of formats, and symmetric int
 quantization with one scale per group. Conventions are described in starter.py.
 """
 
+import math
+
 import numpy as np
 
+_MASK32 = 0xFFFFFFFF
 
-def make_outlier_vector(n=4096, seed=0):
-    """Test data: standard normal values, and every 256th value multiplied by 20."""
-    rng = np.random.default_rng(seed)
-    x = rng.standard_normal(n)
-    x[255::256] *= 20.0
+
+def _mulberry32(seed):
+    """Seeded 32-bit generator (mulberry32). The same seed gives the same sequence."""
+    state = seed & _MASK32
+
+    def next_uniform():
+        nonlocal state
+        state = (state + 0x6D2B79F5) & _MASK32
+        t = state
+        t = ((t ^ (t >> 15)) * (t | 1)) & _MASK32
+        t = (t ^ ((t + (((t ^ (t >> 7)) * (t | 61)) & _MASK32)) & _MASK32)) & _MASK32
+        return ((t ^ (t >> 14)) & _MASK32) / 4294967296.0
+
+    return next_uniform
+
+
+def make_outlier_vector(n=4096, seed=20260):
+    """Test data: standard normal values (Box-Muller), and every 256th value times 20.
+
+    The default seed is the vector of the chapter demo.
+    """
+    rnd = _mulberry32(seed)
+    x = np.empty(n)
+    for i in range(n):
+        u1 = max(rnd(), 1e-12)
+        u2 = rnd()
+        z = math.sqrt(-2.0 * math.log(u1)) * math.cos(2.0 * math.pi * u2)
+        x[i] = z * 20.0 if i % 256 == 0 else z
     return x
 
 

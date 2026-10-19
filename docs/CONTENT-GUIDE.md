@@ -168,6 +168,7 @@ status: draft                       # draft | review | published; необяза
 
 $$
 \alpha_{ij} = \mathrm{softmax}_j\!\left(\frac{q_i k_j^\top}{\sqrt{d}}\right), \qquad o_i = \sum_j \alpha_{ij}\, v_j
+$$
 {#eq-attn}
 
 где $d$ размерность ключей.
