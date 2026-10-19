@@ -1,0 +1,40 @@
+- id: eager-mode
+  term: eager-режим
+  term_en: eager mode
+  definition: 'Режим выполнения, при котором Python вызывает каждую операцию сразу, и каждая операция отправляет своё ядро на GPU. Граф операций при этом не строится целиком.'
+  chapter: compute/compile-graphs
+- id: torch-compile
+  term: torch.compile
+  term_en: torch.compile
+  definition: 'Функция PyTorch 2, которая собирает граф из кода модели, применяет оптимизации и генерирует код для ускорителя. Компиляция идёт при первом вызове, дальше результат переиспользуется, пока выполняются охранные условия.'
+  chapter: compute/compile-graphs
+- id: torchdynamo
+  term: TorchDynamo
+  term_en: TorchDynamo
+  definition: 'Часть torch.compile, которая переписывает выполнение Python и выделяет из кода граф операций PyTorch. Места, где выделить граф нельзя, становятся разрывами графа.'
+  chapter: compute/compile-graphs
+- id: graph-break
+  term: разрыв графа
+  term_en: graph break
+  definition: 'Место, где компилятор не может продолжить граф: выполнение возвращается в Python, а граф начинается заново. Слияние операций через разрыв не проходит.'
+  chapter: compute/compile-graphs
+- id: graph-capture
+  term: захват графа
+  term_en: graph capture
+  definition: 'Однократная запись последовательности операций GPU в CUDA-граф. При записи операции не выполняются, а фиксируются адреса и формы тензоров.'
+  chapter: compute/compile-graphs
+- id: graph-replay
+  term: повтор графа
+  term_en: graph replay
+  definition: 'Запуск записанного CUDA-графа одним вызовом. Все операции графа выполняются с теми адресами памяти, которые были зафиксированы при записи.'
+  chapter: compute/compile-graphs
+- id: guard
+  term: охранное условие
+  term_en: guard
+  definition: 'Проверка, что входы совпадают с теми, для которых построен граф: типы, формы и при необходимости значения. Если проверка не проходит, код строится заново.'
+  chapter: compute/compile-graphs
+- id: dynamic-shapes
+  term: динамические формы
+  term_en: dynamic shapes
+  definition: 'Ситуация, когда размеры тензоров меняются от вызова к вызову. Каждая новая форма может потребовать перекомпиляции или отдельного графа.'
+  chapter: compute/compile-graphs
