@@ -1,0 +1,90 @@
+- id: generative-model
+  term: генеративная модель
+  term_en: generative model
+  definition: 'Модель, которая учится распределению обучающих объектов и создаёт новые объекты, похожие на них. Меток не требует: важна общая форма данных.'
+  chapter: dl/diffusion
+- id: gaussian-noise
+  term: гауссов шум
+  term_en: Gaussian noise
+  definition: 'Случайные значения с нормальным распределением: колоколообразная плотность с центром в нуле. Им размывают данные в диффузионных моделях.'
+  chapter: dl/diffusion
+- id: vae
+  term: вариационный автокодировщик
+  term_en: variational autoencoder (VAE)
+  definition: 'Модель из кодировщика и декодера, обученная максимизировать ELBO. Новые объекты получают, сэмплируя код из простого распределения и декодируя его.'
+  chapter: dl/diffusion
+- id: elbo
+  term: нижняя граница правдоподобия
+  term_en: evidence lower bound (ELBO)
+  definition: 'Оценка логарифма правдоподобия данных снизу: log p(x) не меньше ELBO. Состоит из ошибки восстановления и KL-члена; её максимизируют в VAE.'
+  chapter: dl/diffusion
+  layer: { c: 2, d: 1 }
+- id: kl-divergence
+  term: KL-дивергенция
+  term_en: Kullback–Leibler divergence
+  definition: 'Мера различия между распределениями q и p, равная среднему по q логарифма отношения q/p. Неотрицательна, равна нулю только при совпадении распределений и несимметрична.'
+  chapter: dl/diffusion
+  layer: { c: 2, d: 1 }
+- id: reparameterization-trick
+  term: трюк репараметризации
+  term_en: reparameterization trick
+  definition: 'Запись случайной величины как детерминированной функции параметров и независимого шума, например z = μ + σε. Позволяет пропускать градиент через сэмплирование.'
+  chapter: dl/diffusion
+  layer: { c: 2, d: 1 }
+- id: gan
+  term: GAN
+  term_en: generative adversarial network
+  definition: 'Генеративная модель из двух сетей, генератора и дискриминатора, которые обучаются в состязании. Новый объект получается одним проходом генератора.'
+  chapter: dl/diffusion
+- id: generator
+  term: генератор
+  term_en: generator
+  definition: 'Сеть, которая превращает случайный вход в объект. В GAN она учится обманывать дискриминатор.'
+  chapter: dl/diffusion
+- id: discriminator
+  term: дискриминатор
+  term_en: discriminator
+  definition: 'Сеть, которая отличает настоящие объекты от поддельных, созданных генератором. В GAN её цель противоположна цели генератора.'
+  chapter: dl/diffusion
+- id: minimax-game
+  term: минимаксная игра
+  term_en: minimax game
+  definition: 'Задача, в которой один игрок минимизирует функцию, а другой максимизирует её. В GAN генератор минимизирует, дискриминатор максимизирует.'
+  chapter: dl/diffusion
+  layer: { c: 2, d: 1 }
+- id: mode-collapse
+  term: коллапс мод
+  term_en: mode collapse
+  definition: 'Отказ генеративной модели покрывать разнообразие данных: генератор выдаёт небольшой набор похожих объектов вместо всего распределения.'
+  chapter: dl/diffusion
+- id: diffusion-model
+  term: диффузионная модель
+  term_en: diffusion model
+  definition: 'Генеративная модель, которая учится убирать шум по шагам. Прямой процесс портит данные шумом, обратный восстанавливает их из шума.'
+  chapter: dl/diffusion
+- id: forward-process
+  term: прямой процесс
+  term_en: forward process
+  definition: 'Постепенное добавление шума к данным за заданное число шагов по расписанию. Не обучается: задан формулой.'
+  chapter: dl/diffusion
+- id: reverse-process
+  term: обратный процесс
+  term_en: reverse process
+  definition: 'Пошаговое удаление шума, которое выполняет обученная модель. Начинается с шума и заканчивается объектом, похожим на данные.'
+  chapter: dl/diffusion
+- id: noise-schedule
+  term: расписание шума
+  term_en: noise schedule
+  definition: 'Набор коэффициентов по шагам: доля шума, добавляемая на каждом шаге прямого процесса. Определяет, как быстро данные растворяются в шуме.'
+  chapter: dl/diffusion
+- id: noise-prediction
+  term: предсказание шума
+  term_en: noise prediction
+  definition: 'Обучение сети угадывать шум, добавленный к объекту на шаге t. Через такую регрессию обучают диффузионную модель.'
+  chapter: dl/diffusion
+  layer: { c: 2, d: 1 }
+- id: flow-matching
+  term: flow matching
+  term_en: flow matching
+  definition: 'Метод обучения переноса шума в данные: сеть регрессирует скорость точки вдоль заданных путей между шумом и объектами, а генерация интегрирует эту скорость.'
+  chapter: dl/diffusion
