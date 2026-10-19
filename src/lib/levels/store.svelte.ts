@@ -19,7 +19,7 @@ export interface LevelsOptions {
 	progress?: LevelsPersistence | null;
 	/** Query string to read (`?c=&d=`). Defaults to `window.location.search`. */
 	search?: string;
-	/** Writes the applied state to the URL. Defaults to `replaceState` from `$app/navigation`. */
+	/** Writes the applied state to the URL. Defaults to a shallow `goto` with `replace` from `$app/navigation`. */
 	writeUrl?: (state: LevelState) => void;
 }
 

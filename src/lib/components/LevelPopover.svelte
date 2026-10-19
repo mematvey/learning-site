@@ -57,6 +57,7 @@
 	>
 		<span class="lvl-prefix">Уровень:</span>
 		<span class="lvl-label">{levelLabel('c', applied.c)} · {levelLabel('d', applied.d)}</span>
+		<span class="lvl-short" aria-hidden="true">С{applied.c}·Г{applied.d}</span>
 		<span class="caret" aria-hidden="true">▾</span>
 		<kbd class="lvl-key">L</kbd>
 	</button>
@@ -149,6 +150,9 @@
 	.caret {
 		color: var(--topic);
 		font-size: 12px;
+	}
+	.lvl-short {
+		display: none;
 	}
 	.lvl-key {
 		margin-left: 4px;

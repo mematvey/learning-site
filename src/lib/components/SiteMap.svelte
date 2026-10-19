@@ -614,7 +614,7 @@
 		border-radius: 10px;
 		background: var(--surface);
 		color: var(--text);
-		box-shadow: 0 6px 20px rgb(0 0 0 / 0.18);
+		box-shadow: var(--shadow);
 		font-size: var(--fs-sm);
 		line-height: 1.4;
 		pointer-events: none;

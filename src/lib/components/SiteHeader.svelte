@@ -178,6 +178,19 @@
 		overflow: hidden;
 	}
 
+	/* Long titles shrink and end with an ellipsis instead of being cut mid-word. */
+	.crumbs > a,
+	.crumbs > span {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.crumbs > .sep {
+		flex: none;
+	}
+
 	.crumbs a {
 		color: var(--text-muted);
 		text-decoration: none;
@@ -352,16 +365,13 @@
 			display: block;
 		}
 
-		/* Levels: the icon stays, the values are kept for screen readers only. */
+		/* Levels: the short value (С2·Г1, design-system §5) is shown; the full labels stay for screen readers. */
 		.levels-slot :global(.levels-btn) {
-			width: 34px;
-			padding: 0;
-			justify-content: center;
+			padding: 0 var(--space-2);
 		}
 
-		.levels-slot :global(.levels-btn)::before {
-			content: 'Ур';
-			font-size: 13px;
+		.levels-slot :global(.lvl-short) {
+			display: inline;
 			font-weight: 600;
 		}
 
