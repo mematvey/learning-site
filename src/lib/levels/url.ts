@@ -1,4 +1,4 @@
-import { replaceState } from '$app/navigation';
+import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 import { levelsToQuery, type LevelState } from '$lib/contracts/levels';
 
@@ -13,8 +13,12 @@ export function writeLevelsToUrl(state: LevelState): void {
 		for (const [key, value] of new URLSearchParams(levelsToQuery(state))) {
 			url.searchParams.set(key, value);
 		}
-		replaceState(resolve(`${url.pathname}${url.search}${url.hash}` as '/'), {});
+		// Shallow navigation with replace: no load functions run and no history entry is added.
+		void goto(resolve(`${url.pathname}${url.search}${url.hash}` as '/'), {
+			replace: true,
+			shallow: true,
+		}).catch(() => {});
 	} catch {
-		/* replaceState can throw before the app has started or outside the router */
+		/* goto can throw before the app has started or outside the router */
 	}
 }
