@@ -5,7 +5,6 @@ summary: "Почему обращение к памяти может ждать 
 topic: cs
 prereqs: [cs/memory-cache, cs/concurrency]
 concepts:
-  - { id: process, title: Процесс }
   - { id: virtual-address-space, title: Адресное пространство процесса }
   - { id: virtual-memory, title: Виртуальная память }
   - { id: page, title: Страница }

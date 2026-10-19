@@ -1,8 +1,3 @@
-- id: process
-  term: процесс
-  term_en: process
-  definition: Запущенная программа со своим адресным пространством и набором ресурсов, которыми управляет операционная система.
-  chapter: cs/os-memory
 - id: virtual-address-space
   term: адресное пространство процесса
   term_en: virtual address space

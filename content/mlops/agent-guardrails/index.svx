@@ -6,7 +6,6 @@ topic: mlops
 prereqs: [mlops/llm-apps, mlops/agents-runtime, mlops/security-privacy]
 concepts:
   - { id: lethal-trifecta, title: Смертельная тройка }
-  - { id: human-in-the-loop, title: Подтверждение человеком }
   - { id: tool-allowlist, title: Список разрешённых инструментов }
   - { id: data-exfiltration, title: Утечка данных наружу }
 keywords:
