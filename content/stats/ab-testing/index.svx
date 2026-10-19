@@ -3,7 +3,7 @@ id: stats/ab-testing
 title: "A/B-тесты: размер выборки, мощность, подглядывание"
 topic: stats
 summary: "Сколько пользователей нужно, чтобы заметить нужный эффект, и почему проверка результата до конца эксперимента выдаёт ложные победы."
-prereqs: [stats/estimation-testing, stats/regression]
+prereqs: [stats/estimation-testing, stats/hypothesis-testing, stats/regression]
 concepts:
   - { id: sample-size, title: Размер выборки }
   - { id: effect-size, title: Размер эффекта }

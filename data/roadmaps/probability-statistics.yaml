@@ -18,10 +18,13 @@ steps:
     description: 'Закон больших чисел и центральная предельная теорема.'
     chapters: [stats/limit-theorems]
     labs: [stats-limit-theorems]
-  - title: 'Оценивание и проверка гипотез'
-    description: 'Оценки параметров, доверительные интервалы и статистические тесты.'
+  - title: 'Оценивание параметров'
+    description: 'Точечные оценки, их свойства и доверительные интервалы.'
     chapters: [stats/estimation-testing]
     labs: [stats-estimation-testing]
+  - title: 'Проверка гипотез'
+    description: 'P-значение, ошибки первого и второго рода, t-критерий Уэлча и мощность критерия.'
+    chapters: [stats/hypothesis-testing]
   - title: 'Максимальное правдоподобие и бутстрэп'
     description: 'Оценка по правдоподобию, информация Фишера, интервалы через пересэмплирование и перестановочные тесты.'
     chapters: [stats/mle-fisher, stats/bootstrap-permutation]
