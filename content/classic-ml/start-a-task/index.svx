@@ -3,7 +3,7 @@ id: classic-ml/start-a-task
 title: "С чего начать ML-задачу: baseline, метрика, валидация"
 topic: classic-ml
 summary: "Порядок работы над новой табличной или временной задачей: что определить до модели, как разбить данные, с чего начать сравнение и когда модель пора менять."
-prereqs: [classic-ml/data-preparation, classic-ml/tabular-vs-neural, classic-ml/time-series-validation]
+prereqs: [classic-ml/metrics-validation, classic-ml/bias-variance, classic-ml/data-preparation, classic-ml/tabular-vs-neural, classic-ml/time-series-validation]
 concepts:
   - { id: baseline, title: Baseline }
   - { id: constant-baseline, title: Константный прогноз }

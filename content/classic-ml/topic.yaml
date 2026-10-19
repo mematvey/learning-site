@@ -10,11 +10,12 @@ chapters:
   - linear-algebra-essentials
   - linear-regression
   - bias-variance
+  - regularization
   - logistic-regression
   - metrics-validation
-  - regularization
   - data-preparation
   - feature-selection
+  - knn-svm
   - decision-trees
   - ensembles
   - gradient-boosting
@@ -22,9 +23,8 @@ chapters:
   - tabular-vs-neural
   - time-series-validation
   - calibration-imbalance
-  - anomaly-detection
   - interpretability
-  - knn-svm
   - clustering-pca
+  - anomaly-detection
   - ranking-recsys
   - start-a-task

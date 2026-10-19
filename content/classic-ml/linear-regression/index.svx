@@ -3,7 +3,7 @@ id: classic-ml/linear-regression
 title: Линейная регрессия
 topic: classic-ml
 summary: Как подобрать веса, которые предсказывают число по признакам, почему решение выражается формулой и когда линейной модели не хватает.
-prereqs: []
+prereqs: [classic-ml/linear-algebra-essentials]
 concepts:
   - { id: linear-regression, title: Линейная регрессия }
   - { id: feature, title: Признак }
