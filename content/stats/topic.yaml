@@ -21,6 +21,6 @@ chapters:
   - mcmc
   - regression
   - glm
+  - conformal
   - ab-testing
   - causal-inference
-  - conformal
