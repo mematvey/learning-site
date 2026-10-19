@@ -3,7 +3,7 @@ id: stats/bootstrap-permutation
 title: "Бутстрэп и перестановочные тесты"
 summary: "Как оценить разброс статистики, когда формулы не работают: пересэмплировать выборку с возвращением, и как проверить гипотезу, перемешивая метки групп."
 topic: stats
-prereqs: [stats/estimation-testing, stats/mle-fisher]
+prereqs: [stats/estimation-testing, stats/hypothesis-testing, stats/mle-fisher]
 concepts:
   - { id: bootstrap-distribution, title: Бутстрэп-распределение }
   - { id: percentile-interval, title: Процентильный интервал }

@@ -13,6 +13,7 @@ chapters:
   - distributions
   - limit-theorems
   - estimation-testing
+  - hypothesis-testing
   - mle-fisher
   - bootstrap-permutation
   - bayesian-inference

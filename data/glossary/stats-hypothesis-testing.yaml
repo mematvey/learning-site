@@ -1,0 +1,50 @@
+- id: null-hypothesis
+  term: нулевая гипотеза
+  term_en: null hypothesis
+  definition: Утверждение, которое проверяют, обычно «эффекта нет» или «значение равно заданному».
+  chapter: stats/hypothesis-testing
+- id: alternative-hypothesis
+  term: альтернативная гипотеза
+  term_en: alternative hypothesis
+  definition: Утверждение, которое принимают, если данные плохо согласуются с нулевой гипотезой.
+  chapter: stats/hypothesis-testing
+- id: test-statistic
+  term: статистика критерия
+  term_en: test statistic
+  definition: Число, которое считают по выборке и распределение которого известно, если нулевая гипотеза верна.
+  chapter: stats/hypothesis-testing
+- id: p-value
+  term: p-значение
+  term_en: p-value
+  definition: Вероятность получить результат не менее далёкий от нулевой гипотезы, чем наблюдаемый, если нулевая гипотеза верна. Это не вероятность самой гипотезы.
+  chapter: stats/hypothesis-testing
+- id: z-test
+  term: z-критерий
+  term_en: z-test
+  definition: Критерий о среднем, в котором статистика распределена нормально при известной дисперсии.
+  chapter: stats/hypothesis-testing
+- id: significance-level
+  term: уровень значимости
+  term_en: significance level
+  definition: Допустимая вероятность ошибки первого рода α, которую задают до проверки.
+  chapter: stats/hypothesis-testing
+- id: type-i-error
+  term: ошибка первого рода
+  term_en: type I error
+  definition: Отвержение нулевой гипотезы, когда она верна.
+  chapter: stats/hypothesis-testing
+- id: type-ii-error
+  term: ошибка второго рода
+  term_en: type II error
+  definition: Сохранение нулевой гипотезы, когда верна альтернативная. Вероятность обозначается β.
+  chapter: stats/hypothesis-testing
+- id: power
+  term: мощность критерия
+  term_en: power of a test
+  definition: Вероятность отвергнуть нулевую гипотезу, когда верна альтернативная. Равна 1 − β.
+  chapter: stats/hypothesis-testing
+- id: welch-test
+  term: t-критерий Уэлча
+  term_en: Welch's t-test
+  definition: Сравнение средних двух независимых групп, которое не требует равенства дисперсий. Степени свободы считают по формуле Уэлча-Саттертуэйта.
+  chapter: stats/hypothesis-testing

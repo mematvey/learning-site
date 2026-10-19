@@ -15,10 +15,13 @@ steps:
         stats/limit-theorems,
       ]
     labs: [stats-distributions, stats-limit-theorems]
-  - title: 'Оценивание и проверка гипотез'
-    description: 'Доверительные интервалы, p-value и ошибки первого и второго рода.'
+  - title: 'Оценивание параметров'
+    description: 'Точечные оценки и доверительные интервалы.'
     chapters: [stats/estimation-testing]
     labs: [stats-estimation-testing]
+  - title: 'Проверка гипотез'
+    description: 'P-value, ошибки первого и второго рода и мощность критерия.'
+    chapters: [stats/hypothesis-testing]
   - title: 'Регрессия'
     description: 'Регрессия как статистический метод: допущения и интервалы для эффекта.'
     chapters: [stats/regression]

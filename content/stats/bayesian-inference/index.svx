@@ -3,7 +3,7 @@ id: stats/bayesian-inference
 title: "Байесовский вывод: апостериор вместо p-value"
 topic: stats
 summary: "Как задать неопределённость параметра распределением, обновить его по данным и прочитать ответ из апостериорного распределения."
-prereqs: [stats/classical-probability-2, stats/estimation-testing]
+prereqs: [stats/classical-probability-2, stats/estimation-testing, stats/hypothesis-testing]
 concepts:
   - { id: conjugate-prior, title: Сопряжённое распределение }
   - { id: beta-distribution, title: Бета-распределение }

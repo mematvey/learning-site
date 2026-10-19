@@ -3,7 +3,7 @@ id: stats/regression
 title: "Регрессия как статистический метод: допущения, остатки, интервалы"
 summary: "Как по выборке оценить наклон прямой, что означают остатки и когда доверительный интервал и p-значение наклона можно принимать всерьёз."
 topic: stats
-prereqs: [stats/limit-theorems, stats/estimation-testing]
+prereqs: [stats/limit-theorems, stats/estimation-testing, stats/hypothesis-testing]
 concepts:
   - { id: ols, title: Метод наименьших квадратов }
   - { id: intercept, title: Свободный член }
