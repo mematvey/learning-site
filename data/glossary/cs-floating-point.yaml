@@ -1,0 +1,55 @@
+- id: float-number
+  term: число с плавающей точкой
+  term_en: floating-point number
+  definition: 'Запись вещественного числа в виде знака, масштаба (порядка) и значащих бит (мантиссы) фиксированной длины. Большинство вещественных чисел в такой записи получает округление.'
+  chapter: cs/floating-point
+- id: ieee-754
+  term: IEEE 754
+  term_en: IEEE 754
+  definition: 'Стандарт форматов чисел с плавающей точкой и правил округления. Задаёт, какие биты относятся к знаку, порядку и мантиссе для каждого формата.'
+  chapter: cs/floating-point
+- id: half-precision
+  term: половинная точность
+  term_en: half precision
+  definition: 'Формат float16: 16 бит, из них 5 бит порядка и 10 бит мантиссы. Наибольшее конечное значение 65504.'
+  chapter: cs/floating-point
+- id: bfloat16
+  term: bfloat16
+  term_en: bfloat16
+  definition: 'Формат из 16 бит с таким же числом бит порядка, как у float32, и меньшей мантиссой. Диапазон значений у него широкий, точность ниже, чем у float16.'
+  chapter: cs/floating-point
+- id: machine-epsilon
+  term: машинное эпсилон
+  term_en: machine epsilon
+  definition: 'Разность между числом 1 и ближайшим большим представимым числом. Для float64 равно 2^-52, около 2,2·10^-16.'
+  chapter: cs/floating-point
+- id: round-off-error
+  term: ошибка округления
+  term_en: round-off error
+  definition: Разница между точным значением и значением, которое уместилось в конечное число бит. Накапливается при каждой операции.
+  chapter: cs/floating-point
+- id: absorption
+  term: поглощение
+  term_en: absorption
+  definition: Ситуация, когда малое слагаемое меньше половины шага между соседними числами рядом с большим и при сложении полностью теряется.
+  chapter: cs/floating-point
+- id: catastrophic-cancellation
+  term: потеря значимости
+  term_en: catastrophic cancellation
+  definition: Вычитание близких чисел, при котором совпадающие старшие цифры взаимно уничтожаются, а относительная ошибка результата резко растёт.
+  chapter: cs/floating-point
+- id: kahan-summation
+  term: суммирование Кэхэна
+  term_en: Kahan summation
+  definition: 'Компенсированное суммирование: отдельная переменная запоминает младшие биты, потерянные на каждом шаге, и возвращает их в следующий.'
+  chapter: cs/floating-point
+- id: overflow
+  term: переполнение
+  term_en: overflow
+  definition: Результат больше наибольшего конечного числа формата. Вместо него возвращается бесконечность (inf).
+  chapter: cs/floating-point
+- id: numerical-stability
+  term: численная устойчивость
+  term_en: numerical stability
+  definition: Свойство алгоритма, при котором ошибки округления не усиливаются сверх меры. Один и тот же результат можно вычислить устойчивой и неустойчивой формулой.
+  chapter: cs/floating-point
