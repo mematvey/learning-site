@@ -1,0 +1,55 @@
+- id: serialization
+  term: сериализация
+  term_en: serialization
+  definition: 'Превращение структуры данных в памяти в последовательность байтов для файла или сети и обратно (десериализация).'
+  chapter: cs/serialization-formats
+- id: wire-format
+  term: формат передачи
+  term_en: wire format
+  definition: 'Правила, по которым байты записи располагаются в файле или сообщении: что идёт первым, как помечено поле, сколько байт занимает значение.'
+  chapter: cs/serialization-formats
+- id: varint
+  term: varint
+  term_en: variable-length integer
+  definition: 'Целое число переменной длины: по 7 бит значения в каждом байте, старший бит показывает, что за байтом есть продолжение. Малые числа занимают один байт.'
+  chapter: cs/serialization-formats
+- id: field-number
+  term: номер поля
+  term_en: field number
+  definition: 'Целое число, которым поле записи помечено в бинарном формате, например в protobuf. В байтах записи хранится номер, а не имя поля.'
+  chapter: cs/serialization-formats
+- id: schema
+  term: схема
+  term_en: schema
+  definition: 'Описание структуры данных: какие поля есть, какого типа и что означают. Бинарный формат без схемы не читается, потому что в байтах нет имён полей.'
+  chapter: cs/serialization-formats
+- id: schema-evolution
+  term: эволюция схемы
+  term_en: schema evolution
+  definition: 'Изменение схемы во времени так, чтобы новые читатели понимали старые записи, а старые читатели не ломались на новых.'
+  chapter: cs/serialization-formats
+- id: row-storage
+  term: строчная раскладка
+  term_en: row-oriented storage
+  definition: 'Раскладка, при которой все значения одной записи идут подряд. Чтение одной записи целиком дешёвое, а чтение одной колонки по всем записям требует пройти все байты.'
+  chapter: cs/serialization-formats
+- id: columnar-storage
+  term: колоночная раскладка
+  term_en: columnar storage
+  definition: 'Раскладка, при которой значения одной колонки лежат подряд. Запрос, который читает несколько колонок из многих строк, трогает меньше байт.'
+  chapter: cs/serialization-formats
+- id: protobuf
+  term: Protocol Buffers
+  term_en: Protocol Buffers (protobuf)
+  definition: 'Двоичный формат сериализации от Google: схема описывает сообщения, поля помечены номерами, числа записываются как varint.'
+  chapter: cs/serialization-formats
+- id: parquet
+  term: Parquet
+  term_en: Apache Parquet
+  definition: 'Колоночный файловый формат: данные разбиты на группы строк, внутри которых каждая колонка лежит отдельным блоком. Читатель может прочитать только нужные колонки.'
+  chapter: cs/serialization-formats
+- id: apache-arrow
+  term: Apache Arrow
+  term_en: Apache Arrow
+  definition: 'Колоночный формат представления данных в памяти, который разные процессы и языки могут читать без повторной сериализации.'
+  chapter: cs/serialization-formats
