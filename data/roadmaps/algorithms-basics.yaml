@@ -10,6 +10,10 @@ steps:
   - title: 'Память и кэш'
     description: 'Почему асимптотика не всё: локальность данных и кэши процессора.'
     chapters: [cs/memory-cache]
+  - title: 'Кодировки и Unicode'
+    description: 'Байты, UTF-8 и графемы: откуда берутся ошибки в обработке текста.'
+    chapters: [cs/unicode-encoding]
+    labs: [cs-unicode-encoding]
   - title: 'Сортировка и поиск'
     description: 'Основные алгоритмы сортировки и бинарный поиск.'
     chapters: [cs/sorting-searching]
@@ -41,7 +45,3 @@ steps:
     description: 'Поиск ближайших соседей в больших наборах: точный поиск, HNSW, IVF и PQ.'
     chapters: [cs/vector-search]
     labs: [cs-vector-search]
-  - title: 'Кодировки и Unicode'
-    description: 'Байты, UTF-8 и графемы: откуда берутся ошибки в обработке текста.'
-    chapters: [cs/unicode-encoding]
-    labs: [cs-unicode-encoding]

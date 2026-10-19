@@ -36,6 +36,9 @@ steps:
     description: 'fp32, bf16, fp8 и int4: что экономит память и трафик и где начинается потеря качества.'
     chapters: [compute/precision-quantization]
     labs: [compute-precision-quantization]
+  - title: 'Память при обучении'
+    description: 'Что занимает память при обучении и OOM, и как checkpointing и шардирование её экономят.'
+    chapters: [compute/training-memory]
   - title: 'FlashAttention'
     description: 'Внимание без записи матрицы N×N в память: тайлы и онлайн-softmax.'
     chapters: [compute/flash-attention]
@@ -43,6 +46,15 @@ steps:
   - title: 'Инференс LLM на железе'
     description: 'Prefill и decode, KV-кэш и пропускная способность памяти как предел скорости.'
     chapters: [compute/llm-inference]
+  - title: 'KV-кэш и paged attention'
+    description: 'Почему число одновременных запросов упирается в память и как блоки и общий префикс это меняют.'
+    chapters: [compute/kv-cache-paging]
+  - title: 'Коллективные операции'
+    description: 'Обмены между GPU и время на синхронизацию градиентов и активаций.'
+    chapters: [compute/collectives]
   - title: 'Распределённое обучение'
     description: 'Параллелизмы данных, тензора и конвейера, память на GPU и когда одного GPU достаточно.'
     chapters: [compute/distributed-training]
+  - title: 'Компиляция графов'
+    description: 'torch.compile, граф вычислений и CUDA graphs: что даёт слияние ядер и что его ломает.'
+    chapters: [compute/compile-graphs]

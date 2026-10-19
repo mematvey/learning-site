@@ -8,6 +8,10 @@ steps:
     description: 'Как модель учится: шаг против градиента и выбор размера шага.'
     chapters: [dl/gradient-descent]
     labs: [dl-gradient-descent]
+  - title: 'Softmax и температура'
+    description: 'Превращение оценок в вероятности. Без этого непонятно, что делает внимание.'
+    chapters: [dl/softmax]
+    labs: [dl-softmax]
   - title: 'Обратное распространение'
     description: 'Как градиент проходит через слои по цепному правилу. Без этого не понять обучение блока.'
     chapters: [dl/backprop]
@@ -25,10 +29,6 @@ steps:
     chapters: [dl/regularization-dl]
     labs: [dl-regularization-dl]
     optional: true
-  - title: 'Softmax и температура'
-    description: 'Превращение оценок в вероятности. Без этого непонятно, что делает внимание.'
-    chapters: [dl/softmax]
-    labs: [dl-softmax]
   - title: 'Механизм внимания'
     description: 'Запросы, ключи и значения, масштабирование скалярных произведений, взвешенная сумма.'
     chapters: [dl/attention]
