@@ -91,8 +91,11 @@
 				event.preventDefault();
 				choose(hit);
 			}
+		} else if (event.key === 'Escape') {
+			// A native type=search input clears its text on the first Escape; close the dialog at once.
+			event.preventDefault();
+			close();
 		}
-		// Escape is handled by the native <dialog> (closes it).
 	}
 
 	function onBackdropClick(event: MouseEvent): void {
