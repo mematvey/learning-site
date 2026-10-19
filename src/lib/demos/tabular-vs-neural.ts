@@ -14,7 +14,7 @@ export const DEFAULT_ROW_INDEX = 2;
 /** Upper bound of the row range from the Nature paper on TabPFN (about 10 thousand rows). */
 export const SMALL_ROWS = 10000;
 /** Upper bound of the row range claimed in the TabPFN-2.5 report. Above it, boosting is the default. */
-export const LARGE_ROWS = 100000;
+export const LARGE_ROWS = 50000;
 
 /** Share of uninformative features (percent) at which trees are preferred: "half of the columns mean nothing". */
 export const NOISE_THRESHOLD = 50;
@@ -147,7 +147,7 @@ export function recommend(input: Partial<ChooserState> = {}): Recommendation {
 			kind: 'boosting',
 			title: 'Градиентный бустинг',
 			reasons: [
-				`Строк ${formatRows(rows)}: это выше границы в 100 тысяч из отчёта TabPFN-2.5.`,
+				`Строк ${formatRows(rows)}: это выше границы в 50 тысяч из отчёта TabPFN-2.5.`,
 				'Для таких выборок бустинг остаётся надёжным выбором по умолчанию. Нейросеть можно проверить, если она даёт выигрыш на ваших данных.',
 			],
 		};
