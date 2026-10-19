@@ -1,0 +1,15 @@
+- id: search-space
+  term: пространство поиска
+  term_en: search space
+  definition: 'Множество настроек, из которого подбор выбирает вариант: диапазоны или списки значений для каждого гиперпараметра.'
+  chapter: classic-ml/hyperparameter-search
+- id: nested-cv
+  term: вложенная кросс-валидация
+  term_en: nested cross-validation
+  definition: 'Схема, в которой внутренняя проверка выбирает гиперпараметры, а внешняя оценивает всю процедуру подбора на данных, которых подбор не видел.'
+  chapter: classic-ml/hyperparameter-search
+- id: successive-halving
+  term: последовательное деление пополам
+  term_en: successive halving
+  definition: 'Схема подбора, которая стартует много вариантов на малом бюджете, оставляет лучшую часть и повышает бюджет для оставшихся.'
+  chapter: classic-ml/hyperparameter-search
