@@ -1,0 +1,35 @@
+- id: feature-importance
+  term: важность признака
+  term_en: feature importance
+  definition: 'Число, которое показывает, насколько сильно модель опирается на признак. Зависит от метода: одни считают прирост ошибки, другие вклады в предсказание.'
+  chapter: classic-ml/interpretability
+- id: permutation-importance
+  term: перестановочная важность
+  term_en: permutation importance
+  definition: 'Важность признака как рост ошибки модели на контрольной выборке после перемешивания значений этого признака. Работает для любой модели, но при коррелированных признаках занижает их важность.'
+  chapter: classic-ml/interpretability
+- id: partial-dependence
+  term: частичная зависимость
+  term_en: partial dependence
+  definition: 'Среднее предсказание модели при фиксированном значении признака, усреднённое по остальным признакам из данных. Показывает средний эффект признака, но предполагает независимость признаков.'
+  chapter: classic-ml/interpretability
+- id: ice-curve
+  term: ICE-кривая
+  term_en: individual conditional expectation
+  definition: 'Зависимость предсказания от одного признака для одного объекта при изменении этого признака. Набор ICE-кривых показывает, различается ли эффект между объектами.'
+  chapter: classic-ml/interpretability
+- id: shapley-value
+  term: значение Шепли
+  term_en: Shapley value
+  definition: 'Доля вклада игрока в общий выигрыш коалиции, усреднённая по всем порядкам, в которых игроки могут присоединяться. В интерпретируемости — вклад признака в предсказание.'
+  chapter: classic-ml/interpretability
+- id: shap
+  term: SHAP
+  term_en: SHapley Additive exPlanations
+  definition: 'Метод объяснения предсказания для одного объекта через аддитивные вклады признаков на основе значений Шепли. Вклады в сумме дают отклонение предсказания от среднего.'
+  chapter: classic-ml/interpretability
+- id: correlated-features
+  term: коррелированные признаки
+  term_en: correlated features
+  definition: 'Признаки, которые связаны друг с другом, так что один частично несёт информацию о другом. Из-за них перестановочная важность и частичная зависимость могут вводить в заблуждение.'
+  chapter: classic-ml/interpretability
