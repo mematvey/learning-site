@@ -1,0 +1,45 @@
+- id: collective-op
+  term: коллективная операция
+  term_en: collective operation
+  definition: 'Обмен, в котором участвуют все карты группы сразу: суммирование, сбор или рассылка данных. Скорость такой операции определяется связью между картами и способом передачи.'
+  chapter: compute/collectives
+- id: broadcast
+  term: broadcast
+  term_en: broadcast
+  definition: 'Одна карта рассылает свои данные всем остальным, например начальные веса. После операции у всех одинаковая копия.'
+  chapter: compute/collectives
+- id: reduce-scatter
+  term: reduce-scatter
+  term_en: reduce-scatter
+  definition: 'Данные каждой карты суммируются поэлементно, и каждая карта получает только свою долю итоговой суммы. Первая фаза кольцевого all-reduce.'
+  chapter: compute/collectives
+- id: all-gather
+  term: all-gather
+  term_en: all-gather
+  definition: 'Каждая карта передаёт свою долю данных, и у всех карт в конце оказывается полный набор долей. Вторая фаза кольцевого all-reduce.'
+  chapter: compute/collectives
+- id: ring-all-reduce
+  term: кольцевой all-reduce
+  term_en: ring all-reduce
+  definition: 'Суммирование и рассылка результата по кольцу карт: reduce-scatter, затем all-gather. Каждая карта отправляет примерно 2(N−1)/N от объёма данных, при любом числе карт это почти два объёма.'
+  chapter: compute/collectives
+- id: all-to-all
+  term: all-to-all
+  term_en: all-to-all
+  definition: 'Каждая карта отправляет каждой другой свою порцию данных. Нужен, например, когда токены направляются разным экспертам, расположенным на разных картах.'
+  chapter: compute/collectives
+- id: interconnect
+  term: межсоединение
+  term_en: interconnect
+  definition: 'Физический канал связи между картами или серверами: внутри сервера это быстрая шина, между серверами сеть. Его пропускная способность и задержка задают предел для коллективных операций.'
+  chapter: compute/collectives
+- id: bandwidth
+  term: пропускная способность
+  term_en: bandwidth
+  definition: 'Объём данных, который канал передаёт в единицу времени, обычно в ГБ/с. Для больших сообщений время обмена определяется ею.'
+  chapter: compute/collectives
+- id: network-latency
+  term: задержка передачи
+  term_en: latency
+  definition: 'Фиксированное время на один шаг передачи независимо от объёма. Для мелких сообщений и многих шагов задержка может занимать основное время обмена.'
+  chapter: compute/collectives
