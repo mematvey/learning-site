@@ -3,7 +3,7 @@ id: mlops/pipelines-ci
 title: "Пайплайны и CI для моделей"
 topic: mlops
 summary: "Как автоматизировать обучение, тесты и проверку качества модели при каждом изменении: граф шагов, кеш шагов и условие выкладки."
-prereqs: [mlops/experiment-tracking, mlops/data-versioning]
+prereqs: [mlops/experiment-tracking, mlops/data-versioning, mlops/evaluation]
 concepts:
   - { id: pipeline, title: Пайплайн }
   - { id: dag, title: Ациклический граф шагов }

@@ -3,7 +3,7 @@ id: mlops/observability
 title: "Наблюдаемость и отладка LLM-цепочек"
 topic: mlops
 summary: Как понять, где именно медленный или дорогой ответ теряет время и деньги, если запрос проходит через поиск, модель и проверку; трассы, метрики, логи и что из этого писать.
-prereqs: [mlops/monitoring-drift, mlops/llm-serving]
+prereqs: [mlops/monitoring-drift, mlops/llm-serving, mlops/agents-runtime]
 concepts:
   - { id: trace, title: Трасса }
   - { id: span, title: Спан }
