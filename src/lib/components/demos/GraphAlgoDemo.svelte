@@ -8,33 +8,37 @@
 	} from '$lib/contracts/context';
 	import {
 		DEFAULT_ALGO,
+		DEFAULT_PRESET,
 		DEFAULT_START,
-		DEMO_GRAPH,
+		NEG_WEIGHT_MIN,
 		WEIGHT_MAX,
 		WEIGHT_MIN,
 		applyPatch,
 		clampWeight,
+		hasNegative,
 		name,
+		presetGraph,
 		traverse,
 		type AlgoKind,
 		type Graph,
 		type GraphDemoState,
+		type Preset,
 	} from '$lib/demos/graphs-algorithms';
 
-	/** Graph traversal demo: BFS, DFS and Dijkstra step by step. Registers itself as demo `graph-algo`. */
+	/** Graph traversal demo: BFS, DFS, Dijkstra and Bellman-Ford step by step. Registers itself as demo `graph-algo`. */
 	let { initial }: { initial?: Partial<GraphDemoState> } = $props();
 
 	/* Starting values: the reset button returns to them. */
 	/* svelte-ignore state_referenced_locally */
 	const START: GraphDemoState = applyPatch(
-		{ algo: DEFAULT_ALGO, start: DEFAULT_START },
+		{ algo: DEFAULT_ALGO, start: DEFAULT_START, preset: DEFAULT_PRESET },
 		initial ?? {},
 	);
-	const START_WEIGHTS = DEMO_GRAPH.edges.map((e) => e.w);
+	const weightsOf = (p: Preset): number[] => presetGraph(p).edges.map((e) => e.w);
 
 	/* The props only seed the initial state: the demo owns it afterwards. */
 	let st = $state<GraphDemoState>({ ...START });
-	let weights = $state<number[]>([...START_WEIGHTS]);
+	let weights = $state<number[]>(weightsOf(START.preset));
 	/** Index of the recorded step on show. */
 	let idx = $state(0);
 
@@ -42,26 +46,35 @@
 	const CH = 260;
 	const PAD = 26;
 	const R = 14;
-	const ALGOS: AlgoKind[] = ['bfs', 'dfs', 'dijkstra'];
+	const ALGOS: AlgoKind[] = ['bfs', 'dfs', 'dijkstra', 'bellman'];
 	const LABELS: Record<AlgoKind, string> = {
 		bfs: 'BFS (в ширину)',
 		dfs: 'DFS (в глубину)',
 		dijkstra: 'Дейкстра',
+		bellman: 'Беллман–Форд',
 	};
+	const PRESETS: { id: Preset; label: string }[] = [
+		{ id: 'plain', label: 'Обычный граф' },
+		{ id: 'negative', label: 'Отрицательное ребро' },
+	];
 
 	const demos = getContext<DemosContext | undefined>(DEMOS_CONTEXT);
 	const highlight = getContext<HighlightContext | undefined>(HIGHLIGHT_CONTEXT);
 	const hl = $derived(highlight?.hl ?? null);
 
+	const base = $derived(presetGraph(st.preset));
 	const graph = $derived<Graph>({
-		vertices: DEMO_GRAPH.vertices,
-		edges: DEMO_GRAPH.edges.map((e, i) => ({ ...e, w: weights[i] ?? e.w })),
+		vertices: base.vertices,
+		directed: base.directed,
+		edges: base.edges.map((e, i) => ({ ...e, w: weights[i] ?? e.w })),
 	});
 	const steps = $derived(traverse(graph, st.start, st.algo));
 	const last = $derived(steps.length - 1);
 	const cur = $derived(steps[Math.min(idx, last)] ?? steps[0]);
-	const weighted = $derived(st.algo === 'dijkstra');
+	const weighted = $derived(st.algo === 'dijkstra' || st.algo === 'bellman');
 	const showDist = $derived(st.algo !== 'dfs');
+	const negative = $derived(hasNegative(graph));
+	const wMin = $derived(graph.directed ? NEG_WEIGHT_MIN : WEIGHT_MIN);
 
 	/** Layout of vertices in SVG units. */
 	const pos = (i: number) => {
@@ -109,25 +122,29 @@
 			? 'Очередь (первый выходит первым)'
 			: st.algo === 'dfs'
 				? 'Стек (последний выходит первым)'
-				: 'Ожидают (ближайший первым)',
+				: st.algo === 'bellman'
+					? 'Очередь не нужна: проходим все рёбра'
+					: 'Ожидают (ближайший первым)',
 	);
 	const desc = $derived(
 		`Граф из ${graph.vertices.length} вершин, обход ${LABELS[st.algo]} из вершины ${name(graph, st.start)}. ${cur?.text ?? ''}`,
 	);
 
 	function apply(patch: Partial<GraphDemoState>): void {
-		st = applyPatch(st, patch, graph.vertices.length);
+		const next = applyPatch(st, patch, base.vertices.length);
+		if (next.preset !== st.preset) weights = weightsOf(next.preset);
+		st = next;
 		idx = 0;
 	}
 
 	function setWeight(i: number, value: number): void {
-		weights = weights.map((w, j) => (j === i ? clampWeight(value) : w));
+		weights = weights.map((w, j) => (j === i ? clampWeight(value, wMin) : w));
 		idx = 0;
 	}
 
 	function reset(): void {
 		st = { ...START };
-		weights = [...START_WEIGHTS];
+		weights = weightsOf(START.preset);
 		idx = 0;
 	}
 
@@ -159,6 +176,17 @@
 			{/each}
 		</div>
 
+		<div class="gr-group" role="group" aria-label="Граф">
+			{#each PRESETS as p (p.id)}
+				<button
+					type="button"
+					class="gr-seg"
+					aria-pressed={st.preset === p.id}
+					onclick={() => apply({ preset: p.id })}>{p.label}</button
+				>
+			{/each}
+		</div>
+
 		<label class="gr-ctl">
 			<span class="gr-label">Старт</span>
 			<select
@@ -185,6 +213,19 @@
 		<svg class="gr-svg" viewBox="0 0 {CW} {CH}" role="img" aria-labelledby="gr-title gr-desc">
 			<title id="gr-title">Граф из семи вершин с весами рёбер</title>
 			<desc id="gr-desc">{desc}</desc>
+			<defs>
+				<marker
+					id="gr-arrow"
+					viewBox="0 0 10 10"
+					refX="10"
+					refY="5"
+					markerWidth="6"
+					markerHeight="6"
+					orient="auto"
+				>
+					<path d="M0,0 L10,5 L0,10 z" class="gr-arrowhead" />
+				</marker>
+			</defs>
 
 			{#each graph.edges as e, i (i)}
 				{@const p = pos(e.a)}
@@ -193,6 +234,7 @@
 					class="gr-edge"
 					class:gr-edge-tree={isTree(e.a, e.b)}
 					class:gr-edge-hot={isHot(e.a, e.b)}
+					marker-end={graph.directed ? 'url(#gr-arrow)' : undefined}
 					x1={p.x.toFixed(1)}
 					y1={p.y.toFixed(1)}
 					x2={q.x.toFixed(1)}
@@ -256,16 +298,28 @@
 		</table>
 	</div>
 
+	{#if st.algo === 'dijkstra' && negative}
+		<p class="gr-warn" role="status">
+			Есть отрицательное ребро: Дейкстра здесь может дать неверный ответ. Выберите Беллмана–Форда.
+		</p>
+	{/if}
+
 	<fieldset class="gr-weights">
-		<legend class="gr-label">Веса рёбер ({WEIGHT_MIN}–{WEIGHT_MAX})</legend>
+		<legend class="gr-label"
+			>Веса рёбер ({wMin}–{WEIGHT_MAX}){graph.directed
+				? ', рёбра направленные (a → b)'
+				: ''}</legend
+		>
 		<div class="gr-weight-grid">
 			{#each graph.edges as e, i (i)}
 				<label class="gr-wctl">
-					<span class="gr-mono">{name(graph, e.a)}–{name(graph, e.b)}</span>
+					<span class="gr-mono"
+						>{name(graph, e.a)}{graph.directed ? '→' : '–'}{name(graph, e.b)}</span
+					>
 					<input
 						class="gr-num"
 						type="number"
-						min={WEIGHT_MIN}
+						min={wMin}
 						max={WEIGHT_MAX}
 						step="1"
 						value={e.w}
@@ -290,6 +344,10 @@
 			<li>
 				Дейкстра всегда закрывает ближайшую ожидающую вершину. Пока веса неотрицательны, её
 				расстояние уже окончательное. Попробуйте поменять вес рёбер: кратчайший путь перестроится.
+			</li>
+			<li>
+				В пресете «Отрицательное ребро» C → B имеет вес −2. Дейкстра закрывает B с расстоянием 1 и
+				не видит путь через C (0). Беллман–Форд проходит все рёбра и находит 0.
 			</li>
 		</ul>
 	</div>
@@ -562,6 +620,16 @@
 		margin-bottom: var(--space-1);
 		font-family: var(--font-serif);
 		font-weight: 600;
+	}
+
+	.gr-warn {
+		margin-top: var(--space-3);
+		padding: var(--space-2) var(--space-3);
+		border-left: 3px solid var(--cat-3);
+		color: var(--text);
+	}
+	.gr-arrowhead {
+		fill: var(--text-muted);
 	}
 
 	/* Entity highlight from the text (HIGHLIGHT_CONTEXT) */

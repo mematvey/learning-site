@@ -1,13 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import {
 	DEMO_GRAPH,
+	DEMO_NEG_GRAPH,
+	NEG_WEIGHT_MIN,
 	WEIGHT_MAX,
 	WEIGHT_MIN,
 	applyPatch,
+	bellmanFordSteps,
 	bfsSteps,
 	clampWeight,
 	dfsSteps,
 	dijkstraSteps,
+	hasNegative,
+	neighbours,
+	presetGraph,
 	setEdgeWeight,
 	snapStart,
 	traverse,
@@ -89,7 +95,7 @@ describe('traverse', () => {
 	});
 
 	it('starts with the start vertex and ends with no current vertex', () => {
-		for (const algo of ['bfs', 'dfs', 'dijkstra'] as const) {
+		for (const algo of ['bfs', 'dfs', 'dijkstra', 'bellman'] as const) {
 			const steps = traverse(DEMO_GRAPH, 4, algo);
 			expect(steps[0]?.current).toBeNull();
 			expect(steps.at(-1)?.current).toBeNull();
@@ -122,5 +128,66 @@ describe('applyPatch and snapStart', () => {
 		});
 		expect(applyPatch(base, { start: 100 }, 7).start).toBe(6);
 		expect(snapStart(Number.NaN, 7)).toBe(0);
+	});
+
+	it('takes the preset from the patch and keeps it otherwise', () => {
+		const base = { algo: 'bfs' as const, start: 0, preset: 'plain' as const };
+		expect(applyPatch(base, { preset: 'negative' }).preset).toBe('negative');
+		expect(applyPatch(base, { preset: 'other' as never }).preset).toBe('plain');
+	});
+});
+
+describe('negative preset', () => {
+	it('is directed and has one negative edge', () => {
+		expect(presetGraph('negative')).toBe(DEMO_NEG_GRAPH);
+		expect(DEMO_NEG_GRAPH.directed).toBe(true);
+		expect(hasNegative(DEMO_NEG_GRAPH)).toBe(true);
+		expect(hasNegative(DEMO_GRAPH)).toBe(false);
+	});
+
+	it('gives directed adjacency lists', () => {
+		const adj = neighbours(DEMO_NEG_GRAPH);
+		// C (index 2) has edges to B and to D and E, but no edge back to A.
+		expect(adj[2]?.map((x) => x.to)).toEqual([1, 3, 4]);
+		expect(adj[0]?.map((x) => x.to)).toEqual([1, 2]);
+	});
+
+	it('allows negative weights only in the directed graph', () => {
+		const neg = setEdgeWeight(DEMO_NEG_GRAPH, 2, -20);
+		expect(neg.edges[2]?.w).toBe(NEG_WEIGHT_MIN);
+		const plain = setEdgeWeight(DEMO_GRAPH, 0, -5);
+		expect(plain.edges[0]?.w).toBe(WEIGHT_MIN);
+	});
+
+	it('Dijkstra closes B too early, Bellman-Ford finds the path through C', () => {
+		const dj = dijkstraSteps(DEMO_NEG_GRAPH, 0).at(-1);
+		const bf = bellmanFordSteps(DEMO_NEG_GRAPH, 0).at(-1);
+		expect(dj?.dist[1]).toBe(1);
+		expect(bf?.dist[1]).toBe(0);
+		expect(bf?.text).toContain('Оценки больше не меняются');
+	});
+});
+
+describe('bellmanFordSteps', () => {
+	it('matches Dijkstra on the positive undirected graph', () => {
+		const bf = bellmanFordSteps(DEMO_GRAPH, 0).at(-1);
+		expect(bf?.dist).toEqual([0, 4, 2, 6, 3, 8, 7]);
+	});
+
+	it('reports a reachable negative cycle', () => {
+		// Undirected edge with negative weight: walking it back and forth lowers the distance forever.
+		const g: Graph = {
+			vertices: [
+				{ id: 'X', x: 0, y: 0 },
+				{ id: 'Y', x: 1, y: 0 },
+			],
+			edges: [{ a: 0, b: 1, w: -1 }],
+			directed: false,
+		};
+		expect(bellmanFordSteps(g, 0).at(-1)?.text).toContain('отрицательный цикл');
+	});
+
+	it('is reached through traverse', () => {
+		expect(traverse(DEMO_NEG_GRAPH, 0, 'bellman').at(-1)?.dist[1]).toBe(0);
 	});
 });

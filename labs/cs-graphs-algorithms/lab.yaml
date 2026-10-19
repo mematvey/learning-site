@@ -1,5 +1,5 @@
 id: cs-graphs-algorithms
-title: Обход в ширину и Дейкстра на списках смежности
+title: Обход в ширину, Дейкстра и топологическая сортировка
 chapter: cs/graphs-algorithms
 runtime: pyodide
 starter: starter.py
