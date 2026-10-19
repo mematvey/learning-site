@@ -1,0 +1,35 @@
+- id: test-time-compute
+  term: вычисления на инференсе
+  term_en: test-time compute
+  definition: 'Дополнительные вычисления на один запрос уже после обучения модели. Это длиннее рассуждение, несколько выборок ответа или поиск с оценкой вариантов.'
+  chapter: dl/test-time-compute
+- id: best-of-n
+  term: выбор лучшего из N
+  term_en: best-of-N
+  definition: 'Генерируются N независимых ответов, и один из них выбирается по оценке проверяющей функции или модели награды.'
+  chapter: dl/test-time-compute
+- id: majority-vote
+  term: голосование большинством
+  term_en: majority vote
+  definition: 'Из N ответов выбирается тот, который встречается чаще других. Работает, когда ответы можно сравнить на равенство.'
+  chapter: dl/test-time-compute
+- id: self-consistency
+  term: самосогласованность
+  term_en: self-consistency
+  definition: 'Метод, в котором несколько цепочек рассуждения сэмплируются независимо, а итоговый ответ выбирается голосованием по финальным ответам.'
+  chapter: dl/test-time-compute
+- id: verifier
+  term: проверяющая функция
+  term_en: verifier
+  definition: 'Функция, которая оценивает ответ или решение: запуск тестов, проверка по эталону или модель оценки. Качество выбора не может быть выше качества этой функции.'
+  chapter: dl/test-time-compute
+- id: outcome-reward-model
+  term: модель награды по результату
+  term_en: outcome reward model (ORM)
+  definition: 'Модель, которая оценивает итоговый ответ целиком и не смотрит на промежуточные шаги рассуждения.'
+  chapter: dl/test-time-compute
+- id: process-reward-model
+  term: модель награды по шагам
+  term_en: process reward model (PRM)
+  definition: 'Модель, которая оценивает каждый шаг рассуждения и тем самым показывает, на каком шаге решение пошло не так.'
+  chapter: dl/test-time-compute
