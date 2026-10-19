@@ -1,0 +1,65 @@
+- id: concurrency
+  term: конкурентность
+  term_en: concurrency
+  definition: Несколько задач продвигаются в перекрывающиеся промежутки времени; при этом они не обязательно выполняются в один и тот же момент.
+  chapter: cs/concurrency
+- id: parallelism
+  term: параллелизм
+  term_en: parallelism
+  definition: Несколько задач реально выполняются в один и тот же момент на разных вычислительных блоках, например на разных ядрах.
+  chapter: cs/concurrency
+- id: thread
+  term: поток
+  term_en: thread
+  definition: Последовательность команд внутри процесса; потоки одного процесса разделяют общую память.
+  chapter: cs/concurrency
+- id: process
+  term: процесс
+  term_en: process
+  definition: Отдельная программа со своей памятью и своим интерпретатором; процессы не видят память друг друга без явного обмена данными.
+  chapter: cs/concurrency
+- id: race-condition
+  term: гонка
+  term_en: race condition
+  definition: Ошибка, при которой результат зависит от порядка выполнения шагов потоков, а этот порядок программа не контролирует.
+  chapter: cs/concurrency
+- id: atomicity
+  term: атомарность
+  term_en: atomicity
+  definition: Свойство операции, при котором другие потоки видят её целиком или не видят вовсе.
+  chapter: cs/concurrency
+- id: critical-section
+  term: критическая секция
+  term_en: critical section
+  definition: Участок кода, который в каждый момент может выполнять только один поток, потому что он работает с общими данными.
+  chapter: cs/concurrency
+- id: lock
+  term: блокировка
+  term_en: lock
+  definition: Примитив синхронизации, который пускает к критической секции один поток за раз; остальные ждут, пока блокировку отпустят.
+  chapter: cs/concurrency
+- id: deadlock
+  term: взаимная блокировка
+  term_en: deadlock
+  definition: Ситуация, при которой каждый из нескольких потоков ждёт ресурс, удерживаемый другим, и никто не может продолжить.
+  chapter: cs/concurrency
+- id: global-interpreter-lock
+  term: глобальная блокировка интерпретатора
+  term_en: global interpreter lock (GIL)
+  definition: Блокировка в стандартной сборке CPython, которая не даёт нескольким потокам одновременно исполнять Python-код в одном процессе.
+  chapter: cs/concurrency
+- id: free-threading
+  term: сборка без GIL
+  term_en: free-threading build
+  definition: Опциональная сборка CPython без глобальной блокировки интерпретатора, которая позволяет потокам исполнять Python-код параллельно.
+  chapter: cs/concurrency
+- id: event-loop
+  term: цикл событий
+  term_en: event loop
+  definition: Механизм, который исполняет асинхронные задачи по очереди и переключается на готовую задачу, когда текущая ждёт результат.
+  chapter: cs/concurrency
+- id: coroutine
+  term: корутина
+  term_en: coroutine
+  definition: Функция, которая может приостановиться в точке await и отдать управление циклу событий, а затем продолжить с того же места.
+  chapter: cs/concurrency
