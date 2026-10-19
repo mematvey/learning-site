@@ -1,0 +1,25 @@
+- id: concentration-inequality
+  term: неравенство концентрации
+  term_en: concentration inequality
+  definition: 'Неравенство, которое ограничивает сверху вероятность того, что случайная величина или её среднее уходит далеко от ожидания. Обычно требует дополнительных условий: неотрицательности, ограниченности, независимости или конечной дисперсии.'
+  chapter: stats/concentration
+- id: markov-inequality
+  term: неравенство Маркова
+  term_en: Markov's inequality
+  definition: 'Для неотрицательной случайной величины вероятность того, что она не меньше порога t, не больше её ожидания, делённого на t.'
+  chapter: stats/concentration
+- id: chebyshev-inequality
+  term: неравенство Чебышёва
+  term_en: Chebyshev's inequality
+  definition: 'Вероятность того, что случайная величина отклонится от своего ожидания не меньше чем на t, не больше дисперсии, делённой на t в квадрате. Требует конечной дисперсии.'
+  chapter: stats/concentration
+- id: hoeffding-inequality
+  term: неравенство Хёффдинга
+  term_en: Hoeffding's inequality
+  definition: 'Экспоненциальная граница для суммы независимых величин, каждая из которых лежит в известном отрезке. Вероятность большого отклонения среднего падает экспоненциально быстро с ростом числа измерений.'
+  chapter: stats/concentration
+- id: tail-probability
+  term: вероятность хвоста
+  term_en: tail probability
+  definition: 'Вероятность того, что случайная величина попадает далеко от центра своего распределения, например превышает большой порог или уходит от ожидания на заданную величину.'
+  chapter: stats/concentration
