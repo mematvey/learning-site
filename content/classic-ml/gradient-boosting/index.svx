@@ -62,13 +62,6 @@ sources:
     year: 2017
     url: https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree
     supports: [intuition-lightgbm, hw-histogram]
-  - id: lgbtuning
-    kind: doc
-    title: "LightGBM documentation: Parameters Tuning"
-    venue: LightGBM documentation
-    url: https://lightgbm.readthedocs.io/en/latest/Parameters-Tuning.html
-    accessed: 2026-10-18
-    supports: [intuition-lightgbm, impl-libs]
   - id: prokhorenkova2017
     kind: paper
     title: "CatBoost: unbiased boosting with categorical features"
@@ -150,7 +143,7 @@ $$
 
 <Level c={2}>
 
-Пример. Для квадратичной потери $h_i = 1$, а $g_i$ равно минус остаток. Пусть в листе три примера с остатками 1, 2 и 3. При $\lambda = 0$ вес листа равен $(1 + 2 + 3)/3 = 2$. При $\lambda = 1$ он равен $6/(3 + 1) = 1.5$. Штраф сдвигает вес к нулю, и сильнее всего это заметно на листьях с малым числом примеров. {#math-example}
+Пример. Для квадратичной потери вес листа равен сумме остатков в листе, делённой на число примеров плюс $\lambda$. Пусть в листе три примера с остатками 1, 2 и 3. При $\lambda = 0$ вес листа равен $(1 + 2 + 3)/3 = 2$. При $\lambda = 1$ он равен $6/(3 + 1) = 1.5$. Штраф сдвигает вес к нулю, и сильнее всего это заметно на листьях с малым числом примеров. {#math-example}
 
 </Level>
 
@@ -214,7 +207,7 @@ cat_model = CatBoostClassifier(
 cat_model.fit(X_train, y_train, cat_features=cat_cols, eval_set=(X_val, y_val))
 ```
 
-Во всех трёх `learning_rate` это сжатие $\nu$, число деревьев задаёт `n_estimators` (в CatBoost `iterations`), а ранняя остановка прекращает обучение, когда ошибка на валидации перестала падать. В LightGBM сложность ограничивают параметрами `num_leaves` и `max_depth`. Документация советует задавать `num_leaves` не больше $2^{\mathrm{max\_depth}}$ и подбирать оба параметра вместе <Cite id="lgbtuning" />. {#impl-params}
+Во всех трёх `learning_rate` это сжатие $\nu$, число деревьев задаёт `n_estimators` (в CatBoost `iterations`), а ранняя остановка прекращает обучение, когда ошибка на валидации перестала падать. В LightGBM сложность ограничивают параметрами `num_leaves` и `max_depth`. Оба ограничивают сложность дерева, поэтому их подбирают вместе. Фрагмент проверен запуском на xgboost 3.4.1, lightgbm 4.7.0 и catboost 1.2.10: параметр `early_stopping_rounds` в конструкторе XGBoost и CatBoost, а в LightGBM ранняя остановка идёт через callback `lgb.early_stopping`. {#impl-params}
 
 </Level>
 
