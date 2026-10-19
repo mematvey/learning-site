@@ -1,0 +1,40 @@
+- id: tabular-data
+  term: табличные данные
+  term_en: tabular data
+  definition: 'Данные в виде таблицы: строка описывает объект, столбец признак. Признаки бывают числовыми и категориальными, порядок строк обычно не важен.'
+  chapter: classic-ml/tabular-vs-neural
+- id: inductive-bias
+  term: индуктивное смещение
+  term_en: inductive bias
+  definition: 'Предпочтения модели о том, какие решения ей естественны. Дерево предпочитает разбиения по одному признаку, свёрточная сеть предпочитает локальные связи в изображении.'
+  chapter: classic-ml/tabular-vs-neural
+- id: rotation-invariance
+  term: инвариантность к повороту
+  term_en: rotation invariance
+  definition: 'Свойство модели давать тот же ответ, если повернуть пространство признаков. На таблицах с осмысленными осями такая инвариантность часто мешает.'
+  chapter: classic-ml/tabular-vs-neural
+- id: uninformative-feature
+  term: нерелевантный признак
+  term_en: uninformative feature
+  definition: 'Признак, который не связан с целевой переменной или только добавляет шум. В таблицах таких столбцов часто много.'
+  chapter: classic-ml/tabular-vs-neural
+- id: foundation-model
+  term: foundation-модель
+  term_en: foundation model
+  definition: 'Большая модель, обученная на широких данных и затем применяемая к новым задачам, часто без обучения с нуля.'
+  chapter: classic-ml/tabular-vs-neural
+- id: tabular-foundation-model
+  term: табличная foundation-модель
+  term_en: tabular foundation model
+  definition: 'Модель, предобученная на множестве синтетических таблиц. Обучающую выборку новой задачи она получает как входной контекст и предсказывает без обновления своих весов.'
+  chapter: classic-ml/tabular-vs-neural
+- id: in-context-learning
+  term: обучение в контексте
+  term_en: in-context learning
+  definition: 'Модель решает новую задачу по примерам, переданным вместе с запросом, без обновления весов.'
+  chapter: classic-ml/tabular-vs-neural
+- id: prior-fitted-network
+  term: сеть, обученная на априорных данных
+  term_en: prior-data fitted network
+  definition: 'Нейросеть, обученная на большом числе синтетических датасетов из заданного априорного распределения. В одном прямом проходе она предсказывает по обучающей выборке, переданной как контекст.'
+  chapter: classic-ml/tabular-vs-neural
