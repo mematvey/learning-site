@@ -42,8 +42,9 @@ def test_hidden_ece_in_unit_interval():
 
 def test_hidden_platt_recovers_known_parameters():
     rng = np.random.default_rng(2)
-    scores = rng.normal(size=20000)
-    p_true = 1.0 / (1.0 + np.exp(-(2.0 * scores - 1.0)))
+    scores = rng.uniform(0.001, 0.999, size=20000)
+    logit = np.log(scores / (1.0 - scores))
+    p_true = 1.0 / (1.0 + np.exp(-(2.0 * logit - 1.0)))
     labels = (rng.uniform(size=scores.size) < p_true).astype(float)
     a, b = fit_platt(scores, labels)
     assert abs(a - 2.0) < 0.15, f"slope a far from the generating value, got {a:.3f}"
@@ -52,16 +53,16 @@ def test_hidden_platt_recovers_known_parameters():
 
 def test_hidden_platt_keeps_order():
     rng = np.random.default_rng(3)
-    scores = np.sort(rng.normal(size=300))
-    labels = (rng.uniform(size=300) < 1.0 / (1.0 + np.exp(-scores))).astype(float)
+    scores = np.sort(rng.uniform(0.02, 0.98, size=300))
+    labels = (rng.uniform(size=300) < scores).astype(float)
     a, b = fit_platt(scores, labels)
     p = platt_probs(scores, a, b)
     assert np.all(np.diff(p) >= 0), "monotone calibration must not change the order of objects"
 
 
 def test_hidden_platt_probs_stay_finite():
-    p = platt_probs([-1e6, 0.0, 1e6], a=50.0, b=0.0)
-    assert np.all(np.isfinite(p)), "platt_probs must not overflow for large inputs"
+    p = platt_probs([1e-300, 0.5, 1.0 - 1e-16], a=50.0, b=0.0)
+    assert np.all(np.isfinite(p)), "platt_probs must not overflow for scores at the ends of (0, 1)"
     assert_close(p, [0.0, 0.5, 1.0], atol=1e-9, message="saturated sigmoid values are wrong")
 
 

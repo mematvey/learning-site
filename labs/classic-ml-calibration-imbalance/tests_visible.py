@@ -30,13 +30,14 @@ def test_ece_is_zero_for_constant_matching_frequency():
 
 
 def test_platt_probs_hand_case():
-    p = platt_probs([0.0, 2.0], a=1.0, b=-1.0)
-    expected = [1.0 / (1.0 + np.e), np.e / (1.0 + np.e)]
+    # logit(0.5) = 0 gives sigmoid(-1); logit(0.75) = ln 3 gives sigmoid(ln 3 - 1) = 3 / (e + 3).
+    p = platt_probs([0.5, 0.75], a=1.0, b=-1.0)
+    expected = [1.0 / (1.0 + np.e), 3.0 / (np.e + 3.0)]
     assert_close(p, expected, atol=1e-9, message=f"expected {expected}, got {p.tolist()}")
 
 
 def test_fit_platt_lowers_log_loss():
-    scores = np.array([-2.0, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0])
+    scores = np.array([0.12, 0.27, 0.38, 0.45, 0.55, 0.62, 0.73, 0.88])
     labels = np.array([0, 0, 1, 0, 0, 1, 1, 1])
     a, b = fit_platt(scores, labels)
     assert a > 0, f"positive scores must map to higher probability, got a = {a:.3f}"

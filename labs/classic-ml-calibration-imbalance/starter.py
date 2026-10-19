@@ -18,9 +18,10 @@ def expected_calibration_error(probs, labels, n_bins=10):
 
 
 def platt_probs(scores, a, b):
-    """Platt-scaled probabilities sigmoid(a * scores + b), shape (n,).
+    """Platt-scaled probabilities sigmoid(a * logit(s) + b), shape (n,).
 
-    Must not overflow for large positive or negative inputs.
+    scores: model outputs s in (0, 1), shape (n,). logit(s) = ln(s / (1 - s)).
+    Clip s to [1e-12, 1 - 1e-12] before the logit. Must not overflow for large inputs.
     """
     raise NotImplementedError
 
@@ -29,7 +30,8 @@ def fit_platt(scores, labels, lr=0.1, steps=5000):
     """Fit a and b by plain gradient descent on the mean log-loss.
 
     Start from a = 1, b = 0 and take `steps` steps of size `lr`.
-    The gradient of the mean log-loss is mean((p - y) * s) for a and mean(p - y) for b,
+    Let x = logit(scores) (clip the scores as in platt_probs).
+    The gradient of the mean log-loss is mean((p - y) * x) for a and mean(p - y) for b,
     where p = platt_probs(scores, a, b). Return (a, b) as floats.
     """
     raise NotImplementedError

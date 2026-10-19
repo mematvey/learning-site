@@ -28,11 +28,14 @@ def expected_calibration_error(probs, labels, n_bins=10):
 
 
 def platt_probs(scores, a, b):
-    """Platt-scaled probabilities sigmoid(a * scores + b), shape (n,).
+    """Platt-scaled probabilities sigmoid(a * logit(s) + b), shape (n,).
 
-    Must not overflow for large positive or negative inputs.
+    scores: model outputs s in (0, 1), shape (n,). logit(s) = ln(s / (1 - s)).
+    Clip s to [1e-12, 1 - 1e-12] before the logit. Must not overflow for large inputs.
     """
-    z = np.clip(a * np.asarray(scores, dtype=np.float64) + b, -500.0, 500.0)
+    s = np.clip(np.asarray(scores, dtype=np.float64), 1e-12, 1.0 - 1e-12)
+    x = np.log(s / (1.0 - s))
+    z = np.clip(a * x + b, -500.0, 500.0)
     return 1.0 / (1.0 + np.exp(-z))
 
 
@@ -40,15 +43,17 @@ def fit_platt(scores, labels, lr=0.1, steps=5000):
     """Fit a and b by plain gradient descent on the mean log-loss.
 
     Start from a = 1, b = 0 and take `steps` steps of size `lr`.
-    The gradient of the mean log-loss is mean((p - y) * s) for a and mean(p - y) for b,
+    Let x = logit(scores) (clip the scores as in platt_probs).
+    The gradient of the mean log-loss is mean((p - y) * x) for a and mean(p - y) for b,
     where p = platt_probs(scores, a, b). Return (a, b) as floats.
     """
-    s = np.asarray(scores, dtype=np.float64)
+    s = np.clip(np.asarray(scores, dtype=np.float64), 1e-12, 1.0 - 1e-12)
+    x = np.log(s / (1.0 - s))
     y = np.asarray(labels, dtype=np.float64)
     a, b = 1.0, 0.0
     for _ in range(steps):
         err = platt_probs(s, a, b) - y
-        a -= lr * np.mean(err * s)
+        a -= lr * np.mean(err * x)
         b -= lr * np.mean(err)
     return float(a), float(b)
 
