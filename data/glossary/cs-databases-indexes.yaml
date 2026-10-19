@@ -1,0 +1,70 @@
+- id: database-index
+  term: индекс
+  term_en: index
+  definition: 'Отдельная структура, которая по значению столбца находит строки без чтения всей таблицы. Ускоряет поиск, но замедляет вставку и изменение строк, потому что сам индекс тоже нужно обновить.'
+  chapter: cs/databases-indexes
+- id: full-table-scan
+  term: полное сканирование таблицы
+  term_en: full table scan
+  definition: 'Чтение всех строк таблицы для ответа на запрос. Время растёт вместе с числом строк; индекс позволяет его избежать.'
+  chapter: cs/databases-indexes
+- id: db-page
+  term: страница
+  term_en: page
+  definition: 'Блок фиксированного размера, в котором база хранит данные и узлы индекса. Читается и пишется целиком; в PostgreSQL по умолчанию 8 КБ.'
+  chapter: cs/databases-indexes
+- id: b-tree
+  term: B-дерево
+  term_en: B-tree
+  definition: 'Сбалансированное дерево, где каждый узел занимает страницу, ключи в узле отсортированы, а все листья на одной глубине. Обновляет страницы на месте.'
+  chapter: cs/databases-indexes
+- id: lsm-tree
+  term: LSM-дерево
+  term_en: log-structured merge-tree
+  definition: 'Структура, которая пишет изменения в память и сливает отсортированные файлы на диск в фоне. Запись дешёвая, чтение может проверять несколько файлов.'
+  chapter: cs/databases-indexes
+- id: memtable
+  term: memtable
+  term_en: memtable
+  definition: 'Отсортированная структура в памяти, куда LSM-дерево пишет новые записи. Когда она заполняется, её сбрасывают на диск в виде SSTable.'
+  chapter: cs/databases-indexes
+- id: sstable
+  term: SSTable
+  term_en: sorted string table
+  definition: 'Неизменяемый отсортированный файл на диске, который создаёт LSM-дерево из memtable. Внутри ключи по порядку, поэтому файл можно искать и сливать.'
+  chapter: cs/databases-indexes
+- id: compaction
+  term: компакция
+  term_en: compaction
+  definition: 'Фоновое слияние SSTable в более крупные файлы. Убирает старые версии ключей и удалённые записи, но тратит чтение и запись на перенос данных.'
+  chapter: cs/databases-indexes
+- id: bloom-filter
+  term: фильтр Блума
+  term_en: Bloom filter
+  definition: 'Вероятностная структура из битов и хеш-функций. Может сказать «ключа точно нет» или «возможно есть», ложных отрицаний не бывает, ложные срабатывания возможны.'
+  chapter: cs/databases-indexes
+- id: wal
+  term: журнал предзаписи
+  term_en: write-ahead log, WAL
+  definition: 'Журнал, в который база сначала записывает описание изменений. Страницы данных пишутся на диск только после записи журнала; после сбоя журнал проигрывают заново.'
+  chapter: cs/databases-indexes
+- id: transaction
+  term: транзакция
+  term_en: transaction
+  definition: 'Группа изменений, которые применяются все вместе или не применяются совсем. Атомарность транзакции обеспечивает журнал предзаписи.'
+  chapter: cs/databases-indexes
+- id: isolation-level
+  term: уровень изоляции
+  term_en: isolation level
+  definition: 'Правило, какие изменения других одновременных транзакций видны в текущей. Более строгий уровень даёт более предсказуемый результат ценой блокировок или повторов транзакций.'
+  chapter: cs/databases-indexes
+- id: write-amplification
+  term: усиление записи
+  term_en: write amplification
+  definition: 'Отношение объёма данных, записанных на диск, к объёму данных, которые приложение действительно изменило. Растёт, когда одни и те же данные переписываются при слияниях или обновлениях страниц.'
+  chapter: cs/databases-indexes
+- id: normalization
+  term: нормализация
+  term_en: normalization
+  definition: 'Разнесение данных по таблицам так, чтобы каждое значение хранилось в одном месте. Уменьшает дублирование и ошибки при обновлении, но требует соединений при чтении.'
+  chapter: cs/databases-indexes
