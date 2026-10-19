@@ -47,6 +47,15 @@ sources:
     url: https://doi.org/10.1080/00031305.2016.1154108
     accessed: 2026-10-16
     supports: [mistake-pvalue, mistake-select]
+  - id: dunn1961
+    kind: paper
+    title: "Multiple Comparisons among Means"
+    authors: Dunn O. J.
+    venue: Journal of the American Statistical Association, 56(293), 52-64
+    year: 1961
+    url: https://doi.org/10.1080/01621459.1961.10482090
+    accessed: 2026-10-19
+    supports: [mistake-multi]
   - id: welch1947
     kind: paper
     title: "The Generalization of «Student's» Problem when Several Different Population Variances are Involved"
@@ -193,7 +202,7 @@ print(f"z = {z:.3f}, p = {two_sided_p(z):.3f}")
 </Callout>
 
 - Считать, что «не отвергли нулевую гипотезу» значит «доказали, что её нет». При малой мощности настоящий эффект часто пропускают. <Cite id="openintro4" /> {#mistake-power}
-- Запускать много проверок и принимать каждую значимую без поправки. Если проверки независимы и их $m$, вероятность хотя бы одной ложной тревоги равна $1 - (1-\alpha)^m$. При $m = 20$ и $\alpha = 0{,}05$ это около $0{,}64$. Поправка Бонферрони делит $\alpha$ на $m$: по неравенству объединения вероятность ложной тревоги тогда не превосходит $\alpha$. {#mistake-multi}
+- Запускать много проверок и принимать каждую значимую без поправки. Если проверки независимы и их $m$, вероятность хотя бы одной ложной тревоги равна $1 - (1-\alpha)^m$. При $m = 20$ и $\alpha = 0{,}05$ это около $0{,}64$. Поправка Бонферрони делит $\alpha$ на $m$: по неравенству объединения вероятность ложной тревоги тогда не превосходит $\alpha$. <Cite id="dunn1961" /> {#mistake-multi}
 - Выбирать критерий или порог после просмотра данных и публиковать только удачный результат. Тогда заявленный уровень значимости уже не соответствует реальной ошибке. <Cite id="wasserstein2016" /> {#mistake-select}
 
 ## Когда применять и когда нет {#when}
