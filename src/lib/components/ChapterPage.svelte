@@ -379,6 +379,24 @@
 
 	const labCount = $derived(chapter.labs?.length ?? 0);
 	const sources: Source[] = $derived(chapter.sources ?? []);
+
+	/**
+	 * Joins source fields into one line. Each field is separated by ". " unless the text so far
+	 * already ends with terminal punctuation; the line always ends with a single period.
+	 */
+	function sourceLine(s: Source): string {
+		const parts = [s.authors, s.title, s.venue, s.year]
+			.map((p) => (p === undefined ? '' : String(p).trim()))
+			.filter((p) => p.length > 0);
+		const terminal = /[.!?…]$/;
+		let out = '';
+		for (const p of parts) {
+			if (out === '') out = p;
+			else out += (terminal.test(out) ? ' ' : '. ') + p;
+		}
+		if (out === '') return '';
+		return terminal.test(out) ? out : `${out}.`;
+	}
 </script>
 
 <div class="chapter" data-topic={chapter.topic}>
@@ -472,7 +490,7 @@
 					<ol>
 						{#each sources as s (s.id)}
 							<li id="src-{s.id}">
-								{[s.authors, s.title, s.venue, s.year].filter(Boolean).join('. ')}.
+								{sourceLine(s)}
 								<a class="src-url" href={s.url} rel="external">{s.url}</a>
 							</li>
 						{/each}
