@@ -1,0 +1,40 @@
+- id: policy
+  term: политика
+  term_en: policy
+  definition: Правило, по которому модель выбирает ответ; для языковой модели это распределение вероятностей ответов на запрос при текущих весах.
+  chapter: dl/rl-reasoning
+- id: policy-gradient
+  term: градиент политики
+  term_en: policy gradient
+  definition: Оценка градиента ожидаемой награды по параметрам политики, которую можно посчитать по ответам, сэмплированным самой моделью.
+  chapter: dl/rl-reasoning
+- id: advantage
+  term: преимущество
+  term_en: advantage
+  definition: Величина, которая показывает, насколько ответ лучше или хуже среднего ответа для того же запроса; положительное преимущество повышает вероятность ответа, отрицательное понижает.
+  chapter: dl/rl-reasoning
+- id: ppo
+  term: PPO
+  term_en: proximal policy optimization
+  definition: Алгоритм обучения с подкреплением, который ограничивает сдвиг политики за один шаг через клиппинг отношения вероятностей.
+  chapter: dl/rl-reasoning
+- id: grpo
+  term: GRPO
+  term_en: group relative policy optimization
+  definition: Вариант PPO без отдельного критика; преимущество считается по группе ответов на один запрос, как нормировка их наград.
+  chapter: dl/rl-reasoning
+- id: kl-penalty
+  term: штраф KL
+  term_en: KL penalty
+  definition: Слагаемое в цели, которое штрафует расхождение текущей политики и опорной модели и не даёт ей уйти слишком далеко.
+  chapter: dl/rl-reasoning
+- id: reference-model
+  term: опорная модель
+  term_en: reference model
+  definition: Замороженная копия модели, с которой сравнивается обучаемая политика в штрафе KL.
+  chapter: dl/rl-reasoning
+- id: rlvr
+  term: RLVR
+  term_en: reinforcement learning with verifiable rewards
+  definition: Обучение с подкреплением, в котором награда выдаётся проверкой ответа (сравнением с эталоном или запуском тестов), а не моделью предпочтений.
+  chapter: dl/rl-reasoning
