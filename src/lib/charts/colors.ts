@@ -1,19 +1,20 @@
 /**
- * Colour helpers for charts. Rendering always uses CSS tokens (`var(--…)`, `color-mix`);
- * the hex values below mirror `src/lib/theme/tokens.css` and are used only to decide
- * which ink (text colour) is readable on a computed background.
+ * Colour helpers for charts. Rendering always uses CSS tokens (`var(--…)`, `color-mix`).
+ * The hex values below are the only JS copy of the tokens in `src/lib/theme/tokens.css`; they are
+ * used to decide which ink is readable on a computed background. `colors.test.ts` fails when they
+ * drift from the CSS file, so the CSS stays the single source of truth.
  */
 
 export type Theme = 'light' | 'dark';
 
-/** Sequential scale endpoints, `--seq-0` → `--seq-1`. */
-const SEQ: Record<Theme, [string, string]> = {
+/** Sequential scale endpoints, `--seq-0` → `--seq-1` (mirror of tokens.css). */
+export const SEQ: Record<Theme, [string, string]> = {
 	light: ['#f5eee2', '#27408b'],
 	dark: ['#221f1a', '#9db7ff'],
 };
 
-/** Ink candidates: `dark` is the dark text colour, `light` the light one, per theme. */
-const INK_HEX: Record<Theme, { dark: string; light: string }> = {
+/** Ink candidates: `dark` is the dark text colour, `light` the light one, per theme (mirror of tokens.css). */
+export const INK_HEX: Record<Theme, { dark: string; light: string }> = {
 	light: { dark: '#211c16', light: '#fffdf8' },
 	dark: { dark: '#15130f', light: '#eee7db' },
 };
