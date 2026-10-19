@@ -1,0 +1,55 @@
+- id: vector
+  term: вектор
+  term_en: vector
+  definition: Упорядоченный набор чисел; в геометрии точка или стрелка из начала координат. В ML так описывают объект через его признаки.
+  chapter: classic-ml/linear-algebra-essentials
+- id: matrix
+  term: матрица
+  term_en: matrix
+  definition: Прямоугольная таблица чисел. Матрица размера m×n задаёт линейное преобразование из n-мерного пространства в m-мерное.
+  chapter: classic-ml/linear-algebra-essentials
+- id: linear-map
+  term: линейное отображение
+  term_en: linear map
+  definition: Преобразование векторов, которое сохраняет сложение и умножение на число. Прямые при нём остаются прямыми, а начало координат остаётся на месте.
+  chapter: classic-ml/linear-algebra-essentials
+- id: eigenvector
+  term: собственный вектор
+  term_en: eigenvector
+  definition: Ненулевой вектор, который матрица только растягивает или сжимает, сохраняя или меняя знак его направления. Для квадратной матрицы A это вектор v с Av = λv.
+  chapter: classic-ml/linear-algebra-essentials
+- id: eigenvalue
+  term: собственное число
+  term_en: eigenvalue
+  definition: Коэффициент λ, на который матрица растягивает свой собственный вектор. Для квадратной матрицы находится из уравнения det(A − λI) = 0.
+  chapter: classic-ml/linear-algebra-essentials
+- id: singular-value
+  term: сингулярное число
+  term_en: singular value
+  definition: Неотрицательное число σ, которое показывает, насколько матрица растягивает данные вдоль одного из ортогональных направлений. Сингулярные числа записываются в порядке убывания.
+  chapter: classic-ml/linear-algebra-essentials
+- id: orthogonal-matrix
+  term: ортогональная матрица
+  term_en: orthogonal matrix
+  definition: Квадратная матрица Q, столбцы которой попарно перпендикулярны и имеют единичную длину. Она сохраняет длины векторов, то есть только поворачивает или отражает пространство.
+  chapter: classic-ml/linear-algebra-essentials
+- id: transpose
+  term: транспонирование
+  term_en: transpose
+  definition: Операция, которая меняет местами строки и столбцы матрицы. Транспонированная матрица обозначается A с верхним индексом T.
+  chapter: classic-ml/linear-algebra-essentials
+- id: frobenius-norm
+  term: норма Фробениуса
+  term_en: Frobenius norm
+  definition: Корень из суммы квадратов всех элементов матрицы. Для матрицы равна корню из суммы квадратов её сингулярных чисел.
+  chapter: classic-ml/linear-algebra-essentials
+- id: low-rank-approximation
+  term: низкоранговое приближение
+  term_en: low-rank approximation
+  definition: Матрица того же размера, но меньшего ранга, которая ближе всего к исходной по выбранной норме. Строится из первых сингулярных троек.
+  chapter: classic-ml/linear-algebra-essentials
+- id: eckart-young
+  term: теорема Эккарта–Янга
+  term_en: Eckart–Young theorem
+  definition: Утверждение, что лучшее приближение матрицы матрицей ранга k по норме Фробениуса получается обрезкой сингулярного разложения до первых k слагаемых.
+  chapter: classic-ml/linear-algebra-essentials
