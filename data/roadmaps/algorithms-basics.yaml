@@ -1,12 +1,15 @@
 id: algorithms-basics
 title: 'Основы алгоритмов'
-summary: 'Раздел CS по порядку: сложность, сортировка, хеш-таблицы, графы и кэш.'
+summary: 'Раздел CS по порядку: сложность, память, сортировка, хеш-таблицы, деревья, графы, динамика, базы данных и векторный поиск.'
 audience: 'Для тех, кто хочет закрыть базу по алгоритмам и структурам данных.'
 goal: 'Оценивать сложность, выбирать подходящую структуру данных и понимать влияние памяти на скорость.'
 steps:
   - title: 'Сложность'
     description: 'O-нотация и оценка времени и памяти алгоритма.'
     chapters: [cs/complexity]
+  - title: 'Память и кэш'
+    description: 'Почему асимптотика не всё: локальность данных и кэши процессора.'
+    chapters: [cs/memory-cache]
   - title: 'Сортировка и поиск'
     description: 'Основные алгоритмы сортировки и бинарный поиск.'
     chapters: [cs/sorting-searching]
@@ -15,10 +18,30 @@ steps:
     description: 'Хеш-функции, коллизии и амортизированная стоимость операций.'
     chapters: [cs/hash-tables]
     labs: [cs-hash-tables]
+  - title: 'Деревья и кучи'
+    description: 'BST, B-дерево и приоритетная очередь: как хранить упорядоченные данные.'
+    chapters: [cs/trees-heaps]
+    labs: [cs-trees-heaps]
+  - title: 'Динамика и жадность'
+    description: 'Рекурсия, мемоизация и жадные решения: как не пересчитывать одно и то же.'
+    chapters: [cs/dp-greedy]
+    labs: [cs-dp-greedy]
   - title: 'Графы'
     description: 'Обход в ширину и глубину, кратчайшие пути.'
     chapters: [cs/graphs-algorithms]
     labs: [cs-graphs-algorithms]
-  - title: 'Память и кэш'
-    description: 'Почему асимптотика не всё: локальность данных и кэши процессора.'
-    chapters: [cs/memory-cache]
+  - title: 'Хеш-структуры для больших данных'
+    description: 'Bloom-фильтр, MinHash и Count-Min: приближённые ответы за малую память.'
+    chapters: [cs/hashing-sketches]
+    labs: [cs-hashing-sketches]
+  - title: 'Базы данных и индексы'
+    description: 'Индекс, B-дерево и LSM: почему запрос быстрый или медленный.'
+    chapters: [cs/databases-indexes]
+  - title: 'Векторный поиск'
+    description: 'Поиск ближайших соседей в больших наборах: точный поиск, HNSW, IVF и PQ.'
+    chapters: [cs/vector-search]
+    labs: [cs-vector-search]
+  - title: 'Кодировки и Unicode'
+    description: 'Байты, UTF-8 и графемы: откуда берутся ошибки в обработке текста.'
+    chapters: [cs/unicode-encoding]
+    labs: [cs-unicode-encoding]

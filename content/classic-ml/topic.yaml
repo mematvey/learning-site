@@ -1,8 +1,26 @@
 id: classic-ml
 title: Classic ML
-description: 'Классические модели и методы: от линейной регрессии до ансамблей.'
+description: 'Классические модели и методы: от линейной алгебры и регрессии до бустинга, табличных данных и интерпретации.'
 order: 2
 icon: tree
 accent:
   topic: { light: '#0d9488', dark: '#2dd4bf' }
   soft: { light: '#f0fdf4', dark: '#0f2a28' }
+chapters:
+  - linear-algebra-essentials
+  - linear-regression
+  - bias-variance
+  - logistic-regression
+  - metrics-validation
+  - regularization
+  - data-preparation
+  - decision-trees
+  - ensembles
+  - gradient-boosting
+  - tabular-vs-neural
+  - time-series-validation
+  - calibration-imbalance
+  - interpretability
+  - knn-svm
+  - clustering-pca
+  - start-a-task

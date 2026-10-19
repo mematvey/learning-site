@@ -1,0 +1,47 @@
+id: tabular-ml-production
+title: 'Табличный ML от данных до продакшена'
+summary: 'Путь от линейных моделей и деревьев через подготовку данных и бустинг к валидации, калибровке, интерпретации и первой рабочей задаче.'
+audience: 'Для тех, кто работает с табличными данными и хочет довести модель до выката, а не остановиться на ноутбуке.'
+goal: 'Построить честный baseline, подготовить данные без утечек, выбрать между бустингом и нейросетью и объяснить результат.'
+steps:
+  - title: 'Основа: смещение и разброс'
+    description: 'Зачем сначала понять компромисс модели. Без него не выбрать сложность модели.'
+    chapters: [classic-ml/linear-regression, classic-ml/bias-variance]
+    labs: [classic-ml-linear-regression, classic-ml-bias-variance]
+  - title: 'Классификация'
+    description: 'Логистическая регрессия как первый классификатор и основа калибровки вероятностей.'
+    chapters: [classic-ml/logistic-regression]
+    labs: [classic-ml-logistic-regression]
+  - title: 'Метрики и валидация'
+    description: 'Без честной оценки любое сравнение моделей бессмысленно: сначала научиться мерить.'
+    chapters: [classic-ml/metrics-validation]
+    labs: [classic-ml-metrics-validation]
+  - title: 'Деревья и ансамбли'
+    description: 'Решающие деревья и бэггинг: сильный базовый уровень для табличных данных.'
+    chapters: [classic-ml/decision-trees, classic-ml/ensembles]
+    labs: [classic-ml-decision-trees, classic-ml-ensembles]
+  - title: 'Подготовка данных'
+    description: 'Пропуски, выбросы, категории и утечки: нужны до любой серьёзной модели.'
+    chapters: [classic-ml/data-preparation]
+    labs: [classic-ml-data-preparation]
+  - title: 'Градиентный бустинг'
+    description: 'Основной рабочий инструмент для таблиц: XGBoost, LightGBM и CatBoost.'
+    chapters: [classic-ml/gradient-boosting]
+    labs: [classic-ml-gradient-boosting]
+  - title: 'Бустинг или нейросеть'
+    description: 'Когда таблице нужна нейросеть, а когда хватит бустинга: честное сравнение на 2026 год.'
+    chapters: [classic-ml/tabular-vs-neural]
+  - title: 'Временные ряды'
+    description: 'Если данные упорядочены по времени, обычная кросс-валидация врёт: разбиения по времени.'
+    chapters: [classic-ml/time-series-validation]
+    labs: [classic-ml-time-series-validation]
+  - title: 'Калибровка и дисбаланс'
+    description: 'Насколько вероятности модели можно доверять и что делать, когда класс редкий.'
+    chapters: [classic-ml/calibration-imbalance]
+    labs: [classic-ml-calibration-imbalance]
+  - title: 'Интерпретируемость'
+    description: 'Важность признаков, PDP и SHAP: объяснить модель бизнесу и проверить, что она не ловит мусор.'
+    chapters: [classic-ml/interpretability]
+  - title: 'Первая задача целиком'
+    description: 'Baseline, метрика и валидация собираются в один воспроизводимый эксперимент.'
+    chapters: [classic-ml/start-a-task]

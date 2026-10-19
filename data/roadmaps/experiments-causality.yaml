@@ -1,0 +1,36 @@
+id: experiments-causality
+title: 'Эксперименты и причинность'
+summary: 'От оценок и проверки гипотез к A/B-тестам, бутстрэпу и причинному выводу: как отличить эффект от совпадения.'
+audience: 'Для аналитиков и инженеров, которые проводят эксперименты и хотят понимать, что именно они измерили.'
+goal: 'Планировать эксперимент с нужной мощностью, честно оценивать неопределённость и отличать корреляцию от причины.'
+steps:
+  - title: 'Основа: вероятность и распределения'
+    description: 'Условная вероятность, случайные величины, распределения и предельные теоремы: язык для любого теста.'
+    chapters:
+      [
+        stats/classical-probability,
+        stats/classical-probability-2,
+        stats/random-variables,
+        stats/distributions,
+        stats/limit-theorems,
+      ]
+    labs: [stats-distributions, stats-limit-theorems]
+  - title: 'Оценивание и проверка гипотез'
+    description: 'Доверительные интервалы, p-value и ошибки первого и второго рода.'
+    chapters: [stats/estimation-testing]
+    labs: [stats-estimation-testing]
+  - title: 'Регрессия'
+    description: 'Регрессия как статистический метод: допущения и интервалы для эффекта.'
+    chapters: [stats/regression]
+    labs: [stats-regression]
+  - title: 'A/B-тесты'
+    description: 'Размер выборки, мощность и правила остановки эксперимента.'
+    chapters: [stats/ab-testing]
+    labs: [stats-ab-testing]
+  - title: 'Бутстрэп и перестановки'
+    description: 'Интервалы и p-value без жёстких допущений о распределении: пересэмплирование данных.'
+    chapters: [stats/mle-fisher, stats/bootstrap-permutation]
+    labs: [stats-mle-fisher, stats-bootstrap-permutation]
+  - title: 'Причинный вывод'
+    description: 'Конфаундеры, DAG и контроль переменных: когда эффект в данных не равен причине.'
+    chapters: [stats/causal-inference]
