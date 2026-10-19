@@ -1,0 +1,70 @@
+- id: process
+  term: процесс
+  term_en: process
+  definition: Запущенная программа со своим адресным пространством и набором ресурсов, которыми управляет операционная система.
+  chapter: cs/os-memory
+- id: virtual-address-space
+  term: адресное пространство процесса
+  term_en: virtual address space
+  definition: Набор адресов, которые видит программа. Эти адреса ОС и процессор переводят в места физической памяти.
+  chapter: cs/os-memory
+- id: virtual-memory
+  term: виртуальная память
+  term_en: virtual memory
+  definition: Механизм, при котором адреса программы переводятся в физические адреса. Процесс не видит чужую память и не знает, где его данные лежат физически.
+  chapter: cs/os-memory
+- id: page
+  term: страница
+  term_en: page
+  definition: Блок адресного пространства фиксированного размера; в этой главе 4 КБ. ОС переносит данные между RAM и диском целыми страницами.
+  chapter: cs/os-memory
+- id: page-frame
+  term: кадр
+  term_en: page frame
+  definition: Блок физической памяти того же размера, что страница. В кадр загружается содержимое страницы.
+  chapter: cs/os-memory
+- id: page-table
+  term: таблица страниц
+  term_en: page table
+  definition: Структура, которая для каждой страницы хранит номер кадра или признак, что страницы сейчас нет в RAM.
+  chapter: cs/os-memory
+- id: page-fault
+  term: страничное прерывание
+  term_en: page fault
+  definition: Прерывание при обращении к странице, которую нельзя использовать без участия ОС, например потому что её нет в RAM. ОС обрабатывает его и возвращает управление процессу.
+  chapter: cs/os-memory
+- id: tlb
+  term: буфер трансляции адресов
+  term_en: translation lookaside buffer
+  definition: Небольшой кэш внутри процессора для недавних переводов адресов. Попадание даёт перевод без обхода таблицы страниц в памяти.
+  chapter: cs/os-memory
+- id: demand-paging
+  term: подкачка по требованию
+  term_en: demand paging
+  definition: Стратегия, при которой страница загружается с диска в RAM только при первом обращении к ней.
+  chapter: cs/os-memory
+- id: working-set
+  term: рабочий набор
+  term_en: working set
+  definition: Множество страниц, к которым процесс обращается в ближайшем временном окне.
+  chapter: cs/os-memory
+- id: thrashing
+  term: трэшинг
+  term_en: thrashing
+  definition: Состояние, когда система тратит основное время на подкачку страниц, а полезной работы почти нет, потому что рабочие наборы не помещаются в RAM.
+  chapter: cs/os-memory
+- id: page-cache
+  term: кэш страниц
+  term_en: page cache
+  definition: Область RAM, где ОС хранит содержимое прочитанных с диска файлов. Повторное чтение берёт данные отсюда.
+  chapter: cs/os-memory
+- id: system-call
+  term: системный вызов
+  term_en: system call
+  definition: Запрос программы к ядру ОС, например на чтение файла. Переход в ядро и обратно имеет накладные расходы.
+  chapter: cs/os-memory
+- id: memory-mapped-file
+  term: отображённый в память файл
+  term_en: memory-mapped file
+  definition: Файл, страницы которого связаны с адресным пространством процесса. Байты файла читаются как обычная память, а загрузку страниц делает ОС.
+  chapter: cs/os-memory
