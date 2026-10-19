@@ -27,7 +27,7 @@ sources:
   - id: williams2009
     kind: paper
     title: "Roofline: An Insightful Visual Performance Model for Multicore Architectures"
-    authors: Williams S., Waterman A., Patterson D.
+    authors: Williams S., Waterman A., Patterson D
     venue: Communications of the ACM, 52(4)
     year: 2009
     url: https://dl.acm.org/doi/abs/10.1145/1498765.1498785
@@ -50,7 +50,7 @@ sources:
   - id: hier2020
     kind: paper
     title: "Hierarchical Roofline Analysis: How to Collect Data using Performance Tools on Intel CPUs and NVIDIA GPUs"
-    authors: Yang C. et al.
+    authors: Yang C. et al
     year: 2020
     url: https://arxiv.org/abs/2009.02449
     accessed: 2026-10-18

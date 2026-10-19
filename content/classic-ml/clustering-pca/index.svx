@@ -34,7 +34,7 @@ sources:
   - id: arthur2007kmeanspp
     kind: paper
     title: "k-means++: The Advantages of Careful Seeding"
-    authors: Arthur D., Vassilvitskii S.
+    authors: Arthur D., Vassilvitskii S
     venue: ACM-SIAM Symposium on Discrete Algorithms (SODA)
     year: 2007
     url: https://theory.stanford.edu/~sergei/papers/kMeansPP-soda.pdf
@@ -42,7 +42,7 @@ sources:
   - id: aloise2009nphard
     kind: paper
     title: "NP-hardness of Euclidean sum-of-squares clustering"
-    authors: Aloise D., Deshpande A., Hansen P., Popat P.
+    authors: Aloise D., Deshpande A., Hansen P., Popat P
     venue: Machine Learning
     year: 2009
     url: https://doi.org/10.1007/s10994-009-5103-0

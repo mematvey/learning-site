@@ -27,7 +27,7 @@ sources:
   - id: grinstead1997
     kind: book
     title: Introduction to Probability
-    authors: Grinstead C. M., Snell J. L.
+    authors: Grinstead C. M., Snell J. L
     venue: AMS
     year: 1997
     url: https://math.dartmouth.edu/~prob/prob/prob.pdf

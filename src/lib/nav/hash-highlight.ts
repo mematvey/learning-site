@@ -1,3 +1,4 @@
+import { isVisibleText } from '$lib/notes/text';
 import { parseBlockHash } from './links';
 
 /** CSS class that flashes a block after navigation to its link. Styled in `prose.css`. */
@@ -24,7 +25,8 @@ function headerOffset(): number {
 
 /**
  * Finds the quote inside the block and marks it with a CSS Custom Highlight (no DOM changes).
- * Matching is exact: a quote that no longer exists in the text is simply not highlighted.
+ * Matching is exact over reader-visible text (tooltips and MathML copies are skipped); a quote
+ * that no longer exists in the text is simply not highlighted.
  */
 function highlightQuote(block: HTMLElement, quote: string): void {
 	const api = highlightApi();
@@ -33,6 +35,7 @@ function highlightQuote(block: HTMLElement, quote: string): void {
 	const parts: Array<{ node: Text; start: number }> = [];
 	let text = '';
 	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+		if (!isVisibleText(node as Text)) continue;
 		parts.push({ node: node as Text, start: text.length });
 		text += node.textContent ?? '';
 	}
@@ -89,7 +92,9 @@ export function scrollToHashTarget(root: HTMLElement): () => void {
 		window.scrollTo({ top: Math.max(0, top), behavior: reduce ? 'auto' : 'smooth' });
 		flash(block);
 		highlightApi()?.registry.delete(QUOTE_HIGHLIGHT_NAME);
-		if (parsed.quote) highlightQuote(block, parsed.quote);
+		// Formulas and figures are highlighted as a whole block: their quote is TeX or a caption.
+		const wholeBlock = block.matches('.math-display') || block.hasAttribute('data-figure-id');
+		if (parsed.quote && !wholeBlock) highlightQuote(block, parsed.quote);
 	};
 
 	frame = requestAnimationFrame(() => {

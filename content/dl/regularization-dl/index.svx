@@ -22,7 +22,7 @@ sources:
   - id: srivastava2014
     kind: paper
     title: "Dropout: A Simple Way to Prevent Neural Networks from Overfitting"
-    authors: Srivastava N. et al.
+    authors: Srivastava N. et al
     venue: Journal of Machine Learning Research
     year: 2014
     url: https://jmlr.org/papers/v15/srivastava14a.html
@@ -31,7 +31,7 @@ sources:
   - id: goodfellow2016
     kind: doc
     title: "Deep Learning, глава 7: Regularization for Deep Learning"
-    authors: Goodfellow I., Bengio Y., Courville A.
+    authors: Goodfellow I., Bengio Y., Courville A
     venue: MIT Press
     year: 2016
     url: https://www.deeplearningbook.org/contents/regularization.html
@@ -40,7 +40,7 @@ sources:
   - id: loshchilov2019
     kind: paper
     title: "Decoupled Weight Decay Regularization"
-    authors: Loshchilov I., Hutter F.
+    authors: Loshchilov I., Hutter F
     venue: ICLR
     year: 2019
     url: https://arxiv.org/abs/1711.05101

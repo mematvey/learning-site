@@ -32,8 +32,8 @@ sources:
   - id: clrs2022
     kind: doc
     title: "Introduction to Algorithms (глава 16, Amortized Analysis)"
-    authors: Cormen T.H. et al.
-    venue: MIT Press, 4th ed.
+    authors: Cormen T.H. et al
+    venue: MIT Press, 4th ed
     year: 2022
     url: https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
     accessed: 2026-10-17

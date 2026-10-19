@@ -41,6 +41,24 @@ describe('anchorFromSelection', () => {
 		root.remove();
 	});
 
+	it('leaves the glossary tooltip out of the quote and the context', () => {
+		const root = setup(
+			'<p data-block id="tip">Функция <abbr class="term" data-term="act">активации<span role="tooltip" class="term-tip">Нелинейная функция (activation function)</span></abbr> в узлах.</p>',
+		);
+		const p = root.querySelector('#tip')!;
+		const term = p.querySelector('abbr')!.firstChild as Text;
+		const sel = window.getSelection()!;
+		const range = document.createRange();
+		range.setStart(p.firstChild!, 0);
+		range.setEnd(term.parentNode!, term.parentNode!.childNodes.length);
+		sel.removeAllRanges();
+		sel.addRange(range);
+		const anchor = anchorFromSelection(sel, root);
+		expect(anchor?.exact).toBe('Функция активации');
+		expect(anchor?.suffix).toBe(' в узлах.');
+		root.remove();
+	});
+
 	it('returns null for a collapsed selection', () => {
 		const root = setup(`<p data-block id="a-b">${TEXT}</p>`);
 		const p = root.querySelector('p')!.firstChild as Text;

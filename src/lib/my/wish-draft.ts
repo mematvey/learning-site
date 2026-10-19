@@ -2,11 +2,9 @@ import type { MyTarget, Wish, WishDraft, WishStatus } from '$lib/contracts/my';
 
 export const WISH_TITLE_MAX = 160;
 
-export const WISH_STATUS_LABELS: Record<WishStatus, string> = {
-	idea: 'Идея',
-	drafting: 'Черновик',
-	covered: 'Покрыто',
-};
+import { WISH_STATUS_LABELS } from './status-labels';
+
+export { WISH_STATUS_LABELS };
 
 /** Splits a free-form list (one item per line, or comma / semicolon separated), dropping duplicates. */
 export function splitList(input: string): string[] {

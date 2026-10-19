@@ -26,7 +26,7 @@ sources:
   - id: rumelhart1986
     kind: paper
     title: Learning representations by back-propagating errors
-    authors: Rumelhart D. E., Hinton G. E., Williams R. J.
+    authors: Rumelhart D. E., Hinton G. E., Williams R. J
     venue: Nature
     year: 1986
     url: https://www.nature.com/articles/323533a0
@@ -34,7 +34,7 @@ sources:
   - id: goodfellow2016
     kind: doc
     title: Deep Learning
-    authors: Goodfellow I., Bengio Y., Courville A.
+    authors: Goodfellow I., Bengio Y., Courville A
     venue: MIT Press
     year: 2016
     url: https://www.deeplearningbook.org/
@@ -54,7 +54,7 @@ sources:
   - id: baydin2018
     kind: paper
     title: "Automatic Differentiation in Machine Learning: a Survey"
-    authors: Baydin A. G. et al.
+    authors: Baydin A. G. et al
     venue: Journal of Machine Learning Research
     year: 2018
     url: https://arxiv.org/abs/1502.05767
@@ -68,7 +68,7 @@ sources:
   - id: chen2016
     kind: paper
     title: "Training Deep Nets with Sublinear Memory Cost"
-    authors: Chen T. et al.
+    authors: Chen T. et al
     year: 2016
     url: https://arxiv.org/abs/1604.06174
     supports: [hw-memory]

@@ -1,9 +1,12 @@
 import type { Bookmark, BookmarkDraft, BookmarkKind, MyStore } from '$lib/contracts/my';
+import { visibleOffset, visibleText } from '$lib/notes/text';
 
 /** Limits from the bookmark contract. */
 export const COMMENT_MAX = 280;
 export const QUOTE_MAX = 600;
 export const CONTEXT_MAX = 32;
+/** Leading text kept as the quote of a bookmark on a whole block (paragraph, heading, item). */
+export const BLOCK_QUOTE_MAX = 200;
 
 /** Elements that can be bookmarked by hover, focus or long press. */
 export const BOOKMARK_TARGET_SELECTOR =
@@ -45,6 +48,16 @@ export function texOf(el: Element): string {
 	return (tex ?? el.textContent ?? '').trim();
 }
 
+/**
+ * Reader-visible text of a block, collapsed to one line and cut to `BLOCK_QUOTE_MAX` characters.
+ * Tooltips, MathML copies and other hidden content are skipped (see `notes/text.ts`).
+ */
+export function blockLeadQuote(block: Element): string | undefined {
+	const text = visibleText(block).replace(/\s+/g, ' ').trim();
+	const cut = Array.from(text).slice(0, BLOCK_QUOTE_MAX).join('').trim();
+	return cut || undefined;
+}
+
 /** Draft for a block, formula, figure or term element. Returns null when there is no block to anchor to. */
 export function draftFromElement(
 	el: Element,
@@ -69,6 +82,8 @@ export function draftFromElement(
 		quote = texOf(el).slice(0, QUOTE_MAX) || undefined;
 	} else if (el.matches('[data-figure-id]')) {
 		kind = 'figure';
+	} else {
+		quote = blockLeadQuote(block);
 	}
 
 	const draft: BookmarkDraft = {
@@ -94,8 +109,7 @@ export function draftFromSelection(
 	chapter: string,
 ): BookmarkDraft | null {
 	if (sel.isCollapsed || sel.rangeCount === 0) return null;
-	const exact = sel.toString();
-	if (exact.trim() === '') return null;
+	if (sel.toString().trim() === '') return null;
 
 	const range = sel.getRangeAt(0);
 	const startNode = range.startContainer;
@@ -106,19 +120,19 @@ export function draftFromSelection(
 	const blockId = blockIdOf(block);
 	if (!blockId) return null;
 
-	const before = block.ownerDocument.createRange();
-	before.selectNodeContents(block);
-	before.setEnd(range.startContainer, range.startOffset);
-	const start = before.toString().length;
-	const text = block.textContent ?? '';
-	const end = start + exact.length;
+	// Offsets count reader-visible text only, so tooltips and MathML copies do not leak into the quote.
+	const start = visibleOffset(block, range.startContainer, range.startOffset);
+	const end = visibleOffset(block, range.endContainer, range.endOffset);
+	const text = visibleText(block);
+	const quoted = text.slice(start, end);
+	if (quoted.trim() === '' || end <= start) return null;
 
 	const draft: BookmarkDraft = {
 		kind: block.hasAttribute('data-figure-id') ? 'figure' : 'block',
 		topic,
 		chapter: chapter as BookmarkDraft['chapter'],
 		blockId: blockId as BookmarkDraft['blockId'],
-		quote: exact.slice(0, QUOTE_MAX),
+		quote: quoted.slice(0, QUOTE_MAX),
 		comment: '',
 	};
 	const prefix = text.slice(Math.max(0, start - CONTEXT_MAX), start);

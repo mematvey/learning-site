@@ -1,18 +1,9 @@
-import type {
-	Clarification,
-	MyTarget,
-	Situation,
-	SituationDraft,
-	SituationStatus,
-	Wish,
-} from '$lib/contracts/my';
+import type { Clarification, MyTarget, Situation, SituationDraft, Wish } from '$lib/contracts/my';
+import { SITUATION_STATUS_LABELS } from './status-labels';
 
 export const SITUATION_TITLE_MAX = 160;
 
-export const SITUATION_STATUS_LABELS: Record<SituationStatus, string> = {
-	open: 'Открыта',
-	answered: 'Отвечена',
-};
+export { SITUATION_STATUS_LABELS };
 
 export interface ChapterRef {
 	id: string;

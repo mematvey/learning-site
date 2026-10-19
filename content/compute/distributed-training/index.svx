@@ -32,7 +32,7 @@ sources:
   - id: zero2020
     kind: paper
     title: "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models"
-    authors: Rajbhandari S., Rasley J., Ruwase O., He Y.
+    authors: Rajbhandari S., Rasley J., Ruwase O., He Y
     venue: arXiv preprint
     year: 2019
     url: https://arxiv.org/abs/1910.02054
@@ -49,7 +49,7 @@ sources:
   - id: megatron2021
     kind: paper
     title: "Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM"
-    authors: Narayanan D. et al.
+    authors: Narayanan D. et al
     venue: arXiv preprint
     year: 2021
     url: https://arxiv.org/abs/2104.04473

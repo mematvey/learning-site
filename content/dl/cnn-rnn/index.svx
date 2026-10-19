@@ -27,7 +27,7 @@ sources:
   - id: pascanu2013
     kind: paper
     title: On the difficulty of training recurrent neural networks
-    authors: Pascanu R. et al.
+    authors: Pascanu R. et al
     venue: arXiv:1211.5063
     year: 2012
     url: https://arxiv.org/abs/1211.5063
@@ -36,7 +36,7 @@ sources:
   - id: hochreiter1997
     kind: paper
     title: Long Short-Term Memory
-    authors: Hochreiter S., Schmidhuber J.
+    authors: Hochreiter S., Schmidhuber J
     venue: Neural Computation, 9(8)
     year: 1997
     url: https://doi.org/10.1162/neco.1997.9.8.1735
@@ -45,7 +45,7 @@ sources:
   - id: bai2018
     kind: paper
     title: An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling
-    authors: Bai S., Kolter J. Z., Koltun V.
+    authors: Bai S., Kolter J. Z., Koltun V
     venue: arXiv:1803.01271
     year: 2018
     url: https://arxiv.org/abs/1803.01271
@@ -54,7 +54,7 @@ sources:
   - id: dosovitskiy2021
     kind: paper
     title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale"
-    authors: Dosovitskiy A. et al.
+    authors: Dosovitskiy A. et al
     venue: ICLR
     year: 2021
     url: https://arxiv.org/abs/2010.11929
@@ -63,7 +63,7 @@ sources:
   - id: gu2023
     kind: paper
     title: "Mamba: Linear-Time Sequence Modeling with Selective State Spaces"
-    authors: Gu A., Dao T.
+    authors: Gu A., Dao T
     venue: arXiv:2312.00752
     year: 2023
     url: https://arxiv.org/abs/2312.00752
@@ -72,7 +72,7 @@ sources:
   - id: vaswani2017
     kind: paper
     title: Attention Is All You Need
-    authors: Vaswani A. et al.
+    authors: Vaswani A. et al
     venue: NeurIPS
     year: 2017
     url: https://arxiv.org/abs/1706.03762

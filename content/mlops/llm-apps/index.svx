@@ -35,7 +35,7 @@ sources:
   - id: lewis2020rag
     kind: paper
     title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
-    authors: Lewis P. et al.
+    authors: Lewis P. et al
     venue: NeurIPS
     year: 2020
     url: https://arxiv.org/abs/2005.11401
@@ -44,7 +44,7 @@ sources:
   - id: liu2023lost
     kind: paper
     title: "Lost in the Middle: How Language Models Use Long Contexts"
-    authors: Liu N. F. et al.
+    authors: Liu N. F. et al
     venue: TACL
     year: 2023
     url: https://arxiv.org/abs/2307.03172

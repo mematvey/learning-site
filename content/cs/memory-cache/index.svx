@@ -28,7 +28,7 @@ sources:
   - id: drepper2007
     kind: paper
     title: What Every Programmer Should Know About Memory
-    authors: Drepper U.
+    authors: Drepper U
     venue: Red Hat, Inc., version 1.0
     year: 2007
     url: https://www.akkadia.org/drepper/cpumemory.pdf

@@ -31,7 +31,7 @@ sources:
   - id: glorot2010
     kind: paper
     title: "Understanding the difficulty of training deep feedforward neural networks"
-    authors: Glorot X., Bengio Y.
+    authors: Glorot X., Bengio Y
     venue: AISTATS 2010
     year: 2010
     url: http://proceedings.mlr.press/v9/glorot10a.html
@@ -39,7 +39,7 @@ sources:
   - id: he2015
     kind: paper
     title: "Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification"
-    authors: He K., Zhang X., Ren S., Sun J.
+    authors: He K., Zhang X., Ren S., Sun J
     venue: ICCV
     year: 2015
     url: https://arxiv.org/abs/1502.01852
@@ -47,7 +47,7 @@ sources:
   - id: shazeer2020
     kind: paper
     title: "GLU Variants Improve Transformer"
-    authors: Shazeer N.
+    authors: Shazeer N
     year: 2020
     url: https://arxiv.org/abs/2002.05202
     accessed: 2026-10-18
@@ -55,7 +55,7 @@ sources:
   - id: touvron2023
     kind: paper
     title: "LLaMA: Open and Efficient Foundation Language Models"
-    authors: Touvron H. et al.
+    authors: Touvron H. et al
     year: 2023
     url: https://arxiv.org/abs/2302.13971
     accessed: 2026-10-18

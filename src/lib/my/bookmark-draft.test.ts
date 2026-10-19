@@ -31,7 +31,7 @@ const PAGE = `
 `;
 
 describe('draftFromElement', () => {
-	it('builds a block draft from a paragraph with an id', () => {
+	it('builds a block draft from a paragraph with an id and keeps its leading text as quote', () => {
 		const root = setup(PAGE);
 		const el = root.querySelector('#intro') as HTMLElement;
 		const draft = draftFromElement(el, root, TOPIC, CHAPTER);
@@ -40,8 +40,26 @@ describe('draftFromElement', () => {
 			topic: TOPIC,
 			chapter: CHAPTER,
 			blockId: 'intro',
+			quote: 'Оценки считаются как скалярное произведение запроса и ключа.',
 			comment: '',
 		});
+	});
+
+	it('cuts a block quote to 200 visible characters without the glossary tooltip', () => {
+		const long = 'а'.repeat(250);
+		const root = setup(
+			`<p data-block id="long">${long} <abbr class="term" data-term="x">термин<span role="tooltip" class="term-tip">Подсказка</span></abbr></p>`,
+		);
+		const draft = draftFromElement(root.querySelector('#long')!, root, TOPIC, CHAPTER);
+		expect(draft?.quote).toBe('а'.repeat(200));
+	});
+
+	it('keeps the glossary term out of a block quote', () => {
+		const root = setup(
+			'<p data-block id="t">Функция <abbr class="term" data-term="act">активации<span role="tooltip" class="term-tip">Нелинейная функция (activation function)</span></abbr> в узлах.</p>',
+		);
+		const draft = draftFromElement(root.querySelector('#t')!, root, TOPIC, CHAPTER);
+		expect(draft?.quote).toBe('Функция активации в узлах.');
 	});
 
 	it('builds a formula draft with TeX as the quote for a display formula', () => {
@@ -190,5 +208,23 @@ describe('commitBookmark', () => {
 		await commitBookmark(store, draft, 'second', first);
 		expect(items).toHaveLength(1);
 		expect(items[0]?.comment).toBe('second');
+	});
+
+	it('does not put a glossary tooltip into the selection quote', () => {
+		const root = setup(
+			'<p data-block id="t">Функция <abbr class="term" data-term="act">активации<span role="tooltip" class="term-tip">Нелинейная функция (activation function)</span></abbr> в узлах.</p>',
+		);
+		const p = root.querySelector('#t')!;
+		const term = p.querySelector('abbr')!.firstChild as Text;
+		const range = document.createRange();
+		range.setStart(p.firstChild!, 0);
+		range.setEnd(term.parentNode!, term.parentNode!.childNodes.length);
+		const sel = window.getSelection()!;
+		sel.removeAllRanges();
+		sel.addRange(range);
+		const draft = draftFromSelection(sel, root, TOPIC, CHAPTER);
+		expect(draft?.quote).toBe('Функция активации');
+		sel.removeAllRanges();
+		root.remove();
 	});
 });

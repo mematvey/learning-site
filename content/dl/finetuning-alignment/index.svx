@@ -32,7 +32,7 @@ sources:
   - id: hu2021lora
     kind: paper
     title: "LoRA: Low-Rank Adaptation of Large Language Models"
-    authors: Hu E. J. et al.
+    authors: Hu E. J. et al
     year: 2021
     url: https://arxiv.org/abs/2106.09685
     accessed: 2026-10-18
@@ -40,7 +40,7 @@ sources:
   - id: dettmers2023qlora
     kind: paper
     title: "QLoRA: Efficient Finetuning of Quantized LLMs"
-    authors: Dettmers T. et al.
+    authors: Dettmers T. et al
     year: 2023
     url: https://arxiv.org/abs/2305.14314
     accessed: 2026-10-18
@@ -48,7 +48,7 @@ sources:
   - id: ouyang2022instructgpt
     kind: paper
     title: "Training language models to follow instructions with human feedback"
-    authors: Ouyang L. et al.
+    authors: Ouyang L. et al
     year: 2022
     url: https://arxiv.org/abs/2203.02155
     accessed: 2026-10-18
@@ -56,7 +56,7 @@ sources:
   - id: christiano2017
     kind: paper
     title: "Deep reinforcement learning from human preferences"
-    authors: Christiano P. et al.
+    authors: Christiano P. et al
     year: 2017
     url: https://arxiv.org/abs/1706.03741
     accessed: 2026-10-18
@@ -64,7 +64,7 @@ sources:
   - id: rafailov2023dpo
     kind: paper
     title: "Direct Preference Optimization: Your Language Model is Secretly a Reward Model"
-    authors: Rafailov R. et al.
+    authors: Rafailov R. et al
     year: 2023
     url: https://arxiv.org/abs/2305.18290
     accessed: 2026-10-18
@@ -72,7 +72,7 @@ sources:
   - id: gao2022overopt
     kind: paper
     title: "Scaling Laws for Reward Model Overoptimization"
-    authors: Gao L. et al.
+    authors: Gao L. et al
     year: 2022
     url: https://arxiv.org/abs/2210.10760
     accessed: 2026-10-18

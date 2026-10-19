@@ -24,7 +24,7 @@ sources:
   - id: kingma2014adam
     kind: paper
     title: "Adam: A Method for Stochastic Optimization"
-    authors: Kingma D. P., Ba J.
+    authors: Kingma D. P., Ba J
     venue: ICLR
     year: 2015
     url: https://arxiv.org/abs/1412.6980
@@ -33,7 +33,7 @@ sources:
   - id: sutskever2013
     kind: paper
     title: On the importance of initialization and momentum in deep learning
-    authors: Sutskever I., Martens J., Dahl G., Hinton G.
+    authors: Sutskever I., Martens J., Dahl G., Hinton G
     venue: ICML
     year: 2013
     url: https://proceedings.mlr.press/v28/sutskever13.html
@@ -42,7 +42,7 @@ sources:
   - id: ruder2016
     kind: paper
     title: An overview of gradient descent optimization algorithms
-    authors: Ruder S.
+    authors: Ruder S
     year: 2016
     url: https://arxiv.org/abs/1609.04747
     accessed: 2026-10-16
@@ -50,7 +50,7 @@ sources:
   - id: loshchilov2019
     kind: paper
     title: Decoupled Weight Decay Regularization
-    authors: Loshchilov I., Hutter F.
+    authors: Loshchilov I., Hutter F
     venue: ICLR
     year: 2019
     url: https://arxiv.org/abs/1711.05101
@@ -59,7 +59,7 @@ sources:
   - id: reddi2018
     kind: paper
     title: On the Convergence of Adam and Beyond
-    authors: Reddi S. J., Kale S., Kumar S.
+    authors: Reddi S. J., Kale S., Kumar S
     venue: ICLR
     year: 2018
     url: https://arxiv.org/abs/1904.09237

@@ -1,14 +1,29 @@
 /**
- * Reader-visible text of chapter DOM. KaTeX renders each formula twice: the visible glyphs and
- * a visually hidden MathML copy (`.katex-mathml`, with the TeX source in an annotation). The
- * MathML copy is not text the reader sees, so offsets for anchors and highlights skip it.
+ * Reader-visible text of chapter DOM. Some elements carry text that is in the DOM but not read
+ * as the page's text, and offsets for anchors, highlights and bookmark quotes skip it:
+ * - KaTeX renders each formula twice: visible glyphs and a visually hidden MathML copy
+ *   (`.katex-mathml`, with the TeX source in an annotation);
+ * - glossary terms keep their tooltip (`role="tooltip"`) inside the term;
+ * - `.sr-only` and `aria-hidden="true"` content is not part of the page text.
+ * KaTeX marks its visible glyphs `aria-hidden` too, so `aria-hidden` inside a formula counts as visible.
+ * The `hidden` attribute is not excluded: `<Level>` layers that are switched off stay in the chapter
+ * text, so notes anchored there still resolve (see `chapterTextIndex`).
  */
 
-const HIDDEN_TEXT_SELECTOR = '.katex-mathml';
+const ALWAYS_HIDDEN_SELECTOR = '.katex-mathml, .sr-only, [role="tooltip"], .term-tip';
+const ARIA_HIDDEN_SELECTOR = '[aria-hidden="true"]';
 
-/** True for a text node a reader sees (not part of a formula's MathML copy). */
+/** True when the element itself or an ancestor is hidden from the reader. */
+export function isHiddenElement(el: Element | null): boolean {
+	if (!el) return false;
+	if (el.closest(ALWAYS_HIDDEN_SELECTOR)) return true;
+	const ariaHidden = el.closest(ARIA_HIDDEN_SELECTOR);
+	return ariaHidden !== null && ariaHidden.closest('.katex') === null;
+}
+
+/** True for a text node a reader sees (not a tooltip, MathML copy or other hidden content). */
 export function isVisibleText(node: Text): boolean {
-	return !node.parentElement?.closest(HIDDEN_TEXT_SELECTOR);
+	return !isHiddenElement(node.parentElement);
 }
 
 /** Visible text nodes under `root`, in document order. */

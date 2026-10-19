@@ -23,7 +23,7 @@ sources:
   - id: kaplan2020
     kind: paper
     title: Scaling Laws for Neural Language Models
-    authors: Kaplan J. et al.
+    authors: Kaplan J. et al
     venue: arXiv
     year: 2020
     url: https://arxiv.org/abs/2001.08361
@@ -32,7 +32,7 @@ sources:
   - id: hoffmann2022
     kind: paper
     title: Training Compute-Optimal Large Language Models
-    authors: Hoffmann J. et al.
+    authors: Hoffmann J. et al
     venue: arXiv
     year: 2022
     url: https://arxiv.org/abs/2203.15556
@@ -41,7 +41,7 @@ sources:
   - id: pearce2024
     kind: paper
     title: Reconciling Kaplan and Chinchilla Scaling Laws
-    authors: Pearce T., Song J.
+    authors: Pearce T., Song J
     venue: arXiv
     year: 2024
     url: https://arxiv.org/abs/2406.12907
@@ -50,7 +50,7 @@ sources:
   - id: besiroglu2024
     kind: paper
     title: "Chinchilla Scaling: A replication attempt"
-    authors: Besiroglu T., Erdil E., Barnett M., You J.
+    authors: Besiroglu T., Erdil E., Barnett M., You J
     venue: arXiv
     year: 2024
     url: https://arxiv.org/abs/2404.10102

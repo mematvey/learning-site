@@ -1,3 +1,5 @@
+import type { Bookmark } from '$lib/contracts/my';
+
 /** Longest quote kept in a link. Longer fragments are cut; the target block still matches. */
 export const QUOTE_MAX_CHARS = 80;
 
@@ -16,6 +18,14 @@ export function chapterBlockHref(chapterId: string, blockId?: string, quote?: st
 	if (!quote) return `${base}${fragment}`;
 	const cut = Array.from(quote).slice(0, QUOTE_MAX_CHARS).join('');
 	return `${base}${fragment}${QUOTE_SEPARATOR}${encodeURIComponent(cut)}`;
+}
+
+/**
+ * Link to the place of a bookmark. Only a block bookmark carries a quote to find in the text;
+ * a formula's quote is TeX and a figure has none, so both link to the whole block.
+ */
+export function bookmarkHref(b: Pick<Bookmark, 'kind' | 'chapter' | 'blockId' | 'quote'>): string {
+	return chapterBlockHref(b.chapter, b.blockId, b.kind === 'block' ? b.quote : undefined);
 }
 
 /**

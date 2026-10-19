@@ -51,7 +51,7 @@ sources:
   - id: dapper2010
     kind: paper
     title: "Dapper, a Large-Scale Distributed Systems Tracing Infrastructure"
-    authors: Sigelman B. H. et al.
+    authors: Sigelman B. H. et al
     year: 2010
     url: https://research.google/pubs/dapper-a-large-scale-distributed-systems-tracing-infrastructure/
     accessed: 2026-10-18

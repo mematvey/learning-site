@@ -27,7 +27,7 @@ sources:
   - id: carter1979
     kind: paper
     title: Universal Classes of Hash Functions
-    authors: Carter J.L., Wegman M.N.
+    authors: Carter J.L., Wegman M.N
     venue: Journal of Computer and System Sciences
     year: 1979
     url: "https://doi.org/10.1016/0022-0000(79)90044-8"
@@ -57,8 +57,8 @@ sources:
   - id: knuth1998
     kind: doc
     title: "The Art of Computer Programming, vol. 3: Sorting and Searching (раздел 6.4, Hashing)"
-    authors: Knuth D.E.
-    venue: Addison-Wesley, 2nd ed.
+    authors: Knuth D.E
+    venue: Addison-Wesley, 2nd ed
     year: 1998
     url: https://www-cs-faculty.stanford.edu/~knuth/taocp.html
     accessed: 2026-10-17
@@ -66,8 +66,8 @@ sources:
   - id: clrs2022
     kind: doc
     title: "Introduction to Algorithms (глава 11, Hash Tables)"
-    authors: Cormen T.H. et al.
-    venue: MIT Press, 4th ed.
+    authors: Cormen T.H. et al
+    venue: MIT Press, 4th ed
     year: 2022
     url: https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/
     accessed: 2026-10-17

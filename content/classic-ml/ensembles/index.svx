@@ -32,7 +32,7 @@ sources:
   - id: breiman1996
     kind: paper
     title: Bagging predictors
-    authors: Breiman L.
+    authors: Breiman L
     venue: Machine Learning
     year: 1996
     url: https://doi.org/10.1007/BF00058655
@@ -40,7 +40,7 @@ sources:
   - id: breiman2001
     kind: paper
     title: Random Forests
-    authors: Breiman L.
+    authors: Breiman L
     venue: Machine Learning
     year: 2001
     url: https://doi.org/10.1023/A:1010933404324
@@ -48,7 +48,7 @@ sources:
   - id: freund1997
     kind: paper
     title: "A decision-theoretic generalization of on-line learning and an application to boosting"
-    authors: Freund Y., Schapire R. E.
+    authors: Freund Y., Schapire R. E
     venue: Journal of Computer and System Sciences
     year: 1997
     url: https://doi.org/10.1006/jcss.1997.1504
@@ -56,7 +56,7 @@ sources:
   - id: friedman2001
     kind: paper
     title: "Greedy function approximation: A gradient boosting machine"
-    authors: Friedman J. H.
+    authors: Friedman J. H
     venue: Annals of Statistics
     year: 2001
     url: https://doi.org/10.1214/aos/1013203451

@@ -25,7 +25,7 @@ sources:
   - id: kwon2023
     kind: paper
     title: "Efficient Memory Management for Large Language Model Serving with PagedAttention"
-    authors: Kwon W. et al.
+    authors: Kwon W. et al
     venue: SOSP 2023
     year: 2023
     url: https://arxiv.org/abs/2309.06180
@@ -34,7 +34,7 @@ sources:
   - id: pope2022
     kind: paper
     title: "Efficiently Scaling Transformer Inference"
-    authors: Pope R. et al.
+    authors: Pope R. et al
     year: 2022
     url: https://arxiv.org/abs/2211.05102
     accessed: 2026-10-18
@@ -42,7 +42,7 @@ sources:
   - id: micikevicius2017
     kind: paper
     title: "Mixed Precision Training"
-    authors: Micikevicius P. et al.
+    authors: Micikevicius P. et al
     year: 2017
     url: https://arxiv.org/abs/1710.03740
     accessed: 2026-10-18

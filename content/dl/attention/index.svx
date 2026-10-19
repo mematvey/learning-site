@@ -27,7 +27,7 @@ sources:
   - id: vaswani2017
     kind: paper
     title: Attention Is All You Need
-    authors: Vaswani A. et al.
+    authors: Vaswani A. et al
     venue: NeurIPS
     year: 2017
     url: https://arxiv.org/abs/1706.03762
@@ -36,7 +36,7 @@ sources:
   - id: flashattn2022
     kind: paper
     title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
-    authors: Dao T. et al.
+    authors: Dao T. et al
     venue: NeurIPS
     year: 2022
     url: https://arxiv.org/abs/2205.14135
@@ -53,7 +53,7 @@ sources:
   - id: mistral2023
     kind: paper
     title: Mistral 7B
-    authors: Jiang A. Q. et al.
+    authors: Jiang A. Q. et al
     year: 2023
     url: https://arxiv.org/abs/2310.06825
     accessed: 2026-10-18

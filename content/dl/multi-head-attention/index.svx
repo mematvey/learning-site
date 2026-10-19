@@ -24,7 +24,7 @@ sources:
   - id: vaswani2017
     kind: paper
     title: Attention Is All You Need
-    authors: Vaswani A. et al.
+    authors: Vaswani A. et al
     venue: NeurIPS
     year: 2017
     url: https://arxiv.org/abs/1706.03762
@@ -33,7 +33,7 @@ sources:
   - id: shazeer2019
     kind: paper
     title: 'Fast Transformer Decoding: One Write-Head is All You Need'
-    authors: Shazeer N.
+    authors: Shazeer N
     venue: arXiv
     year: 2019
     url: https://arxiv.org/abs/1911.02150
@@ -42,7 +42,7 @@ sources:
   - id: ainslie2023
     kind: paper
     title: 'GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints'
-    authors: Ainslie J. et al.
+    authors: Ainslie J. et al
     venue: arXiv
     year: 2023
     url: https://arxiv.org/abs/2305.13245

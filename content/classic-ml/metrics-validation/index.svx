@@ -30,7 +30,7 @@ sources:
   - id: fawcett2006
     kind: paper
     title: An introduction to ROC analysis
-    authors: Fawcett T.
+    authors: Fawcett T
     venue: Pattern Recognition Letters
     year: 2006
     url: https://doi.org/10.1016/j.patrec.2005.10.010
@@ -38,7 +38,7 @@ sources:
   - id: davisgoadrich2006
     kind: paper
     title: "The relationship between Precision-Recall and ROC curves"
-    authors: Davis J., Goadrich M.
+    authors: Davis J., Goadrich M
     venue: ICML
     year: 2006
     url: https://doi.org/10.1145/1143844.1143874

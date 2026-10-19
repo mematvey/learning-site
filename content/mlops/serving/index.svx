@@ -35,7 +35,7 @@ sources:
   - id: fowlercanary
     kind: doc
     title: "Canary Release"
-    authors: Fowler M.
+    authors: Fowler M
     venue: martinfowler.com
     url: https://martinfowler.com/bliki/CanaryRelease.html
     accessed: 2026-10-16
