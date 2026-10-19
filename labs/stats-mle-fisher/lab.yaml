@@ -1,5 +1,5 @@
 id: stats-mle-fisher
-title: 'Максимальное правдоподобие и информация Фишера'
+title: "Максимальное правдоподобие и информация Фишера на NumPy"
 chapter: stats/mle-fisher
 runtime: pyodide
 starter: starter.py
