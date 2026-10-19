@@ -19,10 +19,14 @@ chapters:
     multi-head-attention,
     layer-norm,
     transformer-block,
+    moe,
     cnn-rnn,
     tokenization,
     lm-training-scaling,
+    diffusion,
     finetuning-alignment,
+    rl-reasoning,
+    test-time-compute,
     inference-efficiency,
   ]
 featured: [dl/attention]

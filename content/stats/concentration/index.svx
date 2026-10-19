@@ -1,0 +1,17 @@
+---
+id: stats/concentration
+title: "Вероятностные неравенства и концентрация"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: stats
+prereqs: [stats/limit-theorems]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

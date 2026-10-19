@@ -1,0 +1,17 @@
+---
+id: dl/diffusion
+title: "Генеративные модели: VAE, GAN, диффузия и flow matching"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: dl
+prereqs: [dl/backprop, dl/softmax, dl/optimizers]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

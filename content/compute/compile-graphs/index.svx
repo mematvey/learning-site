@@ -1,0 +1,17 @@
+---
+id: compute/compile-graphs
+title: "torch.compile, графы и CUDA graphs"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: compute
+prereqs: [compute/profiling, compute/triton-intro]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

@@ -12,11 +12,15 @@ chapters:
   - random-variables
   - distributions
   - limit-theorems
+  - concentration
   - estimation-testing
   - hypothesis-testing
   - mle-fisher
   - bootstrap-permutation
   - bayesian-inference
+  - mcmc
   - regression
+  - glm
   - ab-testing
   - causal-inference
+  - conformal

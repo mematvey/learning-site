@@ -17,6 +17,10 @@ chapters:
     monitoring-drift,
     llm-serving,
     llm-apps,
+    agents-runtime,
+    agent-evaluation,
+    llm-cost-finops,
     observability,
     security-privacy,
+    agent-guardrails,
   ]

@@ -1,0 +1,17 @@
+---
+id: dl/rl-reasoning
+title: "Обучение с подкреплением для рассуждений: policy gradient, PPO, GRPO, RLVR"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: dl
+prereqs: [dl/finetuning-alignment, dl/softmax]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

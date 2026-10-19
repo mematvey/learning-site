@@ -18,3 +18,7 @@ chapters:
   - databases-indexes
   - vector-search
   - unicode-encoding
+  - floating-point
+  - serialization-formats
+  - concurrency
+  - os-memory

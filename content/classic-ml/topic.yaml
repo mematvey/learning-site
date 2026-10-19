@@ -14,13 +14,17 @@ chapters:
   - metrics-validation
   - regularization
   - data-preparation
+  - feature-selection
   - decision-trees
   - ensembles
   - gradient-boosting
+  - hyperparameter-search
   - tabular-vs-neural
   - time-series-validation
   - calibration-imbalance
+  - anomaly-detection
   - interpretability
   - knn-svm
   - clustering-pca
+  - ranking-recsys
   - start-a-task

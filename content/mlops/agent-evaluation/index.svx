@@ -1,0 +1,17 @@
+---
+id: mlops/agent-evaluation
+title: "Оценка агентов: траектории и повторяемость"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: mlops
+prereqs: [mlops/evaluation, mlops/agents-runtime]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

@@ -1,0 +1,17 @@
+---
+id: dl/test-time-compute
+title: "Вычисления на инференсе и рассуждение"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: dl
+prereqs: [dl/rl-reasoning, dl/inference-efficiency]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

@@ -1,0 +1,17 @@
+---
+id: compute/training-memory
+title: "Память при обучении и OOM"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: compute
+prereqs: [compute/precision-quantization, compute/roofline]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

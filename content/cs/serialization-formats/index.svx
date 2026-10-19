@@ -1,0 +1,17 @@
+---
+id: cs/serialization-formats
+title: "Сериализация и форматы данных"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: cs
+prereqs: [cs/unicode-encoding]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}

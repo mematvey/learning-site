@@ -16,7 +16,11 @@ chapters:
     roofline,
     profiling,
     precision-quantization,
+    training-memory,
     flash-attention,
     llm-inference,
+    kv-cache-paging,
+    collectives,
     distributed-training,
+    compile-graphs,
   ]

@@ -1,0 +1,17 @@
+---
+id: stats/mcmc
+title: "Цепи Маркова и MCMC"
+summary: "Заготовка: краткое описание появится вместе с текстом главы."
+topic: stats
+prereqs: [stats/bayesian-inference, stats/classical-probability-2]
+concepts: []
+keywords: []
+minutes: 20
+labs: []
+sources: []
+status: draft
+---
+
+## Идея {#idea}
+
+Черновик главы: текст ещё не написан. {#idea-stub}
