@@ -1,4 +1,5 @@
 <script lang="ts">
+	import katex from 'katex';
 	import type { Bookmark, BookmarkDraft } from '$lib/contracts/my';
 	import { bookmarkHref } from '$lib/nav/links';
 	import { getMyStore } from '$lib/my/store';
@@ -43,6 +44,11 @@
 		if (b.suffix !== undefined) draft.suffix = b.suffix;
 		if (b.termId !== undefined) draft.termId = b.termId;
 		return draft;
+	}
+
+	/** KaTeX markup for a saved TeX fragment; KaTeX escapes its input, and bad TeX shows as red source. */
+	function renderTex(tex: string): string {
+		return katex.renderToString(tex, { displayMode: true, throwOnError: false, strict: 'ignore' });
 	}
 
 	function label(b: Bookmark): string {
@@ -94,7 +100,10 @@
 						/>
 					{:else}
 						<p class="bml-kind">{label(b)}</p>
-						{#if b.quote}
+						{#if b.quote && b.kind === 'formula'}
+							<!-- eslint-disable-next-line svelte/no-at-html-tags -- KaTeX output escapes its input -->
+							<div class="bml-formula">{@html renderTex(b.quote)}</div>
+						{:else if b.quote}
 							<blockquote class="bml-quote">{b.quote}</blockquote>
 						{/if}
 						{#if b.comment}
@@ -156,6 +165,12 @@
 		margin: 0;
 		font-style: italic;
 		color: var(--text-muted);
+	}
+	/* A saved formula is stored as TeX: rendered by KaTeX; wide formulas scroll inside the card. */
+	.bml-formula {
+		max-width: 100%;
+		overflow-x: auto;
+		padding: var(--space-1) 0;
 	}
 	.bml-comment {
 		margin: 0;
