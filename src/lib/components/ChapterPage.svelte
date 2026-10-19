@@ -620,7 +620,7 @@
 		border-radius: var(--radius);
 		background: transparent;
 		color: var(--text);
-		border: 1px solid var(--border);
+		border: 1px solid var(--border-control);
 		transition:
 			background var(--dur-fast) var(--ease),
 			color var(--dur-fast) var(--ease),

@@ -102,10 +102,31 @@
 		}
 	}
 
-	/* Too narrow for a status line: the settings page stays reachable through the header link. */
-	@media (max-width: 640px) {
+	/*
+	 * Tablets and phones: the status becomes a 34px icon link (dot only). Its aria-label and title
+	 * carry the full state and point to the data settings page.
+	 */
+	@media (max-width: 900px) {
 		.save-indicator {
-			display: none;
+			width: 34px;
+			height: 34px;
+			justify-content: center;
+			border: 1px solid var(--border-control);
+			border-radius: var(--radius);
+			max-width: none;
+		}
+
+		.save-indicator:hover {
+			border-color: var(--text-muted);
+		}
+
+		.text {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
 		}
 	}
 </style>

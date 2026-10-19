@@ -38,3 +38,12 @@
 		'Inter Variable', 'Inter', 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 	--font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Consolas, monospace;
 }
+
+/*
+ * Focus ring for every interactive element (design-system §10). `:where` keeps the rule at zero
+ * specificity, so widget-level focus styles (scoped in components) still take precedence.
+ */
+:where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex='-1'])):focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}

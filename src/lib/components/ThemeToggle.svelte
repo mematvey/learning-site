@@ -47,7 +47,7 @@
 		flex: none;
 		background: var(--surface);
 		color: var(--text-muted);
-		border: 1px solid var(--border);
+		border: 1px solid var(--border-control);
 		border-radius: var(--radius);
 		cursor: pointer;
 		transition:

@@ -35,11 +35,36 @@
 <header class="topbar">
 	<div class="topbar-inner">
 		<a class="brand" href={resolve('/')} data-home>learning-site</a>
-		<a class="nav-link" href={resolve('/roadmaps')} aria-current={onRoadmaps ? 'page' : undefined}
-			>Маршруты</a
+		<a
+			class="nav-link"
+			href={resolve('/roadmaps')}
+			aria-label="Маршруты"
+			aria-current={onRoadmaps ? 'page' : undefined}
 		>
+			<svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+				<path
+					d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linejoin="round"
+				/>
+			</svg>
+			<span class="nav-text">Маршруты</span>
+		</a>
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- the "My" route is linked by its path -->
-		<a class="nav-link" href="/my/" aria-current={onMy ? 'page' : undefined}>Моё</a>
+		<a class="nav-link" href="/my/" aria-label="Моё" aria-current={onMy ? 'page' : undefined}>
+			<svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+				<path
+					d="M6 3h12v18l-6-4-6 4z"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linejoin="round"
+				/>
+			</svg>
+			<span class="nav-text">Моё</span>
+		</a>
 		<nav class="crumbs" aria-label="Путь к главе">
 			{#each crumbs as crumb, i (i)}
 				{#if i > 0}<span class="sep" aria-hidden="true">›</span>{/if}
@@ -51,6 +76,8 @@
 				{/if}
 			{/each}
 		</nav>
+		<!-- Only on phones: starts a new line so that search and levels sit in a second row. -->
+		<div class="row-break" aria-hidden="true"></div>
 		{#if search}
 			<div class="search-slot">{@render search()}</div>
 		{/if}
@@ -64,8 +91,19 @@
 			href="/settings/data/"
 			aria-current={onSettings ? 'page' : undefined}
 			aria-label="Настройки"
-			><span class="full">Настройки</span><span class="short" aria-hidden="true">⚙</span></a
 		>
+			<svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+				<circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" />
+				<path
+					d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linejoin="round"
+				/>
+			</svg>
+			<span class="nav-text">Настройки</span>
+		</a>
 		<!-- eslint-enable svelte/no-navigation-without-resolve -->
 		<ThemeToggle theme={resolved} onToggle={() => onToggleTheme()} />
 	</div>
@@ -94,7 +132,9 @@
 		gap: var(--space-4);
 	}
 
+	/* Never shrinks: the brand stays readable at every width. */
 	.brand {
+		flex: none;
 		font-family: var(--font-serif);
 		font-weight: 700;
 		font-size: 17px;
@@ -102,13 +142,13 @@
 		color: var(--text);
 		text-decoration: none;
 		white-space: nowrap;
-		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
 	}
 
 	.nav-link {
 		flex: none;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-1);
 		font-size: var(--fs-sm);
 		color: var(--text-muted);
 		text-decoration: none;
@@ -120,8 +160,10 @@
 		color: var(--text);
 	}
 
-	.nav-link .short {
+	/* Icons are shown only on phones (see the narrow-screen rules below). */
+	.nav-icon {
 		display: none;
+		flex: none;
 	}
 
 	.crumbs {
@@ -150,9 +192,20 @@
 		font-weight: 550;
 	}
 
-	.search-slot,
+	.row-break {
+		display: none;
+	}
+
 	.levels-slot {
 		flex: none;
+		display: flex;
+		align-items: center;
+	}
+
+	/* Desktop: the search field shrinks before anything else does (crumbs take the rest). */
+	.search-slot {
+		flex: 0 1 250px;
+		min-width: 150px;
 		display: flex;
 		align-items: center;
 	}
@@ -179,7 +232,11 @@
 		}
 	}
 
-	@media (max-width: 900px) {
+	/*
+	 * Tablets and small laptops: no breadcrumbs; Маршруты, Моё and Настройки become icon links; the levels button
+	 * keeps only its values; the search field takes the remaining space.
+	 */
+	@media (max-width: 1100px) {
 		.topbar-inner {
 			padding: 0 16px;
 			gap: var(--space-2);
@@ -190,30 +247,137 @@
 		}
 
 		.search-slot {
-			flex: 1;
-			min-width: 0;
+			flex: 1 1 auto;
+		}
+
+		.nav-link {
+			width: 34px;
+			height: 34px;
+			justify-content: center;
+			border-radius: var(--radius);
+		}
+
+		.nav-link .nav-text {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+
+		.nav-link .nav-icon {
+			display: block;
+		}
+
+		.levels-slot :global(.lvl-prefix) {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
 		}
 	}
 
+	/*
+	 * Phones: two rows. Row 1 is the brand and icon links (Маршруты, Моё, status, Настройки,
+	 * theme); row 2 is the search field and, on chapter pages, the levels button.
+	 * Every icon link is a 34px target; the text stays in the DOM for the accessible name.
+	 */
 	@media (max-width: 640px) {
 		.topbar-inner {
-			padding: 0 12px;
-			gap: var(--space-2);
+			height: auto;
+			flex-wrap: wrap;
+			align-content: center;
+			row-gap: 0;
+			column-gap: var(--space-1);
+			padding: var(--space-2) 12px;
 		}
 
-		/* Phones: the settings link keeps only its gear icon, the label stays in aria-label. */
-		.settings-link .full {
-			display: none;
-		}
-
-		.settings-link .short {
-			display: inline;
+		.brand {
+			order: 0;
+			flex: 1 1 auto;
+			min-width: 0;
 			font-size: 16px;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 
-		/* Search collapses to an icon button (see SearchDialog); slot keeps it on the right. */
+		.nav-link {
+			order: 0;
+		}
+
+		.nav-link[aria-current] {
+			background: var(--topic-soft);
+			color: var(--topic);
+		}
+
+		.row-break {
+			display: block;
+			order: 1;
+			flex: 0 0 100%;
+			height: 0;
+		}
+
 		.search-slot {
-			justify-content: flex-end;
+			order: 2;
+			flex: 1 1 0;
+			margin-top: var(--space-2);
+		}
+
+		.levels-slot {
+			order: 2;
+			margin-top: var(--space-2);
+		}
+
+		/* Search keeps its label and icon, and fills the row. */
+		.search-slot :global(.search-field) {
+			width: 100%;
+			height: 34px;
+			justify-content: flex-start;
+			padding: 0 var(--space-3);
+		}
+
+		.search-slot :global(.search-label) {
+			position: static;
+			width: auto;
+			height: auto;
+			overflow: visible;
+			clip: auto;
+			white-space: nowrap;
+		}
+
+		.search-slot :global(.search-icon) {
+			display: block;
+		}
+
+		/* Levels: the icon stays, the values are kept for screen readers only. */
+		.levels-slot :global(.levels-btn) {
+			width: 34px;
+			padding: 0;
+			justify-content: center;
+		}
+
+		.levels-slot :global(.levels-btn)::before {
+			content: 'Ур';
+			font-size: 13px;
+			font-weight: 600;
+		}
+
+		.levels-slot :global(.lvl-prefix),
+		.levels-slot :global(.lvl-label) {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+
+		.levels-slot :global(.caret),
+		.levels-slot :global(.lvl-key) {
+			display: none;
 		}
 	}
 </style>

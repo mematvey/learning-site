@@ -307,7 +307,7 @@
 		min-height: 36px;
 		padding: 0 var(--space-3);
 		border-radius: 999px;
-		border: 1px solid var(--border);
+		border: 1px solid var(--border-control);
 		background: var(--surface);
 		color: var(--text);
 	}
