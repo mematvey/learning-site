@@ -1,0 +1,55 @@
+- id: ranking
+  term: ранжирование
+  term_en: ranking
+  definition: 'Упорядочивание набора объектов по оценке полезности для запроса. Важен порядок сверху списка, а не только то, попал объект в список или нет.'
+  chapter: classic-ml/ranking-recsys
+- id: relevance
+  term: релевантность
+  term_en: relevance
+  definition: 'Степень полезности объекта для конкретного запроса. В учебных данных её задают числом, например от 0 до 2.'
+  chapter: classic-ml/ranking-recsys
+- id: dcg
+  term: дисконтированный накопленный выигрыш
+  term_en: discounted cumulative gain (DCG)
+  definition: 'Сумма оценок релевантности по позициям списка, где вклад каждой позиции уменьшается с ростом её номера. Значение зависит от величины оценок, поэтому сравнивать его между запросами трудно.'
+  chapter: classic-ml/ranking-recsys
+- id: ndcg
+  term: нормированный дисконтированный выигрыш
+  term_en: normalized discounted cumulative gain (NDCG)
+  definition: 'DCG, делённый на DCG идеального порядка, где объекты стоят по убыванию релевантности. Лежит от 0 до 1; единица у списка, который уже идеально отсортирован.'
+  chapter: classic-ml/ranking-recsys
+- id: recommender-system
+  term: рекомендательная система
+  term_en: recommender system
+  definition: 'Система, которая для пользователя выбирает и упорядочивает объекты, которые он, вероятно, выберет или оценит высоко.'
+  chapter: classic-ml/ranking-recsys
+- id: collaborative-filtering
+  term: коллаборативная фильтрация
+  term_en: collaborative filtering
+  definition: 'Подход, который предсказывает интерес пользователя по прошлому поведению пользователей и объектов, без опоры на описание самих объектов.'
+  chapter: classic-ml/ranking-recsys
+- id: implicit-feedback
+  term: неявная обратная связь
+  term_en: implicit feedback
+  definition: 'Сигнал о предпочтении без явной оценки: просмотр, клик, покупка. Отсутствие клика не означает неприязни: пользователь мог не увидеть объект.'
+  chapter: classic-ml/ranking-recsys
+- id: matrix-factorization
+  term: матричная факторизация
+  term_en: matrix factorization
+  definition: 'Приближение матрицы оценок произведением двух матриц малого ранга. Каждому пользователю и каждому объекту соответствует короткий вектор скрытых признаков.'
+  chapter: classic-ml/ranking-recsys
+- id: alternating-least-squares
+  term: попеременные наименьшие квадраты
+  term_en: alternating least squares (ALS)
+  definition: 'Способ обучения матричной факторизации: при фиксированных векторах объектов пересчитывают векторы пользователей, затем наоборот. Каждый шаг решает задачу наименьших квадратов.'
+  chapter: classic-ml/ranking-recsys
+- id: cold-start
+  term: холодный старт
+  term_en: cold start
+  definition: 'Ситуация, когда у нового пользователя или нового объекта нет истории взаимодействий, и модель, которая опирается только на неё, не может дать надёжную оценку.'
+  chapter: classic-ml/ranking-recsys
+- id: lambdarank
+  term: LambdaRank
+  term_en: LambdaRank
+  definition: 'Способ обучения ранжирования, в котором градиент для пары объектов взвешен изменением NDCG при их перестановке. В сочетании с деревьями решений даёт LambdaMART.'
+  chapter: classic-ml/ranking-recsys
