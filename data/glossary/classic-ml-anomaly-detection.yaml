@@ -1,0 +1,41 @@
+- id: anomaly
+  term: аномалия
+  term_en: anomaly
+  definition: 'Объект, который заметно отличается от основной массы данных. Не всегда ошибка: это может быть редкое, но настоящее событие.'
+  chapter: classic-ml/anomaly-detection
+- id: anomaly-detection
+  term: обнаружение аномалий
+  term_en: anomaly detection
+  definition: 'Задача строить модель обычных объектов и отмечать те, что в неё не укладываются. Часто решается без размеченных примеров аномалий.'
+  chapter: classic-ml/anomaly-detection
+- id: contamination
+  term: доля помеченных объектов
+  term_en: contamination
+  definition: 'Параметр детектора, задающий долю объектов, которую он пометит как аномалии. Не измеряет реальную долю аномалий в данных.'
+  chapter: classic-ml/anomaly-detection
+- id: base-rate
+  term: базовая доля
+  term_en: base rate
+  definition: 'Доля редкого класса в данных. От неё зависит точность детектора: при одних и тех же полноте и доле ложных срабатываний точность падает, когда аномалий становится меньше.'
+  chapter: classic-ml/anomaly-detection
+- id: z-score
+  term: z-оценка
+  term_en: z-score
+  definition: 'Отклонение значения от среднего в единицах стандартного отклонения: (x − μ) / σ.'
+  chapter: classic-ml/anomaly-detection
+  layer: { c: 2, d: 1 }
+- id: isolation-forest
+  term: изоляционный лес
+  term_en: isolation forest
+  definition: 'Ансамбль случайных деревьев, которые делят данные случайными границами. Объекты, отделяющиеся короткими путями, считаются аномальными.'
+  chapter: classic-ml/anomaly-detection
+- id: local-outlier-factor
+  term: локальный фактор выброса
+  term_en: local outlier factor (LOF)
+  definition: 'Метод, который сравнивает плотность вокруг объекта с плотностью вокруг его соседей. Объект в разреженной зоне рядом с плотной получает высокую оценку.'
+  chapter: classic-ml/anomaly-detection
+- id: novelty-detection
+  term: обнаружение новизны
+  term_en: novelty detection
+  definition: 'Постановка, где модель обучается на нормальных данных и оценивает новые объекты, которых не было в обучении.'
+  chapter: classic-ml/anomaly-detection
