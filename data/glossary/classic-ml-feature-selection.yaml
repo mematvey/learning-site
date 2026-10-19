@@ -1,0 +1,25 @@
+- id: feature-selection
+  term: отбор признаков
+  term_en: feature selection
+  definition: Выбор подмножества признаков, на котором обучается модель. Выбор делается по данным, поэтому его нужно учитывать в оценке качества.
+  chapter: classic-ml/feature-selection
+- id: filter-method
+  term: фильтр
+  term_en: filter method
+  definition: Способ отбора, при котором каждый признак оценивается отдельно по простой статистике, например по корреляции с ответом. Быстро, но не видит взаимодействий и избыточности признаков.
+  chapter: classic-ml/feature-selection
+- id: wrapper-method
+  term: обёртка
+  term_en: wrapper method
+  definition: Способ отбора, при котором перебираются наборы признаков и для каждого обучается модель. Учитывает взаимодействия, но дорог по вычислениям.
+  chapter: classic-ml/feature-selection
+- id: embedded-method
+  term: встроенный отбор
+  term_en: embedded method
+  definition: Отбор, который происходит во время обучения модели. Например, L1-штраф обнуляет веса части признаков, и такие признаки выпадают из модели.
+  chapter: classic-ml/feature-selection
+- id: selection-leakage
+  term: утечка через отбор признаков
+  term_en: selection leakage
+  definition: Ошибка, при которой признаки отбираются по всей выборке, включая тестовые фолды. Оценка качества тогда завышена, даже если все признаки шумовые.
+  chapter: classic-ml/feature-selection
