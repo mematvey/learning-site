@@ -1,0 +1,35 @@
+- id: confounder
+  term: конфаундер
+  term_en: confounder
+  definition: 'Переменная, которая влияет и на причину, и на следствие. Из-за неё связь между ними возникает, даже если причинного влияния между ними нет, или искажается.'
+  chapter: stats/causal-inference
+- id: mediator
+  term: медиатор
+  term_en: mediator
+  definition: 'Переменная, через которую причина влияет на следствие: причина влияет на медиатор, медиатор влияет на следствие.'
+  chapter: stats/causal-inference
+- id: collider
+  term: коллайдер
+  term_en: collider
+  definition: 'Переменная, на которую влияют две другие переменные, но которые сами между собой не связаны напрямую. Контроль по коллайдеру создаёт ложную связь между ними.'
+  chapter: stats/causal-inference
+- id: backdoor-criterion
+  term: критерий backdoor
+  term_en: backdoor criterion
+  definition: 'Правило Перла: набор переменных годится для оценки эффекта, если он блокирует все пути между причиной и следствием, которые начинаются стрелкой в причину, и не содержит потомков причины.'
+  chapter: stats/causal-inference
+- id: causal-effect
+  term: причинный эффект
+  term_en: causal effect
+  definition: 'Изменение ожидаемого результата, которое вызвано изменением причины при прочих равных. Отличается от наблюдаемой условной связи, если есть конфаундеры.'
+  chapter: stats/causal-inference
+- id: randomization
+  term: рандомизация
+  term_en: randomization
+  definition: 'Случайное назначение воздействия, которое не зависит от признаков объекта. Разрывает связи, по которым конфаундеры влияли бы на воздействие.'
+  chapter: stats/causal-inference
+- id: simpson-paradox
+  term: парадокс Симпсона
+  term_en: Simpson paradox
+  definition: 'Ситуация, когда связь в каждой подгруппе данных имеет один знак, а в объединённых данных противоположный. Обычно это следствие разного состава групп.'
+  chapter: stats/causal-inference
