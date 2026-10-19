@@ -38,6 +38,7 @@
 	let selected = $state<({ draft: BookmarkDraft } & Placed) | null>(null);
 	let editing = $state<Editing | null>(null);
 	let editError = $state('');
+	let editHeight = $state(0);
 	let fabEl: HTMLButtonElement | undefined = $state();
 
 	const chapterBookmarks = $derived(my.bookmarks.filter((b) => b.chapter === chapterId));
@@ -73,7 +74,7 @@
 		editing = {
 			draft: { ...draft, comment: existing?.comment ?? '' },
 			existing,
-			top: Math.min(top, window.innerHeight - 260),
+			top,
 			left: clampLeft(left - 140, 8),
 		};
 		hover = null;
@@ -238,7 +239,12 @@
 
 {#if editing}
 	{#key editing}
-		<div class="bm-pop" style:top="{editing.top}px" style:left="{editing.left}px">
+		<div
+			class="bm-pop"
+			bind:offsetHeight={editHeight}
+			style:top="{Math.max(8, Math.min(editing.top, window.innerHeight - editHeight - 8))}px"
+			style:left="{editing.left}px"
+		>
 			<BookmarkEditor
 				draft={editing.draft}
 				onSave={save}
