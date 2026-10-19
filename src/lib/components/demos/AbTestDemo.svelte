@@ -553,6 +553,8 @@
 		stroke-width: 2;
 	}
 	.ab-tick {
+		/* SVG text takes its colour from fill, not color: without this the labels are black on dark. */
+		fill: var(--text-muted);
 		font-family: var(--font-mono);
 		font-size: 11px;
 		font-variant-numeric: tabular-nums;
