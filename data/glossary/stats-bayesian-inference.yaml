@@ -1,0 +1,25 @@
+- id: conjugate-prior
+  term: сопряжённое распределение
+  term_en: conjugate prior
+  definition: 'Априорное распределение, которое после обновления по данным остаётся того же семейства. Для бета-распределения и биномиальных данных апостериорное распределение снова бета-распределение.'
+  chapter: stats/bayesian-inference
+- id: beta-distribution
+  term: бета-распределение
+  term_en: beta distribution
+  definition: 'Распределение на отрезке от 0 до 1 с двумя параметрами a и b. Часто используется для неизвестной доли или вероятности.'
+  chapter: stats/bayesian-inference
+- id: posterior-distribution
+  term: апостериорное распределение
+  term_en: posterior distribution
+  definition: 'Распределение параметра после учёта данных: априорное распределение, умноженное на правдоподобие данных и нормированное.'
+  chapter: stats/bayesian-inference
+- id: posterior-mean
+  term: апостериорное среднее
+  term_en: posterior mean
+  definition: 'Математическое ожидание апостериорного распределения параметра. Одна из часто используемых точечных оценок в байесовском выводе.'
+  chapter: stats/bayesian-inference
+- id: credible-interval
+  term: байесовский интервал
+  term_en: credible interval
+  definition: 'Интервал, в котором с заданной апостериорной вероятностью лежит параметр. В отличие от доверительного интервала, его вероятностная формулировка относится к параметру при данных и выбранном априорном распределении.'
+  chapter: stats/bayesian-inference
