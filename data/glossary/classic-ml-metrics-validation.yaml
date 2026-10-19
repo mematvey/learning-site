@@ -53,3 +53,18 @@
   term_en: data leakage
   definition: 'Ситуация, когда при обучении или подготовке данных используется информация из тестовой или валидационной выборки. Оценка получается завышенной.'
   chapter: classic-ml/metrics-validation
+- id: pr-auc
+  term: PR AUC
+  term_en: PR AUC (average precision)
+  definition: 'Площадь под PR-кривой. На практике её считают как average precision: сумма точностей, взвешенных приростом полноты. Полезна, когда положительный класс редкий.'
+  chapter: classic-ml/metrics-validation
+- id: k-fold
+  term: K-блочное разбиение
+  term_en: K-fold
+  definition: 'Выборку делят на K равных частей; каждая часть по очереди становится проверочной, остальные обучают модель. Получают K оценок, их среднее и разброс.'
+  chapter: classic-ml/metrics-validation
+- id: error-cost
+  term: стоимость ошибок
+  term_en: error cost
+  definition: 'Цены ложной тревоги и пропуска, переведённые в одну величину: C = c_FP * FP + c_FN * FN. По ней выбирают порог классификации.'
+  chapter: classic-ml/metrics-validation
