@@ -212,11 +212,6 @@
 			</ol>
 		{/if}
 
-		<p class="cc-note">
-			<span class="cc-note-h">Что заметить.</span> Порядок шагов задаёте вы. Без блокировки одно из обновлений
-			стирается, и итог меньше ожидаемого. С блокировкой потоки ждут друг друга, и итог совпадает.
-		</p>
-
 		<table class="cc-table">
 			<caption>Без блокировки, 1000 случайных порядков на прогон (фиксированный seed)</caption>
 			<thead>
@@ -291,7 +286,7 @@
 		</svg>
 		<p class="cc-axis-note">Число ядер от 1 до 100; пунктир — предел 1/(1 − p).</p>
 
-		<table class="cc-table">
+		<table class="cc-table cc-table-amdahl">
 			<caption>Ускорение S(N) при p = {formatRu(p)}</caption>
 			<thead>
 				<tr>
@@ -358,9 +353,6 @@
 		font-size: 16px;
 		font-style: italic;
 	}
-	.cc-note-h {
-		font-weight: 600;
-	}
 	/* Controls */
 	.cc-controls {
 		display: flex;
@@ -378,6 +370,7 @@
 	}
 	.cc-seg,
 	.cc-btn {
+		white-space: nowrap;
 		min-height: 36px;
 		padding: 0 var(--space-3);
 		border: 1px solid var(--border);
@@ -560,11 +553,6 @@
 	.cc-log li.is-stale {
 		color: var(--fail);
 	}
-	.cc-note {
-		margin-top: var(--space-4);
-		color: var(--text-muted);
-		font-size: var(--fs-sm);
-	}
 	/* Tables */
 	.cc-table {
 		width: 100%;
@@ -587,6 +575,16 @@
 	}
 	.cc-table td {
 		font-family: var(--font-mono);
+	}
+	/* Seven columns must fit a 375 px screen without scrolling the page */
+	.cc-table-amdahl {
+		table-layout: fixed;
+		font-size: 13px;
+	}
+	.cc-table-amdahl th,
+	.cc-table-amdahl td {
+		padding: var(--space-1);
+		overflow-wrap: anywhere;
 	}
 	/* Amdahl */
 	.cc-sliders {

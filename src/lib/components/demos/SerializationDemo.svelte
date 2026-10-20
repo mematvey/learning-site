@@ -303,25 +303,6 @@
 			Модель упрощённая: без сжатия, заголовков и пропуска блоков. Отношение байтов C / c = {ratioText}.
 		</p>
 	</section>
-
-	<div class="sf-learn">
-		<p class="sf-learn-t">Что заметить</p>
-		<ul>
-			<li>
-				Число {fmt(s.varintN)} занимает {varint.length}
-				{bytesWord(varint.length)}. Граница 127 и 128 отделяет один байт от двух.
-			</li>
-			<li>
-				Запись весит {jsonN}
-				{bytesWord(jsonN)} в JSON и {protoN}
-				{bytesWord(protoN)} в protobuf: имена полей против номеров.
-			</li>
-			<li>
-				При запросе по {s.wanted} из {s.columns} колонок колоночная раскладка читает в {ratioText} раз
-				меньше байт. Если нужны все колонки, выигрыша по байтам нет.
-			</li>
-		</ul>
-	</div>
 </div>
 
 <style>
@@ -631,20 +612,6 @@
 		border: 1px solid var(--topic);
 		background: var(--topic-soft);
 		border-radius: 2px;
-	}
-	.sf-learn {
-		padding-top: var(--space-4);
-	}
-	.sf-learn-t {
-		font-weight: 600;
-		margin-bottom: var(--space-2);
-	}
-	.sf-learn ul {
-		list-style: disc;
-		padding-left: var(--space-5);
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-1);
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.sf * {
