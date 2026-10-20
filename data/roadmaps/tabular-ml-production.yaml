@@ -6,8 +6,10 @@ goal: 'Построить честный baseline, подготовить дан
 steps:
   - title: 'Основа: линейная алгебра и смещение-разброс'
     description: 'Язык векторов и матриц, линейная регрессия и компромисс модели. Без него не выбрать сложность модели.'
-    chapters: [classic-ml/linear-algebra-essentials, classic-ml/linear-regression, classic-ml/bias-variance]
-    labs: [classic-ml-linear-algebra-essentials, classic-ml-linear-regression, classic-ml-bias-variance]
+    chapters:
+      [classic-ml/linear-algebra-essentials, classic-ml/linear-regression, classic-ml/bias-variance]
+    labs:
+      [classic-ml-linear-algebra-essentials, classic-ml-linear-regression, classic-ml-bias-variance]
   - title: 'Регуляризация'
     description: 'L1 и L2 против переобучения: штраф за сложность модели до перехода к классификации.'
     chapters: [classic-ml/regularization]

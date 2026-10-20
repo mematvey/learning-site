@@ -6,8 +6,10 @@ goal: 'Уверенно объяснять базовые модели, комп
 steps:
   - title: 'Линейная алгебра, регрессия и смещение-разброс'
     description: 'Векторы и матрицы, простейшая модель, функция потерь, градиентный спуск и главный компромисс обучения.'
-    chapters: [classic-ml/linear-algebra-essentials, classic-ml/linear-regression, classic-ml/bias-variance]
-    labs: [classic-ml-linear-algebra-essentials, classic-ml-linear-regression, classic-ml-bias-variance]
+    chapters:
+      [classic-ml/linear-algebra-essentials, classic-ml/linear-regression, classic-ml/bias-variance]
+    labs:
+      [classic-ml-linear-algebra-essentials, classic-ml-linear-regression, classic-ml-bias-variance]
   - title: 'Регуляризация и логистическая регрессия'
     description: 'L1 и L2 против переобучения, затем классификация: сигмоида, кросс-энтропия, вероятностный взгляд.'
     chapters: [classic-ml/regularization, classic-ml/logistic-regression]
@@ -26,7 +28,13 @@ steps:
     labs: [classic-ml-knn-svm]
   - title: 'Деревья и ансамбли'
     description: 'Решающие деревья, бэггинг и градиентный бустинг, подбор гиперпараметров: почему ансамбли работают лучше одиночных моделей.'
-    chapters: [classic-ml/decision-trees, classic-ml/ensembles, classic-ml/gradient-boosting, classic-ml/hyperparameter-search]
+    chapters:
+      [
+        classic-ml/decision-trees,
+        classic-ml/ensembles,
+        classic-ml/gradient-boosting,
+        classic-ml/hyperparameter-search,
+      ]
     labs: [classic-ml-decision-trees, classic-ml-ensembles, classic-ml-gradient-boosting]
   - title: 'Кластеризация и снижение размерности'
     description: 'Обучение без учителя: k-means и метод главных компонент на основе линейной алгебры.'

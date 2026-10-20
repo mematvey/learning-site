@@ -181,7 +181,8 @@ export function fitVote(
 	const w = feats.map((j) => signedCorr(x, j, y, rows));
 	return (row: number) => {
 		let s = 0;
-		for (let t = 0; t < feats.length; t++) s += (w[t] as number) * (x[row * N_FEATURES + (feats[t] as number)] as number);
+		for (let t = 0; t < feats.length; t++)
+			s += (w[t] as number) * (x[row * N_FEATURES + (feats[t] as number)] as number);
 		return s > 0 ? 1 : 0;
 	};
 }
