@@ -10,7 +10,7 @@ export const N_MIN = 1;
 export const N_MAX = 1000;
 export const N_DEFAULT = 100;
 /** The n slider is log-scaled: n = round(10^(pos / POS_PER_DECADE)). */
-export const POS_PER_DECADE = 2000;
+export const POS_PER_DECADE = 200;
 export const POS_MAX = 3 * POS_PER_DECADE;
 export const POS_DEFAULT = 2 * POS_PER_DECADE;
 

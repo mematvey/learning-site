@@ -244,16 +244,13 @@
 			</dd>
 		</dl>
 	</section>
-
-	<p class="cd-note">
-		<span class="cd-h">Что заметить:</span> точная вероятность всегда ниже каждой из трёх границ. При
-		малом n все границы больше единицы, и неравенства ничего не говорят. При большом n граница Хёффдинга
-		опускается ниже границы Чебышёва.
-	</p>
 </figure>
 
 <style>
 	.cd {
+		display: block;
+		width: 100%;
+		min-width: 0;
 		margin: 0;
 		padding: var(--space-6) var(--space-8) var(--space-8);
 		background: var(--surface);
@@ -268,7 +265,7 @@
 		letter-spacing: normal;
 		text-transform: none;
 		max-width: 100%;
-		overflow-wrap: anywhere;
+		overflow-wrap: break-word;
 	}
 	.cd :global(*),
 	.cd :global(*::before),
@@ -478,6 +475,9 @@
 	/* Cause and consequence */
 	.cd-cause {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		width: 100%;
+		min-width: 0;
 		gap: var(--space-2);
 		margin-top: var(--space-4);
 		color: var(--text-muted);
@@ -492,6 +492,8 @@
 		font-variant-numeric: tabular-nums;
 	}
 	.cd-table caption {
+		display: block;
+		width: 100%;
 		caption-side: top;
 		margin-bottom: var(--space-2);
 		text-align: left;
@@ -538,11 +540,6 @@
 		color: var(--text);
 		font-family: var(--font-mono);
 		font-variant-numeric: tabular-nums;
-	}
-
-	.cd-note {
-		margin-top: var(--space-6);
-		color: var(--text-muted);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

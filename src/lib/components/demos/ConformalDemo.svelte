@@ -593,6 +593,19 @@
 	@media (max-width: 480px) {
 		.cf {
 			padding: var(--space-4);
+			min-width: 0;
+			max-width: 100%;
+		}
+		.cf-table {
+			table-layout: fixed;
+		}
+		.cf-table th,
+		.cf-table td {
+			padding: var(--space-2) var(--space-1);
+			overflow-wrap: anywhere;
+		}
+		.cf-table th[scope='row'] {
+			width: 40%;
 		}
 		.cf-range {
 			width: 100%;

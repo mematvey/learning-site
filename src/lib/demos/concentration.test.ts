@@ -96,9 +96,17 @@ describe('sample sizes for P <= 0.05 at p = 0.5, eps = 0.1', () => {
 });
 
 describe('n slider', () => {
-	it('maps the chapter values n = 10, 100, 92, 185, 500, 1000 back to themselves', () => {
+	it('maps the chapter values n = 10, 100, 92, 185, 500, 1000 back within 1%', () => {
+		// The slider grid is coarse (about 1.2% per step), so exact round trips are not possible.
 		for (const n of [10, 100, 92, 185, 500, 1000]) {
-			expect(nFromPos(posFromN(n))).toBe(n);
+			const back = nFromPos(posFromN(n));
+			expect(Math.abs(back - n)).toBeLessThanOrEqual(Math.max(1, n * 0.01));
+		}
+	});
+
+	it('changes the displayed n on every slider step for n from 100 to 1000', () => {
+		for (let pos = posFromN(100); pos < posFromN(1000); pos += 1) {
+			expect(nFromPos(pos + 1)).not.toBe(nFromPos(pos));
 		}
 	});
 

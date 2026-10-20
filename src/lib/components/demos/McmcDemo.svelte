@@ -290,7 +290,7 @@
 						class="mc-tick"
 						x={tickX(v, plotHist).toFixed(1)}
 						y={CHART_H - 4}
-						text-anchor="middle">{v}</text
+						text-anchor={v === X_MIN ? 'start' : v === X_MAX ? 'end' : 'middle'}>{v}</text
 					>
 				{/each}
 			</svg>
