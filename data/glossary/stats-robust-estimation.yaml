@@ -1,0 +1,70 @@
+- id: robust-estimator
+  term: робастная оценка
+  term_en: robust estimator
+  definition: 'Оценка, которая мало меняется от небольшой доли аномальных наблюдений и от небольших отклонений от предполагаемой модели. Цена обычно небольшая потеря точности на идеальных данных.'
+  chapter: stats/robust-estimation
+- id: influence-function
+  term: функция влияния
+  term_en: influence function
+  definition: 'Показывает, как изменяется оценка, если добавить одно наблюдение в точке x к очень большой выборке. Ограниченная функция влияния означает, что один выброс не может сдвинуть оценку сильно.'
+  chapter: stats/robust-estimation
+- id: breakdown-point
+  term: точка пробоя
+  term_en: breakdown point
+  definition: 'Наибольшая доля испорченных наблюдений, которую оценка выдерживает, не уходя в произвольное значение. Для выборочного среднего она равна нулю, для медианы и MAD равна одной второй.'
+  chapter: stats/robust-estimation
+- id: m-estimator
+  term: M-оценка
+  term_en: M-estimator
+  definition: 'Оценка, которая находит параметр из уравнения, где сумма функции psi от отклонений равна нулю. Среднее и медиана являются частными случаями.'
+  chapter: stats/robust-estimation
+- id: psi-function
+  term: ψ-функция
+  term_en: psi function
+  definition: 'Функция, которая задаёт вклад наблюдения в уравнение M-оценки. Для среднего она линейна; ограниченная ψ-функция ограничивает влияние далёких наблюдений.'
+  chapter: stats/robust-estimation
+- id: location-parameter
+  term: параметр положения
+  term_en: location parameter
+  definition: 'Параметр, который сдвигает распределение, не меняя его формы, например центр симметричного распределения. Среднее и медиана оценивают параметр положения.'
+  chapter: stats/robust-estimation
+- id: scale-estimator
+  term: оценка масштаба
+  term_en: scale estimator
+  definition: 'Оценка разброса наблюдений, например стандартного отклонения, MAD или IQR. Робастную оценку масштаба нормируют так, чтобы в выбранной модели она оценивала σ.'
+  chapter: stats/robust-estimation
+- id: mad
+  term: MAD
+  term_en: median absolute deviation
+  definition: 'Медиана абсолютных отклонений от медианы выборки. Точка пробоя одна вторая. Для нормальных данных её делят на 0,6745 (MADN), что эквивалентно умножению на 1,4826.'
+  chapter: stats/robust-estimation
+- id: iqr
+  term: межквартильный размах
+  term_en: interquartile range
+  definition: 'Разность третьего и первого квартилей выборки. Устойчив к выбросам, как и MAD; для нормальных данных его делят на 2 · 0,6745, чтобы получить оценку σ.'
+  chapter: stats/robust-estimation
+- id: m-scale
+  term: M-оценка масштаба
+  term_en: M-scale
+  definition: 'Масштаб s, который решает уравнение: среднее значение ρ от отклонений, делённых на s, равно заданной константе b. Константу b выбирают по модели, иначе оценка смещена.'
+  chapter: stats/robust-estimation
+- id: tukey-bisquare
+  term: функция Тьюки (bisquare)
+  term_en: Tukey bisquare
+  definition: 'Семейство функций с порогом c: внутри порога вклад наблюдения плавно убывает, за порогом становится нулевым. Параметр c задаёт и устойчивость, и эффективность при нормальных данных.'
+  chapter: stats/robust-estimation
+- id: contaminated-model
+  term: модель с засорением
+  term_en: contaminated model
+  definition: 'Распределение, в котором с вероятностью 1 − ε наблюдение берётся из основного распределения, а с вероятностью ε из другого, например тяжёлохвостого. Удобна для проверки робастных оценок.'
+  chapter: stats/robust-estimation
+- id: asymptotic-variance
+  term: асимптотическая дисперсия
+  term_en: asymptotic variance
+  definition: 'Дисперсия предельного нормального распределения оценки, делённая на n. При больших выборках примерно описывает разброс оценки. Для M-оценки положения она равна σ² V / n.'
+  chapter: stats/robust-estimation
+- id: efficiency
+  term: эффективность оценки
+  term_en: efficiency
+  definition: 'Отношение асимптотических дисперсий двух оценок одного параметра: показывает, во сколько раз одна оценка точнее другой. Чем меньше асимптотическая дисперсия, тем эффективнее оценка.'
+  chapter: stats/robust-estimation
