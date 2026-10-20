@@ -3,7 +3,7 @@ id: classic-ml/anomaly-detection
 title: "Аномалии и редкие события"
 topic: classic-ml
 summary: "Как найти редкие необычные объекты без размеченных примеров, как выбрать порог и почему при доле аномалий 1% точность и ROC AUC обманывают."
-prereqs: [classic-ml/clustering-pca, classic-ml/decision-trees, classic-ml/metrics-validation]
+prereqs: [classic-ml/clustering-pca, classic-ml/decision-trees, classic-ml/metrics-validation, classic-ml/calibration-imbalance]
 concepts:
   - { id: anomaly, title: Аномалия }
   - { id: anomaly-detection, title: Обнаружение аномалий }
@@ -29,6 +29,7 @@ sources:
     title: "2.7. Novelty and Outlier Detection"
     venue: scikit-learn, stable documentation
     url: https://scikit-learn.org/stable/modules/outlier_detection.html
+    accessed: 2026-10-20
     supports: [intuition-isolation, intuition-lof, math-contamination, code-intro, mistake-novelty]
   - id: liu2008iforest
     kind: paper
@@ -37,12 +38,14 @@ sources:
     venue: IEEE International Conference on Data Mining (ICDM)
     year: 2008
     url: https://doi.org/10.1109/ICDM.2008.17
+    accessed: 2026-10-20
     supports: [intuition-isolation, math-complexity]
   - id: sklearnmetrics
     kind: doc
-    title: "3.3. Metrics and scoring: quantifying the quality of predictions"
+    title: "3.4. Metrics and scoring: quantifying the quality of predictions"
     venue: scikit-learn, stable documentation
     url: https://scikit-learn.org/stable/modules/model_evaluation.html
+    accessed: 2026-10-20
     supports: [math-pr, mistake-roc]
 aliases: []
 status: draft
@@ -68,7 +71,7 @@ status: draft
 
 <Variant c="2-4">
 
-Для одного признака отклонение от типичного значения переводят в единицы разброса: это <Term id="z-score">z-оценка</Term>, и порог ставят на её модуль. Для нескольких признаков аналогичная мера учитывает разброс по каждому и связь между ними, но логика та же: объект помечается, если он далеко от центра обычного. {#intuition-zscore}
+Для одного признака отклонение от типичного значения переводят в единицы разброса: это <Term id="z-score">z-оценка (z-score)</Term>, и порог ставят на её модуль. Для нескольких признаков аналогичная мера считает отклонение по каждому признаку в его единицах разброса. Это диагональный вариант расстояния Махаланобиса (Mahalanobis distance): связи между признаками он не учитывает. Логика та же: объект помечается, если он далеко от центра обычного. {#intuition-zscore}
 
 </Variant>
 
@@ -76,7 +79,7 @@ status: draft
 
 Вторая идея это <Term id="local-outlier-factor">локальный фактор выброса (local outlier factor, LOF)</Term>. Он сравнивает плотность вокруг объекта с плотностью вокруг его ближайших соседей. Точка на краю плотного облака отмечается, даже если по всей выборке она не выделяется, потому что вокруг неё пусто, а рядом густо. {#intuition-lof}
 
-<Figure id="fig-anomaly-threshold" alt="Двумерное облако точек: большинство точек собрано в центре, несколько редких точек лежат по краям. Ползунок задаёт долю точек, которые помечаются как аномалии, и помеченные точки окрашены. Под рисунком кривая precision и recall при разных порогах." caption="Порог детектора на двумерных данных">
+<Figure id="fig-anomaly-threshold" alt="Двумерное облако точек: большинство точек собрано в центре, несколько редких точек лежат по краям. Ползунок задаёт долю точек, которые помечаются как аномалии, и помеченные точки окрашены. Рядом с ним кривая precision и recall при разных порогах." caption="Порог детектора на двумерных данных">
 
 <AnomalyDetectionDemo />
 
@@ -109,7 +112,7 @@ $$
 
 <Level c={2}>
 
-Для одного признака с средним $\mu$ и стандартным отклонением $\sigma$ z-оценка равна $z = (x - \mu) / \sigma$. Правило «помечать, если $|z| > t$» при нормальном распределении с $t = 3$ даёт $P(|Z| > 3) \approx 0{,}0027$, что и есть доля срабатываний на нормальных данных. Оно работает, только если форма распределения близка к нормальной. У тяжёлых хвостов реальная доля срабатываний выше. {#math-z-formal}
+Для одного признака со средним $\mu$ и стандартным отклонением $\sigma$ z-оценка равна $z = (x - \mu) / \sigma$. Правило «помечать, если $|z| > t$» при нормальном распределении с $t = 3$ даёт $P(|Z| > 3) \approx 0{,}0027$, что и есть доля срабатываний на нормальных данных. Оно работает, только если форма распределения близка к нормальной. У тяжёлых хвостов реальная доля срабатываний выше. {#math-z-formal}
 
 </Level>
 
@@ -121,7 +124,7 @@ $$
 
 </Level>
 
-Для редкого класса полезнее <Term id="pr-curve">PR-кривая</Term>, а не ROC (<Cite id="sklearnmetrics" />). Площадь под ней (<Term id="pr-auc">PR AUC</Term>, на практике average precision) зависит от базовой доли: для случайного ранжирования она равна доле аномалий, то есть 0,01 при 1%. {#math-pr}
+Для редкого класса полезнее <Term id="pr-curve">PR-кривая</Term>, а не ROC-кривая (receiver operating characteristic: доля найденных аномалий против доли ложных срабатываний среди нормальных) <Cite id="sklearnmetrics" />. Площадь под ней (<Term id="pr-auc">PR AUC</Term>, на практике average precision) зависит от базовой доли: для случайного ранжирования она равна доле аномалий, то есть 0,01 при 1%. {#math-pr}
 
 <Level c={3}>
 
@@ -166,7 +169,7 @@ labels = lof.fit_predict(X)  # -1 аномалия, только для X
 ## Частые ошибки {#mistakes}
 
 - Оценивать по доле верных ответов. При 1% аномалий тривиальная модель получает 99%, и это ничего не доказывает. Сравнивайте с уровнем 0,99 и смотрите на полноту и точность. {#mistake-accuracy}
-- Ориентироваться на ROC AUC при редком классе. На игрушечных данных (990 нормальных точек из нормального распределения с единичной дисперсией и 10 аномальных равномерно в квадрате от −6 до 6 по каждой оси, `random_state=0`) ROC AUC равен примерно 0,997, а average precision около 0,879. Высокий ROC AUC не означает, что срабатывания точны. {#mistake-roc}
+- Ориентироваться на ROC AUC при редком классе. В игрушечном эксперименте (990 нормальных точек из стандартного нормального распределения и 10 аномалий, равномерно в квадрате от −6 до 6 по каждой оси; генератор `numpy.random.default_rng(0)`, детектор `IsolationForest(random_state=0)`) ROC AUC равен примерно 0,997, а average precision около 0,879. Эти числа получены вне демо. Высокий ROC AUC не означает, что срабатывания точны. {#mistake-roc}
 - Считать, что признаки не нужно масштабировать. Для LOF и любых методов на расстояниях признак в тысячах доминирует в расстоянии. Изоляционный лес выбирает границу внутри диапазона признака, поэтому масштаб отдельного признака на результат почти не влияет. {#mistake-scale}
 - Оценивать новые объекты через `fit_predict`. У LOF по умолчанию этот вызов работает только на обучающих данных. Для новых объектов нужен режим обнаружения новизны (`novelty=True`), и обучающая выборка должна быть по возможности очищена от аномалий. {#mistake-novelty}
 

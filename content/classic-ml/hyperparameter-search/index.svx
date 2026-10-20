@@ -7,6 +7,7 @@ prereqs:
   - classic-ml/metrics-validation
   - classic-ml/regularization
   - classic-ml/gradient-boosting
+  - mlops/experiment-tracking
 concepts:
   - { id: successive-halving, title: Последовательное деление пополам }
   - { id: nested-cv, title: Вложенная кросс-валидация }
@@ -28,6 +29,7 @@ sources:
     venue: Journal of Machine Learning Research, 13, 2012
     year: 2012
     url: https://jmlr.org/papers/v13/bergstra12a.html
+    accessed: 2026-10-20
     supports: [intuition-grid-random]
   - id: akiba2019
     kind: paper
@@ -36,13 +38,15 @@ sources:
     venue: KDD 2019
     year: 2019
     url: https://arxiv.org/abs/1907.10902
+    accessed: 2026-10-20
     supports: [math-sequential]
   - id: sklearntuning
     kind: doc
-    title: "Tuning the hyper-parameters of an estimator (scikit-learn 1.9.1 documentation)"
+    title: "3.2. Tuning the hyper-parameters of an estimator (scikit-learn 1.9.1 documentation)"
     authors: scikit-learn developers
     venue: scikit-learn 1.9.1, stable documentation
     url: https://scikit-learn.org/stable/modules/grid_search.html
+    accessed: 2026-10-20
     supports: [intuition-grid-random, impl-search]
   - id: sklearncvnested
     kind: doc
@@ -50,6 +54,7 @@ sources:
     authors: scikit-learn developers
     venue: scikit-learn 1.9.1, stable documentation
     url: https://scikit-learn.org/stable/modules/cross_validation.html
+    accessed: 2026-10-20
     supports: [math-nested]
 aliases: []
 status: draft
@@ -82,6 +87,8 @@ status: draft
 </Figure>
 
 **Что заметить:** при одинаковом числе испытаний сетка проверяет важную ось лишь в нескольких точках, а случайные точки покрывают её плотнее. {#notice-search}
+
+В демо бюджеты методов не выровнены: сетка 3 на 3 тратит 9 обучений, и каждое занимает полный бюджет в 81 единицу, то есть 729 единиц; последовательный подбор тратит 405 единиц. Сравнивайте качество при одинаковом расходе, а не при одинаковом числе строк в таблице. {#notice-budget}
 
 Число точек сетки растёт быстрее, чем число значений на параметр: при трёх параметрах сетка по три значения даёт 27 точек, а по четыре значения уже 64. Поэтому сетка плохо масштабируется на много параметров.
 
@@ -226,3 +233,5 @@ print(scores.mean())
 Если важны лишь несколько параметров, сетка тратит испытания на перебор остальных. Случайные точки дают больше различных значений каждого параметра при том же бюджете. Сетка выигрывает, если параметров мало и важны все.
 
 </Quiz>
+
+## Источники {#sources}

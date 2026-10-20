@@ -187,7 +187,7 @@
 			<p class="ad-panel-t">Облако точек</p>
 			<svg
 				class="ad-svg ad-scatter"
-				style="height: {size}px"
+				style="width: {size}px; height: {size}px"
 				viewBox="0 0 {size} {size}"
 				role="group"
 				aria-label="Двумерное облако точек. Перетаскивайте точки мышью или пальцем. Аномалии двигаются стрелками на клавиатуре."
@@ -249,7 +249,7 @@
 			<p class="ad-panel-t">Точность и полнота при разных порогах</p>
 			<svg
 				class="ad-svg"
-				style="height: {PR_H}px"
+				style="width: {prW}px; height: {PR_H}px"
 				viewBox="0 0 {prW} {PR_H}"
 				role="img"
 				aria-labelledby="ad-pr-title ad-pr-desc"

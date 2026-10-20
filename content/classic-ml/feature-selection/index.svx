@@ -18,7 +18,7 @@ keywords:
   - встроенный отбор
   - утечка
   - кросс-валидация
-minutes: 20
+minutes: { c1: 15, c2: 20, c3: 25, c4: 30 }
 labs: []
 sources:
   - id: guyon2003
@@ -28,6 +28,7 @@ sources:
     venue: Journal of Machine Learning Research, 3
     year: 2003
     url: https://jmlr.org/papers/v3/guyon03a.html
+    accessed: 2026-10-20
     supports: [intuition-kinds, math-filter]
   - id: esl2009
     kind: doc
@@ -37,12 +38,14 @@ sources:
     year: 2009
     note: разд. 7.10.2 (неправильная и правильная схема кросс-валидации при отборе признаков)
     url: https://hastie.su.domains/ElemStatLearn/
+    accessed: 2026-10-20
     supports: [math-cv-wrong, mistake-split]
   - id: sklearnfs
     kind: doc
     title: "Feature selection (User Guide, §1.13), scikit-learn 1.9.1"
     venue: scikit-learn 1.9.1, user guide
     url: https://scikit-learn.org/stable/modules/feature_selection.html
+    accessed: 2026-10-20
     supports: [code-intro]
 aliases: []
 status: draft
@@ -70,13 +73,17 @@ status: draft
 
 ## Математика {#math}
 
-Обозначения: $X$ матрица признаков размера $n \times p$, по строке на пример; $y$ вектор ответов; $x_j$ столбец признака $j$; $S$ набор отобранных признаков. {#math-notation}
-
 <Variant c="1">
 
 Каждому признаку назначают число, которое говорит, насколько он связан с ответом. Берут несколько признаков с лучшими числами. Оценку качества считают только на тех примерах, которые не участвовали ни в отборе, ни в обучении. {#math-words}
 
 </Variant>
+
+<Level c={2}>
+
+Обозначения: $X$ матрица признаков размера $n \times p$, по строке на пример; $y$ вектор ответов; $x_j$ столбец признака $j$; $S$ набор отобранных признаков. {#math-notation}
+
+</Level>
 
 <Variant c="2-4">
 
@@ -162,7 +169,7 @@ model = make_pipeline(StandardScaler(), Lasso(alpha=0.1)).fit(X, y)
 kept = model[-1].coef_ != 0  # features with nonzero weight survive
 ```
 
-Ожидаемый результат первого и второго сниппета на шумовых данных: точность около 0,9 и около 0,5 соответственно. Это близко к симуляции главы: $n = 50$, $p = 1000$, $k = 20$, 5 фолдов со случайным перемешиванием, среднее по 50 повторам с зёрнами 0–49. Точные значения зависят от разбиения на фолды. {#code-expected}
+Ожидаемый результат первого и второго сниппета на шумовых данных: точность около 0,9 и около 0,5 соответственно. Это близко к симуляции на scikit-learn: $n = 50$, $p = 1000$, `SelectKBest` с $k = 20$, 5 фолдов со случайным перемешиванием, среднее по 50 повторам с зёрнами 0–49. В прогоне получилось 0,918 и 0,514. Демо устроено проще: порог отбора и голосование по корреляциям вместо `SelectKBest` и логистической регрессии, поэтому его значения 0,93 и 0,52. Точные значения зависят от разбиения на фолды. {#code-expected}
 
 ## Частые ошибки {#mistakes}
 
