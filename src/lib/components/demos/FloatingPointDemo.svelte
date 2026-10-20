@@ -1,26 +1,8 @@
 <script module lang="ts">
-	import { SvelteMap } from 'svelte/reactivity';
 	import { FORMATS, formatAt, fsum, kahanSum, naiveSum } from '$lib/demos/floating-point';
 
 	/** One million values of 0.1, shared by all instances. */
 	const TENTHS: number[] = new Array<number>(1_000_000).fill(0.1);
-	/** Sums are cached per method, format index and count: each one costs up to a million steps. */
-	const sumCache = new SvelteMap<string, number>();
-
-	/** Sum of the first n values of 0.1 with the given method; format index 3 (float64) for Kahan and fsum. */
-	function cachedSum(method: 'naive' | 'kahan' | 'fsum', fmtIndex: number, n: number): number {
-		const key = `${method}:${fmtIndex}:${n}`;
-		const hit = sumCache.get(key);
-		if (hit !== undefined) return hit;
-		const xs = TENTHS.slice(0, n);
-		let value: number;
-		if (method === 'naive') value = naiveSum(xs, formatAt(fmtIndex));
-		else if (method === 'kahan') value = kahanSum(xs);
-		else value = fsum(xs);
-		sumCache.set(key, value);
-		return value;
-	}
-
 	/** Russian decimal comma; up to 17 significant digits so the stored value is visible. */
 	function fmtNum(v: number): string {
 		if (Number.isNaN(v)) return 'nan';
@@ -96,14 +78,18 @@
 
 	const n = $derived(SUM_N[sumIndex] ?? 1_000_000);
 	const ref = $derived(n / 10);
+	// Pure derivations: each sum costs up to a million steps, and it is recomputed only when n or the format changes.
+	const sums64 = $derived.by(() => {
+		const xs = TENTHS.slice(0, n);
+		return { naive: naiveSum(xs, formatAt(FLOAT64)), kahan: kahanSum(xs), fsum: fsum(xs) };
+	});
+	const sumInFormat = $derived(naiveSum(TENTHS.slice(0, n), fmt));
 	const sumRows = $derived([
-		{ label: 'Наивно, float64', value: cachedSum('naive', FLOAT64, n) },
-		{ label: `Наивно, ${fmt.name}`, value: cachedSum('naive', fmtIndex, n) },
-		{ label: 'Кэхэна, float64', value: cachedSum('kahan', FLOAT64, n) },
-		{ label: 'math.fsum, float64', value: cachedSum('fsum', FLOAT64, n) },
+		{ label: 'Наивно, float64', value: sums64.naive },
+		{ label: `Наивно, ${fmt.name}`, value: sumInFormat },
+		{ label: 'Кэхэна, float64', value: sums64.kahan },
+		{ label: 'math.fsum, float64', value: sums64.fsum },
 	]);
-	const naive64 = $derived(cachedSum('naive', FLOAT64, n));
-	const kahan = $derived(cachedSum('kahan', FLOAT64, n));
 
 	const pair = $derived([shift, shift + 1]);
 	const softNaive = $derived(softmaxNaive(pair));
@@ -241,7 +227,7 @@
 					>
 				</thead>
 				<tbody>
-					{#each sumRows as r (r.label)}
+					{#each sumRows as r, i (i)}
 						<tr>
 							<th scope="row">{r.label}</th>
 							<td>{fmtNum(r.value)}</td>
@@ -279,25 +265,6 @@
 		</p>
 	</section>
 
-	<section class="fp-notice" aria-labelledby="fp-h-notice">
-		<h4 id="fp-h-notice" class="fp-h">Что заметить</h4>
-		<ul class="fp-list">
-			<li>
-				При n = {n.toLocaleString('ru-RU')} наивная сумма float64 отклоняется от точной на
-				{fmtDev(naive64 - ref)}, а сумма Кэхэна дает {fmtNum(kahan)}.
-			</li>
-			<li>
-				В {fmt.name} та же наивная сумма отклоняется на {fmtDev(
-					cachedSum('naive', fmtIndex, n) - ref,
-				)}: чем меньше бит мантиссы, тем раньше теряется точность.
-			</li>
-			<li>
-				Softmax без сдвига при z = {shift} даёт [{softNaive.map(fmtSoft).join('; ')}]; со сдвигом
-				ответ остаётся конечным.
-			</li>
-		</ul>
-	</section>
-
 	<div class="fp-actions">
 		<button type="button" class="fp-btn fp-btn-primary" onclick={resetAll}>Сбросить опыты</button>
 	</div>
@@ -319,8 +286,7 @@
 		min-width: 0;
 		box-sizing: border-box;
 	}
-	.fp-block,
-	.fp-notice {
+	.fp-block {
 		display: grid;
 		gap: var(--space-3);
 		min-width: 0;
@@ -454,18 +420,6 @@
 	.fp-table thead th {
 		font-family: var(--font-sans);
 		color: var(--text-muted);
-	}
-	.fp-list {
-		margin: 0;
-		padding-left: var(--space-4);
-		display: grid;
-		gap: var(--space-1);
-	}
-	.fp-notice {
-		background: var(--surface-2);
-		border-radius: var(--radius);
-		padding: var(--space-3);
-		border-top: 0;
 	}
 	.fp-actions {
 		display: flex;
