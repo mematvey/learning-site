@@ -98,7 +98,7 @@ export function sanitize(
 /**
  * Probability that majority voting over n independent samples is correct, for a binary-like
  * answer: the vote is correct when more than half of the samples are correct.
- * For even n a tie counts as wrong (conservative; the chapter uses odd n).
+ * For even n a tie counts as wrong (conservative; the chapter states the same rule).
  */
 export function majorityAccuracy(n: number, p: number): number {
 	let sum = 0;
