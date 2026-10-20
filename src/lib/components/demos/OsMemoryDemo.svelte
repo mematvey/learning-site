@@ -12,9 +12,8 @@
 		LOOP_REPEATS,
 		type OsMemoryDemoState,
 		countStats,
-		type AccessResult,
-		describeLoop,
 		describeStep,
+		type AccessResult,
 		hex,
 		loopAccesses,
 		pageUniverse,
@@ -52,10 +51,9 @@
 	const stats = $derived(countStats(steps.slice(0, shown)));
 	const universe = $derived(pageUniverse(addrSplit?.page ?? null, loopSize, accesses));
 	const tr = $derived(addr === null ? null : translate(addr, resident));
+	const lastNote = $derived(describeStep(current));
 	const pending = $derived(accesses.length - shown);
 	const frameIdx = $derived(Array.from({ length: frames }, (_, i) => i));
-	const loopNote = $derived(describeLoop(frames, loopSize));
-	const lastNote = $derived(describeStep(current));
 	const faultShare = $derived(
 		stats.accesses > 0 ? Math.round((100 * stats.faults) / stats.accesses) : 0,
 	);
@@ -280,16 +278,6 @@
 		<dt>Доля прерываний</dt>
 		<dd class="os-mono">{faultShare}%</dd>
 	</dl>
-
-	<div class="os-notice">
-		<p class="os-h">Что заметить</p>
-		<p>{loopNote}</p>
-		{#if tr}
-			<p>
-				Смещение {hex(tr.offset, 3)} при переводе не меняется: меняется только номер кадра.
-			</p>
-		{/if}
-	</div>
 </figure>
 
 <style>
@@ -615,13 +603,6 @@
 	.os-stats dd {
 		color: var(--text);
 		text-align: right;
-	}
-	.os-notice {
-		margin-top: var(--space-4);
-		color: var(--text-muted);
-	}
-	.os-notice .os-h {
-		color: var(--text);
 	}
 
 	@media (prefers-reduced-motion: reduce) {
