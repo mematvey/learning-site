@@ -140,41 +140,43 @@
 		<dd class="lc-muted">{formatUnits(model.failed)}</dd>
 	</dl>
 
-	<table class="lc-table">
-		<caption class="lc-cap">Цена по маршрутам, у.е.</caption>
-		<thead>
-			<tr>
-				<th scope="col">Маршрут</th>
-				<th scope="col">Вызов</th>
-				<th scope="col">Задача</th>
-				<th scope="col">Успешность</th>
-				<th scope="col">За успех</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<th scope="row">Дешёвый</th>
-				<td>{formatUnits(model.low.call.total)}</td>
-				<td>{formatUnits(model.low.task.total)}</td>
-				<td>{percent(model.low.success)}%</td>
-				<td>{formatUnits(model.low.task.total / model.low.success)}</td>
-			</tr>
-			<tr>
-				<th scope="row">Дорогой</th>
-				<td>{formatUnits(model.high.call.total)}</td>
-				<td>{formatUnits(model.high.task.total)}</td>
-				<td>{percent(model.high.success)}%</td>
-				<td>{formatUnits(model.high.task.total / model.high.success)}</td>
-			</tr>
-			<tr class="lc-mix">
-				<th scope="row">Смесь</th>
-				<td>—</td>
-				<td>{formatUnits(model.avg.total)}</td>
-				<td>{percent(model.success)}%</td>
-				<td>{formatUnits(model.perSuccess.total)}</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="lc-scroll">
+		<table class="lc-table">
+			<caption class="lc-cap">Цена по маршрутам, у.е.</caption>
+			<thead>
+				<tr>
+					<th scope="col">Маршрут</th>
+					<th scope="col">Вызов</th>
+					<th scope="col">Задача</th>
+					<th scope="col">Успешность</th>
+					<th scope="col">За успех</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th scope="row">Дешёвый</th>
+					<td>{formatUnits(model.low.call.total)}</td>
+					<td>{formatUnits(model.low.task.total)}</td>
+					<td>{percent(model.low.success)}%</td>
+					<td>{formatUnits(model.low.task.total / model.low.success)}</td>
+				</tr>
+				<tr>
+					<th scope="row">Дорогой</th>
+					<td>{formatUnits(model.high.call.total)}</td>
+					<td>{formatUnits(model.high.task.total)}</td>
+					<td>{percent(model.high.success)}%</td>
+					<td>{formatUnits(model.high.task.total / model.high.success)}</td>
+				</tr>
+				<tr class="lc-mix">
+					<th scope="row">Смесь</th>
+					<td>—</td>
+					<td>{formatUnits(model.avg.total)}</td>
+					<td>{percent(model.success)}%</td>
+					<td>{formatUnits(model.perSuccess.total)}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<section class="lc-why" aria-labelledby="lc-why-title">
 		<p id="lc-why-title" class="lc-h">Причина и следствие</p>
@@ -372,12 +374,16 @@
 		text-align: left;
 		color: var(--text-muted);
 	}
+	.lc-scroll {
+		overflow-x: auto;
+	}
 	.lc-table th,
 	.lc-table td {
 		padding: var(--space-2) var(--space-1);
 		border-bottom: 1px solid var(--border);
 		text-align: right;
-		overflow-wrap: anywhere;
+		overflow-wrap: normal;
+		word-break: normal;
 	}
 	.lc-table th {
 		color: var(--text-muted);
@@ -458,6 +464,13 @@
 	}
 
 	@media (max-width: 559px) {
+		.lc-table {
+			table-layout: auto;
+		}
+		.lc-table th:first-child,
+		.lc-table tbody th {
+			white-space: nowrap;
+		}
 		.lc-controls {
 			grid-template-columns: minmax(0, 1fr);
 		}

@@ -13,3 +13,23 @@
   term_en: data exfiltration
   definition: Передача приватных данных за пределы системы через любой канал, включая отправку письма и запрос к внешнему адресу с данными в параметрах.
   chapter: mlops/agent-guardrails
+- id: prompt-injection
+  term: промпт-инъекция
+  term_en: prompt injection
+  definition: 'Текст во входных данных, который выдаёт себя за инструкцию и меняет поведение модели или системы, построенной вокруг неё.'
+  chapter: mlops/agent-guardrails
+- id: indirect-prompt-injection
+  term: непрямая промпт-инъекция
+  term_en: indirect prompt injection
+  definition: 'Инструкция, спрятанная не во вводе пользователя, а в данных, которые система загружает сама: документе, веб-странице, письме или ответе инструмента.'
+  chapter: mlops/agent-guardrails
+- id: least-privilege
+  term: минимальные полномочия
+  term_en: least privilege
+  definition: 'Принцип выдавать системе только те права и инструменты, без которых задача не решается, и только на нужный срок.'
+  chapter: mlops/agent-guardrails
+- id: tool-permissions
+  term: право инструмента
+  term_en: tool permission
+  definition: 'Разрешение на конкретное действие (чтение, запись, отправка), которое проверяет код на стороне сервера, а не сама модель.'
+  chapter: mlops/agent-guardrails

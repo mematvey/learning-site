@@ -4,7 +4,7 @@ import { BlockId, ChapterId, IsoDate, LabId, TermId, TopicId } from './ids';
 export const ChapterStatus = z.enum(['draft', 'review', 'published']);
 export type ChapterStatus = z.infer<typeof ChapterStatus>;
 
-export const SourceKind = z.enum(['paper', 'doc', 'spec', 'repo', 'book']);
+export const SourceKind = z.enum(['paper', 'doc', 'spec', 'repo', 'book', 'blog']);
 export type SourceKind = z.infer<typeof SourceKind>;
 
 /** Source of facts. `<Cite id>` refers to `id`. Numbers about hardware/API need `accessed`. */

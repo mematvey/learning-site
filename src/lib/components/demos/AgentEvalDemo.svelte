@@ -412,6 +412,9 @@
 		color: var(--text-muted);
 		font-size: 13px;
 	}
+	.ae-card-f sup {
+		font-size: 12px;
+	}
 	.ae-card-v {
 		font-family: var(--font-mono);
 		font-size: 22px;
@@ -529,6 +532,9 @@
 	}
 	.ae-run-s {
 		font-size: 12px;
+		color: #166534;
+	}
+	:global([data-theme='dark']) .ae-run-s {
 		color: var(--ok);
 	}
 	.ae-run.is-fail .ae-run-s {
