@@ -135,13 +135,6 @@
 	</section>
 
 	<p class="inj-live" aria-live="polite">{description}</p>
-
-	<div class="inj-notice">
-		<p>
-			<strong>Что заметить:</strong> модель видит инструкцию в любом случае. Меняется только то, что система
-			позволяет сделать после ответа модели.
-		</p>
-	</div>
 </figure>
 
 <style>
@@ -384,14 +377,6 @@
 		margin-top: var(--space-4);
 		color: var(--text-muted);
 	}
-	.inj-notice {
-		margin-top: var(--space-4);
-		padding: var(--space-3) var(--space-4);
-		background: var(--topic-soft);
-		border-left: 3px solid var(--topic);
-		border-radius: var(--radius-sm);
-	}
-
 	@media (max-width: 720px) {
 		.inj {
 			padding: var(--space-4);

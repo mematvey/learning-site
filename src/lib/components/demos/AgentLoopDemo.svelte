@@ -309,6 +309,16 @@
 	.al-side {
 		min-width: 0;
 	}
+	@media (max-width: 480px) {
+		.al-loop {
+			flex-direction: column;
+		}
+		.al-arrow {
+			align-self: center;
+			transform: rotate(90deg);
+		}
+	}
+
 	@media (min-width: 640px) {
 		.al-body {
 			grid-template-columns: minmax(0, 1fr) 240px;
@@ -343,6 +353,8 @@
 	.al-node-t {
 		font-weight: 600;
 		font-size: 13px;
+		overflow-wrap: normal;
+		word-break: keep-all;
 	}
 	.al-node-d {
 		color: var(--text-muted);
