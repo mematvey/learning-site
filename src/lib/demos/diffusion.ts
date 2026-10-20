@@ -53,12 +53,12 @@ export function clampStep(t: number): number {
 
 /** beta_t for a step t in 1..T. */
 export function beta(t: number): number {
-	return BETAS[t - 1];
+	return BETAS[t - 1] ?? 0;
 }
 
 /** alpha_bar_t; equals 1 at t = 0 (no noise yet). */
 export function alphaBar(t: number): number {
-	return t <= 0 ? 1 : ALPHA_BARS[t - 1];
+	return t <= 0 ? 1 : (ALPHA_BARS[t - 1] ?? 1);
 }
 
 /** Share of the signal in x_t: sqrt(alpha_bar_t). */
@@ -106,7 +106,7 @@ export function makeData(n: number = N_POINTS, seed: number = DATA_SEED): Point[
 	const rng = mulberry32(seed);
 	const out: Point[] = [];
 	for (let i = 0; i < n; i++) {
-		const c = DATA_CENTERS[i % 2];
+		const c = DATA_CENTERS[i % 2] as Point;
 		const g = gaussPoint(rng);
 		out.push([c[0] + DATA_STD * g[0], c[1] + DATA_STD * g[1]]);
 	}
@@ -131,7 +131,7 @@ export function qSample(x0: Point, t: number, eps: Point): Point {
 
 /** Forward cloud at step t for all points. */
 export function forwardPoints(data: readonly Point[], noise: readonly Point[], t: number): Point[] {
-	return data.map((x0, i) => qSample(x0, t, noise[i]));
+	return data.map((x0, i) => qSample(x0, t, noise[i] as Point));
 }
 
 /**
@@ -159,7 +159,7 @@ export function predictNoise(x: Point, t: number): Point {
 	let ex = 0;
 	let ey = 0;
 	DATA_CENTERS.forEach((c, k) => {
-		const r = weights[k] / total;
+		const r = (weights[k] ?? 0) / total;
 		const gx = c[0] + ((a * s2) / v) * (x[0] - a * c[0]);
 		const gy = c[1] + ((a * s2) / v) * (x[1] - a * c[1]);
 		ex += r * gx;

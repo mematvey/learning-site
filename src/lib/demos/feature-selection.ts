@@ -99,8 +99,8 @@ function signedCorr(x: Float32Array, j: number, y: Uint8Array, rows: readonly nu
 	let ma = 0;
 	let mb = 0;
 	for (const i of rows) {
-		ma += x[i * N_FEATURES + j];
-		mb += y[i];
+		ma += x[i * N_FEATURES + j] as number;
+		mb += y[i] as number;
 	}
 	ma /= n;
 	mb /= n;
@@ -108,8 +108,8 @@ function signedCorr(x: Float32Array, j: number, y: Uint8Array, rows: readonly nu
 	let saa = 0;
 	let sbb = 0;
 	for (const i of rows) {
-		const da = x[i * N_FEATURES + j] - ma;
-		const db = y[i] - mb;
+		const da = (x[i * N_FEATURES + j] as number) - ma;
+		const db = (y[i] as number) - mb;
 		sab += da * db;
 		saa += da * da;
 		sbb += db * db;
@@ -135,7 +135,9 @@ export function makeRep(seed: number): Rep {
 	const perm = all.slice();
 	for (let i = perm.length - 1; i > 0; i--) {
 		const j = Math.floor(rand() * (i + 1));
-		[perm[i], perm[j]] = [perm[j], perm[i]];
+		const tmp = perm[i] as number;
+		perm[i] = perm[j] as number;
+		perm[j] = tmp;
 	}
 	const folds: number[][] = [];
 	for (let f = 0; f < N_FOLDS; f++) folds.push(perm.filter((_, idx) => idx % N_FOLDS === f));
@@ -161,7 +163,7 @@ export function reps(): Rep[] {
 /** Features whose score is at or above the threshold, in index order. */
 export function selectAbove(scores: Float64Array, threshold: number): number[] {
 	const out: number[] = [];
-	for (let j = 0; j < scores.length; j++) if (scores[j] >= threshold) out.push(j);
+	for (let j = 0; j < scores.length; j++) if ((scores[j] as number) >= threshold) out.push(j);
 	return out;
 }
 
@@ -179,7 +181,7 @@ export function fitVote(
 	const w = feats.map((j) => signedCorr(x, j, y, rows));
 	return (row: number) => {
 		let s = 0;
-		for (let t = 0; t < feats.length; t++) s += w[t] * x[row * N_FEATURES + feats[t]];
+		for (let t = 0; t < feats.length; t++) s += (w[t] as number) * (x[row * N_FEATURES + (feats[t] as number)] as number);
 		return s > 0 ? 1 : 0;
 	};
 }
@@ -223,8 +225,8 @@ export function evaluate(threshold: number): Outcome {
 		let repInside = 0;
 		for (let f = 0; f < N_FOLDS; f++) {
 			const train = trainRows(rep, f);
-			const test = rep.folds[f];
-			const feats = selectAbove(rep.foldScores[f], t);
+			const test = rep.folds[f] as number[];
+			const feats = selectAbove(rep.foldScores[f] as Float64Array, t);
 			insideCount += feats.length / (N_FOLDS * N_REPS);
 			repBefore += accuracy(rep, beforeFeats, train, test) / N_FOLDS;
 			repInside += accuracy(rep, feats, train, test) / N_FOLDS;
@@ -237,14 +239,14 @@ export function evaluate(threshold: number): Outcome {
 		inside,
 		beforeCount,
 		insideCount,
-		runCount: selectAbove(all[0].fullScores, t).length,
+		runCount: selectAbove((all[0] as Rep).fullScores, t).length,
 	};
 }
 
 /** Scores the selection sees in the displayed run (run 0): all rows before the split, or fold 0 inside. */
 function shownScores(mode: SelectionMode): Float64Array {
-	const r = reps()[0];
-	return mode === 'before' ? r.fullScores : r.foldScores[0];
+	const r = reps()[0] as Rep;
+	return mode === 'before' ? r.fullScores : (r.foldScores[0] as Float64Array);
 }
 
 /** Sorted scores of the displayed run for a mode, from the largest. */

@@ -54,7 +54,7 @@
 	const linePath = $derived.by(() => {
 		let d = '';
 		for (let i = 0; i < curve.length; i++) {
-			d += `${i === 0 ? 'M' : 'L'}${xOf(i).toFixed(1)},${yOf(curve[i]).toFixed(1)}`;
+			d += `${i === 0 ? 'M' : 'L'}${xOf(i).toFixed(1)},${yOf(curve[i] as number).toFixed(1)}`;
 		}
 		return d;
 	});
@@ -62,7 +62,7 @@
 	const areaPath = $derived.by(() => {
 		if (kept === 0) return '';
 		let d = `M${xOf(0).toFixed(1)},${yOf(0).toFixed(1)}`;
-		for (let i = 0; i < kept; i++) d += `L${xOf(i).toFixed(1)},${yOf(curve[i]).toFixed(1)}`;
+		for (let i = 0; i < kept; i++) d += `L${xOf(i).toFixed(1)},${yOf(curve[i] as number).toFixed(1)}`;
 		d += `L${xOf(kept - 1).toFixed(1)},${yOf(0).toFixed(1)}Z`;
 		return d;
 	});

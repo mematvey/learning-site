@@ -95,9 +95,9 @@ describe('noise and the demo numbers', () => {
 	});
 
 	it('sorted curve is descending and has one value per feature', () => {
-		const c = sortedCurve();
+		const c = sortedCurve('before');
 		expect(c).toHaveLength(N_FEATURES);
-		for (let i = 1; i < c.length; i++) expect(c[i]).toBeLessThanOrEqual(c[i - 1]);
+		for (let i = 1; i < c.length; i++) expect(c[i]).toBeLessThanOrEqual(c[i - 1] as number);
 	});
 
 	it('at the default threshold: about 20 features before the split, CV about 0.9 before and 0.5 inside', () => {
