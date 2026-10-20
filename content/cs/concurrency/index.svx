@@ -281,5 +281,3 @@ if __name__ == "__main__":  # required for process spawning on Windows and macOS
 Не больше двух раз. По закону Амдала предел равен $1/(1-p) = 1/0{,}5 = 2$, и добавление ядер его не сдвигает.
 
 </Quiz>
-
-## Источники {#sources}

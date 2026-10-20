@@ -254,5 +254,3 @@ print(scores.mean(), scores.std())
 </Quiz>
 
 </Variant>
-
-## Источники {#sources}
