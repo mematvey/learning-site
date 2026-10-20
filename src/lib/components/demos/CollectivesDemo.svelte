@@ -85,7 +85,8 @@
 	const PAD_R = 16;
 	const PAD_T = 14;
 	const PAD_B = 34;
-	const plotW = $derived(wChart >= 280 ? wChart : 560);
+	/* Draw at the container width (min 240px) so SVG text is never scaled down by max-width. */
+	const plotW = $derived(wChart > 0 ? Math.max(wChart, 240) : 560);
 	const innerW = $derived(plotW - PAD_L - PAD_R);
 	const innerH = CHART_H - PAD_T - PAD_B;
 
