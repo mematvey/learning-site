@@ -113,8 +113,8 @@ $$
 
 $$
 \begin{aligned}
-P_{\text{total}} &= P_{\text{sh}} + N\,P_{\text{exp}}, \\
-P_{\text{active}} &= P_{\text{sh}} + k\,P_{\text{exp}}
+P_{\text{total}} &= P_{\text{sh}} + N P_{\text{exp}}, \\
+P_{\text{active}} &= P_{\text{sh}} + k P_{\text{exp}}
 \end{aligned}
 $$
 {#eq-params}

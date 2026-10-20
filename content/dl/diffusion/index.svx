@@ -117,8 +117,8 @@ VAE похож на архиватор с потерями: кодировщик
 
 $$
 \begin{aligned}
-\mathrm{ELBO} &= \mathbb{E}_{q_\phi(z \mid x)}\big[\log p_\theta(x \mid z)\big] \\
-&\quad - \mathrm{KL}\big(q_\phi(z \mid x)\,\|\,p(z)\big)
+\mathrm{ELBO} &= \mathbb{E}_{q}[\log p_\theta(x \mid z)] \\
+&- \mathrm{KL}(q \,\|\, p(z))
 \end{aligned}
 $$
 {#math-elbo}
@@ -130,13 +130,19 @@ $$
 В <Term id="gan">GAN</Term> <Term id="generator">генератор</Term> $G$ превращает шум $z$ в объект, а <Term id="discriminator">дискриминатор</Term> $D$ выдаёт вероятность, что вход настоящий. Задача записывается как <Term id="minimax-game">минимаксная игра</Term>:
 
 $$
-\begin{aligned}
-\min_G \max_D V(D, G), \\
-V(D, G) &= \mathbb{E}_{x}\big[\log D(x)\big] \\
-&\quad + \mathbb{E}_{z}\big[\log(1 - D(G(z)))\big]
-\end{aligned}
+\min_G \max_D V(D, G)
 $$
 {#math-gan}
+
+где $V$ задана выражением
+
+$$
+\begin{aligned}
+V(D, G) &= \mathbb{E}_{x}[\log D(x)] \\
+&+ \mathbb{E}_{z}[\log(1 - D(G(z)))]
+\end{aligned}
+$$
+{#math-gan-value}
 
 Дискриминатор максимизирует $V$, генератор минимизирует. В статье Goodfellow и соавторов показано, что при оптимальном дискриминаторе $V$ связана с расстоянием Йенсена–Шеннона между распределением данных и распределением генератора <Cite id="goodfellow2014" />. {#math-gan-game}
 
