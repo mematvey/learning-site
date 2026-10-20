@@ -45,7 +45,7 @@
 
 	async function resetTopic() {
 		const ok = window.confirm(
-			`Сбросить прогресс темы «${data.topic.title}»? Галочки разделов, пройденность и позиция чтения всех глав темы будут удалены. Заметки, лабы и настройки не затрагиваются.`,
+			`Сбросить прогресс темы «${data.topic.title}»? Галочки разделов, пройденность и позиция чтения всех глав основной программы будут удалены. Экспериментальные главы, заметки, лабы и настройки не затрагиваются.`,
 		);
 		if (!ok) return;
 		try {
@@ -55,7 +55,15 @@
 					'Прогресс доступен только для чтения: данные записаны более новой версией сайта.';
 				return;
 			}
-			await store.resetTopic(data.topic.id);
+			// Experimental chapters are outside the main series: reset main chapters only.
+			const experimentalIds = new Set<string>(data.experimental.map((c) => c.id));
+			const prefix = `${data.topic.id}/`;
+			const { chapters: records } = await store.list();
+			for (const record of records) {
+				if (!record.id.startsWith(prefix)) continue;
+				if (experimentalIds.has(resolveChapterId(record.id))) continue;
+				await store.resetChapter(record.id);
+			}
 			await load();
 		} catch (e) {
 			progressError = `Не удалось сбросить прогресс: ${e instanceof Error ? e.message : String(e)}`;
@@ -127,6 +135,16 @@
 		{/if}
 	</section>
 
+	{#if data.experimental.length > 0}
+		<section class="experiments" aria-labelledby="experiments-title">
+			<h2 id="experiments-title">Эксперименты</h2>
+			<p class="experiments-note">
+				Материалы вне основной программы: могут быть неполными или необязательными.
+			</p>
+			<TopicChapterList chapters={data.experimental} titles={data.titles} {status} experimental />
+		</section>
+	{/if}
+
 	{#if total > 0}
 		<section class="map" aria-labelledby="map-title">
 			<h2 id="map-title">Карта глав</h2>
@@ -183,8 +201,15 @@
 		font-weight: 600;
 		margin-bottom: var(--space-6);
 	}
-	.map {
+	.map,
+	.experiments {
 		margin-top: var(--space-12);
+	}
+	.experiments-note {
+		margin-top: calc(var(--space-2) * -1);
+		margin-bottom: var(--space-6);
+		font-size: var(--fs-sm);
+		color: var(--text-muted);
 	}
 	.reset-row {
 		margin-top: var(--space-3);

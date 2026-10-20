@@ -21,7 +21,14 @@ export const GENERATED_FILES = {
 } as const;
 
 /** `topics.json`: topics sorted by `order`; `chapterIds` are in reading order. */
-export const TopicEntry = Topic.extend({ chapterIds: z.array(ChapterId) });
+/**
+ * `chapterIds`: main sequence in reading order (no experimental chapters).
+ * `experimentalIds`: experimental chapters of the topic, outside the main sequence.
+ */
+export const TopicEntry = Topic.extend({
+	chapterIds: z.array(ChapterId),
+	experimentalIds: z.array(ChapterId),
+});
 export type TopicEntry = z.infer<typeof TopicEntry>;
 export const TopicsRegistry = z.array(TopicEntry);
 export type TopicsRegistry = z.infer<typeof TopicsRegistry>;
@@ -41,8 +48,11 @@ export const ChapterEntry = z.object({
 	path: z.string(),
 	/** URL path relative to the site base, e.g. `/dl/attention/`. */
 	href: z.string().startsWith('/'),
-	/** Zero-based position inside the topic. */
+	/** Experimental chapters are outside the main sequence (see `experimentalIds`). */
+	experimental: z.boolean(),
+	/** Zero-based position inside the topic (inside the experimental list for experimental chapters). */
 	index: z.number().int().nonnegative(),
+	/** Neighbours in the main sequence; always null for experimental chapters. */
 	prev: ChapterId.nullable(),
 	next: ChapterId.nullable(),
 	/** All block ids of the chapter, in document order. */
@@ -79,6 +89,8 @@ export const PrereqNode = z.object({
 	kind: z.enum(['chapter', 'concept']),
 	title: z.string(),
 	topic: TopicId,
+	/** Chapter nodes only: experimental chapters (draw as dashed). */
+	experimental: z.boolean().optional(),
 });
 export type PrereqNode = z.infer<typeof PrereqNode>;
 
