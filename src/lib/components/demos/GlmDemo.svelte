@@ -12,7 +12,6 @@
 		X_VALUES,
 		bandPath,
 		curveAt,
-		describeGlm,
 		fitGlm,
 		fmt,
 		isLink,
@@ -46,6 +45,9 @@
 	let alpha = $state(snapAlpha(initial?.alpha ?? DEFAULT_ALPHA));
 
 	let svgEl = $state<SVGSVGElement | undefined>(undefined);
+	/** Displayed width of the plot in px; tick labels are sized so they stay readable when the SVG shrinks. */
+	let plotW = $state(0);
+	const tickUnits = $derived(plotW > 0 ? (13 * PLOT.W) / plotW : 13);
 	let dragging = $state<number | null>(null);
 
 	const opts = $derived({ slope, link });
@@ -61,7 +63,6 @@
 	const pathBandN = $derived(bandPath(GRID, bandN.lo, bandN.hi));
 	const pathP = $derived(linePath(GRID, curveP));
 	const pathN = $derived(linePath(GRID, curveN));
-	const note = $derived(describeGlm(fitP, fitN, summary));
 	const linkName = $derived(link === 'log' ? 'логарифм' : 'тождественная');
 	const desc = $derived(
 		`Счётчики ${counts.join(', ')} при x = 1…6. Связь: ${linkName}. ` +
@@ -160,59 +161,73 @@
 		Перетащите точку вверх или вниз (или стрелками на клавиатуре), чтобы изменить счётчик.
 	</p>
 
-	<svg
-		bind:this={svgEl}
-		class="glm-svg"
-		viewBox="0 0 {PLOT.W} {PLOT.H}"
-		role="img"
-		aria-labelledby="glm-title glm-desc"
-	>
-		<title id="glm-title">Счётчики и средние модели по признаку x</title>
-		<desc id="glm-desc">{desc}</desc>
+	<div class="glm-plot" bind:clientWidth={plotW}>
+		<svg
+			bind:this={svgEl}
+			class="glm-svg"
+			viewBox="0 0 {PLOT.W} {PLOT.H}"
+			role="img"
+			aria-labelledby="glm-title glm-desc"
+		>
+			<title id="glm-title">Счётчики и средние модели по признаку x</title>
+			<desc id="glm-desc">{desc}</desc>
 
-		{#each yTicks as t (t)}
-			<line class="glm-grid" x1={PLOT.padL} x2={PLOT.W - PLOT.padR} y1={yToPx(t)} y2={yToPx(t)} />
-			<text class="glm-tick" x={PLOT.padL - 6} y={yToPx(t) + 4} text-anchor="end">{t}</text>
-		{/each}
-		{#each X_VALUES as xv (xv)}
-			<text class="glm-tick" x={xToPx(xv)} y={PLOT.H - 10} text-anchor="middle">{xv}</text>
-		{/each}
-		<line class="glm-axis" x1={PLOT.padL} x2={PLOT.padL} y1={PLOT.padT} y2={PLOT.H - PLOT.padB} />
-		<line
-			class="glm-axis"
-			x1={PLOT.padL}
-			x2={PLOT.W - PLOT.padR}
-			y1={PLOT.H - PLOT.padB}
-			y2={PLOT.H - PLOT.padB}
-		/>
-
-		<path class="glm-band glm-band-n" d={pathBandN} />
-		<path class="glm-band glm-band-p" d={pathBandP} />
-		<path class="glm-curve-n" d={pathN} />
-		<path class="glm-curve-p" d={pathP} />
-
-		{#each points as pt (pt.index)}
-			<circle
-				class="glm-point"
-				class:is-drag={dragging === pt.index}
-				cx={xToPx(pt.x)}
-				cy={yToPx(pt.value)}
-				r="7"
-				role="slider"
-				tabindex="0"
-				aria-label="Счётчик при x = {pt.x}"
-				aria-valuemin={COUNT_MIN}
-				aria-valuemax={COUNT_MAX}
-				aria-valuenow={pt.value}
-				aria-valuetext={String(pt.value)}
-				onpointerdown={(e) => onPointerDown(e, pt.index)}
-				onpointermove={(e) => onPointerMove(e, pt.index)}
-				onpointerup={onPointerUp}
-				onpointercancel={onPointerUp}
-				onkeydown={(e) => onKey(e, pt)}
+			{#each yTicks as t (t)}
+				<line class="glm-grid" x1={PLOT.padL} x2={PLOT.W - PLOT.padR} y1={yToPx(t)} y2={yToPx(t)} />
+				<text
+					class="glm-tick"
+					style="font-size: {tickUnits}px"
+					x={PLOT.padL - 6}
+					y={yToPx(t) + 4}
+					text-anchor="end">{t}</text
+				>
+			{/each}
+			{#each X_VALUES as xv (xv)}
+				<text
+					class="glm-tick"
+					style="font-size: {tickUnits}px"
+					x={xToPx(xv)}
+					y={PLOT.H - 10}
+					text-anchor="middle">{xv}</text
+				>
+			{/each}
+			<line class="glm-axis" x1={PLOT.padL} x2={PLOT.padL} y1={PLOT.padT} y2={PLOT.H - PLOT.padB} />
+			<line
+				class="glm-axis"
+				x1={PLOT.padL}
+				x2={PLOT.W - PLOT.padR}
+				y1={PLOT.H - PLOT.padB}
+				y2={PLOT.H - PLOT.padB}
 			/>
-		{/each}
-	</svg>
+
+			<path class="glm-band glm-band-n" d={pathBandN} />
+			<path class="glm-band glm-band-p" d={pathBandP} />
+			<path class="glm-curve-n" d={pathN} />
+			<path class="glm-curve-p" d={pathP} />
+
+			{#each points as pt (pt.index)}
+				<circle
+					class="glm-point"
+					class:is-drag={dragging === pt.index}
+					cx={xToPx(pt.x)}
+					cy={yToPx(pt.value)}
+					r="7"
+					role="slider"
+					tabindex="0"
+					aria-label="Счётчик при x = {pt.x}"
+					aria-valuemin={COUNT_MIN}
+					aria-valuemax={COUNT_MAX}
+					aria-valuenow={pt.value}
+					aria-valuetext={String(pt.value)}
+					onpointerdown={(e) => onPointerDown(e, pt.index)}
+					onpointermove={(e) => onPointerMove(e, pt.index)}
+					onpointerup={onPointerUp}
+					onpointercancel={onPointerUp}
+					onkeydown={(e) => onKey(e, pt)}
+				/>
+			{/each}
+		</svg>
+	</div>
 
 	<ul class="glm-legend">
 		<li><i class="glm-sw glm-sw-p"></i>Пуассон: средняя линия и полоса 95 %</li>
@@ -253,11 +268,6 @@
 			{/if}
 		</tbody>
 	</table>
-
-	<p class="glm-note" aria-live="polite">
-		<strong>Что заметить:</strong>
-		{note}
-	</p>
 
 	<button type="button" class="glm-reset-bottom" onclick={reset}>Сбросить к примеру из главы</button
 	>
@@ -483,7 +493,7 @@
 		border-top: 1px solid var(--border);
 		text-align: left;
 		vertical-align: top;
-		overflow-wrap: anywhere;
+		overflow-wrap: break-word;
 		font-weight: 400;
 	}
 	.glm-table th {
@@ -495,13 +505,9 @@
 	}
 
 	/* Note */
-	.glm-note {
-		margin-top: var(--space-4);
-		padding: var(--space-3) var(--space-4);
-		border-left: 3px solid var(--topic);
-		background: var(--topic-soft);
-		border-radius: var(--radius-sm);
-		font-size: 14px;
+	.glm-plot {
+		width: 100%;
+		min-width: 0;
 	}
 	.glm-reset-bottom {
 		margin-top: var(--space-4);
