@@ -172,12 +172,6 @@
 
 	<p class="cg-why">{why}</p>
 
-	<p class="cg-tip">
-		<strong>Что заметить:</strong> при w = 0,25 eager тратит почти всё время на запуски. Поставьте w =
-		20: граф перестанет что-либо менять, а compile останется выгодным. Поставьте B = 2 и сравните compile
-		с eager.
-	</p>
-
 	<p class="cg-sr" aria-live="polite">{live}</p>
 </div>
 
@@ -402,11 +396,6 @@
 		margin-top: var(--space-4);
 		color: var(--text);
 	}
-	.cg-tip {
-		margin-top: var(--space-3);
-		color: var(--text-muted);
-	}
-
 	/* Visually hidden, read by screen readers on change */
 	.cg-sr {
 		position: absolute;
