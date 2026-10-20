@@ -29,35 +29,45 @@ sources:
     title: "Proximal Policy Optimization Algorithms"
     authors: Schulman J. et al.
     year: 2017
+    venue: arXiv:1707.06347
     url: https://arxiv.org/abs/1707.06347
+    accessed: 2026-10-20
     supports: [math-clip]
   - id: ouyang2022instructgpt
     kind: paper
     title: "Training language models to follow instructions with human feedback"
     authors: Ouyang L. et al.
     year: 2022
+    venue: arXiv:2203.02155
     url: https://arxiv.org/abs/2203.02155
-    supports: [idea-rlvr]
+    accessed: 2026-10-20
+    supports: [idea-rlvr, math-rm, math-rlhf]
   - id: shao2024grpo
     kind: paper
     title: "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models"
     authors: Shao Z. et al.
     year: 2024
+    venue: arXiv:2402.03300
     url: https://arxiv.org/abs/2402.03300
+    accessed: 2026-10-20
     supports: [idea-algorithms, math-variants]
   - id: deepseekr1
     kind: paper
     title: "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning"
     authors: DeepSeek-AI
     year: 2025
+    venue: arXiv:2501.12948
     url: https://arxiv.org/abs/2501.12948
+    accessed: 2026-10-20
     supports: [idea-rlvr]
   - id: rafailov2023dpo
     kind: paper
     title: "Direct Preference Optimization: Your Language Model is Secretly a Reward Model"
     authors: Rafailov R. et al.
     year: 2023
+    venue: arXiv:2305.18290
     url: https://arxiv.org/abs/2305.18290
+    accessed: 2026-10-20
     supports: [when-skip]
 aliases: []
 status: draft
@@ -65,7 +75,7 @@ status: draft
 
 ## Идея {#idea}
 
-Модель решает одну задачу несколько раз, проверка ставит каждому решению награду 0 или 1, и обучение повышает вероятность решений с наградой 1. Метод GRPO сравнивает решения одной задачи между собой, поэтому ему не нужна отдельная модель оценки. {#idea-core}
+Модель решает одну задачу несколько раз, проверка ставит каждому решению награду 0 или 1, и обучение повышает вероятность решений с наградой 1. Метод GRPO (group relative policy optimization) сравнивает решения одной задачи между собой, поэтому ему не нужна отдельная модель оценки. {#idea-core}
 
 ## Интуиция {#intuition}
 
@@ -87,9 +97,9 @@ status: draft
 
 **Что заметить:** верные ответы получают положительное преимущество, неверные отрицательное, и сумма преимуществ всегда равна нулю. Если все ответы одинаково верны или неверны, все преимущества нулевые: в этой задаче модель ничему не учится. {#intuition-notice}
 
-Модель предпочтений и RLHF описаны в [главе о дообучении](../finetuning-alignment/). RLHF применили к языковым моделям в работе InstructGPT <Cite id="ouyang2022instructgpt" />. Для задач с проверяемым ответом модель предпочтений не нужна: проверка и есть награда. Так обучали рассуждения в DeepSeek-R1, где в качестве награды использовали правила проверки ответа и формата <Cite id="deepseekr1" />. Такой подход называют <Term id="rlvr">RLVR</Term> (reinforcement learning with verifiable rewards). {#idea-rlvr}
+Модель предпочтений и RLHF (reinforcement learning from human feedback, обучение с подкреплением по обратной связи людей) описаны в [главе о дообучении](../finetuning-alignment/). RLHF применили к языковым моделям в работе InstructGPT <Cite id="ouyang2022instructgpt" />. Для задач с проверяемым ответом модель предпочтений не нужна: проверка и есть награда. Так обучали рассуждения в DeepSeek-R1, где в качестве награды использовали правила проверки ответа и формата <Cite id="deepseekr1" />. Такой подход называют <Term id="rlvr">RLVR</Term> (reinforcement learning with verifiable rewards). {#idea-rlvr}
 
-Два алгоритма здесь ключевые. <Term id="ppo">PPO</Term> обучает отдельную модель оценки, критика, которая предсказывает ожидаемую награду. <Term id="grpo">GRPO</Term> обходится без критика: базой для оценки служит средняя награда группы ответов на тот же запрос <Cite id="shao2024grpo" />. {#idea-algorithms}
+Два алгоритма здесь ключевые. <Term id="ppo">PPO</Term> (proximal policy optimization) обучает отдельную модель оценки, критика, которая предсказывает ожидаемую награду. <Term id="grpo">GRPO</Term> обходится без критика: базой для оценки служит средняя награда группы ответов на тот же запрос <Cite id="shao2024grpo" />. {#idea-algorithms}
 
 ## Математика {#math}
 
@@ -134,16 +144,38 @@ $$
 
 Ожидание $\mathbb{E}_y[\nabla_\theta \log \pi_\theta(y \mid x)]$ равно нулю: $\sum_y \nabla_\theta \pi_\theta(y \mid x) = \nabla_\theta 1 = 0$. Значит, из награды можно вычесть величину $b$, не зависящую от $y$. Ожидание градиента не изменится, а дисперсия его оценки обычно уменьшается. Групповая средняя и есть такое $b$, оценённое по $G$ сэмплам. Если верных $k$ из $G$ и $p = k/G$, то $\mathrm{mean} = p$, $\mathrm{std} = \sqrt{p(1-p)}$, и преимущества равны $\hat A^{+} = \sqrt{(G-k)/k}$ и $\hat A^{-} = -\sqrt{k/(G-k)}$. При $G = 8$ и $k = 1$ получаем $\hat A^{+} \approx 2{,}65$ и $\hat A^{-} \approx -0{,}38$. {#math-baseline}
 
-Полная цель в духе PPO и GRPO (упрощённая запись: в статьях отношение вероятностей и штраф считаются по токенам):
+Полная цель в духе PPO и GRPO (упрощённая запись: в статьях отношение вероятностей и штраф считаются по токенам). Это цель максимизации: обучение поднимает её значение, поэтому знак минус стоит только перед штрафом KL, а минимум в скобках ограничивает выгоду от сдвига политики:
 
 $$
-\mathcal{L}(\theta) = \mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G} \min\left(\rho_i \hat A_i,\ \mathrm{clip}(\rho_i, 1-\varepsilon, 1+\varepsilon)\,\hat A_i\right)\right] - \beta\, D_{\mathrm{KL}}\left(\pi_\theta \,\|\, \pi_{\mathrm{ref}}\right)
+\mathcal{J}_{\mathrm{GRPO}}(\theta) =\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G} \min\left(\rho_i \hat A_i,\ \mathrm{clip}(\rho_i, 1-\varepsilon, 1+\varepsilon)\,\hat A_i\right)\right] - \beta\, D_{\mathrm{KL}}\left(\pi_\theta \,\|\, \pi_{\mathrm{ref}}\right)
 $$
 {#eq-grpo-loss}
 
 Здесь $\rho_i = \pi_\theta(y_i \mid x) / \pi_{\mathrm{old}}(y_i \mid x)$ — отношение вероятностей новой и старой политики, из которой взяли ответ. Минимум и клиппинг взяты из PPO <Cite id="schulman2017ppo" />: они не дают одному шагу сдвинуть политику слишком далеко. {#math-clip}
 
 Штраф $\beta D_{\mathrm{KL}}$ держит политику рядом с <Term id="reference-model">опорной моделью</Term> $\pi_{\mathrm{ref}}$, то есть с моделью, с которой начиналось обучение. Его вес задаёт $\beta$, и <Term id="kl-penalty">штраф KL</Term> (расхождение Кульбака — Лейблера) вводится именно ради этого. {#math-kl}
+
+</Level>
+
+<Level c={3}>
+
+Откуда берётся награда $r_\psi(x, y)$ для языковой модели. Модель предпочтений учат на парах ответов, которые разметчики сравнили: $y_w$ лучше $y_l$. Здесь $\psi$ веса модели награды, чтобы не путать их с весами $\theta$ политики. Функция потерь в статье InstructGPT <Cite id="ouyang2022instructgpt" /> записана через сигмоиду $\sigma$: {#math-rm}
+
+$$
+\mathcal{L}_{\mathrm{RM}}(\psi) = -\,\mathbb{E}_{(x, y_w, y_l)}\big[\log \sigma\big(r_\psi(x, y_w) - r_\psi(x, y_l)\big)\big]
+$$
+{#eq-rm}
+
+Это модель Брэдли — Терри (Bradley–Terry): вероятность, что $y_w$ лучше $y_l$, задана как $\sigma\big(r_\psi(x, y_w) - r_\psi(x, y_l)\big)$, и потеря выше, когда модель ставит худший ответ выше лучшего. В статье для $K$ ответов одного запроса берут все $\binom{K}{2}$ пар; здесь записана одна пара. {#math-rm-text}
+
+Цель RLHF в той же статье: максимизировать награду модели, но не уходить далеко от модели, обученной с учителем $\pi_{\mathrm{SFT}}$. В обозначениях этой главы: {#math-rlhf}
+
+$$
+\max_{\theta}\ \mathbb{E}_{x,\ y \sim \pi_\theta(\cdot \mid x)}\big[r_\psi(x, y)\big] - \beta\, \mathbb{E}_{x}\, D_{\mathrm{KL}}\big(\pi_\theta(\cdot \mid x)\,\|\,\pi_{\mathrm{SFT}}(\cdot \mid x)\big)
+$$
+{#eq-rlhf}
+
+В статье штраф записан через логарифм отношения для каждого сэмпла; его среднее по $y \sim \pi_\theta$ равно KL, поэтому запись эквивалентна. Статья также добавляет член с претрейн-данными, он здесь опущен. Опорная модель здесь $\pi_{\mathrm{SFT}}$, и штраф KL из раздела выше работает так же. {#math-rlhf-text}
 
 </Level>
 
@@ -200,9 +232,9 @@ print(np.round(group_advantages(rewards), 3))
 
 ## Когда применять и когда нет {#when}
 
-Метод уместен, когда ответ можно проверить автоматически, а базовая модель иногда решает задачу сама. Если в группе ни один ответ не верен, сигнала нет так же, как при полностью верной группе. Поэтому сначала измерьте долю задач, где модель даёт хотя бы один верный ответ из нескольких. Каждый шаг требует генерации группы ответов на каждую задачу, поэтому метод дороже SFT на тех же задачах. {#when-use}
+Метод уместен, когда ответ можно проверить автоматически, а базовая модель иногда решает задачу сама. Если в группе ни один ответ не верен, сигнала нет так же, как при полностью верной группе. Поэтому сначала измерьте долю задач, где модель даёт хотя бы один верный ответ из нескольких. Каждый шаг требует генерации группы ответов на каждую задачу, поэтому метод дороже обучения с учителем (SFT, supervised fine-tuning) на тех же задачах. {#when-use}
 
-Не стоит начинать с него там, где качество — вопрос вкуса или правил: тон, формат, безопасность формулировок. Проверки там нет, и награду пришлось бы строить из модели предпочтений. Проще обучить на парах «лучше — хуже» методом DPO <Cite id="rafailov2023dpo" />, который не сэмплирует ответы во время обучения. {#when-skip}
+Не стоит начинать с него там, где качество — вопрос вкуса или правил: тон, формат, безопасность формулировок. Проверки там нет, и награду пришлось бы строить из модели предпочтений. Проще обучить на парах «лучше — хуже» методом DPO (direct preference optimization) <Cite id="rafailov2023dpo" />, который не сэмплирует ответы во время обучения. {#when-skip}
 
 | Ситуация | Что выбрать |
 |---|---|
@@ -235,7 +267,3 @@ print(np.round(group_advantages(rewards), 3))
 Для математики подходит RLVR: награда даётся проверкой ответа, а группа сэмплов даёт преимущества. Для тона проверки нет, поэтому выбирают обучение на парах предпочтений, например DPO, или SFT на примерах хорошего тона.
 
 </Quiz>
-
-## Источники {#sources}
-
-Список источников формируется из frontmatter главы.

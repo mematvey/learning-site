@@ -219,7 +219,6 @@
 		<p>{text.vote}</p>
 		<p>{text.best}</p>
 	</div>
-	<p class="ttc-notice"><span class="ttc-notice-t">Что заметить.</span> {text.notice}</p>
 </figure>
 
 <style>
@@ -441,6 +440,8 @@
 		font-family: var(--font-sans);
 		color: var(--text-muted);
 		font-size: 12px;
+		overflow-wrap: normal;
+		hyphens: manual;
 	}
 	.ttc-stats dt:first-child {
 		color: var(--text);
@@ -455,15 +456,6 @@
 	.ttc-live p + p {
 		margin-top: var(--space-1);
 	}
-	.ttc-notice {
-		margin-top: var(--space-4);
-		color: var(--text-muted);
-	}
-	.ttc-notice-t {
-		color: var(--text);
-		font-weight: 600;
-	}
-
 	@media (prefers-reduced-motion: reduce) {
 		.ttc *,
 		.ttc *::before,
@@ -480,7 +472,8 @@
 			grid-template-columns: minmax(0, 1fr);
 		}
 		.ttc-stats {
-			grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr);
+			grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr) minmax(0, 1.2fr);
+			gap: var(--space-1) var(--space-2);
 			font-size: 12px;
 		}
 	}

@@ -182,12 +182,6 @@
 		</button>
 	</section>
 
-	<p class="rl-notice">
-		<span class="rl-note-t">Что заметить:</span>
-		верные ответы получают положительное преимущество, неверные отрицательное, и сумма всегда равна нулю.
-		Если все ответы одинаково верны или неверны, все преимущества нулевые.
-	</p>
-
 	<p class="rl-live" aria-live="polite">{live}</p>
 </figure>
 
@@ -384,15 +378,17 @@
 	}
 	.rl-ans[aria-pressed='true'] {
 		border-color: var(--ok);
-		color: var(--ok);
+		color: color-mix(in srgb, var(--ok) 80%, #000);
 		font-weight: 600;
 	}
 
 	/* Cause and effect, stats, steps */
-	.rl-note,
-	.rl-notice {
+	.rl .rl-note {
 		margin-top: var(--space-4);
 		color: var(--text-muted);
+	}
+	.rl .rl-steps .rl-btn {
+		margin-top: var(--space-3);
 	}
 	.rl-stats {
 		display: grid;

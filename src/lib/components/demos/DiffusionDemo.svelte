@@ -236,35 +236,37 @@
 			</p>
 		</div>
 
-		<div class="df-panel" bind:clientWidth={wChart}>
+		<div class="df-panel">
 			<p class="df-panel-t">Доли сигнала и шума</p>
-			<svg
-				class="df-chart"
-				viewBox="0 0 {plotW} {CHART_H + 28}"
-				role="img"
-				aria-labelledby="df-chart-title df-chart-desc"
-			>
-				<title id="df-chart-title">График долей сигнала и шума по шагам</title>
-				<desc id="df-chart-desc">
-					Доля сигнала падает от 1 до 0,006, доля шума растёт от 0 до 1. Текущий шаг {curStep}.
-				</desc>
-				<line class="df-grid" x1="0" x2={plotW} y1="0" y2="0" />
-				<line class="df-grid" x1="0" x2={plotW} y1={CHART_H / 2} y2={CHART_H / 2} />
-				<line class="df-grid" x1="0" x2={plotW} y1={CHART_H} y2={CHART_H} />
-				<path class="df-line df-line-sig" d={sigPath} />
-				<path class="df-line df-line-noi" d={noiPath} />
-				<line class="df-marker" x1={marker} x2={marker} y1="0" y2={CHART_H} />
-				{#each [0, 250, 500, 750, 1000] as tick (tick)}
-					<text
-						class="df-tick"
-						x={plotX(tick, plotW)}
-						y={CHART_H + 18}
-						text-anchor={tick === 0 ? 'start' : tick === T ? 'end' : 'middle'}>{tick}</text
-					>
-				{/each}
-				<text class="df-tick" x="4" y="14">1</text>
-				<text class="df-tick" x="4" y={CHART_H - 4}>0</text>
-			</svg>
+			<div class="df-plot" bind:clientWidth={wChart}>
+				<svg
+					class="df-chart"
+					viewBox="0 0 {plotW} {CHART_H + 28}"
+					role="img"
+					aria-labelledby="df-chart-title df-chart-desc"
+				>
+					<title id="df-chart-title">График долей сигнала и шума по шагам</title>
+					<desc id="df-chart-desc">
+						Доля сигнала падает от 1 до 0,006, доля шума растёт от 0 до 1. Текущий шаг {curStep}.
+					</desc>
+					<line class="df-grid" x1="0" x2={plotW} y1="0" y2="0" />
+					<line class="df-grid" x1="0" x2={plotW} y1={CHART_H / 2} y2={CHART_H / 2} />
+					<line class="df-grid" x1="0" x2={plotW} y1={CHART_H} y2={CHART_H} />
+					<path class="df-line df-line-sig" d={sigPath} />
+					<path class="df-line df-line-noi" d={noiPath} />
+					<line class="df-marker" x1={marker} x2={marker} y1="0" y2={CHART_H} />
+					{#each [0, 250, 500, 750, 1000] as tick (tick)}
+						<text
+							class="df-tick"
+							x={plotX(tick, plotW)}
+							y={CHART_H + 18}
+							text-anchor={tick === 0 ? 'start' : tick === T ? 'end' : 'middle'}>{tick}</text
+						>
+					{/each}
+					<text class="df-tick" x="4" y="14">1</text>
+					<text class="df-tick" x="4" y={CHART_H - 4}>0</text>
+				</svg>
+			</div>
 			<p class="df-key">
 				<span class="df-key-sig"></span> √ᾱ сигнал
 				<span class="df-key-noi"></span> √(1 − ᾱ) шум
@@ -444,6 +446,10 @@
 	}
 	.df-panel {
 		min-width: 0;
+	}
+	.df-plot {
+		min-width: 0;
+		width: 100%;
 	}
 	.df-panel-t {
 		margin-bottom: var(--space-2);
