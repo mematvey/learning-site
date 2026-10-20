@@ -20,7 +20,7 @@
 		color: var(--topic);
 		text-decoration: none;
 		font-family: var(--font-sans);
-		font-size: 0.8em;
+		font-size: 12px;
 		font-weight: 600;
 	}
 	.cite a:hover {

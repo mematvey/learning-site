@@ -28,6 +28,7 @@ sources:
     venue: arXiv preprint
     year: 2024
     url: https://arxiv.org/abs/2406.12045
+    accessed: 2026-10-20
     supports: [math-pass-hat]
   - id: chen2021
     kind: paper
@@ -36,6 +37,7 @@ sources:
     venue: arXiv preprint
     year: 2021
     url: https://arxiv.org/abs/2107.03374
+    accessed: 2026-10-20
     supports: [math-pass-at-k]
   - id: zheng2023
     kind: paper
@@ -44,6 +46,7 @@ sources:
     venue: arXiv preprint (NeurIPS 2023 Datasets and Benchmarks Track)
     year: 2023
     url: https://arxiv.org/abs/2306.05685
+    accessed: 2026-10-20
     supports: [mistake-judge]
   - id: shankar2024
     kind: paper
@@ -52,6 +55,7 @@ sources:
     venue: arXiv preprint
     year: 2024
     url: https://arxiv.org/abs/2404.12272
+    accessed: 2026-10-20
     supports: [mistake-judge]
 aliases: []
 status: draft
@@ -96,9 +100,14 @@ status: draft
 Пусть запуски независимы и у каждого успех с вероятностью $p$. Тогда метрики за $k$ запусков:
 
 $$
-\mathrm{pass}^k = p^k, \qquad \mathrm{pass@}k = 1 - (1 - p)^k
+\mathrm{pass}^k = p^k
 $$
 {#math-pass-hat}
+
+$$
+\mathrm{pass@}k = 1 - (1 - p)^k
+$$
+{#math-pass-at-formula}
 
 $\mathrm{pass}^k$ это вероятность, что все $k$ запусков успешны. $\mathrm{pass@}k$ это вероятность, что хотя бы один успешен: вторая формула получается как дополнение к событию «все запуски неудачны», вероятность которого $(1-p)^k$. Для $p = 0{,}8$ и $k = 3$ получаем $0{,}512$ и $0{,}992$. В <Cite id="yao2024" /> для оценки агентов используется метрика pass^k: все запуски на задаче должны быть успешными. {#math-pass-at-k}
 
