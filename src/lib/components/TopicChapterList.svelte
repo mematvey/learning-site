@@ -9,10 +9,13 @@
 		chapters,
 		titles,
 		status,
+		experimental = false,
 	}: {
 		chapters: ChapterEntry[];
 		titles: Record<string, { title: string; href: string }>;
 		status: Record<string, Status>;
+		/** Experimental list: no sequence numbers, a «эксп.» label instead. */
+		experimental?: boolean;
 	} = $props();
 
 	function minutesLabel(m: ChapterEntry['minutes']): string {
@@ -31,7 +34,11 @@
 	{#each chapters as ch, i (ch.id)}
 		{@const st = status[ch.id] ?? 'new'}
 		<li class="item">
-			<span class="num">{String(i + 1).padStart(2, '0')}</span>
+			{#if experimental}
+				<span class="num exp">эксп.</span>
+			{:else}
+				<span class="num">{String(i + 1).padStart(2, '0')}</span>
+			{/if}
 			<div class="body">
 				<h3>
 					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- registry href: not a typed route yet; resolve() adds the site base -->
@@ -93,6 +100,15 @@
 		font-size: var(--fs-sm);
 		color: var(--topic);
 		padding-top: 4px;
+	}
+	.num.exp {
+		font-size: 12px;
+		text-transform: lowercase;
+		border: 1px dashed var(--topic);
+		border-radius: 999px;
+		padding: 2px 8px;
+		margin-top: 2px;
+		white-space: nowrap;
 	}
 	h3 {
 		font-family: var(--font-serif);

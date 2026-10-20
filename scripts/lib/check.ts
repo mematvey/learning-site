@@ -154,6 +154,12 @@ export function checkContent(loaded: LoadedContent): Diagnostic[] {
 					line: fmLine(/^prereqs:/),
 					message: `пререквизит "${p}" не найден`,
 				});
+			} else if (chapters.get(p)?.data.experimental === true && data.experimental !== true) {
+				out.push({
+					file: ch.file,
+					line: fmLine(/^prereqs:/),
+					message: `пререквизит "${p}" экспериментальный: основная глава не может на него опираться`,
+				});
 			}
 		}
 		for (const lab of data.labs ?? []) {

@@ -37,29 +37,41 @@ export function buildRegistries(loaded: LoadedContent): Registries {
 	const topics: TopicEntry[] = [];
 	const chapters: ChapterEntry[] = [];
 	const orderByTopic = new Map<string, string[]>();
+	const experimentalByTopic = new Map<string, string[]>();
+	const isExperimental = (id: string) => byId.get(id)?.data.experimental === true;
 
 	for (const topic of loaded.topics) {
 		const members = loaded.chapters
 			.filter((ch) => ch.topicDir === topic.data.id)
 			.map((ch) => ch.data.id);
-		const explicit = topic.data.chapters?.map((slug) => `${topic.data.id}/${slug}`);
+		// Experimental chapters stay out of the main sequence: no numbering, prev/next, progress totals.
+		const mainMembers = members.filter((id) => !isExperimental(id));
+		const explicit = topic.data.chapters
+			?.map((slug) => `${topic.data.id}/${slug}`)
+			.filter((id) => !isExperimental(id));
 		// Chapters missing from an explicit `chapters:` list still belong to the topic: append them.
 		const listed = new Set(explicit ?? []);
 		const rest = topoOrder(
-			members.filter((id) => !listed.has(id)),
+			mainMembers.filter((id) => !listed.has(id)),
 			prereqsOf,
 		);
 		const ordered = [...(explicit ?? []), ...rest];
 		orderByTopic.set(topic.data.id, ordered);
-		topics.push({ ...topic.data, chapterIds: ordered });
+		const experimental = topoOrder(members.filter(isExperimental), prereqsOf);
+		experimentalByTopic.set(topic.data.id, experimental);
+		topics.push({ ...topic.data, chapterIds: ordered, experimentalIds: experimental });
 	}
 	topics.sort((a, b) => a.order - b.order || (a.id < b.id ? -1 : 1));
 
 	for (const ch of loaded.chapters) {
 		const order = orderByTopic.get(ch.topicDir) ?? [];
-		const index = order.indexOf(ch.data.id);
-		const prevId = index > 0 ? (order[index - 1] ?? null) : null;
-		const nextId = index >= 0 && index < order.length - 1 ? (order[index + 1] ?? null) : null;
+		const experimental = ch.data.experimental === true;
+		const index = experimental
+			? (experimentalByTopic.get(ch.topicDir) ?? []).indexOf(ch.data.id)
+			: order.indexOf(ch.data.id);
+		const prevId = !experimental && index > 0 ? (order[index - 1] ?? null) : null;
+		const nextId =
+			!experimental && index >= 0 && index < order.length - 1 ? (order[index + 1] ?? null) : null;
 		const blocks = [...ch.scan.blocks, ...ch.scan.figures]
 			.sort((a, b) => a.line - b.line)
 			.map((b) => b.id);
@@ -70,6 +82,7 @@ export function buildRegistries(loaded: LoadedContent): Registries {
 		}));
 		chapters.push({
 			...ch.data,
+			experimental,
 			path: ch.file,
 			href: `/${ch.topicDir}/${ch.dir.split('/')[1] ?? ''}/`,
 			index: Math.max(index, 0),
@@ -82,7 +95,7 @@ export function buildRegistries(loaded: LoadedContent): Registries {
 	chapters.sort((a, b) => {
 		const ta = topics.findIndex((t) => t.id === a.topic);
 		const tb = topics.findIndex((t) => t.id === b.topic);
-		return ta - tb || a.index - b.index;
+		return ta - tb || Number(a.experimental) - Number(b.experimental) || a.index - b.index;
 	});
 
 	const labs: LabEntry[] = loaded.labs.map((lab) => {
@@ -120,7 +133,13 @@ function buildGraph(loaded: LoadedContent): PrereqGraphData {
 	const concepts = new Set<string>();
 
 	for (const ch of loaded.chapters) {
-		nodes.push({ id: ch.data.id, kind: 'chapter', title: ch.data.title, topic: ch.data.topic });
+		nodes.push({
+			id: ch.data.id,
+			kind: 'chapter',
+			title: ch.data.title,
+			topic: ch.data.topic,
+			experimental: ch.data.experimental === true,
+		});
 		for (const concept of ch.data.concepts ?? []) {
 			if (concepts.has(concept.id)) continue;
 			concepts.add(concept.id);

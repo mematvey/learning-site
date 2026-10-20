@@ -60,6 +60,8 @@ export const ChapterFrontmatter = z
 		/** Previous ids of this chapter; merged into `data/aliases.yaml` at generation. */
 		aliases: z.array(ChapterId).optional(),
 		status: ChapterStatus.optional(),
+		/** Experimental chapters sit outside the main sequence (default false). */
+		experimental: z.boolean().optional(),
 	})
 	.refine((f) => f.id.startsWith(`${f.topic}/`), {
 		message: 'id must start with "<topic>/"',
