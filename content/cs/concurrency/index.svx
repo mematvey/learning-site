@@ -31,43 +31,50 @@ sources:
   - id: pythonthreading
     kind: doc
     title: "threading: Thread-based parallelism"
-    venue: Python 3 documentation
-    url: https://docs.python.org/3/library/threading.html
+    venue: Python 3.13 documentation
+    url: https://docs.python.org/3.13/library/threading.html
+    accessed: 2026-10-20
     supports: [intuition-thread]
   - id: pythonglossary
     kind: doc
     title: "Glossary: global interpreter lock"
-    venue: Python 3 documentation
-    url: https://docs.python.org/3/glossary.html#term-global-interpreter-lock
+    venue: Python 3.13 documentation
+    url: https://docs.python.org/3.13/glossary.html#term-global-interpreter-lock
+    accessed: 2026-10-20
     supports: [intuition-gil]
   - id: pythonasyncio
     kind: doc
     title: "asyncio: Asynchronous I/O"
-    venue: Python 3 documentation
-    url: https://docs.python.org/3/library/asyncio.html
+    venue: Python 3.13 documentation
+    url: https://docs.python.org/3.13/library/asyncio.html
+    accessed: 2026-10-20
     supports: [code-asyncio]
   - id: pythonfutures
     kind: doc
     title: "concurrent.futures: Launching parallel tasks"
-    venue: Python 3 documentation
-    url: https://docs.python.org/3/library/concurrent.futures.html
+    venue: Python 3.13 documentation
+    url: https://docs.python.org/3.13/library/concurrent.futures.html
+    accessed: 2026-10-20
     supports: [code-process]
   - id: pythondis
     kind: doc
     title: "dis: Disassembler for Python bytecode"
-    venue: Python 3 documentation
-    url: https://docs.python.org/3/library/dis.html
+    venue: Python 3.13 documentation
+    url: https://docs.python.org/3.13/library/dis.html
+    accessed: 2026-10-20
     supports: [code-race]
   - id: pep779
     kind: spec
     title: "PEP 779: Criteria for supported status for free-threaded Python"
     url: https://peps.python.org/pep-0779/
+    accessed: 2026-10-20
     supports: [when-free]
   - id: amdahlwiki
     kind: doc
     title: "Amdahl's law"
     venue: Wikipedia
     url: https://en.wikipedia.org/wiki/Amdahl%27s_law
+    accessed: 2026-10-20
     supports: [math-amdahl-setup]
 status: draft
 ---
@@ -98,13 +105,13 @@ status: draft
 
 В стандартной сборке CPython выполнением Python-кода управляет <Term id="global-interpreter-lock">глобальная блокировка интерпретатора</Term> (global interpreter lock, GIL): в каждый момент Python-код исполняет один поток. Во время ожидания ввода-вывода поток отпускает GIL, поэтому потоки помогают в задачах, которые в основном ждут, и почти не помогают в вычислениях на Python. <Cite id="pythonglossary" /> {#intuition-gil}
 
-<Figure id="fig-concurrency-demo" alt="Слева счётчик с несколькими потоками: без блокировки часть обновлений теряется, с блокировкой итог совпадает с ожидаемым. В центре ползунок доли последовательной части: график ускорения от числа ядер выходит на предел. Справа таймлайн потоков, где видно, как блокировка заставляет их ждать." caption="Гонка на счётчике, закон Амдала и ожидание на блокировке в одной модели" notice="демо показывает модель: порядок шагов задаётся, а не случаен.">
+<Figure id="fig-concurrency-demo" alt="Верхняя часть: гонка на счётчике с двумя, тремя или четырьмя потоками. Без блокировки часть обновлений теряется, с блокировкой итог совпадает с ожидаемым; видны карточки потоков и журнал шагов. Нижняя часть: ползунок доли параллельной части p и ползунок числа ядер N, график ускорения S(N) от числа ядер с пунктирным пределом.">
 
 <ConcurrencyDemo />
 
 </Figure>
 
-**Что заметить:** без блокировки потери обновлений растут вместе с числом потоков, а блокировка убирает потери, но заставляет потоки ждать друг друга на таймлайне. Ускорение от добавления ядер упирается в последовательную часть: при доле 0,9 ускорение не превысит 10 раз, а при ста ядрах составит около 9,2. {#intuition-notice}
+**Что заметить:** без блокировки потери обновлений растут вместе с числом потоков, а блокировка убирает потери, но заставляет потоки ждать друг друга. Ускорение от добавления ядер упирается в последовательную часть: при доле 0,9 ускорение не превысит 10 раз, а при ста ядрах составит около 9,17. {#intuition-notice}
 
 ## Математика {#math}
 
@@ -222,7 +229,7 @@ if __name__ == "__main__":  # required for process spawning on Windows and macOS
 ## Частые ошибки {#mistakes}
 
 - **Считать `counter += 1` атомарным.** <Term id="atomicity">Атомарная</Term> (atomicity) операция видна другим потокам целиком или не видна вовсе. Оператор `+=` над общей переменной таким не является. {#mistake-atomic}
-- **Доверять тесту, который прошёл один раз.** Гонка зависит от расписания потоков. Короткий прогон может дать верный ответ: в одном из наших запусков счётчик сошёлся. Проверку нужно повторять под нагрузкой. {#mistake-once}
+- **Доверять тесту, который прошёл один раз.** Гонка зависит от расписания потоков, и один удачный прогон ничего не доказывает. В демо при двух потоках без блокировки 88% случайных порядков шагов теряют обновление (1000 порядков, фиксированный seed). Проверку нужно повторять под нагрузкой. {#mistake-once}
 - **Блокировка вокруг всей работы.** Если весь цикл под одной блокировкой, потоки выстраиваются в очередь и ускорения нет. Две блокировки, взятые в разном порядке двумя потоками, дают <Term id="deadlock">взаимную блокировку</Term> (deadlock): каждый ждёт, что отпустит другой. {#mistake-lock}
 - **asyncio для вычислений.** Корутина, которая считает без `await`, блокирует все остальные задачи. Асинхронность помогает с ожиданием, а не с процессором. {#mistake-async}
 - **Потоки для вычислений на Python.** В стандартной сборке потоки выполняют Python-код по очереди из-за GIL. Для такой работы нужны процессы или векторные библиотеки. {#mistake-threads}
@@ -274,3 +281,5 @@ if __name__ == "__main__":  # required for process spawning on Windows and macOS
 Не больше двух раз. По закону Амдала предел равен $1/(1-p) = 1/0{,}5 = 2$, и добавление ядер его не сдвигает.
 
 </Quiz>
+
+## Источники {#sources}
