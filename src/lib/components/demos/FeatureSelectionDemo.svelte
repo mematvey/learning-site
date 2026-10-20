@@ -42,7 +42,7 @@
 	const curve = $derived(sortedCurve(mode));
 	const kept = $derived(displayedCount(mode, threshold));
 	const plotW = $derived(chartW >= 200 ? chartW : 320);
-	const innerW = $derived(plotW - PAD_L - 8);
+	const innerW = $derived(plotW - PAD_L - 24);
 	const innerH = CHART_H - PAD_T - PAD_B;
 	const noiseMax = noiseMaxMean();
 
@@ -392,7 +392,6 @@
 	}
 	.fs-svg {
 		display: block;
-		max-width: 100%;
 		height: 180px;
 		touch-action: none;
 		cursor: ns-resize;

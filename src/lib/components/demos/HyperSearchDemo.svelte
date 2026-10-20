@@ -355,11 +355,6 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="hs-note" aria-live="polite">
-		<p class="hs-note-t">Что заметить</p>
-		<p>{note}</p>
-	</div>
 </figure>
 
 <style>
@@ -615,19 +610,6 @@
 	}
 	.hs-step p {
 		font-size: 12px;
-	}
-
-	/* Note */
-	.hs-note {
-		margin-top: var(--space-6);
-		padding: var(--space-3) var(--space-4);
-		background: var(--bg);
-		border: 1px solid var(--border);
-		border-radius: var(--radius);
-	}
-	.hs-note-t {
-		margin-bottom: var(--space-1);
-		font-weight: 600;
 	}
 
 	@media (prefers-reduced-motion: reduce) {

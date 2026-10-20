@@ -538,6 +538,10 @@
 		grid-template-columns: minmax(0, 1fr);
 		gap: var(--space-3);
 	}
+	.rr sub {
+		font-size: 12px;
+		line-height: 0;
+	}
 	.rr-table {
 		width: 100%;
 		table-layout: fixed;
