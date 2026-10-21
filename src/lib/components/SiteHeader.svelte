@@ -52,8 +52,13 @@
 			</svg>
 			<span class="nav-text">Маршруты</span>
 		</a>
-		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- the "My" route is linked by its path -->
-		<a class="nav-link" href="/my/" aria-label="Моё" aria-current={onMy ? 'page' : undefined}>
+
+		<a
+			class="nav-link"
+			href={resolve('/my/' as '/')}
+			aria-label="Моё"
+			aria-current={onMy ? 'page' : undefined}
+		>
 			<svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
 				<path
 					d="M6 3h12v18l-6-4-6 4z"
@@ -88,7 +93,7 @@
 		<!-- eslint-disable svelte/no-navigation-without-resolve -- the settings route is linked by its path -->
 		<a
 			class="nav-link settings-link"
-			href="/settings/data/"
+			href={resolve('/settings/data/' as '/')}
 			aria-current={onSettings ? 'page' : undefined}
 			aria-label="Настройки"
 		>

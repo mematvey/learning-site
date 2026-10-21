@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { syncState } from '$lib/export/autosync.svelte';
 	import { folderSync, type FolderStatus } from '$lib/export/folder';
@@ -49,7 +50,12 @@
 
 {#if folder}
 	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- settings route is linked by its path -->
-	<a class="save-indicator" href="/settings/data/" aria-label={fullLabel} title={fullLabel}>
+	<a
+		class="save-indicator"
+		href={resolve('/settings/data/' as '/')}
+		aria-label={fullLabel}
+		title={fullLabel}
+	>
 		<span class="dot" class:ready={folder.state === 'ready'} aria-hidden="true"></span>
 		<span class="text">{label}</span>
 	</a>
