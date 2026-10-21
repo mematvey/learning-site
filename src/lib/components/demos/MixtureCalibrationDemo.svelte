@@ -522,9 +522,9 @@
 		opacity: 0.7;
 	}
 	.mx-ref-limit {
-		stroke: var(--warn);
-		stroke-width: 1.25;
-		stroke-dasharray: 2 3;
+		stroke: var(--cat-2);
+		stroke-width: 2;
+		stroke-dasharray: 5 3;
 	}
 	.mx-pt-madn {
 		fill: var(--topic);
@@ -561,7 +561,7 @@
 		background: var(--cat-3);
 	}
 	.mx-sw-limit {
-		background: var(--warn);
+		background: var(--cat-2);
 	}
 	.mx-h {
 		margin-top: var(--space-6);

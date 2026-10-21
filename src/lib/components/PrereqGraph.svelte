@@ -43,6 +43,11 @@
 	const hrefById = $derived(new Map(getChapters().map((c) => [c.id as string, c.href])));
 	const titleById = $derived(new Map(graph.nodes.map((n) => [n.id, n.title])));
 	const edgesPlain = $derived(graph.edges.filter((e) => e.kind === 'prereq'));
+	// Experimental flag lives in the graph data, not in the layout nodes.
+	const experimentalIds = $derived(
+		new Set(graph.nodes.filter((n) => n.experimental).map((n) => n.id)),
+	);
+	const hasExperimental = $derived(experimentalIds.size > 0);
 
 	// Progress: the `done` prop plus whatever the local store knows (client only).
 	let storeDone = $state<string[]>([]);
@@ -253,6 +258,7 @@
 							class:is-current={focus === n.id}
 							class:is-dim={!!related && !related.has(n.id)}
 							class:is-active={active === n.id}
+							class:is-experimental={experimentalIds.has(n.id)}
 							data-topic={n.topic}
 							transform="translate({n.x} {n.y})"
 							role="presentation"
@@ -305,6 +311,9 @@
 			<li><span class="swatch swatch-done"></span>Пройдена</li>
 			{#if focus}
 				<li><span class="swatch swatch-current"></span>Текущая глава</li>
+			{/if}
+			{#if hasExperimental}
+				<li><span class="swatch swatch-experimental"></span>Экспериментальная</li>
 			{/if}
 			<li><span class="arrow-key" aria-hidden="true">→</span>Сначала левая, потом правая</li>
 		</ul>
@@ -459,6 +468,11 @@
 	.map-node.is-dim {
 		opacity: 0.3;
 	}
+	/* Experimental chapters keep a dashed outline, also when current or active (declared last to win). */
+	.map-node.is-experimental rect {
+		stroke-dasharray: 4 3;
+		stroke-width: 1.5;
+	}
 	.mark-bg {
 		fill: var(--topic);
 	}
@@ -517,6 +531,10 @@
 	.swatch-current {
 		background: var(--surface-2);
 		border: 3px solid var(--topic);
+	}
+	.swatch-experimental {
+		background: var(--surface-2);
+		border: 1.5px dashed var(--text-muted);
 	}
 	.arrow-key {
 		color: var(--accent);
