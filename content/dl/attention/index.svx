@@ -125,7 +125,7 @@ status: draft
 
 ## Идея {#idea}
 
-Механизм внимания (<Term id="attention">attention</Term>) даёт каждому токену взвешенную смесь тех токенов, на которые ему разрешено смотреть (в декодере это прошлые токены и он сам). Веса пересчитываются для каждого входа: модель сама решает, что важно для данной позиции. {#idea-weights}
+Механизм внимания (<Term id="attention">attention</Term>) даёт каждому токену взвешенную смесь тех токенов, на которые ему разрешено смотреть (в декодере это прошлые токены и он сам). {#idea-weights}
 
 ## Интуиция {#intuition}
 
@@ -135,7 +135,7 @@ Scaled dot-product attention задаёт конкретное правило. �
 
 Откуда векторы? Из одного входа: $q = x W^Q$, $k = x W^K$, $v = x W^V$, где $x$ вектор <Term id="attn-token">токена</Term>. Матрицы $W$ это веса модели: обучение подбирает их так, чтобы решить, что «похоже». {#idea-projections}
 
-Выберите токен и наведите курсор на ячейки: чем толще дуга, тем больше внимания он отдаёт другому. Векторы в демо случайные, поэтому оно показывает механику, а не смысл слов. {#intuition-hint}
+Наведите курсор на ячейки: толщина дуги равна весу. Векторы в демо случайные, смысл слов здесь не виден. {#intuition-hint}
 
 <Figure id="fig-attn-arcs" alt="Шесть токенов в ряд; от выбранного токена-запроса к остальным проведены дуги, толщина дуги равна весу внимания. Веса от каждого токена в сумме дают единицу." caption="Веса внимания от выбранного токена-запроса" notice="веса по строке в сумме дают единицу.">
 
@@ -168,7 +168,7 @@ $$
 
 ## Математика {#math}
 
-Четыре шага: сравнить запросы с ключами, поделить на корень из размерности ключей, нормировать строки в распределения и взять смесь значений. {#math-steps-words}
+Четыре шага: оценки, масштаб, softmax и смесь значений. {#math-steps-words}
 
 <Level c={2}>
 
@@ -179,6 +179,47 @@ $$
 <StepCards steps={[{ title: 'Оценки', text: 'Q сравнивается с K: в ячейке скалярное произведение запроса и ключа.', formula: 'S = QK^\\top' }, { title: 'Масштаб', text: 'Все оценки делятся на корень из d.', formula: 'S / \\sqrt{d}' }, { title: 'Softmax', text: 'Каждая строка нормируется в вероятности.', formula: '\\alpha_{ij} = \\mathrm{softmax}_j(S_{ij})' }, { title: 'Смесь значений', text: 'Веса умножаются на V.', formula: 'O = \\alpha V' }]} />
 
 </Figure>
+
+Пример: $n = 4$, $d_{\mathrm{model}} = d_k = d_v = 3$. {#math-example}
+
+<Figure id="fig-attn-proj" alt="X 4×3 на W^Q 3×3 даёт Q 4×3." caption="Проекция Q = X W^Q" notice="строка i Q зависит только от строки i X.">
+
+<MatrixEquation title="X W^Q = Q" desc="X · W^Q." items={[{kind:'matrix',id:'X',label:'X',values:[[1,0,2],[0,1,1],[2,1,0],[1,1,1]],dim:'4 × 3'},{kind:'op',text:'×'},{kind:'matrix',id:'W',label:'W^Q',values:[[1,0,1],[0,1,0],[1,0,0]],dim:'3 × 3'},{kind:'op',text:'='},{kind:'matrix',id:'Q',label:'Q',values:[[3,0,1],[1,1,0],[2,1,2],[2,1,1]],dim:'4 × 3',entity:'q'}]} />
+
+</Figure>
+
+<Figure id="fig-attn-scores" alt="Q 4×3 на Kᵀ 3×4 даёт S 4×4." caption="Оценки S = QKᵀ" notice="S₂₃ = 1·1 + 1·2 + 0·1 = 3, сумма трёх слагаемых.">
+
+<MatrixEquation title="S = QKᵀ" desc="Q · Kᵀ." items={[{kind:'matrix',id:'Q',label:'Q',values:[[3,0,1],[1,1,0],[2,1,2],[2,1,1]],dim:'4 × 3',entity:'q',highlightRows:[1]},{kind:'op',text:'×'},{kind:'matrix',id:'Kt',label:'Kᵀ',values:[[0,1,1,1],[1,0,2,1],[2,2,1,2]],dim:'3 × 4',entity:'k',highlightCols:[2]},{kind:'op',text:'='},{kind:'matrix',id:'S',label:'S',values:[[2,5,4,5],[1,1,3,2],[5,6,6,7],[3,4,5,5]],dim:'4 × 4',highlightCells:[[1,2]]}]} />
+
+</Figure>
+
+$S' = S / \sqrt{3}$, затем softmax по строкам: $A_{ij} = e^{S'_{ij}} / \sum_k e^{S'_{ik}}$. {#math-example-scale}
+
+<Figure id="fig-attn-softmax" alt="S' через softmax даёт A; подсвечена строка 2." caption="Шаги 3 и 4: S' = S / √3, softmax" notice="строка 2 матрицы A: 0,144 + 0,144 + 0,456 + 0,256 = 1,000.">
+
+<MatrixEquation title="Softmax по строкам" desc="S' через softmax." items={[{kind:'matrix',id:'Sp',label:"S'",values:[[1.15,2.89,2.31,2.89],[0.58,0.58,1.73,1.15],[2.89,3.46,3.46,4.04],[1.73,2.31,2.89,2.89]],dim:'4 × 4'},{kind:'op',text:'softmax'},{kind:'matrix',id:'A',label:'A',values:[[0.065,0.365,0.205,0.365],[0.144,0.144,0.456,0.256],[0.129,0.23,0.23,0.41],[0.11,0.195,0.348,0.348]],dim:'4 × 4',highlightRows:[1]}]} decimals={3} />
+
+</Figure>
+
+$O = AV$: $(n, n)(n, d_v) = (n, d_v)$, строка $O_i$ смешивает строки $V$. {#math-example-mix}
+
+<Figure id="fig-attn-mix" alt="A 4×4 на V 4×3 даёт O 4×3." caption="Выход O = AV" notice="O₂ = (2,00; 2,17; 1,54), смесь строк V весами строки 2 матрицы A.">
+
+<MatrixEquation title="O = AV" desc="A · V." items={[{kind:'matrix',id:'A',label:'A',values:[[0.065,0.365,0.205,0.365],[0.144,0.144,0.456,0.256],[0.129,0.23,0.23,0.41],[0.11,0.195,0.348,0.348]],dim:'4 × 4',highlightRows:[1]},{kind:'op',text:'×'},{kind:'matrix',id:'V',label:'V',values:[[3,1,2],[1,1,2],[2,3,1],[2,2,2]],dim:'4 × 3',entity:'v'},{kind:'op',text:'='},{kind:'matrix',id:'O',label:'O',values:[[1.7,1.78,1.79],[2,2.17,1.54],[1.9,1.87,1.77],[1.91,2.04,1.65]],dim:'4 × 3',highlightRows:[1]}]} decimals={2} />
+
+</Figure>
+
+| Стадия | Одна голова | С батчем $B$ и $h$ головами |
+|---|---|---|
+| $X$ | $(n, d_{\mathrm{model}})$ | $(B, n, d_{\mathrm{model}})$ |
+| $Q$, $K$, $V$ | $(n, d_k)$, $(n, d_k)$, $(n, d_v)$ | $(B, h, n, d_k)$, $(B, h, n, d_v)$ |
+| $S$, $A$ | $(n, n)$ | $(B, h, n, n)$ |
+| $O$ | $(n, d_v)$ | $(B, h, n, d_v)$ |
+
+Веса головы $W^Q, W^K \in \mathbb{R}^{d_{\mathrm{model}} \times d_k}$, $W^V \in \mathbb{R}^{d_{\mathrm{model}} \times d_v}$: без смещений $P = d_{\mathrm{model}}(2d_k + d_v)$, при $d$ всюду $3d^2$. {#math-params}
+
+Операции: $n\,d_{\mathrm{model}}(2d_k + d_v) + n^2 d_k + n^2 d_v$. При $d$ всюду $3nd^2 + 2n^2 d$, а при $n > 1{,}5\,d$ главный член $n^2$. В наивной реализации $S$ и $A$ растут как $n^2$ и хранятся целиком. {#math-ops}
 
 </Level>
 
@@ -193,7 +234,41 @@ $$
 $$
 {#math-var-formula}
 
-Значит, $\mathrm{Var}(q \cdot k / \sqrt{d}) = 1$ при любом $d$. Деление на $d$ дало бы $1/d$: при $d = 512$ softmax почти равномерен. Моделирование на 200 тысячах пар даёт дисперсию $q \cdot k$ около 64 при $d = 64$ и около 510 при $d = 512$; в обученной модели это приближённо. <Cite id="vaswani2017" /> {#math-var}
+Значит, $\mathrm{Var}(q \cdot k / \sqrt{d}) = 1$ при любом $d$. Деление на $d$ дало бы $1/d$: при $d = 512$ softmax почти равномерен. В обученной модели это приближённо. <Cite id="vaswani2017" /> {#math-var}
+
+Дисперсия суммы равна сумме дисперсий, если пары $(q_t, k_t)$ независимы при разных $t$, а внутри пары $q_t$ и $k_t$ независимы: {#math-var-general-intro}
+
+$$
+\mathrm{Var}(q \cdot k) = \sum_{t=1}^{d} \big(\mathbb{E}[q_t^2]\,\mathbb{E}[k_t^2] - (\mathbb{E}\,q_t\,\mathbb{E}\,k_t)^2\big)
+$$
+{#math-var-general}
+
+Для одинаковых компонент со средними $\mu$ и дисперсиями $\sigma^2$: $d(\sigma_q^2\sigma_k^2 + \sigma_q^2\mu_k^2 + \mu_q^2\sigma_k^2)$, при $\mu = 0$ это $d\,\sigma_q^2\sigma_k^2$. Рост линейный: $\sqrt{d}$ нормирует. Независимость идеализация: $q$ и $k$ из одного $x$. {#math-var-means}
+
+По ЦПТ сумма $d$ слагаемых с конечной дисперсией сближается с нормальной. Эксцесс суммы равен эксцессу слагаемого, делённому на $d$: для $N(0, 1)$ это $6/d$ ($1{,}5$ при $d = 4$). Ломается при малом $d$ и доминирующей компоненте. {#math-clt}
+
+<Figure id="fig-var-d" alt="Дисперсия q·k по d на линии y = d." caption="Дисперсия q·k против d, N(0, 1)" notice="отклонение от y = d до 1,3 %.">
+
+<LineChart title="Дисперсия q·k" desc="Эмп. дисперсия и y = d." xLabel="d" yLabel="Var(q·k)" series={[{id:'emp',label:'эмп.',x:[1,2,4,8,16,32,64,128,256,512,1024],y:[1,2,4,8,15.9,31.8,63.6,128.3,252.8,509.2,1024.7]},{id:'theory',label:'y = d',x:[1,2,4,8,16,32,64,128,256,512,1024],y:[1,2,4,8,16,32,64,128,256,512,1024]}]} />
+
+</Figure>
+
+При $n = 16$, 500 испытаний, максимум строки без масштаба 0,423, 0,842, 0,945 при $d = 4, 64, 512$; с $1/\sqrt{d}$ 0,233, 0,245, 0,246. Энтропия без масштаба падает с 1,777 до 0,135, с масштабом 2,36–2,39. {#math-softmax-stats}
+
+<Figure id="fig-softmax-stats" alt="Максимум строки softmax по d и масштабу." caption="Средний максимум строки softmax, n = 16, 500 испытаний, seed 0" notice="без масштаба растёт к 1; с 1/√d около 0,24.">
+
+<BarChart title="Средний максимум строки softmax" desc="d = 4, 64, 512." bars={[{label:'d=4',value:0.423},{label:'d=4, √d',value:0.233},{label:'d=64',value:0.842},{label:'d=64, √d',value:0.245},{label:'d=512',value:0.945},{label:'d=512, √d',value:0.246}]} />
+
+</Figure>
+
+Пусть $p_i = (1+\varepsilon_i)/n$, тогда $\sum_i \varepsilon_i = 0$ и $H \approx \log n - \frac{1}{2n}\sum_i \varepsilon_i^2$. Softmax не меняется при сдвиге логитов, поэтому $\varepsilon_i \approx z_i - \bar z$, и $\mathbb{E}\sum_i (z_i - \bar z)^2 = (n-1)\sigma^2$ при $z_i \sim N(0, \sigma^2)$. При малом $\sigma$: {#math-entropy-derive}
+
+$$
+\mathbb{E}[H] \approx \log n - \frac{\sigma^2}{2}\Big(1 - \frac{1}{n}\Big)
+$$
+{#math-entropy-mean}
+
+Формула верна при $\sigma \lesssim 0{,}5$ ($n = 16$). {#math-entropy-check}
 
 Для $p_i = e^{z_i} / \sum_k e^{z_k}$ верно $\partial p_i / \partial z_j = p_i(\delta_{ij} - p_j)$, то есть $J = \mathrm{diag}(p) - p p^\top$. Для двух классов производная $p(1-p)$ равна 0,25 при $\Delta = 0$ и $4{,}5 \cdot 10^{-5}$ при $\Delta = 10$. Градиент по логитам равен $J\,\partial L / \partial p$. {#math-jacobian}
 
@@ -245,7 +320,7 @@ import torch.nn.functional as F
 out = F.scaled_dot_product_attention(Q, K, V, is_causal=True)  # (batch, heads, n, d)
 ```
 
-Формы: $S$ и $A$ имеют $(n, m)$, $O$ имеет $(n, d_v)$. Функция ниже проверена в NumPy на примере из раздела «Математика». {#impl-shapes}
+Функция ниже проверена в NumPy на примере из раздела «Математика». {#impl-shapes}
 
 ```python
 def attention(Q, K, V, mask=None):
