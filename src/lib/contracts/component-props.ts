@@ -303,6 +303,41 @@ export interface MatrixDiagramProps extends ChartBase {
 	highlight?: string[];
 }
 
+/** One matrix with numeric cells in a MatrixEquation row. */
+export interface EquationMatrix {
+	kind: 'matrix';
+	id: string;
+	/** Short name drawn above the matrix, e.g. "Q" or "Kᵀ". Plain text, no TeX. */
+	label: string;
+	/** Row-major values. */
+	values: number[][];
+	/** Printed under the matrix, e.g. "n × d = 4 × 3". */
+	dim?: string;
+	rowLabels?: string[];
+	colLabels?: string[];
+	/** Entity colour (as in MatrixDiagram); otherwise a neutral categorical colour. */
+	entity?: EntityId;
+	/** Zero-based indices of rows / columns drawn highlighted. */
+	highlightRows?: number[];
+	highlightCols?: number[];
+	/** Zero-based [row, col] cells drawn with a strong outline. */
+	highlightCells?: Array<[number, number]>;
+	/** Dim the whole matrix (it takes no part in this step). */
+	dimmed?: boolean;
+}
+
+/** An operator glyph between matrices: "×", "=", "÷ √d", "softmax". */
+export interface EquationOp {
+	kind: 'op';
+	text: string;
+}
+
+export interface MatrixEquationProps extends ChartBase {
+	items: Array<EquationMatrix | EquationOp>;
+	/** Digits after the decimal point in cells; default 2. Integers are printed without a fraction. */
+	decimals?: number;
+}
+
 /* ---------- Demos ---------- */
 
 /** Attention arcs demo. Registers itself as demo `attention`. */
