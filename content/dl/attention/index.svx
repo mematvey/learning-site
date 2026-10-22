@@ -31,7 +31,7 @@ sources:
     year: 2017
     url: https://arxiv.org/abs/1706.03762
     accessed: 2026-10-16
-    supports: [math-scale, math-var, math-var-formula]
+    supports: [math-scale, math-var, math-var-formula, math-var-assume]
   - id: flashattn2022
     kind: paper
     title: 'FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness'
@@ -40,7 +40,7 @@ sources:
     year: 2022
     url: https://arxiv.org/abs/2205.14135
     accessed: 2026-10-16
-    supports: [hw-flash, hw-scores]
+    supports: [hw-flash, hw-scores, hw-no-fit, hw-io]
   - id: flashattn3
     kind: paper
     title: 'FlashAttention-3'
@@ -56,7 +56,7 @@ sources:
     venue: PyTorch documentation
     url: https://pytorch.org/docs/stable/generated/torch.nn.functional.scaled_dot_product_attention.html
     accessed: 2026-10-16
-    supports: [impl-torch]
+    supports: [impl-torch, impl-torch-args]
   - id: mistral2023
     kind: paper
     title: Mistral 7B
@@ -64,7 +64,61 @@ sources:
     year: 2023
     url: https://arxiv.org/abs/2310.06825
     accessed: 2026-10-18
-    supports: [when-window]
+    supports: [when-window, math-sparse]
+  - id: tsai2019
+    kind: paper
+    title: "Transformer Dissection: A Unified Understanding of Transformer's Attention via the Lens of Kernel"
+    authors: Tsai Y.-H. H. et al
+    year: 2019
+    url: https://arxiv.org/abs/1908.11775
+    accessed: 2026-10-22
+    supports: [math-kernel]
+  - id: katharopoulos2020
+    kind: paper
+    title: 'Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention'
+    authors: Katharopoulos A. et al
+    year: 2020
+    url: https://arxiv.org/abs/2006.16236
+    accessed: 2026-10-22
+    supports: [math-linear, math-recurrent]
+  - id: bhojanapalli2020
+    kind: paper
+    title: Low-Rank Bottleneck in Multi-head Attention Models
+    authors: Bhojanapalli S. et al
+    year: 2020
+    url: https://arxiv.org/abs/2002.07028
+    accessed: 2026-10-22
+    supports: [math-rank]
+  - id: zhai2023
+    kind: paper
+    title: 'Stabilizing Transformer Training by Preventing Attention Entropy Collapse'
+    authors: Zhai S. et al
+    year: 2023
+    url: https://arxiv.org/abs/2303.06296
+    accessed: 2026-10-22
+    supports: [math-entropy]
+  - id: dehghani2023
+    kind: paper
+    title: Scaling Vision Transformers to 22 Billion Parameters
+    authors: Dehghani M. et al
+    year: 2023
+    url: https://arxiv.org/abs/2302.05442
+    accessed: 2026-10-22
+    supports: [math-qknorm]
+  - id: child2019
+    kind: paper
+    title: Generating Long Sequences with Sparse Transformers
+    authors: Child R. et al
+    year: 2019
+    url: https://arxiv.org/abs/1904.10509
+    accessed: 2026-10-22
+    supports: [math-sparse]
+  - id: a100spec
+    kind: doc
+    title: NVIDIA A100 Tensor Core GPU
+    url: https://www.nvidia.com/en-us/data-center/a100/
+    accessed: 2026-10-22
+    supports: [hw-ridge]
 aliases: []
 status: draft
 ---
@@ -132,14 +186,31 @@ $$
 
 <Level c={3}>
 
-Авторы иллюстрируют это в сноске 4 статьи. Пусть компоненты $q$ и $k$ независимы, с нулевым средним и единичной дисперсией. Тогда дисперсия их скалярного произведения равна $d$:
+Авторы иллюстрируют это в сноске к разделу 3.2.1 статьи. Предположения: компоненты $q_t$ и $k_t$ независимы между собой и от других компонент, $\mathbb{E}[q_t] = \mathbb{E}[k_t] = 0$, $\mathrm{Var}(q_t) = \mathrm{Var}(k_t) = 1$. Тогда $\mathrm{Var}(q_t k_t) = \mathbb{E}[q_t^2]\,\mathbb{E}[k_t^2] = 1$, а слагаемые для разных $t$ независимы. {#math-var-assume}
 
 $$
-\mathrm{Var}(q \cdot k) = d
+\mathrm{Var}(q \cdot k) = \sum_{t=1}^{d} \mathrm{Var}(q_t k_t) = d
 $$
 {#math-var-formula}
 
-Значит, масштаб скалярного произведения растёт как $\sqrt{d}$, и деление на $\sqrt{d}$ возвращает дисперсию к единице. <Cite id="vaswani2017" /> {#math-var}
+Поэтому $\mathrm{Var}(q \cdot k / \sqrt{d}) = 1$ при любом $d$. Деление на $d$ дало бы $\mathrm{Var} = 1/d$: при $d = 512$ softmax почти равномерен. Моделирование на 200 тысячах пар случайных векторов даёт дисперсию 63,8 при $d = 64$ и 510,9 при $d = 512$. В обученной модели они приближённы. <Cite id="vaswani2017" /> {#math-var}
+
+Для $p_i = e^{z_i} / \sum_k e^{z_k}$ верно $\partial p_i / \partial z_j = p_i(\delta_{ij} - p_j)$, где $\delta_{ij}$ равно единице при $i = j$. В матричной записи $J = \mathrm{diag}(p) - p p^\top$ (проверено символьно). Для двух классов с разностью логитов $\Delta$ производная $p(1-p)$ равна 0,25 при $\Delta = 0$, 0,0067 при $\Delta = 5$ и $4{,}5 \cdot 10^{-5}$ при $\Delta = 10$. {#math-jacobian}
+
+Градиент по логитам равен $J\,\partial L / \partial p$, поэтому при насыщении он почти нулевой. {#math-saturation}
+
+Пусть $S = QK^\top / \sqrt{d}$, $A = \mathrm{softmax}$ по строкам, $O = AV$, $G = \partial L / \partial O$ и $dA = \partial L / \partial A = G V^\top$. Тогда $\partial L / \partial V = A^\top G$, а по строкам softmax:
+
+$$
+dS = A \odot \big(dA - \mathrm{rowsum}(dA \odot A)\,\mathbf{1}^\top\big), \qquad \frac{\partial L}{\partial Q} = \frac{dS\,K}{\sqrt{d}}, \qquad \frac{\partial L}{\partial K} = \frac{dS^\top Q}{\sqrt{d}}
+$$
+{#math-grad-s}
+
+Здесь $\odot$ поэлементное произведение, $\mathbf{1}$ вектор из единиц. Конечные разности подтверждают формулы (ошибка около $10^{-9}$). Если $A_i$ почти one-hot, то $dS_i \approx 0$. {#math-grad-check}
+
+Маска аддитивна: $S' = S + B$, где $B_{ij} = 0$ для разрешённых пар и $-\infty$ для запрещённых. Так как $e^{-\infty} = 0$, запрещённые ключи выпадают из знаменателя softmax. Обнуление оценки не работает: $e^0$ остаётся весом (для оценок $(1, 2, 3)$ с обнулённой третьей получается $0{,}09$ у запрещённой позиции). Умножение готовых весов на маску даёт сумму строки около $0{,}33$. {#math-mask}
+
+Стоимость на голову: $4n^2 d$ FLOP при $m = n$ и $d_v = d$ ($QK^\top$ и $AV$), память $O(n^2)$ под $S$ и $A$. {#math-cost}
 
 </Level>
 
@@ -148,6 +219,24 @@ $$
 Делить на размерность ключей было бы слишком сильно. Оценки стали бы очень маленькими, softmax дал бы почти равномерное распределение, и внимание размазалось бы по всем токенам. Корень возвращает разброс оценок к единице, если компоненты запроса и ключа независимы и имеют единичную дисперсию. В начале обучения это приблизительно так при нормированном входе и подходящем масштабе весов инициализации; позже допущение выполняется лишь приблизительно, но масштаб остаётся разумным.
 
 </Aside>
+
+<Level c={4}>
+
+Softmax-внимание — ядерное сглаживание: с $\kappa(q_i, k_j) = \exp(q_i \cdot k_j / \sqrt{d})$ выход равен $\sum_j \kappa(q_i, k_j) v_j / \sum_l \kappa(q_i, k_l)$, то есть оценке Надарайя–Ватсона (название наше; Tsai и соавт. пишут о линейном сглаживателе). Ядро асимметрично и не обязано быть положительно определённым. <Cite id="tsai2019" /> {#math-kernel}
+
+Линейное внимание заменяет $\kappa$ на $\varphi(q_i)^\top \varphi(k_j)$, где $\varphi: \mathbb{R}^d \to \mathbb{R}^r$. Тогда $o_i = \varphi(q_i)^\top S_n \,/\, \varphi(q_i)^\top z_n$ с $S_n = \sum_j \varphi(k_j) v_j^\top$ и $z_n = \sum_j \varphi(k_j)$: стоимость $O(n r d_v)$ вместо $O(n^2 d)$. Авторы берут $\varphi(x) = \mathrm{elu}(x) + 1$ для неотрицательных весов и короткие последовательности. <Cite id="katharopoulos2020" /> {#math-linear}
+
+При каузальной маске $S_t = S_{t-1} + \varphi(k_t) v_t^\top$ и $z_t = z_{t-1} + \varphi(k_t)$: шаг стоит $O(r d_v)$, но прошлое сжато в $r \times d_v$ чисел, а softmax хранит все пары явно. {#math-recurrent}
+
+Логиты $S = QK^\top$ имеют ранг не больше $d$; Bhojanapalli и соавт. связывают узкую голову с low-rank bottleneck. <Cite id="bhojanapalli2020" /> Но softmax нелинеен: случайные логиты ранга 2 размера $12 \times 12$ дают после softmax полный ранг 12 (проверено numpy). {#math-rank}
+
+Энтропия строки $H_i = -\sum_j a_{ij} \log a_{ij} \le \log n$. Zhai и соавт. связывают схлопывание энтропии с нестабильностью (причинность открыта) и предлагают спектральную нормировку $Q$ и $K$. <Cite id="zhai2023" /> {#math-entropy}
+
+QK-норма: при LayerNorm без обучаемого масштаба $\|\hat q\| = \|\hat k\| = \sqrt{d}$, и по неравенству Коши–Буняковского $|\hat q \cdot \hat k| / \sqrt{d} \le \sqrt{d}$: логиты ограничены независимо от масштаба весов. <Cite id="dehghani2023" /> {#math-qknorm}
+
+Факторизованное внимание Child и соавт. стоит $O(n\sqrt{n})$ при $\ell \approx \sqrt{n}$: одна головка смотрит на $\ell$ предыдущих позиций, другая на каждую $\ell$-ю. Окно из $w$ ключей даёт $O(nw)$, и за $k$ слоёв сигнал доходит до $kw$ позиций, как в Mistral 7B. <Cite id="child2019" /> <Cite id="mistral2023" /> {#math-sparse}
+
+</Level>
 
 ## Код {#code}
 
@@ -167,6 +256,30 @@ scores = Q @ K.T / np.sqrt(d)
 
 В PyTorch тот же расчёт есть в функции `torch.nn.functional.scaled_dot_product_attention`. Масштаб по умолчанию равен $1/\sqrt{d}$, а булева маска `attn_mask` работает так же, как в лабе: `True` означает, что запрос может смотреть на ключ. Библиотека может выбрать реализацию с тайлами (см. ниже, d=3), поэтому её результат совпадает с NumPy-версией с точностью до ошибок округления. <Cite id="torchsdpa" /> {#impl-torch}
 
+Аргументы: `query, key, value, attn_mask=None, dropout_p=0.0, is_causal=False, scale=None, enable_gqa=False`. Булева `attn_mask` с `True` на разрешённых позициях; float-маска прибавляется к оценкам; `attn_mask` вместе с `is_causal=True` даёт ошибку. Проверено на CPU. <Cite id="torchsdpa" /> {#impl-torch-args}
+
+```python
+out = F.scaled_dot_product_attention(Q, K, V, is_causal=True)  # (batch, heads, n, d)
+```
+
+Формы: $S$ и $A$ имеют форму $(n, m)$, $O$ имеет форму $(n, d_v)$. Функция ниже проверена в NumPy на примере из раздела «Математика». {#impl-shapes}
+
+```python
+def attention(Q, K, V, mask=None):
+    d = Q.shape[-1]
+    S = Q @ K.T / np.sqrt(d)
+    if mask is not None:
+        S = np.where(mask, S, -np.inf)       # True = allowed
+    S = S - S.max(axis=-1, keepdims=True)    # shift by row max
+    A = np.exp(S)
+    A = A / A.sum(axis=-1, keepdims=True)
+    return A @ V, A
+```
+
+Строка без разрешённых ключей даёт максимум $-\infty$ и NaN. {#impl-empty-row}
+
+Численная стабильность: в fp16 наибольшее число 65504, $e^x$ переполняется при $x > 11{,}09$. Логиты $(1000, 1001, 1002)$ без сдвига дают в fp16 NaN, со сдвигом в fp32 дают $(0{,}090;\ 0{,}245;\ 0{,}665)$. Сумму экспонент накапливают в fp32, даже если данные в fp16 или bf16. {#impl-stability}
+
 </Level>
 
 <Level d={3}>
@@ -175,11 +288,28 @@ scores = Q @ K.T / np.sqrt(d)
 
 Алгоритм <Term id="flash-attention">FlashAttention</Term> считает внимание тайлами, которые помещаются в <Term id="sram">SRAM</Term>, и накапливает softmax онлайн. Для каждой строки запросов хранятся текущий максимум и сумма экспонент; по мере прохода тайлов по ключам они корректируются, и в конце получается точный результат. Матрица $S$ целиком не записывается, поэтому промежуточная память растёт линейно по $n$. <Cite id="flashattn2022" /> Дальше алгоритм развили в FlashAttention-3 (2024): он рассчитан на GPU архитектуры Hopper, использует асинхронность тензорных ядер и поддерживает FP8. <Cite id="flashattn3" /> {#hw-flash}
 
+Арифметическая интенсивность наивной реализации (см. <Term id="arithmetic-intensity">арифметическую интенсивность</Term>): $4n^2 d$ FLOP на $8n^2$ байт, так как $n^2$ элементов fp16 проходят через HBM четыре раза (запись и чтение после $QK^\top$ и после softmax). Итог $d/2$ FLOP на байт: 32 при $d = 64$, независимо от $n$. {#hw-intensity}
+
+У A100 80GB SXM пик FP16/BF16 с тензорными ядрами 312 TFLOPS и 2 039 ГБ/с памяти; <Term id="ridge-point">точка перегиба</Term> около 153 FLOP на байт. При интенсивности 32 перенос $8n^2$ байт при $n = 8192$ занимает около 0,26 мс, два матричных умножения при пике около 0,055 мс: наивное внимание ограничено памятью. Оценка снизу без softmax. <Cite id="a100spec" /> {#hw-ridge}
+
+Почему $S$ не остаётся на чипе: при $n = 8192$ это $6{,}7 \cdot 10^7$ значений, а SRAM одного SM 192 КБ, около $10^5$ значений fp16. Матрица больше примерно в 680 раз. <Cite id="flashattn2022" /> {#hw-no-fit}
+
+Стандартное внимание делает $\Theta(Nd + N^2)$ обращений к HBM, FlashAttention $\Theta(N^2 d^2 / M)$, где $M$ размер SRAM в значениях и $d \le M \le Nd$. Без констант при $N = 8192$, $d = 64$, $M = 98\,304$ отношение равно примерно 24. <Cite id="flashattn2022" /> {#hw-io}
+
+Тайлинг требует онлайн-softmax с поправкой на выход: на строку хранятся $m$, $\ell$, $o$. Блок оценок $s_j$ и значений $v_j$ обновляет их (одномерная версия в главе [Softmax](../softmax/)):
+
+$$
+m' = \max\!\big(m, \max_{j \in b} s_j\big), \quad \ell' = e^{m - m'} \ell + \sum_{j \in b} e^{s_j - m'}, \quad o' = e^{m - m'} o + \sum_{j \in b} e^{s_j - m'} v_j
+$$
+{#hw-online-update}
+
+Начало: $m = -\infty$, $\ell = 0$, $o = 0$; после последнего блока $o / \ell$ точен. Инвариант: после обработки $J$ величины $\ell_J = \sum_{j \in J} e^{s_j - m_J}$ и $o_J = \sum_{j \in J} e^{s_j - m_J} v_j$ верны, а при росте максимума старые суммы домножаются на $e^{m_J - m'}$. Блочный проход совпал с эталоном с ошибкой около $2 \cdot 10^{-16}$ (numpy). {#hw-online-proof}
+
 </Level>
 
 ## Когда применять и когда нет {#when}
 
-Полное внимание хорошо, пока последовательность умещается в память. Его стоимость растёт как $O(n^2)$ по времени и памяти для матрицы оценок, где $n$ длина последовательности (см. раздел «Код»). На длинных контекстах (десятки тысяч токенов) это становится главным ограничением, и тогда смотрят на альтернативы: внимание с ограниченным окном, где каждый токен смотрит на последние $w$ позиций ($w$ ширина окна). Так работает sliding window attention в Mistral 7B, которая заявляет обработку последовательностей произвольной длины при сниженной стоимости инференса. <Cite id="mistral2023" /> {#when-window}
+Полное внимание хорошо, пока последовательность умещается в память. Его стоимость растёт как $O(n^2)$ по времени и памяти для матрицы оценок, где $n$ длина последовательности (см. раздел «Код»). На длинных контекстах (десятки тысяч токенов) это становится главным ограничением, и тогда смотрят на альтернативы: внимание с ограниченным окном, где каждый токен смотрит на последние $w$ позиций ($w$ ширина окна). Так устроено sliding window attention в Mistral 7B: окно $W = 4096$, а через передачу информации между слоями теоретическая протяжённость около 131 тысячи токенов. Авторы сообщают о двукратном ускорении при длине 16K относительно обычного внимания. <Cite id="mistral2023" /> {#when-window}
 
 Линейное внимание и state-space модели заменяют явную матрицу $n \times n$ рекуррентным состоянием фиксированного размера. Они дешевле на длинных последовательностях, но сжимают прошлое в фиксированный объём, и точный поиск по старым токенам им обычно даётся хуже. Выбор между ними зависит от задачи, а не от моды. {#when-linear}
 
