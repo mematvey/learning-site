@@ -37,6 +37,8 @@ describe('NotesStore.importNotes', () => {
 	it('merge keeps a stored note that is newer than the incoming one', async () => {
 		const store = await open();
 		const note = await store.create(draft('старый'));
+		// Timestamps have millisecond resolution; without a pause both can land in one tick.
+		await new Promise((resolve) => setTimeout(resolve, 5));
 		const newer = await store.update(note.id, { text: 'новый' });
 		const older = { ...note, text: 'из старого файла' };
 
