@@ -85,6 +85,24 @@ sources:
     url: https://pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html
     accessed: 2026-10-16
     supports: [impl-torch, impl-numeric]
+  - id: sun2024
+    kind: paper
+    title: Massive Activations in Large Language Models
+    authors: Sun M. et al
+    venue: arXiv
+    year: 2024
+    url: https://arxiv.org/abs/2402.17762
+    accessed: 2026-10-22
+    supports: [math-ln-outlier]
+  - id: wu2018
+    kind: paper
+    title: Group Normalization
+    authors: Wu Y., He K.
+    venue: arXiv
+    year: 2018
+    url: https://arxiv.org/abs/1803.08494
+    accessed: 2026-10-22
+    supports: [math-shapes]
 aliases: []
 status: draft
 ---
@@ -155,33 +173,45 @@ $$
 
 Три токена ($n = 3$), $d = 4$. Статистики считаются по строкам: $\mu$ и $\sigma^2$ — столбцы $n \times 1$. {#math-ln-matrix}
 
-<Figure id="fig-ln-mean" alt="Матрица X 3 на 4. Справа μ по строкам: 3, 5, 2." caption="μ первой строки: (1 + 3 + 3 + 5) / 4 = 3" notice="μ даёт n чисел, а не d.">
+<Figure id="fig-ln-mean" alt="X 3 на 4; справа μ: 3, 5, 2." caption="μ первой строки: (1 + 3 + 3 + 5) / 4 = 3" notice="μ даёт n чисел, а не d.">
 
-<MatrixEquation title="X и μ" desc="Матрица X и столбец μ; первая строка подсвечена." items={[{ kind: 'matrix', id: 'X', label: 'X', values: [[1, 3, 3, 5], [4, 4, 6, 6], [0, 0, 4, 4]], dim: 'n × d = 3 × 4', highlightRows: [0] }, { kind: 'op', text: '→' }, { kind: 'matrix', id: 'mu', label: 'μ', values: [[3], [5], [2]], dim: 'n × 1', highlightRows: [0] }]} />
+<MatrixEquation title="X и μ" desc="X и μ; первая строка подсвечена." items={[{ kind: 'matrix', id: 'X', label: 'X', values: [[1, 3, 3, 5], [4, 4, 6, 6], [0, 0, 4, 4]], dim: 'n × d = 3 × 4', highlightRows: [0] }, { kind: 'op', text: '→' }, { kind: 'matrix', id: 'mu', label: 'μ', values: [[3], [5], [2]], dim: 'n × 1', highlightRows: [0] }]} />
 
 </Figure>
 
-<Figure id="fig-ln-center" alt="X минус μ: первая строка −2, 0, 0, 2. Справа σ²: 2, 1, 4." caption="σ² первой строки: (4 + 0 + 0 + 4) / 4 = 2" notice="сумма отклонений строки равна 0.">
+<Figure id="fig-ln-center" alt="X минус μ: первая строка −2, 0, 0, 2. Справа σ²: 2, 1, 4." caption="σ² первой строки: (4 + 0 + 0 + 4) / 4 = 2" notice="сумма отклонений равна 0.">
 
 <MatrixEquation title="Отклонения и σ²" desc="X минус μ и σ²; первая строка подсвечена." items={[{ kind: 'matrix', id: 'D', label: 'X − μ', values: [[-2, 0, 0, 2], [-1, -1, 1, 1], [-2, -2, 2, 2]], dim: 'n × d = 3 × 4', highlightRows: [0] }, { kind: 'op', text: '→' }, { kind: 'matrix', id: 'var', label: 'σ²', values: [[2], [1], [4]], dim: 'n × 1', highlightRows: [0] }]} />
 
 </Figure>
 
-Получаем $\hat{X} = (X - \mu)/\sqrt{\sigma^2 + \varepsilon}$: первая строка $(-\sqrt{2}, 0, 0, \sqrt{2})$, среднее 0, дисперсия 1. Строки 2 и 3 дают $(-1, -1, 1, 1)$. Затем $Y = \hat{X} \odot \gamma + \beta$ с $\gamma = (2, 2, 1, 1)$ и $\beta = (0, 1, 0, -1)$, общими для всех токенов: первая строка $Y$ равна $(-2{,}83;\ 1;\ 0;\ 0{,}41)$. {#math-ln-affine}
+Получаем $\hat{X} = (X - \mu)/\sqrt{\sigma^2 + \varepsilon}$: первая строка $(-\sqrt{2}, 0, 0, \sqrt{2})$, среднее 0, дисперсия 1. Далее $Y = \hat{X} \odot \gamma + \beta$, общие для токенов. {#math-ln-affine}
+
+<Figure id="fig-ln-affine" alt="X̂ ⊙ γ + β: строка 1 результата −2,83; 1; 0; 0,41." caption="Масштаб γ и сдвиг β, общие для токенов" notice="строки 2 и 3 дают −2; −1; 1; 0.">
+
+<MatrixEquation title="Масштаб и сдвиг" desc="X̂ умножить на γ, прибавить β; результат Y." items={[{ kind: 'matrix', id: 'Xh', label: 'X̂', values: [[-1.4142, 0, 0, 1.4142], [-1, -1, 1, 1], [-1, -1, 1, 1]], dim: 'n × d = 3 × 4' }, { kind: 'op', text: '⊙' }, { kind: 'matrix', id: 'g', label: 'γ', values: [[2, 2, 1, 1]], dim: '1 × d' }, { kind: 'op', text: '+' }, { kind: 'matrix', id: 'b', label: 'β', values: [[0, 1, 0, -1]], dim: '1 × d' }, { kind: 'op', text: '=' }, { kind: 'matrix', id: 'Y', label: 'Y', values: [[-2.8284, 1, 0, 0.4142], [-2, -1, 1, 0], [-2, -1, 1, 0]], dim: 'n × d = 3 × 4', highlightRows: [0] }]} />
+
+</Figure>
 
 </Level>
 
 <Level c={3}>
 
-Вывод при $\varepsilon \to 0$: $\sum_t \hat{x}_t = 0$ и $\sum_t \hat{x}_t^2 = \sum_t (x_t - \mu)^2/\sigma^2 = d$. Значит, $\hat{x}$ лежит на $(d-2)$-мерной сфере радиуса $\sqrt{d}$ в гиперплоскости $\sum_j \hat{x}_j = 0$. {#math-ln-sphere}
+При $\varepsilon \to 0$: $\sum_t \hat{x}_t = 0$ и $\sum_t \hat{x}_t^2 = \sum_t (x_t - \mu)^2/\sigma^2 = d$. Значит, $\hat{x}$ на $(d-2)$-мерной сфере радиуса $\sqrt{d}$ в гиперплоскости $\sum_j \hat{x}_j = 0$. {#math-ln-sphere}
 
-Точнее, при $a > 0$ выполнено $\mathrm{LN}(ax + b\mathbf{1}) = (x - \mu)/\sqrt{\sigma^2 + \varepsilon/a^2}$. Строка 3 матрицы $X$ равна $2 \cdot$ строка 2 $- 8$; при $\varepsilon = 10^{-5}$ их LN отличаются не больше чем на $4 \cdot 10^{-6}$. {#math-ln-eps-shift}
+При $a > 0$ $\mathrm{LN}(ax + b\mathbf{1}) = (x - \mu)/\sqrt{\sigma^2 + \varepsilon/a^2}$. Строка 3 матрицы $X$ равна $2 \cdot$ строка 2 $- 8$; при $\varepsilon = 10^{-5}$ их LN отличаются не больше чем на $4 \cdot 10^{-6}$. {#math-ln-eps-shift}
 
-LN делит признаки токена на одно число, поэтому их отношения сохраняются, а масштаб токена выравнивается. Проверка на трёх строках с $d = 64$ и $\sigma = 0{,}1$, $1$, $10$ (numpy, seed 0): разброс до нормировки $0{,}09$; $0{,}99$; $9{,}80$, после нормировки $1{,}00$ у всех. {#math-ln-scales}
+LN делит отклонения токена на одно число: отношения между ними сохраняются. Проверка: $d = 64$, $\sigma = 0{,}1$, $1$, $10$ (numpy, seed 0). {#math-ln-scales}
 
-Выброс (massive activation): один признак равен 30, остальные 63 из $\mathcal{N}(0, 1)$. Его доля в $\sum_t (x_t - \mu)^2$ равна 0,90 и до, и после LN: делитель $\sigma$ её не меняет. Ослабить выброс может только поэлементный $\gamma$. {#math-ln-outlier}
+<Figure id="fig-ln-spread" alt="Строки с σ 0,1, 1 и 10: разброс до LayerNorm 0,09; 0,99; 9,80; после 1,00." caption="Разброс строк до и после LayerNorm" notice="масштабы различались в сто раз, после нормировки равны.">
 
-Делитель $d$ даёт $\hat\sigma^2 = (d-1)s^2/d$, где $\mathrm{Var}(s^2) = 2\sigma^4/(d-1)$ для гауссовых признаков. Значит, $\mathrm{Var}(\hat\sigma^2) = 2(d-1)\sigma^4/d^2$, и относительный разброс $\sqrt{2(d-1)}/d$ равен 61% при $d = 4$, 34% при $d = 16$, 9% при $d = 256$ (симуляция: расхождение до 0,002). При $d = 2$ и $x_1 \neq x_2$ LN при $\varepsilon = 0$ даёт $(1, -1)$ или $(-1, 1)$. {#math-ln-noise}
+<BarChart title="Разброс строк до и после LayerNorm" desc="Три строки до нормировки и после." yLabel="разброс" bars={[{ label: 'до 0,1', value: 0.09, cat: 1 }, { label: 'до 1', value: 0.99, cat: 2 }, { label: 'до 10', value: 9.8, cat: 3 }, { label: 'после 0,1', value: 1, cat: 1 }, { label: 'после 1', value: 1, cat: 2 }, { label: 'после 10', value: 1, cat: 3 }]} />
+
+</Figure>
+
+Выброс (massive activation, <Cite id="sun2024" />): один признак 30, остальные 63 из $\mathcal{N}(0, 1)$, $d = 64$. Его доля в $\sum_t (x_t - \mu)^2$ по 2000 сидам 0,92 (от 0,88 до 0,95), после LN та же. Нормировка выброс не уменьшает; поэлементный $\gamma$ может. {#math-ln-outlier}
+
+Делитель $d$ даёт $\hat\sigma^2 = (d-1)s^2/d$, где $\mathrm{Var}(s^2) = 2\sigma^4/(d-1)$ для гауссовых признаков. Значит, $\mathrm{Var}(\hat\sigma^2) = 2(d-1)\sigma^4/d^2$, и относительный разброс $\sqrt{2(d-1)}/d$ равен 61% при $d = 4$, 34% при $d = 16$, 9% при $d = 256$ (симуляция, до 0,002). При $d = 2$ LN при $\varepsilon = 0$ и $x_1 \neq x_2$ даёт $(1, -1)$ или $(-1, 1)$. {#math-ln-noise}
 
 </Level>
 
@@ -195,20 +225,20 @@ LN делит признаки токена на одно число, поэто
 
 <Level c={2}>
 
-Вход имеет форму $(B, n, d)$, ось задаёт форму статистик. {#math-shapes}
+Вход $(B, n, d)$, ось задаёт форму статистик. GroupNorm (вход $(B, C, H, W)$) делит $C$ каналов на $G$ групп и считает статистику по каждой группе <Cite id="wu2018" />. {#math-shapes}
 
-| Норма | Оси статистики | Форма статистик | Параметры | Хранится |
+| Норма | Оси | Форма | Параметры | Хранится |
 |---|---|---|---|---|
 | LayerNorm | признаки | (B, n, 1) | γ, β: 2d | ничего |
 | BatchNorm | B и n, на каждый признак | (1, 1, d) | γ, β: 2d | бегущие среднее и дисперсия |
 | RMSNorm | признаки | (B, n, 1) | γ: d | ничего |
 | GroupNorm | каналы группы и пространство | (B, G) | γ, β: 2 на канал | ничего |
 
-На инференсе LN и RMSNorm не меняются. BatchNorm берёт сохранённые бегущие статистики и от батча не зависит. {#math-shape-inference}
+На инференсе BatchNorm берёт сохранённые бегущие статистики. {#math-shape-inference}
 
-<Figure id="fig-ln-axes" alt="Матрица 3 на 4 дважды: слева строка подсвечена, справа столбец." caption="LayerNorm по строке, BatchNorm по столбцу" notice="n статистик против d.">
+<Figure id="fig-ln-axes" alt="3 на 4 дважды: слева строка, справа столбец подсвечены." caption="LayerNorm по строке, BatchNorm по столбцу" notice="n статистик против d.">
 
-<MatrixEquation title="Оси нормировки" desc="Строка и столбец одной матрицы X подсвечены." items={[{ kind: 'matrix', id: 'ln', label: 'LayerNorm', values: [[1, 3, 3, 5], [4, 4, 6, 6], [0, 0, 4, 4]], dim: 'статистика 3 × 1', highlightRows: [0] }, { kind: 'op', text: 'или' }, { kind: 'matrix', id: 'bn', label: 'BatchNorm', values: [[1, 3, 3, 5], [4, 4, 6, 6], [0, 0, 4, 4]], dim: 'статистика 1 × 4', highlightCols: [0] }]} />
+<MatrixEquation title="Оси нормировки" desc="Строка и столбец матрицы X подсвечены." items={[{ kind: 'matrix', id: 'ln', label: 'LayerNorm', values: [[1, 3, 3, 5], [4, 4, 6, 6], [0, 0, 4, 4]], dim: '3 × 1', highlightRows: [0] }, { kind: 'op', text: 'или' }, { kind: 'matrix', id: 'bn', label: 'BatchNorm', values: [[1, 3, 3, 5], [4, 4, 6, 6], [0, 0, 4, 4]], dim: '1 × 4', highlightCols: [0] }]} />
 
 </Figure>
 
@@ -229,7 +259,7 @@ $$
 
 <Level c={3}>
 
-RMSNorm не вычитает $\mu$. Так как $\frac{1}{d}\sum_t x_t^2 = \sigma^2 + \mu^2$, он даёт $x/\sqrt{\sigma^2 + \mu^2}$, а LN даёт $(x - \mu)/\sigma$. При $\mu = 0$ они совпадают точно. При $\mu \neq 0$ отличие порядка $|\mu|/\sigma$: при $d = 512$ на 1000 строках максимум 0,23 даёт строка с $\mu/\sigma = -0{,}17$. Для $(1, 3, 3, 5)$ при $\mu/\sigma \approx 2{,}1$ RMSNorm даёт $(0{,}30;\ 0{,}90;\ 0{,}90;\ 1{,}51)$, LN даёт $(-1{,}41;\ 0;\ 0;\ 1{,}41)$. {#math-rms-check}
+RMSNorm не вычитает $\mu$. Так как $\frac{1}{d}\sum_t x_t^2 = \sigma^2 + \mu^2$, он даёт $x/\sqrt{\sigma^2 + \mu^2}$, а LN даёт $(x - \mu)/\sigma$. При $\mu = 0$ они совпадают точно. При $\mu \neq 0$ отличие порядка $|\mu|/\sigma$: при $d = 512$ (N(0, 1), 1000 строк, seed 1) максимум 0,23 даёт строка с $\mu/\sigma = -0{,}17$; по 20 сидам от 0,17 до 0,23, в среднем 0,19. {#math-rms-check}
 
 </Level>
 
