@@ -44,7 +44,7 @@ sources:
   - id: flashattn3
     kind: paper
     title: 'FlashAttention-3'
-    venue: NeurIPS
+    venue: arXiv
     year: 2024
     url: https://arxiv.org/abs/2407.08608
     accessed: 2026-10-22
@@ -193,11 +193,11 @@ $$
 $$
 {#math-var-formula}
 
-Поэтому $\mathrm{Var}(q \cdot k / \sqrt{d}) = 1$ при любом $d$. Деление на $d$ дало бы $\mathrm{Var} = 1/d$: при $d = 512$ softmax почти равномерен. Моделирование на 200 тысячах пар случайных векторов даёт дисперсию 63,8 при $d = 64$ и 510,9 при $d = 512$. В обученной модели они приближённы. <Cite id="vaswani2017" /> {#math-var}
+Поэтому $\mathrm{Var}(q \cdot k / \sqrt{d}) = 1$ при любом $d$. Деление на $d$ дало бы $\mathrm{Var} = 1/d$: при $d = 512$ softmax почти равномерен. Моделирование на 200 тысячах пар случайных векторов даёт дисперсию около 64 при $d = 64$ и около 510 при $d = 512$. В обученной модели они приближённы. <Cite id="vaswani2017" /> {#math-var}
 
-Для $p_i = e^{z_i} / \sum_k e^{z_k}$ верно $\partial p_i / \partial z_j = p_i(\delta_{ij} - p_j)$, где $\delta_{ij}$ равно единице при $i = j$. В матричной записи $J = \mathrm{diag}(p) - p p^\top$ (проверено символьно). Для двух классов с разностью логитов $\Delta$ производная $p(1-p)$ равна 0,25 при $\Delta = 0$, 0,0067 при $\Delta = 5$ и $4{,}5 \cdot 10^{-5}$ при $\Delta = 10$. {#math-jacobian}
+Для $p_i = e^{z_i} / \sum_k e^{z_k}$ верно $\partial p_i / \partial z_j = p_i(\delta_{ij} - p_j)$, где $\delta_{ij}$ равно единице при $i = j$. В матричной записи $J = \mathrm{diag}(p) - p p^\top$ (проверено символьно). Для двух классов $p = \sigma(\Delta)$ с разностью логитов $\Delta$ производная $dp / d\Delta = p(1-p)$ равна 0,25 при $\Delta = 0$, 0,0066 при $\Delta = 5$ и $4{,}5 \cdot 10^{-5}$ при $\Delta = 10$. {#math-jacobian}
 
-Градиент по логитам равен $J\,\partial L / \partial p$, поэтому при насыщении он почти нулевой. {#math-saturation}
+Градиент по логитам равен $J\,\partial L / \partial p$. Множитель $p(1-p)$ при $\Delta = 10$ около $4{,}5 \cdot 10^{-5}$, поэтому насыщенный softmax почти не передаёт градиент. {#math-saturation}
 
 Пусть $S = QK^\top / \sqrt{d}$, $A = \mathrm{softmax}$ по строкам, $O = AV$, $G = \partial L / \partial O$ и $dA = \partial L / \partial A = G V^\top$. Тогда $\partial L / \partial V = A^\top G$, а по строкам softmax:
 
@@ -206,7 +206,7 @@ dS = A \odot \big(dA - \mathrm{rowsum}(dA \odot A)\,\mathbf{1}^\top\big), \qquad
 $$
 {#math-grad-s}
 
-Здесь $\odot$ поэлементное произведение, $\mathbf{1}$ вектор из единиц. Конечные разности подтверждают формулы (ошибка около $10^{-9}$). Если $A_i$ почти one-hot, то $dS_i \approx 0$. {#math-grad-check}
+Здесь $\odot$ поэлементное произведение, $\mathbf{1}$ вектор из единиц. Конечные разности подтверждают формулы (ошибка порядка $10^{-10}$). Если $A_i$ почти one-hot, то $dS_i \approx 0$. {#math-grad-check}
 
 Маска аддитивна: $S' = S + B$, где $B_{ij} = 0$ для разрешённых пар и $-\infty$ для запрещённых. Так как $e^{-\infty} = 0$, запрещённые ключи выпадают из знаменателя softmax. Обнуление оценки не работает: $e^0$ остаётся весом (для оценок $(1, 2, 3)$ с обнулённой третьей получается $0{,}09$ у запрещённой позиции). Умножение готовых весов на маску даёт сумму строки около $0{,}33$. {#math-mask}
 
@@ -222,17 +222,17 @@ $$
 
 <Level c={4}>
 
-Softmax-внимание — ядерное сглаживание: с $\kappa(q_i, k_j) = \exp(q_i \cdot k_j / \sqrt{d})$ выход равен $\sum_j \kappa(q_i, k_j) v_j / \sum_l \kappa(q_i, k_l)$, то есть оценке Надарайя–Ватсона (название наше; Tsai и соавт. пишут о линейном сглаживателе). Ядро асимметрично и не обязано быть положительно определённым. <Cite id="tsai2019" /> {#math-kernel}
+Softmax-внимание — ядерное сглаживание: с $\kappa(q_i, k_j) = \exp(q_i \cdot k_j / \sqrt{d})$ выход равен $\sum_j \kappa(q_i, k_j) v_j / \sum_l \kappa(q_i, k_l)$, то есть оценке Надарайя–Ватсона (название наше; Tsai и соавт. описывают внимание как kernel smoother из класса линейных сглаживателей). Ядро асимметрично по ролям $q$ и $k$. <Cite id="tsai2019" /> {#math-kernel}
 
-Линейное внимание заменяет $\kappa$ на $\varphi(q_i)^\top \varphi(k_j)$, где $\varphi: \mathbb{R}^d \to \mathbb{R}^r$. Тогда $o_i = \varphi(q_i)^\top S_n \,/\, \varphi(q_i)^\top z_n$ с $S_n = \sum_j \varphi(k_j) v_j^\top$ и $z_n = \sum_j \varphi(k_j)$: стоимость $O(n r d_v)$ вместо $O(n^2 d)$. Авторы берут $\varphi(x) = \mathrm{elu}(x) + 1$ для неотрицательных весов и короткие последовательности. <Cite id="katharopoulos2020" /> {#math-linear}
+Линейное внимание заменяет $\kappa$ на $\varphi(q_i)^\top \varphi(k_j)$, где $\varphi: \mathbb{R}^d \to \mathbb{R}^r$. Тогда $o_i = \varphi(q_i)^\top S_n \,/\, \varphi(q_i)^\top z_n$ с $S_n = \sum_j \varphi(k_j) v_j^\top$ и $z_n = \sum_j \varphi(k_j)$: стоимость $O(n r d_v)$ вместо $O(n^2 d)$. Линейное внимание мотивировано очень длинными последовательностями, где квадратичная стоимость непомерна. Авторы берут $\varphi(x) = \mathrm{elu}(x) + 1$ для неотрицательных весов и используют его в экспериментах с меньшими последовательностями. <Cite id="katharopoulos2020" /> {#math-linear}
 
-При каузальной маске $S_t = S_{t-1} + \varphi(k_t) v_t^\top$ и $z_t = z_{t-1} + \varphi(k_t)$: шаг стоит $O(r d_v)$, но прошлое сжато в $r \times d_v$ чисел, а softmax хранит все пары явно. {#math-recurrent}
+При каузальной маске $S_t = S_{t-1} + \varphi(k_t) v_t^\top$ и $z_t = z_{t-1} + \varphi(k_t)$: шаг стоит $O(r d_v)$, но прошлое сжато в $r \times d_v$ чисел, а softmax-внимание хранит кэш ключей и значений размера $t \cdot d$ и пересчитывает все оценки. {#math-recurrent}
 
-Логиты $S = QK^\top$ имеют ранг не больше $d$; Bhojanapalli и соавт. связывают узкую голову с low-rank bottleneck. <Cite id="bhojanapalli2020" /> Но softmax нелинеен: случайные логиты ранга 2 размера $12 \times 12$ дают после softmax полный ранг 12 (проверено numpy). {#math-rank}
+Логиты $S = QK^\top$ имеют ранг не больше $d$; Bhojanapalli и соавт. связывают узкую голову с low-rank bottleneck. <Cite id="bhojanapalli2020" /> Но softmax нелинеен: для случайных логитов общего положения ранга 2 размера $12 \times 12$ softmax даёт полный ранг 12 (проверено numpy на нескольких прогонах). {#math-rank}
 
-Энтропия строки $H_i = -\sum_j a_{ij} \log a_{ij} \le \log n$. Zhai и соавт. связывают схлопывание энтропии с нестабильностью (причинность открыта) и предлагают спектральную нормировку $Q$ и $K$. <Cite id="zhai2023" /> {#math-entropy}
+Энтропия строки $H_i = -\sum_j a_{ij} \log a_{ij} \le \log n$. Zhai и соавт. наблюдают схлопывание энтропии вместе с нестабильностью обучения, но причинную связь не доказывают. Их средство σReparam: спектральная нормировка и обучаемый скаляр во всех линейных слоях. <Cite id="zhai2023" /> {#math-entropy}
 
-QK-норма: при LayerNorm без обучаемого масштаба $\|\hat q\| = \|\hat k\| = \sqrt{d}$, и по неравенству Коши–Буняковского $|\hat q \cdot \hat k| / \sqrt{d} \le \sqrt{d}$: логиты ограничены независимо от масштаба весов. <Cite id="dehghani2023" /> {#math-qknorm}
+QK-норма (нормировка $q$ и $k$ перед скалярным произведением; в статье без смещения и центрирования): при единичной RMS-норме $\|\hat q\| = \|\hat k\| = \sqrt{d}$, и по неравенству Коши–Буняковского $|\hat q \cdot \hat k| / \sqrt{d} \le \sqrt{d}$, то есть логиты ограничены. Обучаемый масштаб в статье не описан, граница относится к нормировке без него. <Cite id="dehghani2023" /> {#math-qknorm}
 
 Факторизованное внимание Child и соавт. стоит $O(n\sqrt{n})$ при $\ell \approx \sqrt{n}$: одна головка смотрит на $\ell$ предыдущих позиций, другая на каждую $\ell$-ю. Окно из $w$ ключей даёт $O(nw)$, и за $k$ слоёв сигнал доходит до $kw$ позиций, как в Mistral 7B. <Cite id="child2019" /> <Cite id="mistral2023" /> {#math-sparse}
 
@@ -259,6 +259,7 @@ scores = Q @ K.T / np.sqrt(d)
 Аргументы: `query, key, value, attn_mask=None, dropout_p=0.0, is_causal=False, scale=None, enable_gqa=False`. Булева `attn_mask` с `True` на разрешённых позициях; float-маска прибавляется к оценкам; `attn_mask` вместе с `is_causal=True` даёт ошибку. Проверено на CPU. <Cite id="torchsdpa" /> {#impl-torch-args}
 
 ```python
+import torch.nn.functional as F
 out = F.scaled_dot_product_attention(Q, K, V, is_causal=True)  # (batch, heads, n, d)
 ```
 
@@ -294,7 +295,7 @@ def attention(Q, K, V, mask=None):
 
 Почему $S$ не остаётся на чипе: при $n = 8192$ это $6{,}7 \cdot 10^7$ значений, а SRAM одного SM 192 КБ, около $10^5$ значений fp16. Матрица больше примерно в 680 раз. <Cite id="flashattn2022" /> {#hw-no-fit}
 
-Стандартное внимание делает $\Theta(Nd + N^2)$ обращений к HBM, FlashAttention $\Theta(N^2 d^2 / M)$, где $M$ размер SRAM в значениях и $d \le M \le Nd$. Без констант при $N = 8192$, $d = 64$, $M = 98\,304$ отношение равно примерно 24. <Cite id="flashattn2022" /> {#hw-io}
+Стандартное внимание делает $\Theta(nd + n^2)$ обращений к HBM, FlashAttention $\Theta(n^2 d^2 / M)$, где $M$ размер SRAM в значениях и $d \le M \le nd$. Без констант при $n = 8192$, $d = 64$, $M = 98\,304$ отношение равно примерно 24. <Cite id="flashattn2022" /> {#hw-io}
 
 Тайлинг требует онлайн-softmax с поправкой на выход: на строку хранятся $m$, $\ell$, $o$. Блок оценок $s_j$ и значений $v_j$ обновляет их (одномерная версия в главе [Softmax](../softmax/)):
 
@@ -303,7 +304,7 @@ m' = \max\!\big(m, \max_{j \in b} s_j\big), \quad \ell' = e^{m - m'} \ell + \sum
 $$
 {#hw-online-update}
 
-Начало: $m = -\infty$, $\ell = 0$, $o = 0$; после последнего блока $o / \ell$ точен. Инвариант: после обработки $J$ величины $\ell_J = \sum_{j \in J} e^{s_j - m_J}$ и $o_J = \sum_{j \in J} e^{s_j - m_J} v_j$ верны, а при росте максимума старые суммы домножаются на $e^{m_J - m'}$. Блочный проход совпал с эталоном с ошибкой около $2 \cdot 10^{-16}$ (numpy). {#hw-online-proof}
+Начало: $m = -\infty$, $\ell = 0$, $o = 0$; после последнего блока $o / \ell$ точен. Инвариант: после обработки $J$ величины $\ell_J = \sum_{j \in J} e^{s_j - m_J}$ и $o_J = \sum_{j \in J} e^{s_j - m_J} v_j$ верны, а при росте максимума старые суммы домножаются на $e^{m_J - m'}$. Блочный проход совпал с эталоном с ошибкой порядка $10^{-16}$ (numpy). {#hw-online-proof}
 
 </Level>
 
