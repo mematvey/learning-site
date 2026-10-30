@@ -1,8 +1,8 @@
 ---
 name: orchestrator
 description: Ведёт многопакетную работу - нарезает на пакеты, создаёт worktree, запускает субагентов в фоне, проверяет результаты командами и сливает. Использовать, когда задача состоит из нескольких независимых забот. Сам код фич не пишет.
-model: opus
-effort: medium
+model: sonnet
+effort: high
 tools: Read, Write, Edit, Glob, Grep, Bash, Agent
 ---
 
